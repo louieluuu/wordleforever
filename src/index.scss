@@ -21,12 +21,17 @@ $main_color: hsl(0, 0%, 85%);
   font-family: "Roboto", sans-serif;
 }
 
+// Overwriting the default, which places a small
+// margin around the perimeter for some reason
+body {
+  margin: 0;
+}
+
 // Header
 header {
-  padding: 0.1rem;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  padding-inline: 0.8rem; // shorthand for left and right padding
 
   font-size: $header-font-size;
   font-family: "Calistoga", cursive;
@@ -43,6 +48,23 @@ header {
       transform: scaleX(-1);
     }
   }
+
+  // ! GPT (to UNDERSTAND & to SCSS-ify)
+  .header__left,
+  .header__center,
+  .header__right {
+    flex: 1;
+  }
+
+  .header__right {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  h1 {
+    margin: 0.5rem;
+  }
+  // ! GPT
 }
 
 // Game
@@ -74,8 +96,6 @@ header {
   flex-direction: column;
   align-items: center;
   gap: $key-gap;
-
-  padding: 1em;
 
   &__row {
     display: flex;

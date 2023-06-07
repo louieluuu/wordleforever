@@ -13,9 +13,7 @@ function App() {
         <div className="header__left">
           <HiMenu className="header svg" />
         </div>
-        <div className="header__center">
-          <h1>Wordle</h1>
-        </div>
+        <h1>React-Wordle</h1>
         <div className="header__right">
           <RiQuestionLine className="header svg" />
           <BiBarChartAlt2 className="header svg--flipped" />
