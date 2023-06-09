@@ -1,12 +1,11 @@
+// TODO: Scale font size with viewport width (?)
+// ! "Don't use em, just base everything off the rem" -A Wise Man
+
 $guess-w: 3.5rem;
 $guess-h: 3.5rem;
 $guess-gap: 0.25em;
 
-$key-gap: 0.4em;
-
-$header-font-size: 1rem;
-
-$main_color: hsl(0, 0%, 85%);
+$color-primary: hsl(0, 0%, 85%);
 
 @mixin box($width, $height) {
   display: flex;
@@ -28,28 +27,28 @@ body {
 }
 
 // Header
-header {
+.header {
   display: flex;
   align-items: center;
   padding-inline: 0.8rem; // shorthand for left and right padding
 
-  font-size: $header-font-size;
+  font-size: 1rem;
   font-family: "Calistoga", cursive;
 
-  border-bottom: 1px solid $main_color;
+  border-bottom: 1px solid $color-primary;
 
-  .svg {
-    width: $header-font-size * 2;
-    height: $header-font-size * 2;
-    padding: 0.25em;
-
-    &--flipped {
-      @extend .svg;
-      transform: scaleX(-1);
-    }
+  &__svg {
+    width: 2rem;
+    height: 2rem;
+    padding: 0.25rem;
   }
 
-  // ! GPT (to UNDERSTAND & to SCSS-ify)
+  &__svg--flipped {
+    @extend .header__svg;
+    transform: scaleX(-1);
+  }
+
+  // ! GPT (to UNDERSTAND)
   .header__left,
   .header__center,
   .header__right {
@@ -72,18 +71,18 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: $guess-gap;
+  gap: 0.25rem;
 
-  padding: 1em;
+  padding: 1rem;
 }
 
 .guess {
   display: flex;
-  gap: $guess-gap;
+  gap: 0.25rem;
 
   &__box {
     @include box($guess-w, $guess-h);
-    border: 2px solid $main_color;
+    border: 2px solid $color-primary;
 
     font-weight: bold;
     font-size: $guess-w/1.5;
@@ -95,17 +94,19 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: $key-gap;
+  gap: 0.4rem;
 
   &__row {
     display: flex;
-    gap: $key-gap;
+    gap: 0.4rem;
   }
 
   &__key {
     @include box($guess-w/1.5, $guess-h);
 
-    background-color: $main_color;
+    cursor: pointer;
+
+    background-color: $color-primary;
     border-radius: 0.25em;
     font-weight: bold;
     font-size: 1.25em;

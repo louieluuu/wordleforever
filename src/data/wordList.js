@@ -1,4 +1,4 @@
-[
+export const WORD_LIST = [
   "cigar",
   "rebut",
   "sissy",
@@ -2313,5 +2313,5 @@
   "rower",
   "artsy",
   "rural",
-  "shave"
+  "shave",
 ]
