@@ -91,24 +91,27 @@ body {
 
     &--active {
       @extend .guess__tile;
-      border: 2px solid $color-secondary;
+      border-color: $color-secondary;
     }
 
     &--correct {
       @extend .guess__tile;
-      border: 2px solid hsl(115, 29, 52);
+      color: white;
+      border-color: hsl(115, 29, 52);
       background-color: hsl(115, 29, 52);
     }
 
     &--wrong-position {
       @extend .guess__tile;
-      border: 2px solid hsl(49, 51, 57);
+      color: white;
+      border-color: hsl(49, 51, 57);
       background-color: hsl(49, 51, 57);
     }
 
     &--wrong {
       @extend .guess__tile;
-      border: 2px solid $color-secondary;
+      color: white;
+      border-color: $color-secondary;
       background-color: $color-secondary;
     }
   }
