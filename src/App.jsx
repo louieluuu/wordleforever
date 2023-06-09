@@ -14,9 +14,8 @@ function App() {
   const [gameBoard, setGameBoard] = useState(
     new Array(6).fill().map((_) => new Array(5).fill(""))
   )
-
+  const [isGameOver, setIsGameOver] = useState(false)
   // const [gridLetter, setGridLetter] = useState("")
-  // isGameOver state (?)
 
   // Game setup on mount
   // -select random word
@@ -24,20 +23,21 @@ function App() {
   useEffect(() => {
     const randomWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)]
     setTargetWord(randomWord.toUpperCase())
-
     console.log(randomWord)
   }, [])
 
   // The event listener starts firing only after the component is mounted.
   useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown)
+    if (!isGameOver) {
+      window.addEventListener("keydown", handleKeyDown)
+    }
 
     // If you include a return in useEffect,
     // it will be executed only when the component is unmounted
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
-  }, [activeTile])
+  }, [activeTile, isGameOver])
 
   function handleKeyDown(e) {
     const isLetterRegex = /^[a-zA-Z]$/
@@ -59,22 +59,27 @@ function App() {
         // Correct guess: gameOver (win)
         if (userGuess === targetWord) {
           console.log(
-            `Correct guess: guess: ${userGuess} vs. target: ${targetWord}`
+            `Correct guess: guess: ${userGuess} vs. target: ${targetWord} \n
+            You win !! Yay!`
           )
-          // TODO: handleGameWin()
-          // TODO: unmount() i.e. disable buttons
+          setIsGameOver(true)
         }
         // Wrong guess
         else {
-          // TODO: if array is full / activeRow > length then gameOver (lose)
-
-          // TODO: ... else, continue the game
-          setActiveRow((activeRow) => activeRow + 1)
-          setActiveTile(0)
-          setUserGuess("")
-          console.log(`Valid guess submitted: ${userGuess}`)
-          console.log(`activeRow: ${activeRow}`)
-          console.log(`activeTile: ${activeTile}`)
+          // Run out of guesses
+          if (activeRow >= 5) {
+            console.log(`game over, run out of guesses`)
+            setIsGameOver(true)
+          }
+          // Game continues
+          else {
+            setActiveRow((activeRow) => activeRow + 1)
+            setActiveTile(0)
+            setUserGuess("")
+            console.log(`Valid guess submitted: ${userGuess}`)
+            console.log(`activeRow: ${activeRow}`)
+            console.log(`activeTile: ${activeTile}`)
+          }
         }
       }
     }
