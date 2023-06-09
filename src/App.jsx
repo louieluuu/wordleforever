@@ -11,15 +11,12 @@ function App() {
   const [activeRow, setActiveRow] = useState(0)
   const [userGuess, setUserGuess] = useState("")
   const [targetWord, setTargetWord] = useState("")
-  const [gameBoard, setGameBoard] = useState(
-    new Array(6).fill().map((_) => new Array(5).fill(""))
-  )
+  const [gameBoard, setGameBoard] = useState(new Array(6).fill().map((_) => new Array(5).fill("")))
   const [isGameOver, setIsGameOver] = useState(false)
   // const [gridLetter, setGridLetter] = useState("")
 
   // Game setup on mount
   // -select random word
-  // -initialize the gameBoard
   useEffect(() => {
     const randomWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)]
     setTargetWord(randomWord.toUpperCase())
@@ -34,10 +31,22 @@ function App() {
 
     // If you include a return in useEffect,
     // it will be executed only when the component is unmounted
+    // isGameOver must be included as a dependency
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
   }, [activeTile, isGameOver])
+
+  // Helper function
+  function getGuessTileClassName(row, col) {
+    let guessTileClassName = "guess__tile"
+
+    if (activeRow === row && activeTile === col) {
+      guessTileClassName += "--active"
+    }
+
+    return guessTileClassName
+  }
 
   function handleKeyDown(e) {
     const isLetterRegex = /^[a-zA-Z]$/
@@ -95,7 +104,7 @@ function App() {
               ? row.map(
                   (cell, colIndex) => (colIndex === activeTile - 1 ? "" : cell) // ! activeTile - 1 ? XD
                 )
-              : row // [... row]?
+              : row // TODO: [... row]? UNDERSTAND
         )
         setGameBoard(updatedGameBoard)
 
@@ -111,10 +120,11 @@ function App() {
         const updatedGameBoard = gameBoard.map(
           (row, rowIndex) =>
             rowIndex === activeRow
-              ? row.map((cell, colIndex) =>
-                  colIndex === activeTile ? "G" : cell
+              ? row.map(
+                  (cell, colIndex) => (colIndex === activeTile ? "G" : cell)
+                  // TODO: userGuess[activeTile] not working cause state...
                 )
-              : row // [... row]?
+              : row // TODO: [... row]? UNDERSTAND
         )
         setGameBoard(updatedGameBoard)
 
@@ -135,51 +145,53 @@ function App() {
       {/* Game Board */}
       <div className="game-board">
         <div className="guess">
-          <div className="guess__box">{gameBoard[0][0]}</div>
-          <div className="guess__box">{gameBoard[0][1]}</div>
-          <div className="guess__box">{gameBoard[0][2]}</div>
-          <div className="guess__box">{gameBoard[0][3]}</div>
-          <div className="guess__box">{gameBoard[0][4]}</div>
+          <div className={getGuessTileClassName(0, 0)}>{gameBoard[0][0]}</div>
+          <div className={getGuessTileClassName(0, 1)}>{gameBoard[0][1]}</div>
+          <div className={getGuessTileClassName(0, 2)}>{gameBoard[0][2]}</div>
+          <div className={getGuessTileClassName(0, 3)}>{gameBoard[0][3]}</div>
+          <div className={getGuessTileClassName(0, 4)}>{gameBoard[0][4]}</div>
         </div>
 
         <div className="guess">
-          <div className="guess__box">{gameBoard[1][0]}</div>
-          <div className="guess__box">{gameBoard[1][1]}</div>
-          <div className="guess__box">{gameBoard[1][2]}</div>
-          <div className="guess__box">{gameBoard[1][3]}</div>
-          <div className="guess__box">{gameBoard[1][4]}</div>
+          <div className={`guess__tile${activeRow === 1 && activeTile === 0 ? "--active" : ""}`}>
+            {gameBoard[1][0]}
+          </div>
+          <div className="guess__tile--correct">{gameBoard[1][1]}</div>
+          <div className="guess__tile">{gameBoard[1][2]}</div>
+          <div className="guess__tile">{gameBoard[1][3]}</div>
+          <div className="guess__tile">{gameBoard[1][4]}</div>
         </div>
 
         <div className="guess">
-          <div className="guess__box">{gameBoard[2][0]}</div>
-          <div className="guess__box">{gameBoard[2][1]}</div>
-          <div className="guess__box">{gameBoard[2][2]}</div>
-          <div className="guess__box">{gameBoard[2][3]}</div>
-          <div className="guess__box">{gameBoard[2][4]}</div>
+          <div className="guess__tile">{gameBoard[2][0]}</div>
+          <div className="guess__tile">{gameBoard[2][1]}</div>
+          <div className="guess__tile">{gameBoard[2][2]}</div>
+          <div className="guess__tile">{gameBoard[2][3]}</div>
+          <div className="guess__tile">{gameBoard[2][4]}</div>
         </div>
 
         <div className="guess">
-          <div className="guess__box">{gameBoard[3][0]}</div>
-          <div className="guess__box">{gameBoard[3][1]}</div>
-          <div className="guess__box">{gameBoard[3][2]}</div>
-          <div className="guess__box">{gameBoard[3][3]}</div>
-          <div className="guess__box">{gameBoard[3][4]}</div>
+          <div className="guess__tile">{gameBoard[3][0]}</div>
+          <div className="guess__tile">{gameBoard[3][1]}</div>
+          <div className="guess__tile">{gameBoard[3][2]}</div>
+          <div className="guess__tile">{gameBoard[3][3]}</div>
+          <div className="guess__tile">{gameBoard[3][4]}</div>
         </div>
 
         <div className="guess">
-          <div className="guess__box">{gameBoard[4][0]}</div>
-          <div className="guess__box">{gameBoard[4][1]}</div>
-          <div className="guess__box">{gameBoard[4][2]}</div>
-          <div className="guess__box">{gameBoard[4][3]}</div>
-          <div className="guess__box">{gameBoard[4][4]}</div>
+          <div className="guess__tile">{gameBoard[4][0]}</div>
+          <div className="guess__tile">{gameBoard[4][1]}</div>
+          <div className="guess__tile">{gameBoard[4][2]}</div>
+          <div className="guess__tile">{gameBoard[4][3]}</div>
+          <div className="guess__tile">{gameBoard[4][4]}</div>
         </div>
 
         <div className="guess">
-          <div className="guess__box">{gameBoard[5][0]}</div>
-          <div className="guess__box">{gameBoard[5][1]}</div>
-          <div className="guess__box">{gameBoard[5][2]}</div>
-          <div className="guess__box">{gameBoard[5][3]}</div>
-          <div className="guess__box">{gameBoard[5][4]}</div>
+          <div className="guess__tile">{gameBoard[5][0]}</div>
+          <div className="guess__tile">{gameBoard[5][1]}</div>
+          <div className="guess__tile">{gameBoard[5][2]}</div>
+          <div className="guess__tile">{gameBoard[5][3]}</div>
+          <div className="guess__tile">{gameBoard[5][4]}</div>
         </div>
       </div>
 
