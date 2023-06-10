@@ -94,6 +94,12 @@ body {
       border-color: $color-secondary;
     }
 
+    // TODO: erase later, only for visualization
+    &--current {
+      @extend .guess__tile;
+      border-color: hsl(13, 50, 50);
+    }
+
     &--correct {
       @extend .guess__tile;
       color: white;
