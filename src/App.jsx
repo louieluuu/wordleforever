@@ -41,8 +41,13 @@ function App() {
   function getGuessTileClassName(row, col) {
     let guessTileClassName = "guess__tile"
 
-    if (activeRow === row && activeTile === col) {
+    if (activeRow === row && col < userGuess.length) {
       guessTileClassName += "--active"
+    }
+
+    // TODO: erase later, only for visualization
+    if (activeRow === row && col === activeTile) {
+      guessTileClassName += "--current"
     }
 
     return guessTileClassName
@@ -101,15 +106,17 @@ function App() {
         const updatedGameBoard = gameBoard.map(
           (row, rowIndex) =>
             rowIndex === activeRow
-              ? row.map(
-                  (cell, colIndex) => (colIndex === activeTile - 1 ? "" : cell) // ! activeTile - 1 ? XD
-                )
+              ? row.map((cell, colIndex) => (colIndex === activeTile - 1 ? "" : cell))
               : row // TODO: [... row]? UNDERSTAND
         )
+        console.log(updatedGameBoard)
         setGameBoard(updatedGameBoard)
 
-        setUserGuess(userGuess.slice(0, activeTile - 1)) // ! activeTile - 1 ? XD
-        console.log(`activeTile: ${activeTile}`)
+        const newGuess = userGuess.slice(0, activeTile - 1)
+        console.log(`user guess so far: ${newGuess}`)
+        setUserGuess(newGuess)
+
+        console.log(`activeTile changed from: ${activeTile} to ${activeTile - 1}`)
         console.log(`key pressed: ${e.key}`)
       }
     }
@@ -117,22 +124,22 @@ function App() {
     // Letters
     else if (isLetterRegex.test(e.key) === true) {
       if (activeTile < 5) {
+        const newGuess = userGuess.concat(e.key.toUpperCase())
+        setUserGuess(newGuess)
+
         const updatedGameBoard = gameBoard.map(
           (row, rowIndex) =>
             rowIndex === activeRow
-              ? row.map(
-                  (cell, colIndex) => (colIndex === activeTile ? "G" : cell)
-                  // TODO: userGuess[activeTile] not working cause state...
-                )
+              ? row.map((cell, colIndex) => (colIndex === activeTile ? newGuess[activeTile] : cell))
               : row // TODO: [... row]? UNDERSTAND
         )
+        console.log(updatedGameBoard)
         setGameBoard(updatedGameBoard)
 
-        console.log(gameBoard)
-
-        setUserGuess(userGuess.concat(e.key.toUpperCase()))
         setActiveTile((activeTile) => activeTile + 1)
-        console.log(`activeTile: ${activeTile}`)
+
+        console.log(`user guess so far: ${newGuess}`)
+        console.log(`activeTile changed from: ${activeTile} to ${activeTile + 1}`)
         console.log(`key pressed: ${e.key}`)
       }
     }
