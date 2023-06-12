@@ -1,12 +1,6 @@
-// TODO: Scale font size with viewport width (?)
-// ! "Don't use em, just base everything off the rem" -A Wise Man
-
-$guess-w: 3.5rem;
-$guess-h: 3.5rem;
-$guess-gap: 0.25em;
-
 $color-primary: hsl(0, 0%, 85%);
 $color-secondary: hsl(240, 2, 48);
+$color-hover: hsl(0, 0, 80%);
 
 @mixin box($width, $height) {
   display: flex;
@@ -82,22 +76,16 @@ body {
   gap: 0.35rem;
 
   &__tile {
-    @include box($guess-w, $guess-h);
+    @include box(3.5rem, 3.5rem);
     border: 2px solid $color-primary;
 
     color: black;
     font-weight: bold;
-    font-size: $guess-w/1.5;
+    font-size: 2rem;
 
     &--active {
       @extend .guess__tile;
       border-color: $color-secondary;
-    }
-
-    // TODO: erase later, only for visualization
-    &--current {
-      @extend .guess__tile;
-      border-color: hsl(13, 50, 50);
     }
 
     &--correct {
@@ -128,31 +116,38 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
 
   &__row {
     display: flex;
-    gap: 0.4rem;
+    gap: 0.45rem;
   }
 
   &__key {
-    @include box($guess-w/1.5, $guess-h);
+    @include box(2.5rem, 3.5rem);
 
     cursor: pointer;
 
     background-color: $color-primary;
+    border: none;
     border-radius: 0.25em;
     font-weight: bold;
-    font-size: 1.25em;
+    font-size: 1.2em;
+
+    &:hover {
+      background-color: $color-hover;
+      transition-duration: 0.2s;
+      transition-timing-function: ease-in;
+    }
 
     &--large {
       @extend .keyboard__key;
-      width: $guess-w;
-      font-size: 0.75em;
+      width: 4rem;
+      font-size: 0.75rem;
 
       &--svg {
         @extend .keyboard__key--large;
-        font-size: 1.5em;
+        font-size: 1.5rem;
       }
     }
   }
