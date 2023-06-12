@@ -68,104 +68,120 @@ function App() {
     return guessTileClassName
   }
 
-  function handleKeyDown(e) {
-    const isLetterRegex = /^[a-zA-Z]$/
-
-    // Enter
-    if (e.key === "Enter") {
-      // Guess too short
-      if (activeTile < 5) {
-        console.log(`key pressed: ${e.key}`)
-        console.log(`activeRow: ${activeRow}`)
-        console.log(`Not enough letters in: ${userGuess}`)
-      }
-      // Guess invalid
-      else if (!VALID_GUESSES.includes(userGuess.toLowerCase())) {
-        console.log(`Guess not in dictionary: ${userGuess}`)
-      }
-      // Submit guess
-      else {
-        // Correct guess: gameOver (win)
-        if (userGuess === targetWord) {
-          console.log(
-            `Correct guess: guess: ${userGuess} vs. target: ${targetWord} \n
+  function handleEnter() {
+    // Guess too short
+    if (activeTile < 5) {
+      console.log(`activeRow: ${activeRow}`)
+      console.log(`Not enough letters in: ${userGuess}`)
+    }
+    // Guess invalid
+    else if (!VALID_GUESSES.includes(userGuess.toLowerCase())) {
+      console.log(`Guess not in dictionary: ${userGuess}`)
+    }
+    // Submit guess
+    else {
+      // Correct guess: gameOver (win)
+      if (userGuess === targetWord) {
+        console.log(
+          `Correct guess: guess: ${userGuess} vs. target: ${targetWord} \n
             You win !! Yay!`
-          )
+        )
+        setIsGameOver(true)
+        // despite the game being over, in order to render the colors of the (previous) winning row,
+        // the active row must still be incremented once
+        setActiveRow((activeRow) => activeRow + 1)
+      }
+      // Wrong guess
+      else {
+        // Run out of guesses
+        if (activeRow >= 5) {
+          console.log(`game over, run out of guesses`)
           setIsGameOver(true)
-          // despite the game being over, in order to render the colors of the (previous) winning row,
-          // the active row must still be incremented once
-          setActiveRow((activeRow) => activeRow + 1)
         }
-        // Wrong guess
+        // Game continues
         else {
-          // Run out of guesses
-          if (activeRow >= 5) {
-            console.log(`game over, run out of guesses`)
-            setIsGameOver(true)
-          }
-          // Game continues
-          else {
-            setActiveRow((activeRow) => activeRow + 1)
-            setActiveTile(0)
-            setUserGuess("")
-            console.log(`Valid guess submitted: ${userGuess}`)
-            console.log(`activeRow: ${activeRow}`)
-            console.log(`activeTile: ${activeTile}`)
-          }
+          setActiveRow((activeRow) => activeRow + 1)
+          setActiveTile(0)
+          setUserGuess("")
+          console.log(`Valid guess submitted: ${userGuess}`)
+          console.log(`activeRow: ${activeRow}`)
+          console.log(`activeTile: ${activeTile}`)
         }
-      }
-    }
-
-    // Backspace
-    else if (e.key === "Backspace") {
-      if (activeTile !== 0) {
-        setActiveTile((activeTile) => activeTile - 1)
-
-        const updatedGameBoard = gameBoard.map(
-          (row, rowIndex) =>
-            rowIndex === activeRow
-              ? row.map((cell, colIndex) => (colIndex === activeTile - 1 ? "" : cell))
-              : row // TODO: [... row]? UNDERSTAND
-        )
-        console.log(updatedGameBoard)
-        setGameBoard(updatedGameBoard)
-
-        const newGuess = userGuess.slice(0, activeTile - 1)
-        console.log(`user guess so far: ${newGuess}`)
-        setUserGuess(newGuess)
-
-        console.log(`activeTile changed from: ${activeTile} to ${activeTile - 1}`)
-        console.log(`key pressed: ${e.key}`)
-      }
-    }
-
-    // Letters
-    else if (isLetterRegex.test(e.key) === true) {
-      if (activeTile < 5) {
-        const newGuess = userGuess.concat(e.key.toUpperCase())
-        setUserGuess(newGuess)
-
-        const updatedGameBoard = gameBoard.map(
-          (row, rowIndex) =>
-            rowIndex === activeRow
-              ? row.map((cell, colIndex) => (colIndex === activeTile ? newGuess[activeTile] : cell))
-              : row // TODO: [... row]? UNDERSTAND
-        )
-        console.log(updatedGameBoard)
-        setGameBoard(updatedGameBoard)
-
-        setActiveTile((activeTile) => activeTile + 1)
-
-        console.log(`user guess so far: ${newGuess}`)
-        console.log(`activeTile changed from: ${activeTile} to ${activeTile + 1}`)
-        console.log(`key pressed: ${e.key}`)
       }
     }
   }
 
-  function onKeyClick(letter) {
-    console.log(letter)
-    setUserGuess(userGuess.concat(letter))
+  function handleBackspace() {
+    if (activeTile !== 0) {
+      setActiveTile((activeTile) => activeTile - 1)
+
+      const updatedGameBoard = gameBoard.map(
+        (row, rowIndex) =>
+          rowIndex === activeRow
+            ? row.map((cell, colIndex) => (colIndex === activeTile - 1 ? "" : cell))
+            : row // TODO: [... row]? UNDERSTAND
+      )
+      console.log(updatedGameBoard)
+      setGameBoard(updatedGameBoard)
+
+      const newGuess = userGuess.slice(0, activeTile - 1)
+      console.log(`user guess so far: ${newGuess}`)
+      setUserGuess(newGuess)
+
+      console.log(`activeTile changed from: ${activeTile} to ${activeTile - 1}`)
+    }
+  }
+
+  function handleLetter(letter) {
+    if (activeTile < 5) {
+      const newGuess = userGuess.concat(letter.toUpperCase())
+      setUserGuess(newGuess)
+
+      const updatedGameBoard = gameBoard.map(
+        (row, rowIndex) =>
+          rowIndex === activeRow
+            ? row.map((cell, colIndex) => (colIndex === activeTile ? newGuess[activeTile] : cell))
+            : row // TODO: [... row]? UNDERSTAND
+      )
+      console.log(updatedGameBoard)
+      setGameBoard(updatedGameBoard)
+
+      setActiveTile((activeTile) => activeTile + 1)
+
+      console.log(`user guess so far: ${newGuess}`)
+      console.log(`activeTile changed from: ${activeTile} to ${activeTile + 1}`)
+      console.log(`key pressed: ${letter}`)
+    }
+  }
+
+  function handleKeyDown(e) {
+    const isLetterRegex = /^[a-zA-Z]$/
+
+    if (e.key === "Enter") {
+      handleEnter()
+    }
+    //
+    else if (e.key === "Backspace") {
+      handleBackspace()
+    }
+    //
+    else if (isLetterRegex.test(e.key) === true) {
+      handleLetter(e.key)
+    }
+  }
+
+  function handleKeyboardClick(clicked) {
+    if (clicked === "Enter") {
+      handleEnter()
+    }
+    //
+    else if (clicked === "Backspace") {
+      handleBackspace()
+    }
+    //
+    else {
+      handleLetter(clicked)
+    }
   }
 
   return (
@@ -223,7 +239,7 @@ function App() {
         </div>
       </div>
 
-      <Keyboard onClick={onKeyClick} />
+      <Keyboard onClick={handleKeyboardClick} />
     </>
   )
 }

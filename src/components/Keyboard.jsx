@@ -26,13 +26,19 @@ export default function Keyboard({ onClick }) {
       </div>
 
       <div className="keyboard__row">
-        <div className="keyboard__key--large">ENTER</div>
+        <div className="keyboard__key--large" key="Enter" onClick={() => onClick("Enter")}>
+          ENTER
+        </div>
         {thirdRow.map((letter) => (
           <button className="keyboard__key" key={letter} onClick={() => onClick(letter)}>
             {letter}
           </button>
         ))}
-        <div className="keyboard__key--large--svg">
+        <div
+          className="keyboard__key--large--svg"
+          key="Backspace"
+          onClick={() => onClick("Backspace")}
+        >
           <IoBackspaceOutline />
         </div>
       </div>
