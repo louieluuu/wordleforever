@@ -2,11 +2,16 @@ import React from "react"
 
 import { IoBackspaceOutline } from "react-icons/io5"
 
-export default function Keyboard() {
+export default function Keyboard({ onClick }) {
   return (
     <div className="keyboard">
       <div className="keyboard__row">
-        <div className="keyboard__key">Q</div>
+        <button
+          className="keyboard__key"
+          onClick={() => onClick("q")}
+        >
+          Q
+        </button>
         <div className="keyboard__key">W</div>
         <div className="keyboard__key">E</div>
         <div className="keyboard__key">R</div>

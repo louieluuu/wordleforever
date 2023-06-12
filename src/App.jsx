@@ -9,7 +9,7 @@ import Keyboard from "./components/Keyboard"
 function App() {
   const [activeTile, setActiveTile] = useState(0)
   const [activeRow, setActiveRow] = useState(0)
-  const [userGuess, setUserGuess] = useState("")
+  const [userGuess, setUserGuess] = useState("     ")
   const [targetWord, setTargetWord] = useState("")
   const [gameBoard, setGameBoard] = useState(new Array(6).fill().map((_) => new Array(5).fill("")))
   const [isGameOver, setIsGameOver] = useState(false)
@@ -103,11 +103,10 @@ function App() {
       if (activeTile !== 0) {
         setActiveTile((activeTile) => activeTile - 1)
 
-        const updatedGameBoard = gameBoard.map(
-          (row, rowIndex) =>
-            rowIndex === activeRow
-              ? row.map((cell, colIndex) => (colIndex === activeTile - 1 ? "" : cell))
-              : row // TODO: [... row]? UNDERSTAND
+        const updatedGameBoard = gameBoard.map((row, rowIndex) =>
+          rowIndex === activeRow
+            ? row.map((cell, colIndex) => (colIndex === activeTile - 1 ? "" : cell))
+            : row
         )
         console.log(updatedGameBoard)
         setGameBoard(updatedGameBoard)
@@ -127,11 +126,10 @@ function App() {
         const newGuess = userGuess.concat(e.key.toUpperCase())
         setUserGuess(newGuess)
 
-        const updatedGameBoard = gameBoard.map(
-          (row, rowIndex) =>
-            rowIndex === activeRow
-              ? row.map((cell, colIndex) => (colIndex === activeTile ? newGuess[activeTile] : cell))
-              : row // TODO: [... row]? UNDERSTAND
+        const updatedGameBoard = gameBoard.map((row, rowIndex) =>
+          rowIndex === activeRow
+            ? row.map((cell, colIndex) => (colIndex === activeTile ? newGuess[activeTile] : cell))
+            : [...row]
         )
         console.log(updatedGameBoard)
         setGameBoard(updatedGameBoard)
@@ -145,64 +143,36 @@ function App() {
     }
   }
 
+  // TODO: getStyles() generalize
+
+  function onKeyboardClick(letter) {
+    const newGuess = userGuess.concat(letter.toUpperCase())
+    setUserGuess(newGuess)
+  }
+
   return (
     <>
       <Header />
 
       {/* Game Board */}
       <div className="game-board">
-        <div className="guess">
-          <div className={getGuessTileClassName(0, 0)}>{gameBoard[0][0]}</div>
-          <div className={getGuessTileClassName(0, 1)}>{gameBoard[0][1]}</div>
-          <div className={getGuessTileClassName(0, 2)}>{gameBoard[0][2]}</div>
-          <div className={getGuessTileClassName(0, 3)}>{gameBoard[0][3]}</div>
-          <div className={getGuessTileClassName(0, 4)}>{gameBoard[0][4]}</div>
-        </div>
-
-        <div className="guess">
-          <div className={`guess__tile${activeRow === 1 && activeTile === 0 ? "--active" : ""}`}>
-            {gameBoard[1][0]}
-          </div>
-          <div className="guess__tile--correct">{gameBoard[1][1]}</div>
-          <div className="guess__tile">{gameBoard[1][2]}</div>
-          <div className="guess__tile">{gameBoard[1][3]}</div>
-          <div className="guess__tile">{gameBoard[1][4]}</div>
-        </div>
-
-        <div className="guess">
-          <div className="guess__tile">{gameBoard[2][0]}</div>
-          <div className="guess__tile">{gameBoard[2][1]}</div>
-          <div className="guess__tile">{gameBoard[2][2]}</div>
-          <div className="guess__tile">{gameBoard[2][3]}</div>
-          <div className="guess__tile">{gameBoard[2][4]}</div>
-        </div>
-
-        <div className="guess">
-          <div className="guess__tile">{gameBoard[3][0]}</div>
-          <div className="guess__tile">{gameBoard[3][1]}</div>
-          <div className="guess__tile">{gameBoard[3][2]}</div>
-          <div className="guess__tile">{gameBoard[3][3]}</div>
-          <div className="guess__tile">{gameBoard[3][4]}</div>
-        </div>
-
-        <div className="guess">
-          <div className="guess__tile">{gameBoard[4][0]}</div>
-          <div className="guess__tile">{gameBoard[4][1]}</div>
-          <div className="guess__tile">{gameBoard[4][2]}</div>
-          <div className="guess__tile">{gameBoard[4][3]}</div>
-          <div className="guess__tile">{gameBoard[4][4]}</div>
-        </div>
-
-        <div className="guess">
-          <div className="guess__tile">{gameBoard[5][0]}</div>
-          <div className="guess__tile">{gameBoard[5][1]}</div>
-          <div className="guess__tile">{gameBoard[5][2]}</div>
-          <div className="guess__tile">{gameBoard[5][3]}</div>
-          <div className="guess__tile">{gameBoard[5][4]}</div>
-        </div>
+        {gameBoard.map((row, rowIndex) => (
+          <>
+            {rowIndex === activeRow ? (
+              Array.from(userGuess).map((letter) => <div className="guess__tile">{letter}</div>)
+            ) : (
+              // <div>{userGuess}</div>
+              <div className="guess">
+                {row.map((tile, tileIndex) => (
+                  <div className={getGuessTileClassName(rowIndex, tileIndex)}>{tile}</div>
+                ))}
+              </div>
+            )}
+          </>
+        ))}
       </div>
 
-      <Keyboard />
+      <Keyboard onClick={onKeyboardClick} />
     </>
   )
 }
