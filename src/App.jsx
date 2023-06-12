@@ -163,6 +163,11 @@ function App() {
     }
   }
 
+  function onKeyClick(letter) {
+    console.log(letter)
+    setUserGuess(userGuess.concat(letter))
+  }
+
   return (
     <>
       <Header />
@@ -218,7 +223,7 @@ function App() {
         </div>
       </div>
 
-      <Keyboard />
+      <Keyboard onClick={onKeyClick} />
     </>
   )
 }
