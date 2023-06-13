@@ -10,18 +10,19 @@ function App() {
   const [activeTile, setActiveTile] = useState(0)
   const [activeRow, setActiveRow] = useState(0)
   const [userGuess, setUserGuess] = useState("")
-  const [targetWord, setTargetWord] = useState("")
-  const [gameBoard, setGameBoard] = useState(new Array(6).fill().map((_) => new Array(5).fill("")))
+  const [solution, setSolution] = useState("")
+  const [gameBoard, setGameBoard] = useState(
+    new Array(6).fill().map((_) => new Array(5).fill({ letter: "" }))
+  )
   const [isGameOver, setIsGameOver] = useState(false)
 
-  // const [remainingGuess, setRemainingGuess] = useState(targetWord)
   // const [gridLetter, setGridLetter] = useState("")
 
   // Game setup on mount
   // -select random word
   useEffect(() => {
     const randomWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)]
-    setTargetWord(randomWord.toUpperCase())
+    setSolution(randomWord.toUpperCase())
     console.log(randomWord)
   }, [])
 
@@ -43,25 +44,23 @@ function App() {
   function getGuessTileClassName(row, col) {
     let guessTileClassName = "guess__tile"
 
-    if (activeRow === row && !isGameOver) {
-      if (col < userGuess.length) {
-        guessTileClassName += "--active"
-      } else {
-        // nothing
+    if (!gameBoard[row][col].color) {
+      if (activeRow === row && !isGameOver) {
+        if (col < userGuess.length) {
+          guessTileClassName += "--active"
+        }
       }
-      return guessTileClassName
     }
     //
-    else if (gameBoard[row][col] === targetWord[col]) {
+    else if (gameBoard[row][col].color === "green") {
       guessTileClassName += "--correct"
     }
-    // .includes() will always return true if the comparison is with "", so this condition
-    // must be explicitly selected out lest the row be filled with yellows from the start
-    else if (targetWord.includes(gameBoard[row][col]) && gameBoard[row][col] !== "") {
+    //
+    else if (gameBoard[row][col].color === "yellow") {
       guessTileClassName += "--wrong-position"
     }
     //
-    else if (gameBoard[row][col] !== "") {
+    else if (gameBoard[row][col].color === "gray") {
       guessTileClassName += "--wrong"
     }
 
@@ -81,9 +80,9 @@ function App() {
     // Submit guess
     else {
       // Correct guess: gameOver (win)
-      if (userGuess === targetWord) {
+      if (userGuess === solution) {
         console.log(
-          `Correct guess: guess: ${userGuess} vs. target: ${targetWord} \n
+          `Correct guess: guess: ${userGuess} vs. target: ${solution} \n
             You win !! Yay!`
         )
         setIsGameOver(true)
@@ -104,11 +103,48 @@ function App() {
           setActiveTile(0)
           setUserGuess("")
           console.log(`Valid guess submitted: ${userGuess}`)
-          console.log(`activeRow: ${activeRow}`)
           console.log(`activeTile: ${activeTile}`)
         }
       }
+      updateColors()
     }
+  }
+
+  // Color logic: Three-pass algorithm
+  function updateColors() {
+    console.log(`activeRow: ${activeRow}`)
+    console.log(gameBoard)
+    let updatedGameBoard = [...gameBoard]
+    let copySolution = [...solution]
+
+    // 1: Fill the greens
+    updatedGameBoard[activeRow].forEach((tile, tileIndex) => {
+      if (tile.letter === solution[tileIndex]) {
+        updatedGameBoard[activeRow][tileIndex] = { ...tile, color: "green" }
+      }
+    })
+
+    // 2: Fill the yellows
+    updatedGameBoard[activeRow].forEach((tile, tileIndex) => {
+      // Check for existence of color property first to prevent yellows from overwriting greens
+      if (!tile.color) {
+        let includedIndex = copySolution.indexOf(tile.letter)
+        if (includedIndex !== -1) {
+          updatedGameBoard[activeRow][tileIndex] = { ...tile, color: "yellow" }
+          // Prevent the "double letter fiasco" by removing letters as they're seen
+          copySolution[includedIndex] = null
+        }
+      }
+    })
+
+    // 3: Fill the grays
+    updatedGameBoard[activeRow].forEach((tile, tileIndex) => {
+      if (!tile.color) {
+        updatedGameBoard[activeRow][tileIndex] = { ...tile, color: "gray" }
+      }
+    })
+
+    setGameBoard(updatedGameBoard)
   }
 
   function handleBackspace() {
@@ -118,7 +154,9 @@ function App() {
       const updatedGameBoard = gameBoard.map(
         (row, rowIndex) =>
           rowIndex === activeRow
-            ? row.map((cell, colIndex) => (colIndex === activeTile - 1 ? "" : cell))
+            ? row.map((cell, colIndex) =>
+                colIndex === activeTile - 1 ? { ...cell, letter: "" } : cell
+              )
             : row // TODO: [... row]? UNDERSTAND
       )
       console.log(updatedGameBoard)
@@ -140,7 +178,9 @@ function App() {
       const updatedGameBoard = gameBoard.map(
         (row, rowIndex) =>
           rowIndex === activeRow
-            ? row.map((cell, colIndex) => (colIndex === activeTile ? newGuess[activeTile] : cell))
+            ? row.map((cell, colIndex) =>
+                colIndex === activeTile ? { ...cell, letter: newGuess[activeTile] } : cell
+              )
             : row // TODO: [... row]? UNDERSTAND
       )
       console.log(updatedGameBoard)
@@ -188,54 +228,53 @@ function App() {
     <>
       <Header />
 
-      {/* Game Board */}
       <div className="game-board">
         <div className="guess">
-          <div className={getGuessTileClassName(0, 0)}>{gameBoard[0][0]}</div>
-          <div className={getGuessTileClassName(0, 1)}>{gameBoard[0][1]}</div>
-          <div className={getGuessTileClassName(0, 2)}>{gameBoard[0][2]}</div>
-          <div className={getGuessTileClassName(0, 3)}>{gameBoard[0][3]}</div>
-          <div className={getGuessTileClassName(0, 4)}>{gameBoard[0][4]}</div>
+          <div className={getGuessTileClassName(0, 0)}>{gameBoard[0][0].letter}</div>
+          <div className={getGuessTileClassName(0, 1)}>{gameBoard[0][1].letter}</div>
+          <div className={getGuessTileClassName(0, 2)}>{gameBoard[0][2].letter}</div>
+          <div className={getGuessTileClassName(0, 3)}>{gameBoard[0][3].letter}</div>
+          <div className={getGuessTileClassName(0, 4)}>{gameBoard[0][4].letter}</div>
         </div>
 
         <div className="guess">
-          <div className={getGuessTileClassName(1, 0)}>{gameBoard[1][0]}</div>
-          <div className={getGuessTileClassName(1, 1)}>{gameBoard[1][1]}</div>
-          <div className={getGuessTileClassName(1, 2)}>{gameBoard[1][2]}</div>
-          <div className={getGuessTileClassName(1, 3)}>{gameBoard[1][3]}</div>
-          <div className={getGuessTileClassName(1, 4)}>{gameBoard[1][4]}</div>
+          <div className={getGuessTileClassName(1, 0)}>{gameBoard[1][0].letter}</div>
+          <div className={getGuessTileClassName(1, 1)}>{gameBoard[1][1].letter}</div>
+          <div className={getGuessTileClassName(1, 2)}>{gameBoard[1][2].letter}</div>
+          <div className={getGuessTileClassName(1, 3)}>{gameBoard[1][3].letter}</div>
+          <div className={getGuessTileClassName(1, 4)}>{gameBoard[1][4].letter}</div>
         </div>
 
         <div className="guess">
-          <div className={getGuessTileClassName(2, 0)}>{gameBoard[2][0]}</div>
-          <div className={getGuessTileClassName(2, 1)}>{gameBoard[2][1]}</div>
-          <div className={getGuessTileClassName(2, 2)}>{gameBoard[2][2]}</div>
-          <div className={getGuessTileClassName(2, 3)}>{gameBoard[2][3]}</div>
-          <div className={getGuessTileClassName(2, 4)}>{gameBoard[2][4]}</div>
+          <div className={getGuessTileClassName(2, 0)}>{gameBoard[2][0].letter}</div>
+          <div className={getGuessTileClassName(2, 1)}>{gameBoard[2][1].letter}</div>
+          <div className={getGuessTileClassName(2, 2)}>{gameBoard[2][2].letter}</div>
+          <div className={getGuessTileClassName(2, 3)}>{gameBoard[2][3].letter}</div>
+          <div className={getGuessTileClassName(2, 4)}>{gameBoard[2][4].letter}</div>
         </div>
 
         <div className="guess">
-          <div className={getGuessTileClassName(3, 0)}>{gameBoard[3][0]}</div>
-          <div className={getGuessTileClassName(3, 1)}>{gameBoard[3][1]}</div>
-          <div className={getGuessTileClassName(3, 2)}>{gameBoard[3][2]}</div>
-          <div className={getGuessTileClassName(3, 3)}>{gameBoard[3][3]}</div>
-          <div className={getGuessTileClassName(3, 4)}>{gameBoard[3][4]}</div>
+          <div className={getGuessTileClassName(3, 0)}>{gameBoard[3][0].letter}</div>
+          <div className={getGuessTileClassName(3, 1)}>{gameBoard[3][1].letter}</div>
+          <div className={getGuessTileClassName(3, 2)}>{gameBoard[3][2].letter}</div>
+          <div className={getGuessTileClassName(3, 3)}>{gameBoard[3][3].letter}</div>
+          <div className={getGuessTileClassName(3, 4)}>{gameBoard[3][4].letter}</div>
         </div>
 
         <div className="guess">
-          <div className={getGuessTileClassName(4, 0)}>{gameBoard[4][0]}</div>
-          <div className={getGuessTileClassName(4, 1)}>{gameBoard[4][1]}</div>
-          <div className={getGuessTileClassName(4, 2)}>{gameBoard[4][2]}</div>
-          <div className={getGuessTileClassName(4, 3)}>{gameBoard[4][3]}</div>
-          <div className={getGuessTileClassName(4, 4)}>{gameBoard[4][4]}</div>
+          <div className={getGuessTileClassName(4, 0)}>{gameBoard[4][0].letter}</div>
+          <div className={getGuessTileClassName(4, 1)}>{gameBoard[4][1].letter}</div>
+          <div className={getGuessTileClassName(4, 2)}>{gameBoard[4][2].letter}</div>
+          <div className={getGuessTileClassName(4, 3)}>{gameBoard[4][3].letter}</div>
+          <div className={getGuessTileClassName(4, 4)}>{gameBoard[4][4].letter}</div>
         </div>
 
         <div className="guess">
-          <div className={getGuessTileClassName(5, 0)}>{gameBoard[5][0]}</div>
-          <div className={getGuessTileClassName(5, 1)}>{gameBoard[5][1]}</div>
-          <div className={getGuessTileClassName(5, 2)}>{gameBoard[5][2]}</div>
-          <div className={getGuessTileClassName(5, 3)}>{gameBoard[5][3]}</div>
-          <div className={getGuessTileClassName(5, 4)}>{gameBoard[5][4]}</div>
+          <div className={getGuessTileClassName(5, 0)}>{gameBoard[5][0].letter}</div>
+          <div className={getGuessTileClassName(5, 1)}>{gameBoard[5][1].letter}</div>
+          <div className={getGuessTileClassName(5, 2)}>{gameBoard[5][2].letter}</div>
+          <div className={getGuessTileClassName(5, 3)}>{gameBoard[5][3].letter}</div>
+          <div className={getGuessTileClassName(5, 4)}>{gameBoard[5][4].letter}</div>
         </div>
       </div>
 
