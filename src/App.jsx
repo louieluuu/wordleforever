@@ -42,23 +42,21 @@ function App() {
   function getGuessTileClassName(row, col) {
     let guessTileClassName = "guess__tile"
 
-    if (!gameBoard[row][col].color) {
-      if (activeRow === row && !isGameOver) {
-        if (col < userGuess.length) {
-          guessTileClassName += "--active"
-        }
+    if (!gameBoard[row][col].state) {
+      if (activeRow === row && col < userGuess.length && !isGameOver) {
+        guessTileClassName += "--active"
       }
     }
     //
-    else if (gameBoard[row][col].color === "green") {
+    else if (gameBoard[row][col].state === "correct") {
       guessTileClassName += "--correct"
     }
     //
-    else if (gameBoard[row][col].color === "yellow") {
+    else if (gameBoard[row][col].state === "wrong-position") {
       guessTileClassName += "--wrong-position"
     }
     //
-    else if (gameBoard[row][col].color === "gray") {
+    else if (gameBoard[row][col].state === "wrong") {
       guessTileClassName += "--wrong"
     }
 
@@ -104,12 +102,12 @@ function App() {
           console.log(`activeTile: ${activeTile}`)
         }
       }
-      updateColors()
+      updateTileStates()
     }
   }
 
   // Color logic: Three-pass algorithm
-  function updateColors() {
+  function updateTileStates() {
     console.log(`activeRow: ${activeRow}`)
     console.log(gameBoard)
     let updatedGameBoard = [...gameBoard]
@@ -119,30 +117,30 @@ function App() {
     // those indexes to null so they won't affect the remaining letters.
     let copySolution = [...solution]
 
-    // 1: Fill the greens
+    // 1: Handle corrects
     updatedGameBoard[activeRow].forEach((tile, tileIndex) => {
       if (tile.letter === copySolution[tileIndex]) {
-        updatedGameBoard[activeRow][tileIndex] = { ...tile, color: "green" }
+        updatedGameBoard[activeRow][tileIndex] = { ...tile, state: "correct" }
         copySolution[tileIndex] = null
       }
     })
 
-    // 2: Fill the yellows
+    // 2: Handle wrong position (yellows)
     updatedGameBoard[activeRow].forEach((tile, tileIndex) => {
       // Check for existence of color property first to prevent yellows from overwriting greens
-      if (!tile.color) {
+      if (!tile.state) {
         let includedIndex = copySolution.indexOf(tile.letter)
         if (includedIndex !== -1) {
-          updatedGameBoard[activeRow][tileIndex] = { ...tile, color: "yellow" }
+          updatedGameBoard[activeRow][tileIndex] = { ...tile, state: "wrong-position" }
           copySolution[includedIndex] = null
         }
       }
     })
 
-    // 3: Fill the grays
+    // 3: Any remaining tiles are wrong
     updatedGameBoard[activeRow].forEach((tile, tileIndex) => {
-      if (!tile.color) {
-        updatedGameBoard[activeRow][tileIndex] = { ...tile, color: "gray" }
+      if (!tile.state) {
+        updatedGameBoard[activeRow][tileIndex] = { ...tile, state: "wrong" }
       }
     })
 
