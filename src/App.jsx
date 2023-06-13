@@ -16,8 +16,6 @@ function App() {
   )
   const [isGameOver, setIsGameOver] = useState(false)
 
-  // const [gridLetter, setGridLetter] = useState("")
-
   // Game setup on mount
   // -select random word
   useEffect(() => {
@@ -115,12 +113,17 @@ function App() {
     console.log(`activeRow: ${activeRow}`)
     console.log(gameBoard)
     let updatedGameBoard = [...gameBoard]
+
+    // Create a copy of the solution as an array.
+    // As we encounter letters that form part of the solution, we set
+    // those indexes to null so they won't affect the remaining letters.
     let copySolution = [...solution]
 
     // 1: Fill the greens
     updatedGameBoard[activeRow].forEach((tile, tileIndex) => {
-      if (tile.letter === solution[tileIndex]) {
+      if (tile.letter === copySolution[tileIndex]) {
         updatedGameBoard[activeRow][tileIndex] = { ...tile, color: "green" }
+        copySolution[tileIndex] = null
       }
     })
 
@@ -131,7 +134,6 @@ function App() {
         let includedIndex = copySolution.indexOf(tile.letter)
         if (includedIndex !== -1) {
           updatedGameBoard[activeRow][tileIndex] = { ...tile, color: "yellow" }
-          // Prevent the "double letter fiasco" by removing letters as they're seen
           copySolution[includedIndex] = null
         }
       }
