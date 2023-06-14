@@ -7,8 +7,8 @@ import Header from "./components/Header"
 import Keyboard from "./components/Keyboard"
 
 function App() {
-  const [activeTile, setActiveTile] = useState(0)
   const [activeRow, setActiveRow] = useState(0)
+  const [activeTile, setActiveTile] = useState(0)
   const [userGuess, setUserGuess] = useState("")
   const [solution, setSolution] = useState("")
   const [gameBoard, setGameBoard] = useState(
@@ -16,23 +16,20 @@ function App() {
   )
   const [isGameOver, setIsGameOver] = useState(false)
 
-  // Game setup on mount
-  // -select random word
+  // Select random word upon mount
   useEffect(() => {
     const randomWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)]
     setSolution(randomWord.toUpperCase())
     console.log(randomWord)
   }, [])
 
-  // The event listener starts firing only after the component is mounted.
+  // Global keyboard event listener: dependencies in 2nd param
   useEffect(() => {
     if (!isGameOver) {
       window.addEventListener("keydown", handleKeyDown)
     }
 
-    // If you include a return in useEffect,
-    // it will be executed only when the component is unmounted
-    // isGameOver must be included as a dependency
+    // else
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
@@ -69,10 +66,11 @@ function App() {
       console.log(`activeRow: ${activeRow}`)
       console.log(`Not enough letters in: ${userGuess}`)
     }
-    // Guess invalid
+    // Guess invalid (i.e. not in dictionary)
     else if (!VALID_GUESSES.includes(userGuess.toLowerCase())) {
       console.log(`Guess not in dictionary: ${userGuess}`)
     }
+
     // Submit guess
     else {
       // Correct guess: gameOver (win)
@@ -82,13 +80,10 @@ function App() {
             You win !! Yay!`
         )
         setIsGameOver(true)
-        // despite the game being over, in order to render the colors of the (previous) winning row,
-        // the active row must still be incremented once
-        setActiveRow((activeRow) => activeRow + 1)
       }
       // Wrong guess
       else {
-        // Run out of guesses
+        // Run out of guesses: gameOver (loss)
         if (activeRow >= 5) {
           console.log(`game over, run out of guesses`)
           setIsGameOver(true)
@@ -102,7 +97,9 @@ function App() {
           console.log(`activeTile: ${activeTile}`)
         }
       }
+      // Update colors
       updateTileStates()
+      updateKeyStates()
     }
   }
 
@@ -113,11 +110,11 @@ function App() {
     let updatedGameBoard = [...gameBoard]
 
     // Create a copy of the solution as an array.
-    // As we encounter letters that form part of the solution, we set
+    // As we encounter letters that are included in the solution, we set
     // those indexes to null so they won't affect the remaining letters.
     let copySolution = [...solution]
 
-    // 1: Handle corrects
+    // 1: Identify corrects
     updatedGameBoard[activeRow].forEach((tile, tileIndex) => {
       if (tile.letter === copySolution[tileIndex]) {
         updatedGameBoard[activeRow][tileIndex] = { ...tile, state: "correct" }
@@ -125,7 +122,7 @@ function App() {
       }
     })
 
-    // 2: Handle wrong position (yellows)
+    // 2: Identify wrong position (yellows)
     updatedGameBoard[activeRow].forEach((tile, tileIndex) => {
       // Check for existence of color property first to prevent yellows from overwriting greens
       if (!tile.state) {
@@ -151,22 +148,20 @@ function App() {
     if (activeTile !== 0) {
       setActiveTile((activeTile) => activeTile - 1)
 
-      const updatedGameBoard = gameBoard.map(
-        (row, rowIndex) =>
-          rowIndex === activeRow
-            ? row.map((cell, colIndex) =>
-                colIndex === activeTile - 1 ? { ...cell, letter: "" } : cell
-              )
-            : row // TODO: [... row]? UNDERSTAND
+      const updatedGameBoard = gameBoard.map((row, rowIndex) =>
+        rowIndex === activeRow
+          ? row.map((cell, colIndex) =>
+              colIndex === activeTile - 1 ? { ...cell, letter: "" } : cell
+            )
+          : row
       )
       console.log(updatedGameBoard)
       setGameBoard(updatedGameBoard)
 
-      const newGuess = userGuess.slice(0, activeTile - 1)
+      const userGuessString = userGuess.join("")
+      const newGuess = userGuessString.slice(0, activeTile - 1)
       console.log(`user guess so far: ${newGuess}`)
       setUserGuess(newGuess)
-
-      console.log(`activeTile changed from: ${activeTile} to ${activeTile - 1}`)
     }
   }
 
@@ -175,13 +170,12 @@ function App() {
       const newGuess = userGuess.concat(letter.toUpperCase())
       setUserGuess(newGuess)
 
-      const updatedGameBoard = gameBoard.map(
-        (row, rowIndex) =>
-          rowIndex === activeRow
-            ? row.map((cell, colIndex) =>
-                colIndex === activeTile ? { ...cell, letter: newGuess[activeTile] } : cell
-              )
-            : row // TODO: [... row]? UNDERSTAND
+      const updatedGameBoard = gameBoard.map((row, rowIndex) =>
+        rowIndex === activeRow
+          ? row.map((cell, colIndex) =>
+              colIndex === activeTile ? { ...cell, letter: newGuess[activeTile] } : cell
+            )
+          : row
       )
       console.log(updatedGameBoard)
       setGameBoard(updatedGameBoard)
@@ -190,7 +184,6 @@ function App() {
 
       console.log(`user guess so far: ${newGuess}`)
       console.log(`activeTile changed from: ${activeTile} to ${activeTile + 1}`)
-      console.log(`key pressed: ${letter}`)
     }
   }
 
@@ -199,13 +192,9 @@ function App() {
 
     if (e.key === "Enter") {
       handleEnter()
-    }
-    //
-    else if (e.key === "Backspace") {
+    } else if (e.key === "Backspace") {
       handleBackspace()
-    }
-    //
-    else if (isLetterRegex.test(e.key) === true) {
+    } else if (isLetterRegex.test(e.key) === true) {
       handleLetter(e.key)
     }
   }
@@ -228,57 +217,20 @@ function App() {
     <>
       <Header />
 
+      {/* Game board */}
       <div className="game-board">
-        <div className="guess">
-          <div className={getGuessTileClassName(0, 0)}>{gameBoard[0][0].letter}</div>
-          <div className={getGuessTileClassName(0, 1)}>{gameBoard[0][1].letter}</div>
-          <div className={getGuessTileClassName(0, 2)}>{gameBoard[0][2].letter}</div>
-          <div className={getGuessTileClassName(0, 3)}>{gameBoard[0][3].letter}</div>
-          <div className={getGuessTileClassName(0, 4)}>{gameBoard[0][4].letter}</div>
-        </div>
-
-        <div className="guess">
-          <div className={getGuessTileClassName(1, 0)}>{gameBoard[1][0].letter}</div>
-          <div className={getGuessTileClassName(1, 1)}>{gameBoard[1][1].letter}</div>
-          <div className={getGuessTileClassName(1, 2)}>{gameBoard[1][2].letter}</div>
-          <div className={getGuessTileClassName(1, 3)}>{gameBoard[1][3].letter}</div>
-          <div className={getGuessTileClassName(1, 4)}>{gameBoard[1][4].letter}</div>
-        </div>
-
-        <div className="guess">
-          <div className={getGuessTileClassName(2, 0)}>{gameBoard[2][0].letter}</div>
-          <div className={getGuessTileClassName(2, 1)}>{gameBoard[2][1].letter}</div>
-          <div className={getGuessTileClassName(2, 2)}>{gameBoard[2][2].letter}</div>
-          <div className={getGuessTileClassName(2, 3)}>{gameBoard[2][3].letter}</div>
-          <div className={getGuessTileClassName(2, 4)}>{gameBoard[2][4].letter}</div>
-        </div>
-
-        <div className="guess">
-          <div className={getGuessTileClassName(3, 0)}>{gameBoard[3][0].letter}</div>
-          <div className={getGuessTileClassName(3, 1)}>{gameBoard[3][1].letter}</div>
-          <div className={getGuessTileClassName(3, 2)}>{gameBoard[3][2].letter}</div>
-          <div className={getGuessTileClassName(3, 3)}>{gameBoard[3][3].letter}</div>
-          <div className={getGuessTileClassName(3, 4)}>{gameBoard[3][4].letter}</div>
-        </div>
-
-        <div className="guess">
-          <div className={getGuessTileClassName(4, 0)}>{gameBoard[4][0].letter}</div>
-          <div className={getGuessTileClassName(4, 1)}>{gameBoard[4][1].letter}</div>
-          <div className={getGuessTileClassName(4, 2)}>{gameBoard[4][2].letter}</div>
-          <div className={getGuessTileClassName(4, 3)}>{gameBoard[4][3].letter}</div>
-          <div className={getGuessTileClassName(4, 4)}>{gameBoard[4][4].letter}</div>
-        </div>
-
-        <div className="guess">
-          <div className={getGuessTileClassName(5, 0)}>{gameBoard[5][0].letter}</div>
-          <div className={getGuessTileClassName(5, 1)}>{gameBoard[5][1].letter}</div>
-          <div className={getGuessTileClassName(5, 2)}>{gameBoard[5][2].letter}</div>
-          <div className={getGuessTileClassName(5, 3)}>{gameBoard[5][3].letter}</div>
-          <div className={getGuessTileClassName(5, 4)}>{gameBoard[5][4].letter}</div>
-        </div>
+        {gameBoard.map((row, rowIndex) => (
+          <>
+            <div className="guess">
+              {row.map((cell, colIndex) => (
+                <div className={getGuessTileClassName(rowIndex, colIndex)}>{cell.letter}</div>
+              ))}
+            </div>
+          </>
+        ))}
       </div>
 
-      <Keyboard onClick={handleKeyboardClick} />
+      <Keyboard onClick={handleKeyboardClick} userGuess={userGuess} />
     </>
   )
 }
