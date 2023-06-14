@@ -46,6 +46,11 @@ body {
     transform: scaleX(-1);
   }
 
+  &__svg--challenge {
+    @extend .header__svg;
+    fill: hsl(10, 100%, 50%);
+  }
+
   // ! GPT (to UNDERSTAND)
   .header__left,
   .header__center,

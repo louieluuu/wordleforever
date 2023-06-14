@@ -20,6 +20,7 @@ function App() {
   const [isGameOver, setIsGameOver] = useState(false)
 
   // For use in Challenge Mode
+  const [isChallengeMode, setIsChallengeMode] = useState(false)
   const [fixedGreens, setFixedGreens] = useState(["", "", "", "", ""])
   const [fixedYellows, setFixedYellows] = useState({}) // hashmap
 
@@ -102,7 +103,7 @@ function App() {
       console.log(`Guess not in dictionary: ${userGuess}`)
     }
     // ! Challenge mode: adhere to previous hints
-    else if (usesPreviousHints() !== "okay") {
+    else if (isChallengeMode && usesPreviousHints() !== "okay") {
       console.log(`Not adherent to: ${usesPreviousHints()}`)
     }
     // Submit guess
@@ -128,7 +129,7 @@ function App() {
           // Remove yellows from fixedYellows as they become green
           if (object.letter in newFixedYellows) {
             newFixedYellows[object.letter] -= 1
-            // Cleanup the hashmap
+            // Cleanup the hashmap when values reach 0
             if (newFixedYellows[object.letter] === 0) {
               delete newFixedYellows[object.letter]
             }
@@ -136,6 +137,7 @@ function App() {
         }
         //
         else if (object.state === "wrong-position") {
+          // TODO: I don't know if this logic is supposed to be *that* hard...........
           let countLettersInGuess = userGuess.filter((letter) => letter === object.letter).length
           let countLettersInHashmap = newFixedYellows[object.letter]
           let countLettersInSolution = solution.filter((letter) => letter === object.letter).length
@@ -286,7 +288,7 @@ function App() {
 
   return (
     <>
-      <Header />
+      <Header isChallengeMode={isChallengeMode} setIsChallengeMode={setIsChallengeMode} />
 
       {/* Game Board */}
       <div className="game-board">

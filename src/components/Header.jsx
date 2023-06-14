@@ -1,11 +1,16 @@
 import React from "react"
+import { useState } from "react"
 
+import { HiMenu } from "react-icons/hi"
 import { RiQuestionLine } from "react-icons/ri"
 import { BiBarChartAlt2 } from "react-icons/bi"
 import { FaCog } from "react-icons/fa"
-import { HiMenu } from "react-icons/hi"
 
-export default function Header() {
+import InfoModal from "./InfoModal"
+
+export default function Header({ isChallengeMode, setIsChallengeMode }) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
   return (
     <header className="header">
       <div className="header__left">
@@ -13,10 +18,18 @@ export default function Header() {
       </div>
       <h1>React-Wordle</h1>
       <div className="header__right">
-        <RiQuestionLine className="header__svg" />
+        <RiQuestionLine onClick={() => setIsModalOpen(true)} className="header__svg" />
         <BiBarChartAlt2 className="header__svg--flipped" />
-        <FaCog className="header__svg" />
+        <FaCog
+          onClick={() => {
+            setIsChallengeMode(!isChallengeMode)
+            console.log(`Challenge mode activated: ${!isChallengeMode}`)
+          }}
+          // className={`header__svg${isChallengeMode && "--challenge"}`}
+          className={`header__svg${isChallengeMode ? "--challenge" : ""}`}
+        />
       </div>
+      {isModalOpen && <InfoModal />}
     </header>
   )
 }
