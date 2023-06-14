@@ -19,6 +19,7 @@ $color-hover: hsl(0, 0, 80%);
 // margin around the perimeter for some reason
 body {
   margin: 0;
+  cursor: default;
 }
 
 // Header
@@ -36,6 +37,8 @@ body {
     width: 2rem;
     height: 2rem;
     padding: 0.25rem;
+
+    cursor: pointer;
   }
 
   &__svg--flipped {
@@ -140,6 +143,27 @@ body {
       transition-timing-function: ease-in;
     }
 
+    &--correct {
+      @extend .keyboard__key;
+      color: white;
+      border-color: hsl(115, 29, 52);
+      background-color: hsl(115, 29, 52);
+    }
+
+    &--wrong-position {
+      @extend .keyboard__key;
+      color: white;
+      border-color: hsl(49, 51, 57);
+      background-color: hsl(49, 51, 57);
+    }
+
+    &--wrong {
+      @extend .keyboard__key;
+      color: white;
+      border-color: $color-secondary;
+      background-color: $color-secondary;
+    }
+
     &--large {
       @extend .keyboard__key;
       width: 4rem;
@@ -150,5 +174,14 @@ body {
         font-size: 1.5rem;
       }
     }
+  }
+}
+
+@media (max-width: 360px) {
+  body {
+    background-color: lightblue;
+  }
+  .keyboard {
+    width: clamp(200px, 50%, 600px);
   }
 }

@@ -12,6 +12,7 @@ function App() {
   // userGuess is an array instead of a string because an array is more convenient
   // to manipulate, ultimately to display in JSX/HTML.
   const [userGuess, setUserGuess] = useState(["", "", "", "", ""])
+  // TODO: Should solution be an array or a string?
   const [solution, setSolution] = useState([])
   const [gameBoard, setGameBoard] = useState(
     new Array(6).fill().map((_) => new Array(5).fill({ letter: "" }))
@@ -41,18 +42,17 @@ function App() {
     }
   }, [activeTile, isGameOver])
 
-  // Helper function
+  // Helper functions
   function getGuessTileClassName(row, col) {
     let guessTileClassName = "guess__tile"
 
-    // TODO: Can I bundle this logic together with the colors?
-    // if (!gameBoard[row][col].state) {
-    //   if (activeRow === row && col < userGuess.length && !isGameOver) {
-    //     guessTileClassName += "--active"
-    //   }
-    // }
+    if (!gameBoard[row][col].state) {
+      if (row === activeRow && col < activeTile && !isGameOver) {
+        guessTileClassName += "--active"
+      }
+    }
     //
-    if (gameBoard[row][col].state === "correct") {
+    else if (gameBoard[row][col].state === "correct") {
       guessTileClassName += "--correct"
     }
     //
@@ -69,22 +69,26 @@ function App() {
 
   function usesPreviousHints() {
     // Check green hints
-    console.log(`userGuess: ${userGuess}`)
+    console.log(`fixedGreens:`)
+    console.log(fixedGreens)
 
-    for (let objectIndex = 0; objectIndex < userGuess.length; objectIndex++) {
-      if (
-        fixedGreens[objectIndex].letter &&
-        userGuess[objectIndex].letter !== fixedGreens[objectIndex].letter
-      ) {
-        return false
+    for (let i = 0; i < userGuess.length; ++i) {
+      if (fixedGreens[i] !== "" && userGuess[i] !== fixedGreens[i]) {
+        return "green"
       }
     }
 
-    // // Check yellow hints; count of letters must be the same
-    // let countInFixedYellows = 0
-    // let countInUserGuess = 0
+    // Check yellow hints
+    for (const key in fixedYellows) {
+      if (Object.hasOwnProperty.call(fixedYellows, key)) {
+        let countLettersInGuess = userGuess.filter((letter) => letter === key).length
+        if (fixedYellows[key] > countLettersInGuess) {
+          return "yellow"
+        }
+      }
+    }
 
-    return true
+    return "okay"
   }
 
   function handleEnter() {
@@ -97,13 +101,13 @@ function App() {
     else if (!VALID_GUESSES.includes(userGuess.join("").toLowerCase())) {
       console.log(`Guess not in dictionary: ${userGuess}`)
     }
-    // // ! Challenge mode: adhere to previous hints
-    // else if (usesPreviousHints() === false) {
-    //   console.log(`Challenge mode: guess must adhere to previous hints`)
-    // }
+    // ! Challenge mode: adhere to previous hints
+    else if (usesPreviousHints() !== "okay") {
+      console.log(`Not adherent to: ${usesPreviousHints()}`)
+    }
     // Submit guess
     else {
-      // Update & color game board
+      // Update the game board's letters and colors
       const updatedGameBoard = [...gameBoard]
       updatedGameBoard[activeRow] = updatedGameBoard[activeRow].map((object, objectIndex) => ({
         ...object,
@@ -115,21 +119,44 @@ function App() {
 
       setGameBoard(coloredGameBoard)
 
-      // Update Keyboard keys
-
       // ! Challenge Mode: update relevant states the player must adhere to
       const newFixedGreens = [...fixedGreens]
       const newFixedYellows = { ...fixedYellows }
       coloredGameBoard[activeRow].forEach((object, objectIndex) => {
         if (object.state === "correct") {
-          newFixedGreens[objectIndex] = coloredGameBoard[activeRow][objectIndex]
+          newFixedGreens[objectIndex] = object.letter
+          // Remove yellows from fixedYellows as they become green
+          if (object.letter in newFixedYellows) {
+            newFixedYellows[object.letter] -= 1
+            // Cleanup the hashmap
+            if (newFixedYellows[object.letter] === 0) {
+              delete newFixedYellows[object.letter]
+            }
+          }
         }
         //
         else if (object.state === "wrong-position") {
-          if (newFixedYellows[object.letter] in newFixedYellows) {
-            newFixedYellows[object.letter] += 1
-          } else {
-            newFixedYellows[object.letter] = 1
+          let countLettersInGuess = userGuess.filter((letter) => letter === object.letter).length
+          let countLettersInHashmap = newFixedYellows[object.letter]
+          let countLettersInSolution = solution.filter((letter) => letter === object.letter).length
+
+          if (countLettersInGuess <= countLettersInHashmap) {
+            // do nothing
+          }
+          //
+          else {
+            if (countLettersInGuess > countLettersInSolution) {
+              // do nothing
+            } else {
+              // increment if all conditions are met
+              if (object.letter in newFixedYellows) {
+                newFixedYellows[object.letter] += 1
+              }
+              //
+              else {
+                newFixedYellows[object.letter] = 1
+              }
+            }
           }
         }
         console.log(newFixedGreens)
@@ -249,13 +276,9 @@ function App() {
     if (!isGameOver) {
       if (clicked === "Enter") {
         handleEnter()
-      }
-      //
-      else if (clicked === "Backspace") {
+      } else if (clicked === "Backspace") {
         handleBackspace()
-      }
-      //
-      else {
+      } else {
         handleLetter(clicked)
       }
     }
@@ -271,7 +294,8 @@ function App() {
           <div key={rowIndex} className="guess">
             {rowIndex === activeRow
               ? userGuess.map((letter, index) => (
-                  <div key={index} className={`guess__tile${index < activeTile ? "--active" : ""}`}>
+                  // <div key={index} className={`guess__tile${index < activeTile ? "--active" : ""}`}>
+                  <div key={index} className={getGuessTileClassName(rowIndex, index)}>
                     {letter}
                   </div>
                 ))

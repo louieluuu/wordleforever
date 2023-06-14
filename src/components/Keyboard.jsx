@@ -8,20 +8,24 @@ export default function Keyboard({ onClick, gameBoard, greens, yellows }) {
   function getKeyboardKeyClassName(letter) {
     let keyboardKeyClassName = "keyboard__key"
 
-    if (greens.some((object) => object.letter === letter)) {
-      keyboardKeyClassName += "--correct"
-    } else if (letter in yellows) {
+    if (letter in yellows) {
       keyboardKeyClassName += "--wrong-position"
     }
-
-    gameBoard.some((row) =>
-      row.some((cell) => {
-        if (cell.letter === letter && cell.state === "wrong") {
-          keyboardKeyClassName += "--wrong"
-          return keyboardKeyClassName
-        }
-      })
-    )
+    //
+    else if (greens.includes(letter)) {
+      keyboardKeyClassName += "--correct"
+    }
+    //
+    else {
+      gameBoard.some((row) =>
+        row.some((cell) => {
+          if (cell.letter === letter && cell.state === "wrong") {
+            keyboardKeyClassName += "--wrong"
+            return keyboardKeyClassName
+          }
+        })
+      )
+    }
 
     return keyboardKeyClassName
   }
