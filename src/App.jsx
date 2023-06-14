@@ -19,25 +19,23 @@ function App() {
   const [isGameOver, setIsGameOver] = useState(false)
 
   // For use in Challenge Mode
-  const [correctLetters, setCorrectLetters] = useState(["", "", "", "", ""])
+  const [fixedGreens, setFixedGreens] = useState(["", "", "", "", ""])
+  const [fixedYellows, setFixedYellows] = useState({}) // hashmap
 
-  // Game setup on mount
-  // -select random word
+  // Select random word upon mount
   useEffect(() => {
     const randomWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)].toUpperCase()
     setSolution(randomWord.split(""))
     console.log(randomWord)
   }, [])
 
-  // The event listener starts firing only after the component is mounted.
+  // Global keyboard event listener: dependencies in 2nd param
   useEffect(() => {
     if (!isGameOver) {
       window.addEventListener("keydown", handleKeyDown)
     }
 
-    // If you include a return in useEffect,
-    // it will be executed only when the component is unmounted
-    // isGameOver must be included as a dependency
+    // else
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
@@ -47,6 +45,7 @@ function App() {
   function getGuessTileClassName(row, col) {
     let guessTileClassName = "guess__tile"
 
+    // TODO: Can I bundle this logic together with the colors?
     // if (!gameBoard[row][col].state) {
     //   if (activeRow === row && col < userGuess.length && !isGameOver) {
     //     guessTileClassName += "--active"
@@ -68,94 +67,103 @@ function App() {
     return guessTileClassName
   }
 
-  function handleKeyDown(e) {
-    const isLetterRegex = /^[a-zA-Z]$/
+  function usesPreviousHints() {
+    // Check green hints
+    console.log(`userGuess: ${userGuess}`)
 
-    // Enter
-    if (e.key === "Enter") {
-      // Guess too short
-      if (activeTile < 5) {
-        console.log(`key pressed: ${e.key}`)
-        console.log(`activeRow: ${activeRow}`)
-        console.log(`Not enough letters in: ${userGuess}`)
+    for (let objectIndex = 0; objectIndex < userGuess.length; objectIndex++) {
+      if (
+        fixedGreens[objectIndex].letter &&
+        userGuess[objectIndex].letter !== fixedGreens[objectIndex].letter
+      ) {
+        return false
       }
-      // Guess invalid
-      else if (!VALID_GUESSES.includes(userGuess.join("").toLowerCase())) {
-        console.log(`Guess not in dictionary: ${userGuess}`)
-      }
-      // Submit guess
-      else {
-        // Update game board
-        const updatedGameBoard = [...gameBoard]
-        updatedGameBoard[activeRow] = updatedGameBoard[activeRow].map((object, objectIndex) => ({
-          ...object,
-          letter: userGuess[objectIndex],
-        }))
+    }
 
-        const coloredGameBoard = updateTileStates(updatedGameBoard)
-        console.log(coloredGameBoard)
+    // // Check yellow hints; count of letters must be the same
+    // let countInFixedYellows = 0
+    // let countInUserGuess = 0
 
-        setGameBoard(coloredGameBoard)
+    return true
+  }
 
-        // Update tile states
+  function handleEnter() {
+    // Guess too short
+    if (activeTile < 5) {
+      console.log(`activeRow: ${activeRow}`)
+      console.log(`Not enough letters in: ${userGuess}`)
+    }
+    // Guess invalid
+    else if (!VALID_GUESSES.includes(userGuess.join("").toLowerCase())) {
+      console.log(`Guess not in dictionary: ${userGuess}`)
+    }
+    // // ! Challenge mode: adhere to previous hints
+    // else if (usesPreviousHints() === false) {
+    //   console.log(`Challenge mode: guess must adhere to previous hints`)
+    // }
+    // Submit guess
+    else {
+      // Update & color game board
+      const updatedGameBoard = [...gameBoard]
+      updatedGameBoard[activeRow] = updatedGameBoard[activeRow].map((object, objectIndex) => ({
+        ...object,
+        letter: userGuess[objectIndex],
+      }))
 
-        // Correct guess: gameOver (win)
-        // Direct array comparison won't work with ===, so we must compare their string forms.
-        if (userGuess.join("") === solution.join("")) {
-          console.log(
-            `Correct guess: guess: ${userGuess} vs. target: ${solution} \n
-            You win !! Yay!`
-          )
-          setIsGameOver(true)
+      const coloredGameBoard = updateTileStates(updatedGameBoard)
+      console.log(coloredGameBoard)
+
+      setGameBoard(coloredGameBoard)
+
+      // Update Keyboard keys
+
+      // ! Challenge Mode: update relevant states the player must adhere to
+      const newFixedGreens = [...fixedGreens]
+      const newFixedYellows = { ...fixedYellows }
+      coloredGameBoard[activeRow].forEach((object, objectIndex) => {
+        if (object.state === "correct") {
+          newFixedGreens[objectIndex] = coloredGameBoard[activeRow][objectIndex]
         }
-        // Wrong guess
-        else {
-          // Run out of guesses
-          if (activeRow >= 5) {
-            console.log(`game over, run out of guesses`)
-            setIsGameOver(true)
+        //
+        else if (object.state === "wrong-position") {
+          if (newFixedYellows[object.letter] in newFixedYellows) {
+            newFixedYellows[object.letter] += 1
+          } else {
+            newFixedYellows[object.letter] = 1
           }
         }
-        // Game continues: note that these states will be changed regardless
-        // of whether the game is over or not. This allows the winning row
-        // to be properly rendered as well.
-        setActiveRow((activeRow) => activeRow + 1)
-        setActiveTile(0)
-        setUserGuess(["", "", "", "", ""])
-        console.log(`Valid guess submitted: ${userGuess}`)
-        console.log(`activeRow: ${activeRow}`)
-        console.log(`activeTile: ${activeTile}`)
+        console.log(newFixedGreens)
+        console.log(newFixedYellows)
+      })
+      setFixedGreens(newFixedGreens)
+      setFixedYellows(newFixedYellows)
+
+      // Correct guess: gameOver (win)
+      // Direct array comparison won't work with ===, so we must compare their string forms.
+      if (userGuess.join("") === solution.join("")) {
+        console.log(
+          `Correct guess: guess: ${userGuess} vs. target: ${solution} \n
+      You win !! Yay!`
+        )
+        setIsGameOver(true)
       }
-    }
-
-    // Backspace
-    else if (e.key === "Backspace") {
-      if (activeTile !== 0) {
-        setActiveTile((activeTile) => activeTile - 1)
-
-        const newGuess = [...userGuess]
-        newGuess[activeTile - 1] = ""
-        console.log(`user guess so far: ${newGuess}`)
-        setUserGuess(newGuess)
-
-        console.log(`activeTile changed from: ${activeTile} to ${activeTile - 1}`)
-        console.log(`key pressed: ${e.key}`)
+      // Wrong guess
+      else {
+        // Run out of guesses: gameOver (loss)
+        if (activeRow >= 5) {
+          console.log(`game over, run out of guesses`)
+          setIsGameOver(true)
+        }
       }
-    }
-
-    // Letters
-    else if (isLetterRegex.test(e.key) === true) {
-      if (activeTile < 5) {
-        const newGuess = [...userGuess]
-        newGuess[activeTile] = e.key.toUpperCase()
-        setUserGuess(newGuess)
-
-        setActiveTile((activeTile) => activeTile + 1)
-
-        console.log(`user guess so far: ${newGuess}`)
-        console.log(`activeTile changed from: ${activeTile} to ${activeTile + 1}`)
-        console.log(`key pressed: ${e.key}`)
-      }
+      // Game continues: note that these states will be changed regardless
+      // of whether the game is over or not. This allows the winning row
+      // to be properly rendered as well.
+      setActiveRow((activeRow) => activeRow + 1)
+      setActiveTile(0)
+      setUserGuess(["", "", "", "", ""])
+      console.log(`Valid guess submitted: ${userGuess}`)
+      console.log(`activeRow: ${activeRow}`)
+      console.log(`activeTile: ${activeTile}`)
     }
   }
 
@@ -199,11 +207,58 @@ function App() {
     return updatedGameBoard
   }
 
-  // TODO: getStyles() generalize
+  function handleBackspace() {
+    if (activeTile !== 0) {
+      setActiveTile((activeTile) => activeTile - 1)
 
-  function onKeyboardClick(letter) {
-    const newGuess = userGuess.concat(letter.toUpperCase())
-    setUserGuess(newGuess)
+      const newGuess = [...userGuess]
+      newGuess[activeTile - 1] = ""
+      console.log(`user guess so far: ${newGuess}`)
+      setUserGuess(newGuess)
+
+      console.log(`activeTile changed from: ${activeTile} to ${activeTile - 1}`)
+    }
+  }
+
+  function handleLetter(letter) {
+    if (activeTile < 5) {
+      const newGuess = [...userGuess]
+      newGuess[activeTile] = letter.toUpperCase()
+      setUserGuess(newGuess)
+
+      setActiveTile((activeTile) => activeTile + 1)
+
+      console.log(`user guess so far: ${newGuess}`)
+      console.log(`activeTile changed from: ${activeTile} to ${activeTile + 1}`)
+    }
+  }
+
+  function handleKeyDown(e) {
+    const isLetterRegex = /^[a-zA-Z]$/
+
+    if (e.key === "Enter") {
+      handleEnter()
+    } else if (e.key === "Backspace") {
+      handleBackspace()
+    } else if (isLetterRegex.test(e.key) === true) {
+      handleLetter(e.key)
+    }
+  }
+
+  function handleKeyboardClick(clicked) {
+    if (!isGameOver) {
+      if (clicked === "Enter") {
+        handleEnter()
+      }
+      //
+      else if (clicked === "Backspace") {
+        handleBackspace()
+      }
+      //
+      else {
+        handleLetter(clicked)
+      }
+    }
   }
 
   return (
@@ -229,7 +284,12 @@ function App() {
         ))}
       </div>
 
-      <Keyboard onClick={onKeyboardClick} />
+      <Keyboard
+        onClick={handleKeyboardClick}
+        gameBoard={gameBoard}
+        greens={fixedGreens}
+        yellows={fixedYellows}
+      />
     </>
   )
 }
