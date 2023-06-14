@@ -2,7 +2,30 @@ import React from "react"
 
 import { IoBackspaceOutline } from "react-icons/io5"
 
-export default function Keyboard({ onClick }) {
+// param gameRow represents a user's guess - but not the current userGuess,
+// rather a previous guess as imprinted on the gameBoard.
+export default function Keyboard({ onClick, gameBoard, greens, yellows }) {
+  function getKeyboardKeyClassName(letter) {
+    let keyboardKeyClassName = "keyboard__key"
+
+    if (greens.some((object) => object.letter === letter)) {
+      keyboardKeyClassName += "--correct"
+    } else if (letter in yellows) {
+      keyboardKeyClassName += "--wrong-position"
+    }
+
+    gameBoard.some((row) =>
+      row.some((cell) => {
+        if (cell.letter === letter && cell.state === "wrong") {
+          keyboardKeyClassName += "--wrong"
+          return keyboardKeyClassName
+        }
+      })
+    )
+
+    return keyboardKeyClassName
+  }
+
   const firstRow = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"]
   const secondRow = ["A", "S", "D", "F", "G", "H", "J", "K", "L"]
   const thirdRow = ["Z", "X", "C", "V", "B", "N", "M"]
@@ -11,7 +34,10 @@ export default function Keyboard({ onClick }) {
     <div className="keyboard">
       <div className="keyboard__row">
         {firstRow.map((letter) => (
-          <button className="keyboard__key" key={letter} onClick={() => onClick(letter)}>
+          <button
+            className={getKeyboardKeyClassName(letter)}
+            key={letter}
+            onClick={() => onClick(letter)}>
             {letter}
           </button>
         ))}
@@ -19,7 +45,10 @@ export default function Keyboard({ onClick }) {
 
       <div className="keyboard__row">
         {secondRow.map((letter) => (
-          <button className="keyboard__key" key={letter} onClick={() => onClick(letter)}>
+          <button
+            className={getKeyboardKeyClassName(letter)}
+            key={letter}
+            onClick={() => onClick(letter)}>
             {letter}
           </button>
         ))}
@@ -30,15 +59,17 @@ export default function Keyboard({ onClick }) {
           ENTER
         </div>
         {thirdRow.map((letter) => (
-          <button className="keyboard__key" key={letter} onClick={() => onClick(letter)}>
+          <button
+            className={getKeyboardKeyClassName(letter)}
+            key={letter}
+            onClick={() => onClick(letter)}>
             {letter}
           </button>
         ))}
         <div
           className="keyboard__key--large--svg"
           key="Backspace"
-          onClick={() => onClick("Backspace")}
-        >
+          onClick={() => onClick("Backspace")}>
           <IoBackspaceOutline />
         </div>
       </div>
