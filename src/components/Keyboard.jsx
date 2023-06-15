@@ -2,17 +2,15 @@ import React from "react"
 
 import { IoBackspaceOutline } from "react-icons/io5"
 
-// param gameRow represents a user's guess - but not the current userGuess,
-// rather a previous guess as imprinted on the gameBoard.
-export default function Keyboard({ onClick, gameBoard, greens, yellows }) {
+export default function Keyboard({ onClick, gameBoard, greenHints, yellowHints }) {
   function getKeyboardKeyClassName(letter) {
     let keyboardKeyClassName = "keyboard__key"
 
-    if (letter in yellows) {
+    if (letter in yellowHints) {
       keyboardKeyClassName += "--wrong-position"
     }
     //
-    else if (greens.includes(letter)) {
+    else if (greenHints.includes(letter)) {
       keyboardKeyClassName += "--correct"
     }
     //
