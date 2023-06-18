@@ -1,58 +1,143 @@
 import { useState, useEffect } from "react"
-import { WORD_LIST } from "./data/wordList.js"
 import { VALID_GUESSES } from "./data/validGuesses.js"
 
 // Components
 import Header from "./components/Header"
 import Keyboard from "./components/Keyboard"
 
+// Socket
+import { socket } from "./socket"
+
 function App() {
   const [currentRow, setCurrentRow] = useState(0)
   const [currentTile, setCurrentTile] = useState(0)
+  const [isGameOver, setIsGameOver] = useState(false)
+
   // userGuess and solution are arrays instead of strings because arrays are
   // easier to manipulate in most cases (ex. to find occurrence of a char).
   const [userGuess, setUserGuess] = useState(["", "", "", "", ""])
   const [solution, setSolution] = useState([])
-  // gameBoard is not populated with strings. It's comprised of Objects with a Letter property.
-  // Later on, in order to color each tile, the color information has to be stored in a buffer.
-  // That's why we choose an Object: the color property will be added to the Object on demand.
+
+  // gameBoard is not populated with strings. It's comprised of Objects with a Letter property,
+  // and, as required, a Color property.
+  // The colors cannot be determined all at once; the coloring algorithm takes three passes.
+  // Thus, the color information has to be stored in a buffer somewhere.
+  // That's why we use an Object: the color property will be stored in the Object on demand.
   const [gameBoard, setGameBoard] = useState(
     new Array(6).fill().map((_) => new Array(5).fill({ letter: "" }))
   )
-  const [isGameOver, setIsGameOver] = useState(false)
 
   // For use in Challenge Mode
   const [isChallengeMode, setIsChallengeMode] = useState(false)
+  const [firstGuess, setFirstGuess] = useState(["", "", "", "", ""])
   const [greenHints, setGreenHints] = useState(["", "", "", "", ""])
-  // If a user unearths 2 E's as yellow hints, he must include 2 E's in subsequent answers.
+  // If a user unearths 2 E's as yellow hints, he must include at least 2 E's in subsequent answers.
   // yellowHints is a hashmap that records yellow hints and their occurrence freq., ex. {E: 2}.
   const [yellowHints, setYellowHints] = useState({})
 
-  // Select random word upon mount
+  // ! Socket states
+  const [uuid, setUuid] = useState("")
+  const [showForm, setShowForm] = useState(false)
+  const [isInRoom, setIsInRoom] = useState(false)
+  const [otherBoard, setOtherBoard] = useState(
+    new Array(6).fill().map((_) => new Array(5).fill({ letter: "" }))
+  )
+
+  // ! Socket : Connect
+  // Don't put socket.on connect outside of useEffect or else it'll
+  // render like 6 times :)
   useEffect(() => {
-    const randomWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)].toUpperCase()
-    setSolution(randomWord.split(""))
-    console.log(randomWord)
+    socket.on("connect", () => {
+      console.log("Connected to server")
+
+      // Also right when you connect, grab the solution from the server
+      socket.on("newSolution", (solution) => {
+        console.log(`solution: ${solution}`)
+        setSolution(solution)
+      })
+    })
+
+    // If you remove this line it'll render twice?
+    // Render twice might also be because of Strict Mode?
+    return () => {
+      socket.off("connect")
+    }
   }, [])
+
+  // ! Socket useEffect
+  useEffect(() => {
+    socket.on("userConnected", (userId) => {
+      console.log(`Another user: ${userId} has connected to this lobby.`)
+    })
+
+    socket.on("matchMade", (uuid) => {
+      console.log(`Match made! Setting isInRoom to TRUE so you can play now...`)
+      setUuid(uuid)
+      setIsInRoom(true)
+    })
+
+    // TODO: Apparently you can put this outside the useEffect and it works fine
+    socket.on("revealBoard", (hiddenBoard) => {
+      setOtherBoard(hiddenBoard)
+    })
+
+    // return () => {
+    //   socket.off("userConnected")
+    //   socket.off("revealBoard")
+    // }
+  }, [socket]) // TODO: with or without "socket" dependency, seems to work okay?
 
   // Global keyboard event listener: dependencies in 2nd param
   useEffect(() => {
-    if (!isGameOver) {
-      window.addEventListener("keydown", handleKeyDown)
-    }
+    window.addEventListener("keydown", handleKeyDown)
 
     // else
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
-  }, [currentTile, isGameOver])
+  }, [currentTile, isInRoom])
+
+  // // Select random solution upon mount
+  // useEffect(() => {
+  //   const randomWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)].toUpperCase()
+  //   setSolution(randomWord.split(""))
+  //   console.log(randomWord)
+
+  //   // ! For testing
+  //   setIsChallengeMode(true)
+  // }, [])
+
+  // ! Challenge Mode: select a random first guess the player must adhere to.
+  // The random guess will always have exactly one green character to start.
+  // TODO: The current implementation also allows yellow letters, not yet sure if we want that.
+  useEffect(() => {
+    if (isChallengeMode) {
+      while (firstGuess[0] === "") {
+        const randomGuess =
+          VALID_GUESSES[Math.floor(Math.random() * VALID_GUESSES.length)].toUpperCase()
+        let countGreenLetters = 0
+        for (let i = 0; i < randomGuess.length; ++i) {
+          if (randomGuess[i] === solution[i]) {
+            countGreenLetters += 1
+          }
+        }
+        if (countGreenLetters === 1) {
+          setFirstGuess(randomGuess)
+          console.log(`randomGuess: ${randomGuess}`)
+          // submitGuess(randomGuess)
+          // update board... etc
+          break
+        }
+      }
+    }
+  }, [isChallengeMode])
 
   /**
    *
    * HELPER FUNCTIONS
    *
    */
-  function getGuessTileClassName(row, col) {
+  function getGuessTileClassName(gameBoard, row, col) {
     let guessTileClassName = "guess__tile"
 
     if (!gameBoard[row][col].color) {
@@ -91,8 +176,17 @@ function App() {
     // Then yellow hints.
     // Note the condition: if yellowHints is {E: 2}, the userGuess can have 3 E's, but not 1.
     for (const key in yellowHints) {
+      console.log(`KEY KEY KEY : ${key}`)
       const countLettersInGuess = userGuess.filter((letter) => letter === key).length
-      if (yellowHints[key] > countLettersInGuess) {
+      const countGreenLetters = userGuess.filter(
+        (letter, letterIndex) => letter === key && letter === solution[letterIndex]
+      ).length
+      const countYellowLettersInGuess = countLettersInGuess - countGreenLetters
+      console.log(`currentLetter: ${key}`)
+      console.log(`countLettersInGuess: ${countLettersInGuess}`)
+      console.log(`countGreenLetters: ${countGreenLetters}`)
+      console.log(`countYellowLettersInGuess: ${countYellowLettersInGuess}`)
+      if (yellowHints[key] > countYellowLettersInGuess) {
         return "yellow"
       }
     }
@@ -171,12 +265,11 @@ function App() {
       const newGreenHints = [...greenHints]
       const newYellowHints = { ...yellowHints }
 
-      // Update green hints first
       coloredGameBoard[currentRow].forEach((object, objectIndex) => {
         if (object.color === "correct") {
           newGreenHints[objectIndex] = object.letter
           // Decrement yellow hints as they become green
-          if (object.letter in newYellowHints) {
+          if (object.letter in newYellowHints && object.letter !== newGreenHints[objectIndex]) {
             newYellowHints[object.letter] -= 1
             // Cleanup the hashmap when values reach 0
             if (newYellowHints[object.letter] === 0) {
@@ -185,7 +278,7 @@ function App() {
           }
         }
 
-        // Then yellow hints. The logic is hard to parse without examples.
+        // The logic for yellow hints is hard to parse without examples.
         // Follow along, keeping in mind that the key property is the # of letters.
         /* 
         -- CASE 1 --
@@ -203,13 +296,31 @@ function App() {
         in OOZES that are in the wrong-position. This is because there is only one
         "O" in the solution. In other words, the # O's in the solution acts as a "max".
 
+        -- CASE 3 --
+        guess: OOZES  |  yellowHints: {O: 1}  |  solution: IGLOO
+
+        yellowHints SHOULD be incremented. 
+        # O's in yellowHints = 1
+        # O's in userGuess = 2
+        # O's in solution = 2
+        
+        yellowHints < userGuess <= solution
+            1       <     2     <=    2
+
         */
         else if (object.color === "wrong-position") {
-          let countLettersInGuess = userGuess.filter((letter) => letter === object.letter).length
-          let countLettersInYellowHints = newYellowHints[object.letter]
-          let countLettersInSolution = solution.filter((letter) => letter === object.letter).length
+          const countLettersInGuess = userGuess.filter((letter) => letter === object.letter).length
+          const countLettersInYellowHints = newYellowHints[object.letter]
+          const countLettersInSolution = solution.filter(
+            (letter) => letter === object.letter
+          ).length
 
-          if (countLettersInGuess <= countLettersInYellowHints) {
+          const countGreenLetters = userGuess.filter(
+            (letter, letterIndex) => letter === solution[letterIndex]
+          ).length
+          const countYellowLettersInGuess = countLettersInGuess - countGreenLetters
+
+          if (countYellowLettersInGuess <= countLettersInYellowHints) {
             // do nothing; does not meet min threshold
           }
           //
@@ -261,6 +372,9 @@ function App() {
       console.log(`Valid guess submitted: ${userGuess}`)
       console.log(`currentRow: ${currentRow}`)
       console.log(`currentTile: ${currentTile}`)
+
+      // ! Socket
+      socket.emit("guessSubmit", uuid, coloredGameBoard)
     }
   }
 
@@ -290,7 +404,14 @@ function App() {
 
   // TODO: Is there a way to generalize these two handleKey functions?
   function handleKeyDown(e) {
+    // const variable = e.key
+    // handleKeyboardClick(e.key)
+
     const isLetterRegex = /^[a-zA-Z]$/
+
+    if (isGameOver || !isInRoom) {
+      return
+    }
 
     if (e.key === "Enter") {
       handleEnter()
@@ -313,36 +434,94 @@ function App() {
     }
   }
 
-  // TODO: Am I passing in these props correctly?
+  // ! Socket : this needs to be global
+  const otherGameBoards = []
+
+  function createRoom() {
+    socket.emit("createRoom", socket.id)
+    socket.on("returnUuid", (uuid) => {
+      console.log(`copy & paste this code to your friend: ${uuid}`)
+    })
+  }
+
+  function joinRoom(e) {
+    e.preventDefault()
+    const pastedValue = e.clipboardData.getData("text/plain")
+    socket.emit("joinRoom", pastedValue)
+
+    socket.on("roomError", (uuid) => {
+      console.log(`Error: Room "${uuid}" doesn't exist.`)
+    })
+  }
+
+  // TODO: Move Keyboard events into Keyboard component
+  // TODO: "Game" component that houses game logic?
+  // TODO: Row and Tile components
+  // TODO: Look into Context (stores) so props aren't so ugly
   return (
     <>
       <Header isChallengeMode={isChallengeMode} setIsChallengeMode={setIsChallengeMode} />
 
-      {/* Game Board */}
-      <div className="game-board">
-        {gameBoard.map((row, rowIndex) => (
-          <div key={rowIndex} className="guess">
-            {rowIndex === currentRow
-              ? userGuess.map((letter, index) => (
-                  <div key={index} className={getGuessTileClassName(rowIndex, index)}>
-                    {letter}
-                  </div>
-                ))
-              : row.map((tile, tileIndex) => (
-                  <div key={tileIndex} className={getGuessTileClassName(rowIndex, tileIndex)}>
+      {isInRoom ? (
+        <>
+          <div className="game-board">
+            {gameBoard.map((row, rowIndex) => (
+              <div key={rowIndex} className="guess">
+                {rowIndex === currentRow
+                  ? userGuess.map((letter, index) => (
+                      <div
+                        key={index}
+                        className={getGuessTileClassName(gameBoard, rowIndex, index)}>
+                        {letter}
+                      </div>
+                    ))
+                  : row.map((tile, tileIndex) => (
+                      <div
+                        key={tileIndex}
+                        className={getGuessTileClassName(gameBoard, rowIndex, tileIndex)}>
+                        {tile.letter}
+                      </div>
+                    ))}
+              </div>
+            ))}
+          </div>
+
+          <div className="game-board">
+            {otherBoard.map((row, rowIndex) => (
+              <div key={rowIndex} className="guess">
+                {row.map((tile, tileIndex) => (
+                  <div
+                    key={tileIndex}
+                    className={getGuessTileClassName(otherBoard, rowIndex, tileIndex)}>
                     {tile.letter}
                   </div>
                 ))}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      <Keyboard
-        onClick={handleKeyboardClick}
-        gameBoard={gameBoard}
-        greenHints={greenHints}
-        yellowHints={yellowHints}
-      />
+          <Keyboard
+            onClick={handleKeyboardClick}
+            gameBoard={gameBoard}
+            greenHints={greenHints}
+            yellowHints={yellowHints}
+          />
+        </>
+      ) : (
+        <div>
+          <button onClick={() => setShowForm((prev) => !prev)}>Join</button>
+          {showForm && (
+            <form onPaste={joinRoom}>
+              <label>
+                Enter your code here:
+                <input type="text" onChange={(e) => setUuid(e.target.value)} />
+              </label>
+            </form>
+          )}
+
+          <button onClick={createRoom}>Create</button>
+        </div>
+      )}
     </>
   )
 }
