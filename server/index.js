@@ -1,5 +1,11 @@
-// TODO: importing the WORD_LIST is weird b/c CJS / ESM
+// TODO: importing the WORD_LIST is weird b/c CommonJS / ESModule
 const WORD_LIST = ["horse", "ports", "treat"]
+
+// Room IDs should be different from socket IDs, else glitchy
+const { v4: uuidv4 } = require("uuid")
+
+// add, size, has, delete, forEach,
+const waitingRooms = new Set()
 
 const express = require("express")
 const { createServer } = require("http")
@@ -26,9 +32,6 @@ const randomWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)].toUpp
 const solution = randomWord.split("")
 console.log(solution)
 
-// Lobby IDs should be different from socket IDs, else glitchy
-const roomId = "ABC"
-
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`)
 
@@ -41,42 +44,60 @@ io.on("connection", (socket) => {
 
   io.emit("newSolution", solution)
 
-  // Lobby joining logic
-  socket.on("joinLobby", (lobbyId) => {
-    socket.join(roomId)
-    // console.log(`You have joined the room: ${lobbyId}`)
-    // Prevent duplicate queueing (double clicking)
-    if (queuedUsers.includes(lobbyId)) {
+  // Create room logic
+  socket.on("createRoom", (lobbyId) => {
+    const uuid = uuidv4()
+    console.log(`uuid: ${uuid}`)
+    socket.join(uuid)
+    socket.emit("returnUuid", uuid)
+    waitingRooms.add(uuid)
+
+    // // Prevent duplicate queueing (double clicking)
+    // if (queuedUsers.includes(lobbyId)) {
+    //   return
+    // }
+    // queuedUsers.push(lobbyId)
+
+    // console.log(`List of queued users now: ${queuedUsers}`)
+
+    // // if there are 2 players queued, then make them join a room together
+    // if (queuedUsers.length == 2) {
+    //   // pop twice
+    //   queuedUsers.pop()
+    //   queuedUsers.pop()
+    //   // // Should leave your room before joining another one;
+    //   // // doesn't automatically leave, I've tested it
+    //   // socket.leave(lobbyId)
+    //   // console.log(`You have left the room: ${lobbyId}`)
+    //   // console.log(`You have joined the room: ${roomId}`)
+    //   console.log(`List of queued users now: ${queuedUsers}`)
+
+    //   io.to(roomId).emit("matchMade")
+
+    //   const clientsInRoom = io.sockets.adapter.rooms.get(roomId)
+    //   console.log(clientsInRoom)
+    // }
+  })
+
+  socket.on("joinRoom", (uuid) => {
+    // First check if the submitted uuid is actually an waiting room
+    if (!waitingRooms.has(uuid)) {
+      socket.emit("roomError", uuid)
       return
     }
-    queuedUsers.push(lobbyId)
 
-    console.log(`List of queued users now: ${queuedUsers}`)
-
-    // if there are 2 players queued, then make them join a room together
-    if (queuedUsers.length == 2) {
-      // pop twice
-      queuedUsers.pop()
-      queuedUsers.pop()
-      // // Should leave your room before joining another one;
-      // // doesn't automatically leave, I've tested it
-      // socket.leave(lobbyId)
-      // console.log(`You have left the room: ${lobbyId}`)
-      // console.log(`You have joined the room: ${roomId}`)
-      console.log(`List of queued users now: ${queuedUsers}`)
-
-      io.to(roomId).emit("matchMade")
-
-      const clientsInRoom = io.sockets.adapter.rooms.get(roomId)
-      console.log(clientsInRoom)
-    }
+    socket.join(uuid)
+    io.to(uuid).emit("matchMade", uuid)
+    waitingRooms.delete(uuid)
+    const clientsInRoom = io.sockets.adapter.rooms.get(uuid)
+    console.log(clientsInRoom)
   })
 
   // Process the board to only display colors
   // Then show the hidden board to the other user
-  socket.on("guessSubmit", (coloredGameBoard) => {
+  socket.on("guessSubmit", (uuid, coloredGameBoard) => {
     const hiddenBoard = coloredGameBoard.map((row) => row.map((tile) => ({ ...tile, letter: "" })))
-    socket.to(roomId).emit("revealBoard", hiddenBoard)
+    socket.to(uuid).emit("revealBoard", hiddenBoard)
   })
 })
 
