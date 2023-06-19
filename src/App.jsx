@@ -15,9 +15,16 @@ function App() {
   const [currentTile, setCurrentTile] = useState(0)
   const [isGameOver, setIsGameOver] = useState(false)
 
+  // TODO: userGuess - behaves mostly like a string, sometimes the color is used in
+  // TODO: specific cases.
   // userGuess and solution are arrays instead of strings because arrays are
   // easier to manipulate in most cases (ex. to find occurrence of a char).
-  const [userGuess, setUserGuess] = useState(["", "", "", "", ""])
+  const [userGuess, setUserGuess] = useState(
+    new Array(5).fill().map(() => ({
+      letter: "",
+      color: "none",
+    }))
+  )
   const [solution, setSolution] = useState([])
 
   // gameBoard is not populated with strings. It's comprised of Objects with a Letter property,
@@ -31,7 +38,6 @@ function App() {
 
   // For use in Challenge Mode
   const [isChallengeMode, setIsChallengeMode] = useState(false)
-  const [firstGuess, setFirstGuess] = useState(["", "", "", "", ""])
   const [greenHints, setGreenHints] = useState(["", "", "", "", ""])
   // If a user unearths 2 E's as yellow hints, he must include at least 2 E's in subsequent answers.
   // yellowHints is a hashmap that records yellow hints and their occurrence freq., ex. {E: 2}.
@@ -39,7 +45,7 @@ function App() {
 
   // ! Socket states
   const [showForm, setShowForm] = useState(false)
-  const [uuid, setUuid] = useState("")
+  const [room, setRoom] = useState("")
   const [isInRoom, setIsInRoom] = useState(false)
   const [otherBoard, setOtherBoard] = useState(
     new Array(6).fill().map((_) => new Array(5).fill({ letter: "" }))
@@ -51,9 +57,9 @@ function App() {
       console.log("Connected to server")
     })
 
-    socket.on("matchMade", (uuid, solution) => {
-      console.log(`Match made! Setting isInRoom to TRUE so you can play now...`)
-      setUuid(uuid)
+    // TODO: Variable names - abstracted or not btwn client & server?
+    socket.on("matchMade", (room, solution) => {
+      setRoom(room)
       setSolution(solution)
       setIsInRoom(true)
     })
@@ -87,7 +93,7 @@ function App() {
   function getGuessTileClassName(gameBoard, row, col) {
     let guessTileClassName = "guess__tile"
 
-    if (!gameBoard[row][col].color) {
+    if (gameBoard[row][col].color === "none") {
       if (row === currentRow && col < currentTile && !isGameOver) {
         guessTileClassName += "--active"
       }
@@ -110,30 +116,33 @@ function App() {
 
   // Checks if the userGuess adheres to the previous hints.
   function usesPreviousHints() {
-    // Using traditional for loops here because forEach doesn't terminate upon return.
-    console.log(greenHints)
+    console.log("usesPreviousHints:")
+    console.log(gameBoard)
+    // No previous hints
+    if (currentRow === 0) {
+      return "yes"
+    }
 
-    // Check adherence to green hints first
-    for (let i = 0; i < userGuess.length; ++i) {
-      if (greenHints[i] !== "" && userGuess[i] !== greenHints[i]) {
-        return "green"
+    const copyPreviousGuess = [...gameBoard[currentRow - 1]]
+    const colorizedGuess = colorizeGuess(userGuess)
+
+    for (let i = 0; i < copyPreviousGuess.length; ++i) {
+      if (copyPreviousGuess[i].color === "green") {
+        if (colorizedGuess[i] !== "green") {
+          return "green"
+        }
+      } else if (copyPreviousGuess[i].color === "yellow") {
+        const index = colorizedGuess.indexOf(copyPreviousGuess[i].letter)
+        if (index === 1) {
+          return "yellow"
+        }
+        copyPreviousGuess[i] = null
+        colorizedGuess[index] = null
       }
     }
 
-    // Then yellow hints.
-    // Note the condition: if yellowHints is {E: 2}, the userGuess can have 3 E's, but not 1.
-    for (const key in yellowHints) {
-      console.log(`KEY KEY KEY : ${key}`)
-      const countLettersInGuess = userGuess.filter((letter) => letter === key).length
-      const countGreenLetters = userGuess.filter(
-        (letter, letterIndex) => letter === key && letter === solution[letterIndex]
-      ).length
-      const countYellowLettersInGuess = countLettersInGuess - countGreenLetters
-      console.log(`currentLetter: ${key}`)
-      console.log(`countLettersInGuess: ${countLettersInGuess}`)
-      console.log(`countGreenLetters: ${countGreenLetters}`)
-      console.log(`countYellowLettersInGuess: ${countYellowLettersInGuess}`)
-      if (yellowHints[key] > countYellowLettersInGuess) {
+    for (let i = 0; i < copyPreviousGuess.length; ++i) {
+      if (copyPreviousGuess[i].color === "yellow") {
         return "yellow"
       }
     }
@@ -141,45 +150,41 @@ function App() {
     return "yes"
   }
 
-  // Three-pass algorithm that assigns colors based on the correctness of the userGuess and
-  // transfers that information to the gameBoard.
-  function updateTileColors(newGameBoard) {
-    console.log(`currentRow: ${currentRow}`)
-    console.log(gameBoard)
-
+  // Three-pass algorithm evaluates the userGuess and assigns colors accordingly.
+  function colorizeGuess(guess) {
     // Create a copy of the solution as an array.
     // As we encounter letters that form part of the solution, we set
     // those indexes to null so they won't affect the remaining letters.
     let copySolution = [...solution]
 
     // 1: Identify greens
-    newGameBoard[currentRow].forEach((tile, tileIndex) => {
-      if (tile.letter === copySolution[tileIndex]) {
-        newGameBoard[currentRow][tileIndex] = { ...tile, color: "correct" }
+    guess.forEach((tile, tileIndex) => {
+      if (tile.letter === solution[letterIndex]) {
+        guess = { ...tile, color: "correct" }
         copySolution[tileIndex] = null
       }
     })
 
     // 2: Identify yellows
-    newGameBoard[currentRow].forEach((tile, tileIndex) => {
+    guess.forEach((tile, tileIndex) => {
       // Check for existence of color property first to prevent yellows from overwriting greens
-      if (!tile.color) {
+      if (tile.color !== "correct") {
         let includedIndex = copySolution.indexOf(tile.letter)
         if (includedIndex !== -1) {
-          newGameBoard[currentRow][tileIndex] = { ...tile, color: "wrong-position" }
+          guess = { ...tile, color: "wrong-position" }
           copySolution[includedIndex] = null
         }
       }
     })
 
     // 3: Any remaining tiles must be wrong
-    newGameBoard[currentRow].forEach((tile, tileIndex) => {
-      if (!tile.color) {
-        newGameBoard[currentRow][tileIndex] = { ...tile, color: "wrong" }
+    guess.forEach((tile, tileIndex) => {
+      if (tile.color === "none") {
+        guess = { ...tile, color: "wrong" }
       }
     })
 
-    return newGameBoard
+    return guess
   }
 
   function handleEnter() {
@@ -198,101 +203,11 @@ function App() {
     }
     // Guess is valid: submit guess
     else {
-      // Update the gameBoard's letters and colors
+      // Update the gameBoard with the colorized guess
+      const colorizedGuess = colorizeGuess(userGuess)
       const newGameBoard = [...gameBoard]
-      newGameBoard[currentRow] = newGameBoard[currentRow].map((object, objectIndex) => ({
-        ...object,
-        letter: userGuess[objectIndex],
-      }))
-
-      const coloredGameBoard = updateTileColors(newGameBoard)
-      setGameBoard(coloredGameBoard)
-
-      // ! Challenge Mode: update the hints the player must adhere to
-      const newGreenHints = [...greenHints]
-      const newYellowHints = { ...yellowHints }
-
-      coloredGameBoard[currentRow].forEach((object, objectIndex) => {
-        if (object.color === "correct") {
-          newGreenHints[objectIndex] = object.letter
-          // Decrement yellow hints as they become green
-          if (object.letter in newYellowHints && object.letter !== newGreenHints[objectIndex]) {
-            newYellowHints[object.letter] -= 1
-            // Cleanup the hashmap when values reach 0
-            if (newYellowHints[object.letter] === 0) {
-              delete newYellowHints[object.letter]
-            }
-          }
-        }
-
-        // The logic for yellow hints is hard to parse without examples.
-        // Follow along, keeping in mind that the key property is the # of letters.
-        /* 
-        -- CASE 1 --
-        guess: BROKE  |  yellowHints: {O: 1}  |  solution: IGLOO
-
-        yellowHints should NOT increment, even though there is an "O"
-        in BROKE that is in the wrong-position. This is because a yellow "O" has
-        already been recorded by the hashmap; there is no need to duplicate it.
-        In other words, the # O's in yellowHints acts as a "min".
-
-        -- CASE 2 --
-        guess: OOZES  |  yellowHints: {O: 1}  |  solution: GLOWS
-
-        yellowHints should NOT increment, even though there are two "O"s
-        in OOZES that are in the wrong-position. This is because there is only one
-        "O" in the solution. In other words, the # O's in the solution acts as a "max".
-
-        -- CASE 3 --
-        guess: OOZES  |  yellowHints: {O: 1}  |  solution: IGLOO
-
-        yellowHints SHOULD be incremented. 
-        # O's in yellowHints = 1
-        # O's in userGuess = 2
-        # O's in solution = 2
-        
-        yellowHints < userGuess <= solution
-            1       <     2     <=    2
-
-        */
-        else if (object.color === "wrong-position") {
-          const countLettersInGuess = userGuess.filter((letter) => letter === object.letter).length
-          const countLettersInYellowHints = newYellowHints[object.letter]
-          const countLettersInSolution = solution.filter(
-            (letter) => letter === object.letter
-          ).length
-
-          const countGreenLetters = userGuess.filter(
-            (letter, letterIndex) => letter === solution[letterIndex]
-          ).length
-          const countYellowLettersInGuess = countLettersInGuess - countGreenLetters
-
-          if (countYellowLettersInGuess <= countLettersInYellowHints) {
-            // do nothing; does not meet min threshold
-          }
-          //
-          else {
-            if (countLettersInGuess > countLettersInSolution) {
-              // do nothing; exceeds max threshold
-            }
-            //
-            else {
-              // Increment if the count is in between the min and max thresholds
-              if (object.letter in newYellowHints) {
-                newYellowHints[object.letter] += 1
-              }
-              //
-              else {
-                newYellowHints[object.letter] = 1
-              }
-            }
-          }
-        }
-        console.log(newGreenHints)
-        console.log(newYellowHints)
-      })
-      setGreenHints(newGreenHints)
-      setYellowHints(newYellowHints)
+      newGameBoard[currentRow] = colorizedGuess
+      setGameBoard(newGameBoard)
 
       // Correct guess: gameOver (win)
       // Direct array comparison won't work with ===, so we must compare their string forms.
@@ -321,7 +236,7 @@ function App() {
       console.log(`currentTile: ${currentTile}`)
 
       // ! Socket
-      socket.emit("guessSubmit", uuid, coloredGameBoard)
+      socket.emit("guessSubmit", room, newGameBoard)
     }
   }
 
@@ -339,7 +254,8 @@ function App() {
   function handleLetter(letter) {
     if (currentTile < 5) {
       const newGuess = [...userGuess]
-      newGuess[currentTile] = letter.toUpperCase()
+      newGuess[currentTile] = { letter: letter.toUpperCase(), color: "none" }
+      console.log(newGuess)
       setUserGuess(newGuess)
 
       setCurrentTile((currentTile) => currentTile + 1)
@@ -349,8 +265,8 @@ function App() {
     }
   }
 
-  // TODO: Is there a way to generalize these two handleKey functions?
   function handleKeyDown(e) {
+    // TODO: Generalize these two handleKey functions using the comments below
     // const variable = e.key
     // handleKeyboardClick(e.key)
 
@@ -381,13 +297,10 @@ function App() {
     }
   }
 
-  // ! Socket : this needs to be global
-  const otherGameBoards = []
-
   function createRoom() {
     socket.emit("createRoom")
-    socket.on("returnUuid", (uuid) => {
-      console.log(`copy & paste this code to your friend: ${uuid}`)
+    socket.on("returnUuid", (room) => {
+      console.log(`copy & paste this code to your friend: ${room}`)
     })
   }
 
@@ -396,8 +309,8 @@ function App() {
     const pastedValue = e.clipboardData.getData("text/plain")
     socket.emit("joinRoom", pastedValue)
 
-    socket.on("roomError", (uuid) => {
-      console.log(`Error: Room "${uuid}" doesn't exist.`)
+    socket.on("roomError", (room) => {
+      console.log(`Error: Room "${room}" doesn't exist.`)
     })
   }
 
@@ -415,11 +328,11 @@ function App() {
             {gameBoard.map((row, rowIndex) => (
               <div key={rowIndex} className="guess">
                 {rowIndex === currentRow
-                  ? userGuess.map((letter, index) => (
+                  ? userGuess.map((tile, index) => (
                       <div
                         key={index}
                         className={getGuessTileClassName(gameBoard, rowIndex, index)}>
-                        {letter}
+                        {tile.letter}
                       </div>
                     ))
                   : row.map((tile, tileIndex) => (
@@ -455,18 +368,22 @@ function App() {
           />
         </>
       ) : (
-        <div>
-          <button onClick={() => setShowForm((prev) => !prev)}>Join</button>
+        <div className="menu">
+          <button className="menu__btn" onClick={createRoom}>
+            Create
+          </button>
+          <button className="menu__btn" onClick={() => setShowForm((prev) => !prev)}>
+            Join
+          </button>
+
           {showForm && (
             <form onPaste={joinRoom}>
               <label>
-                Enter your code here:
-                <input autoFocus type="text" onChange={(e) => setUuid(e.target.value)} />
+                Enter your code here: {""}
+                <input autoFocus type="text" onChange={(e) => setRoom(e.target.value)} />
               </label>
             </form>
           )}
-
-          <button onClick={createRoom}>Create</button>
         </div>
       )}
     </>

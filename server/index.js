@@ -97,8 +97,8 @@ io.on("connection", (socket) => {
 
   // Process the board to only display colors ("hiddenBoard")
   // Then show that hiddenBoard to the other user
-  socket.on("guessSubmit", (uuid, coloredGameBoard) => {
-    const hiddenBoard = coloredGameBoard.map((row) => row.map((tile) => ({ ...tile, letter: "" })))
+  socket.on("guessSubmit", (uuid, newGameBoard) => {
+    const hiddenBoard = newGameBoard.map((row) => row.map((tile) => ({ ...tile, letter: "" })))
     socket.to(uuid).emit("revealBoard", hiddenBoard)
   })
 })
