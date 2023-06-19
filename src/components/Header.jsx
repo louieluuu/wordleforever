@@ -25,7 +25,6 @@ export default function Header({ isChallengeMode, setIsChallengeMode }) {
             setIsChallengeMode(!isChallengeMode)
             console.log(`Challenge mode activated: ${!isChallengeMode}`)
           }}
-          // className={`header__svg${isChallengeMode && "--challenge"}`}
           className={`header__svg${isChallengeMode ? "--challenge" : ""}`}
         />
       </div>

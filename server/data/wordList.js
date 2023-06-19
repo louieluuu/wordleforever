@@ -1,4 +1,4 @@
-export const WORD_LIST = [
+const WORD_LIST = [
   "cigar",
   "rebut",
   "sissy",
@@ -2315,3 +2315,5 @@ export const WORD_LIST = [
   "rural",
   "shave",
 ]
+
+module.exports = WORD_LIST

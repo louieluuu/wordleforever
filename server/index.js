@@ -1,12 +1,10 @@
-// TODO: importing the WORD_LIST is weird b/c CommonJS / ESModule
-const WORD_LIST = ["horse", "ports", "treat"]
+const WORD_LIST = require("./data/wordList")
+const VALID_GUESSES = require("./data/validGuesses")
 
-// Room IDs should be different from socket IDs, else glitchy
+// Generate uuids
 const { v4: uuidv4 } = require("uuid")
 
-// add, size, has, delete, forEach,
-const waitingRooms = new Set()
-
+// WebSockets
 const express = require("express")
 const { createServer } = require("http")
 const { Server } = require("socket.io")
@@ -15,86 +13,90 @@ const app = express()
 const httpServer = createServer(app)
 const io = new Server(httpServer, {
   cors: {
-    // This origin should be where the client is running (5173)
-    origin: "*",
+    // Client-side URL
+    origin: "http://localhost:5173",
   },
 })
 
-// ! I don't think this is necessary
-// const cors = require("cors")
-// app.use(cors()) // Add cors middleware
+// Global variables
+const waitingRooms = new Set()
 
-// Matchmaking
+// Random matchmaking (non-lobby)
 const queuedUsers = []
 
-// Generate a single solution (outside of io connection)
-const randomWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)].toUpperCase()
-const solution = randomWord.split("")
-console.log(solution)
+// Generates a random solution
+function getRandomSolution() {
+  const randomSolution = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)]
+    .toUpperCase()
+    .split("")
+  console.log(`Solution: ${randomSolution}`)
+  return randomSolution
+}
 
+// ! Challenge mode
+// Generates a random starting word that always has exactly one green match
+function getRandomFirstGuess(solution) {
+  let randomFirstGuess
+  while (true) {
+    randomFirstGuess = VALID_GUESSES[Math.floor(Math.random() * VALID_GUESSES.length)].toUpperCase()
+    let countGreenLetters = 0
+    for (let i = 0; i < randomFirstGuess.length; ++i) {
+      if (randomFirstGuess[i] === solution[i]) {
+        countGreenLetters += 1
+      }
+    }
+    if (countGreenLetters === 1) {
+      console.log(`firstGuess: ${randomFirstGuess}`)
+      break
+    }
+  }
+  return randomFirstGuess.split("")
+}
+
+// All server-side socket logic is, by design, wrapped in the io.on("connection") function.
 io.on("connection", (socket) => {
+  // Print info when connections are made (io.engine contains metadata)
   console.log(`User connected: ${socket.id}`)
-
-  socket.broadcast.emit("userConnected", socket.id)
-
-  // io.engine is the underlying thing, you can maybe think of it as metadata-y
-  // Fetch the number of clients using io.engine
   const count = io.engine.clientsCount
-  console.log(`total # clients connected: ${count}`)
+  console.log(`Current # total users: ${count}`)
 
-  io.emit("newSolution", solution)
+  // Create room
+  socket.on("createRoom", () => {
+    let newUuid = uuidv4()
+    // Guarantees non-colliding rooms (even though the chance is infinitely small)
+    while (waitingRooms.has(newUuid)) {
+      newUuid = uuidv4()
+    }
 
-  // Create room logic
-  socket.on("createRoom", (lobbyId) => {
-    const uuid = uuidv4()
-    console.log(`uuid: ${uuid}`)
-    socket.join(uuid)
-    socket.emit("returnUuid", uuid)
-    waitingRooms.add(uuid)
-
-    // // Prevent duplicate queueing (double clicking)
-    // if (queuedUsers.includes(lobbyId)) {
-    //   return
-    // }
-    // queuedUsers.push(lobbyId)
-
-    // console.log(`List of queued users now: ${queuedUsers}`)
-
-    // // if there are 2 players queued, then make them join a room together
-    // if (queuedUsers.length == 2) {
-    //   // pop twice
-    //   queuedUsers.pop()
-    //   queuedUsers.pop()
-    //   // // Should leave your room before joining another one;
-    //   // // doesn't automatically leave, I've tested it
-    //   // socket.leave(lobbyId)
-    //   // console.log(`You have left the room: ${lobbyId}`)
-    //   // console.log(`You have joined the room: ${roomId}`)
-    //   console.log(`List of queued users now: ${queuedUsers}`)
-
-    //   io.to(roomId).emit("matchMade")
-
-    //   const clientsInRoom = io.sockets.adapter.rooms.get(roomId)
-    //   console.log(clientsInRoom)
-    // }
+    socket.join(newUuid)
+    socket.emit("returnUuid", newUuid)
+    waitingRooms.add(newUuid)
   })
 
+  // Join room
   socket.on("joinRoom", (uuid) => {
-    // First check if the submitted uuid is actually an waiting room
+    // First check if the submitted ID is actually a waiting room
     if (!waitingRooms.has(uuid)) {
       socket.emit("roomError", uuid)
       return
     }
-
     socket.join(uuid)
-    io.to(uuid).emit("matchMade", uuid)
+
+    // Generate the word(s) required to play, then broadcast them to the room
+    const solution = getRandomSolution()
+    const firstGuess = getRandomFirstGuess(solution)
+    io.to(uuid).emit("matchMade", uuid, solution)
+
+    // TODO: I think we need to track waitingRooms as well as activeRooms.
+    // TODO: activeRooms will track games that are in progress so there's no overlap.
     waitingRooms.delete(uuid)
-    const clientsInRoom = io.sockets.adapter.rooms.get(uuid)
-    console.log(clientsInRoom)
+
+    // const clientsInRoom = io.sockets.adapter.rooms.get(uuid)
+    // console.log(clientsInRoom)
   })
 
-  // Process the board to only display colors
-  // Then show the hidden board to the other user
+  // Process the board to only display colors ("hiddenBoard")
+  // Then show that hiddenBoard to the other user
   socket.on("guessSubmit", (uuid, coloredGameBoard) => {
     const hiddenBoard = coloredGameBoard.map((row) => row.map((tile) => ({ ...tile, letter: "" })))
     socket.to(uuid).emit("revealBoard", hiddenBoard)
@@ -108,10 +110,30 @@ httpServer.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
 })
 
-// middleware = a function that gets executed for every incoming connection (middle man)
-// -useful for logging, authentication, ...
-// io.use((socket, next))
+// TODO: random matchmaking
+// Queueing up random users logic
+// // Prevent duplicate queueing (double clicking)
+// if (queuedUsers.includes(lobbyId)) {
+//   return
+// }
+// queuedUsers.push(lobbyId)
 
-// io.emit sends to all sockets
-// socket.emit sends to only the socket that sent the message
-// io.emit belongs under the io.on("connection") event
+// console.log(`List of queued users now: ${queuedUsers}`)
+
+// // if there are 2 players queued, then make them join a room together
+// if (queuedUsers.length == 2) {
+//   // pop twice
+//   queuedUsers.pop()
+//   queuedUsers.pop()
+//   // // Should leave your room before joining another one;
+//   // // doesn't automatically leave, I've tested it
+//   // socket.leave(lobbyId)
+//   // console.log(`You have left the room: ${lobbyId}`)
+//   // console.log(`You have joined the room: ${roomId}`)
+//   console.log(`List of queued users now: ${queuedUsers}`)
+
+//   io.to(roomId).emit("matchMade")
+
+//   const clientsInRoom = io.sockets.adapter.rooms.get(roomId)
+//   console.log(clientsInRoom)
+// }

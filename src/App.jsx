@@ -1,3 +1,5 @@
+// TODO: package.json: changed from "module" to "type" = "commonjs" to support wordlist
+
 import { useState, useEffect } from "react"
 import { VALID_GUESSES } from "./data/validGuesses.js"
 
@@ -36,101 +38,46 @@ function App() {
   const [yellowHints, setYellowHints] = useState({})
 
   // ! Socket states
-  const [uuid, setUuid] = useState("")
   const [showForm, setShowForm] = useState(false)
+  const [uuid, setUuid] = useState("")
   const [isInRoom, setIsInRoom] = useState(false)
   const [otherBoard, setOtherBoard] = useState(
     new Array(6).fill().map((_) => new Array(5).fill({ letter: "" }))
   )
 
-  // ! Socket : Connect
-  // Don't put socket.on connect outside of useEffect or else it'll
-  // render like 6 times :)
+  // ! Socket useEffect
   useEffect(() => {
     socket.on("connect", () => {
       console.log("Connected to server")
-
-      // Also right when you connect, grab the solution from the server
-      socket.on("newSolution", (solution) => {
-        console.log(`solution: ${solution}`)
-        setSolution(solution)
-      })
     })
 
-    // If you remove this line it'll render twice?
-    // Render twice might also be because of Strict Mode?
-    return () => {
-      socket.off("connect")
-    }
-  }, [])
-
-  // ! Socket useEffect
-  useEffect(() => {
-    socket.on("userConnected", (userId) => {
-      console.log(`Another user: ${userId} has connected to this lobby.`)
-    })
-
-    socket.on("matchMade", (uuid) => {
+    socket.on("matchMade", (uuid, solution) => {
       console.log(`Match made! Setting isInRoom to TRUE so you can play now...`)
       setUuid(uuid)
+      setSolution(solution)
       setIsInRoom(true)
     })
 
-    // TODO: Apparently you can put this outside the useEffect and it works fine
     socket.on("revealBoard", (hiddenBoard) => {
       setOtherBoard(hiddenBoard)
     })
 
-    // return () => {
-    //   socket.off("userConnected")
-    //   socket.off("revealBoard")
-    // }
+    // TODO: more cleanup?
+    return () => {
+      socket.off("connect")
+    }
   }, [socket]) // TODO: with or without "socket" dependency, seems to work okay?
 
   // Global keyboard event listener: dependencies in 2nd param
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown)
+    setIsChallengeMode(true)
 
     // else
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
   }, [currentTile, isInRoom])
-
-  // // Select random solution upon mount
-  // useEffect(() => {
-  //   const randomWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)].toUpperCase()
-  //   setSolution(randomWord.split(""))
-  //   console.log(randomWord)
-
-  //   // ! For testing
-  //   setIsChallengeMode(true)
-  // }, [])
-
-  // ! Challenge Mode: select a random first guess the player must adhere to.
-  // The random guess will always have exactly one green character to start.
-  // TODO: The current implementation also allows yellow letters, not yet sure if we want that.
-  useEffect(() => {
-    if (isChallengeMode) {
-      while (firstGuess[0] === "") {
-        const randomGuess =
-          VALID_GUESSES[Math.floor(Math.random() * VALID_GUESSES.length)].toUpperCase()
-        let countGreenLetters = 0
-        for (let i = 0; i < randomGuess.length; ++i) {
-          if (randomGuess[i] === solution[i]) {
-            countGreenLetters += 1
-          }
-        }
-        if (countGreenLetters === 1) {
-          setFirstGuess(randomGuess)
-          console.log(`randomGuess: ${randomGuess}`)
-          // submitGuess(randomGuess)
-          // update board... etc
-          break
-        }
-      }
-    }
-  }, [isChallengeMode])
 
   /**
    *
@@ -191,7 +138,7 @@ function App() {
       }
     }
 
-    return "okay"
+    return "yes"
   }
 
   // Three-pass algorithm that assigns colors based on the correctness of the userGuess and
@@ -246,7 +193,7 @@ function App() {
       console.log(`Guess not in dictionary: ${userGuess}`)
     }
     // ! Challenge Mode: guess doesn't adhere to previous hints
-    else if (isChallengeMode && usesPreviousHints() !== "okay") {
+    else if (isChallengeMode && usesPreviousHints() !== "yes") {
       console.log(`Not adherent to: ${usesPreviousHints()}`)
     }
     // Guess is valid: submit guess
@@ -438,7 +385,7 @@ function App() {
   const otherGameBoards = []
 
   function createRoom() {
-    socket.emit("createRoom", socket.id)
+    socket.emit("createRoom")
     socket.on("returnUuid", (uuid) => {
       console.log(`copy & paste this code to your friend: ${uuid}`)
     })
@@ -514,7 +461,7 @@ function App() {
             <form onPaste={joinRoom}>
               <label>
                 Enter your code here:
-                <input type="text" onChange={(e) => setUuid(e.target.value)} />
+                <input autoFocus type="text" onChange={(e) => setUuid(e.target.value)} />
               </label>
             </form>
           )}
