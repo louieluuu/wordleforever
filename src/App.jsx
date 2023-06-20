@@ -50,10 +50,14 @@ function App() {
       console.log("Connected to server")
     })
 
-    socket.on("matchMade", (room, solution) => {
+    socket.on("matchMadeChallengeOn", (room, solution, firstGuess) => {
+      setIsInRoom(true)
       setRoom(room)
       setSolution(solution)
-      setIsInRoom(true)
+      const newGameBoard = [...gameBoard]
+      newGameBoard[0] = colorizeGuess(firstGuess, solution)
+      setGameBoard(newGameBoard)
+      setCurrentRow(1)
     })
 
     socket.on("revealBoard", (hiddenBoard) => {
@@ -64,7 +68,7 @@ function App() {
     return () => {
       socket.off("connect")
     }
-  }, [])
+  }, [socket])
 
   // Global keyboard event listener: dependencies in 2nd param
   useEffect(() => {
@@ -116,7 +120,7 @@ function App() {
     }
 
     const copyPreviousGuess = [...gameBoard[currentRow - 1]]
-    const colorizedGuess = colorizeGuess(userGuess)
+    const colorizedGuess = colorizeGuess(userGuess, solution)
     console.log("colorizedGuess:")
     console.log(colorizedGuess)
 
@@ -149,7 +153,7 @@ function App() {
   }
 
   // Three-pass algorithm evaluates the userGuess and assigns colors accordingly.
-  function colorizeGuess(guess) {
+  function colorizeGuess(guess, solution) {
     // Create a copy of the solution as an array.
     // As we encounter letters that form part of the solution, we set
     // those indexes to null so they won't affect the remaining letters.
@@ -211,7 +215,7 @@ function App() {
     // Guess is valid: submit guess
     else {
       // Update the gameBoard with the colorized guess
-      const colorizedGuess = colorizeGuess(userGuess)
+      const colorizedGuess = colorizeGuess(userGuess, solution)
       const newGameBoard = [...gameBoard]
       newGameBoard[currentRow] = colorizedGuess
       setGameBoard(newGameBoard)

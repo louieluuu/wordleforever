@@ -83,9 +83,9 @@ io.on("connection", (socket) => {
     socket.join(uuid)
 
     // Generate the word(s) required to play, then broadcast them to the room
-    const solution = "SEERS".split("")
+    const solution = getRandomSolution()
     const firstGuess = getRandomFirstGuess(solution)
-    io.to(uuid).emit("matchMade", uuid, solution)
+    io.to(uuid).emit("matchMadeChallengeOn", uuid, solution, firstGuess)
 
     // TODO: I think we need to track waitingRooms as well as activeRooms.
     // TODO: activeRooms will track games that are in progress so there's no overlap.
