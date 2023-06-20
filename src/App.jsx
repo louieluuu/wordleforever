@@ -15,16 +15,9 @@ function App() {
   const [currentTile, setCurrentTile] = useState(0)
   const [isGameOver, setIsGameOver] = useState(false)
 
-  // TODO: userGuess - behaves mostly like a string, sometimes the color is used in
-  // TODO: specific cases.
   // userGuess and solution are arrays instead of strings because arrays are
   // easier to manipulate in most cases (ex. to find occurrence of a char).
-  const [userGuess, setUserGuess] = useState(
-    new Array(5).fill().map(() => ({
-      letter: "",
-      color: "none",
-    }))
-  )
+  const [userGuess, setUserGuess] = useState(["", "", "", "", ""])
   const [solution, setSolution] = useState([])
 
   // gameBoard is not populated with strings. It's comprised of Objects with a Letter property,
@@ -57,7 +50,6 @@ function App() {
       console.log("Connected to server")
     })
 
-    // TODO: Variable names - abstracted or not btwn client & server?
     socket.on("matchMade", (room, solution) => {
       setRoom(room)
       setSolution(solution)
@@ -72,7 +64,7 @@ function App() {
     return () => {
       socket.off("connect")
     }
-  }, [socket]) // TODO: with or without "socket" dependency, seems to work okay?
+  }, [])
 
   // Global keyboard event listener: dependencies in 2nd param
   useEffect(() => {
@@ -93,7 +85,7 @@ function App() {
   function getGuessTileClassName(gameBoard, row, col) {
     let guessTileClassName = "guess__tile"
 
-    if (gameBoard[row][col].color === "none") {
+    if (!gameBoard[row][col].color) {
       if (row === currentRow && col < currentTile && !isGameOver) {
         guessTileClassName += "--active"
       }
@@ -125,25 +117,31 @@ function App() {
 
     const copyPreviousGuess = [...gameBoard[currentRow - 1]]
     const colorizedGuess = colorizeGuess(userGuess)
+    console.log("colorizedGuess:")
+    console.log(colorizedGuess)
 
     for (let i = 0; i < copyPreviousGuess.length; ++i) {
-      if (copyPreviousGuess[i].color === "green") {
-        if (colorizedGuess[i] !== "green") {
+      if (copyPreviousGuess[i].color === "correct") {
+        if (colorizedGuess[i].letter !== copyPreviousGuess[i].letter) {
           return "green"
         }
-      } else if (copyPreviousGuess[i].color === "yellow") {
-        const index = colorizedGuess.indexOf(copyPreviousGuess[i].letter)
-        if (index === 1) {
+      }
+      //
+      else if (copyPreviousGuess[i].color === "wrong-position") {
+        const index = colorizedGuess.findIndex((obj) => obj.letter === copyPreviousGuess[i].letter)
+        if (index === -1) {
           return "yellow"
         }
         copyPreviousGuess[i] = null
-        colorizedGuess[index] = null
+        colorizedGuess[index].letter = null
       }
     }
 
     for (let i = 0; i < copyPreviousGuess.length; ++i) {
-      if (copyPreviousGuess[i].color === "yellow") {
-        return "yellow"
+      if (copyPreviousGuess[i] !== null) {
+        if (copyPreviousGuess[i].color === "wrong-position") {
+          return "yellow"
+        }
       }
     }
 
@@ -156,35 +154,44 @@ function App() {
     // As we encounter letters that form part of the solution, we set
     // those indexes to null so they won't affect the remaining letters.
     let copySolution = [...solution]
+    let colorizedGuess = new Array(5).fill().map(() => ({}))
+
+    console.log("Very first time")
+    console.log(colorizedGuess)
 
     // 1: Identify greens
-    guess.forEach((tile, tileIndex) => {
-      if (tile.letter === solution[letterIndex]) {
-        guess = { ...tile, color: "correct" }
-        copySolution[tileIndex] = null
+    guess.forEach((letter, letterIndex) => {
+      if (letter === solution[letterIndex]) {
+        colorizedGuess[letterIndex] = { letter: letter, color: "correct" }
+        copySolution[letterIndex] = null
       }
     })
 
+    console.log("After green stage:")
+    console.log(colorizedGuess)
+
     // 2: Identify yellows
-    guess.forEach((tile, tileIndex) => {
+    guess.forEach((letter, letterIndex) => {
       // Check for existence of color property first to prevent yellows from overwriting greens
-      if (tile.color !== "correct") {
-        let includedIndex = copySolution.indexOf(tile.letter)
+      if (colorizedGuess[letterIndex] !== "correct") {
+        let includedIndex = copySolution.indexOf(letter)
         if (includedIndex !== -1) {
-          guess = { ...tile, color: "wrong-position" }
+          colorizedGuess[letterIndex] = { letter: letter, color: "wrong-position" }
           copySolution[includedIndex] = null
         }
       }
     })
 
     // 3: Any remaining tiles must be wrong
-    guess.forEach((tile, tileIndex) => {
-      if (tile.color === "none") {
-        guess = { ...tile, color: "wrong" }
+    colorizedGuess.forEach((object, objectIndex) => {
+      if (!object.color) {
+        colorizedGuess[objectIndex] = { letter: guess[objectIndex], color: "wrong" }
       }
     })
 
-    return guess
+    console.log("Fresh out the oven")
+    console.log(colorizedGuess)
+    return colorizedGuess
   }
 
   function handleEnter() {
@@ -254,8 +261,7 @@ function App() {
   function handleLetter(letter) {
     if (currentTile < 5) {
       const newGuess = [...userGuess]
-      newGuess[currentTile] = { letter: letter.toUpperCase(), color: "none" }
-      console.log(newGuess)
+      newGuess[currentTile] = letter.toUpperCase()
       setUserGuess(newGuess)
 
       setCurrentTile((currentTile) => currentTile + 1)
@@ -328,11 +334,11 @@ function App() {
             {gameBoard.map((row, rowIndex) => (
               <div key={rowIndex} className="guess">
                 {rowIndex === currentRow
-                  ? userGuess.map((tile, index) => (
+                  ? userGuess.map((letter, index) => (
                       <div
                         key={index}
                         className={getGuessTileClassName(gameBoard, rowIndex, index)}>
-                        {tile.letter}
+                        {letter}
                       </div>
                     ))
                   : row.map((tile, tileIndex) => (

@@ -83,7 +83,7 @@ io.on("connection", (socket) => {
     socket.join(uuid)
 
     // Generate the word(s) required to play, then broadcast them to the room
-    const solution = getRandomSolution()
+    const solution = "SEERS".split("")
     const firstGuess = getRandomFirstGuess(solution)
     io.to(uuid).emit("matchMade", uuid, solution)
 
