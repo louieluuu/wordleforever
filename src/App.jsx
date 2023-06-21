@@ -31,10 +31,6 @@ function App() {
 
   // For use in Challenge Mode
   const [isChallengeMode, setIsChallengeMode] = useState(false)
-  const [greenHints, setGreenHints] = useState(["", "", "", "", ""])
-  // If a user unearths 2 E's as yellow hints, he must include at least 2 E's in subsequent answers.
-  // yellowHints is a hashmap that records yellow hints and their occurrence freq., ex. {E: 2}.
-  const [yellowHints, setYellowHints] = useState({})
 
   // ! Socket states
   const [showForm, setShowForm] = useState(false)
@@ -58,17 +54,33 @@ function App() {
       newGameBoard[0] = colorizeGuess(firstGuess, solution)
       setGameBoard(newGameBoard)
       setCurrentRow(1)
+      socket.emit("submitGuess", room, newGameBoard)
     })
 
-    socket.on("revealBoard", (hiddenBoard) => {
-      setOtherBoard(hiddenBoard)
+    socket.on("showOtherBoard", (otherBoard) => {
+      setOtherBoard(otherBoard)
     })
 
     // TODO: more cleanup?
     return () => {
       socket.off("connect")
     }
-  }, [socket])
+  }, [])
+
+  // TODO: Trying to move this to its own effect cause it depends on isGameOver
+  // TODO: in other words not all the socket logic can belong under one umbrella
+  useEffect(() => {
+    // TODO: For some strange reason this doesn't work with the state
+    // TODO: room, you need to pass in the room. Very very bizarre.
+    socket.on("gameOver", (room) => {
+      setIsGameOver((prev) => !prev)
+      socket.emit("revealGameBoard", room, gameBoard)
+    })
+
+    socket.on("showFinalBoard", (finalBoard) => {
+      setOtherBoard(finalBoard)
+    })
+  }, [gameBoard, isGameOver, otherBoard]) // TODO: .....................
 
   // Global keyboard event listener: dependencies in 2nd param
   useEffect(() => {
@@ -86,6 +98,7 @@ function App() {
    * HELPER FUNCTIONS
    *
    */
+
   function getGuessTileClassName(gameBoard, row, col) {
     let guessTileClassName = "guess__tile"
 
@@ -220,18 +233,18 @@ function App() {
       newGameBoard[currentRow] = colorizedGuess
       setGameBoard(newGameBoard)
 
-      // Correct guess: gameOver (win)
+      // Correct guess: Game Over (win)
       // Direct array comparison won't work with ===, so we must compare their string forms.
       if (userGuess.join("") === solution.join("")) {
-        console.log(
-          `Correct guess: guess: ${userGuess} vs. target: ${solution} \n
-      You win !! Yay!`
-        )
+        socket.emit("correctGuess", room)
+        console.log("You WIN! YAY!")
         setIsGameOver(true)
       }
       // Wrong guess
       else {
-        // Run out of guesses: gameOver (loss)
+        // ! Socket
+        socket.emit("submitGuess", room, newGameBoard)
+        // Run out of guesses: Game Over (loss)
         if (currentRow >= 5) {
           console.log(`game over, run out of guesses`)
           setIsGameOver(true)
@@ -244,10 +257,6 @@ function App() {
       setUserGuess(["", "", "", "", ""])
       console.log(`Valid guess submitted: ${userGuess}`)
       console.log(`currentRow: ${currentRow}`)
-      console.log(`currentTile: ${currentTile}`)
-
-      // ! Socket
-      socket.emit("guessSubmit", room, newGameBoard)
     }
   }
 
@@ -370,12 +379,7 @@ function App() {
             ))}
           </div>
 
-          <Keyboard
-            onClick={handleKeyboardClick}
-            gameBoard={gameBoard}
-            greenHints={greenHints}
-            yellowHints={yellowHints}
-          />
+          <Keyboard onClick={handleKeyboardClick} gameBoard={gameBoard} currentRow={currentRow} />
         </>
       ) : (
         <div className="menu">
@@ -390,7 +394,7 @@ function App() {
             <form onPaste={joinRoom}>
               <label>
                 Enter your code here: {""}
-                <input autoFocus type="text" onChange={(e) => setRoom(e.target.value)} />
+                <input autoFocus type="text" />
               </label>
             </form>
           )}
