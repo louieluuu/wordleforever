@@ -171,10 +171,7 @@ function App() {
     // As we encounter letters that form part of the solution, we set
     // those indexes to null so they won't affect the remaining letters.
     let copySolution = [...solution]
-    let colorizedGuess = new Array(5).fill().map(() => ({}))
-
-    console.log("Very first time")
-    console.log(colorizedGuess)
+    const colorizedGuess = [...guess]
 
     // 1: Identify greens
     guess.forEach((letter, letterIndex) => {
@@ -184,13 +181,10 @@ function App() {
       }
     })
 
-    console.log("After green stage:")
-    console.log(colorizedGuess)
-
     // 2: Identify yellows
     guess.forEach((letter, letterIndex) => {
       // Check for existence of color property first to prevent yellows from overwriting greens
-      if (colorizedGuess[letterIndex] !== "correct") {
+      if (colorizedGuess[letterIndex].color !== "correct") {
         let includedIndex = copySolution.indexOf(letter)
         if (includedIndex !== -1) {
           colorizedGuess[letterIndex] = { letter: letter, color: "wrong-position" }
@@ -206,8 +200,6 @@ function App() {
       }
     })
 
-    console.log("Fresh out the oven")
-    console.log(colorizedGuess)
     return colorizedGuess
   }
 
