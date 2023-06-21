@@ -82,25 +82,20 @@ io.on("connection", (socket) => {
     }
     socket.join(uuid)
 
-    const countClientsInRoom = io.sockets.adapter.rooms.get(uuid).size
-    if (countClientsInRoom === 2) {
-      socket.to(uuid).emit("matchMade", uuid)
-    }
-  })
-
-  socket.on("startNewGame", (uuid) => {
     // Generate the word(s) required to play, then broadcast them to the room
-    const solution = getRandomSolution()
-    const firstGuess = getRandomFirstGuess(solution)
+    // const solution = getRandomSolution()
+    // const firstGuess = getRandomFirstGuess(solution)
 
-    // const solution = "DRIED".split("")
-    // const firstGuess = "TUTEE".split("")
-
-    io.to(uuid).emit("wordsGenerated", uuid, solution, firstGuess)
+    const solution = "DRIED".split("")
+    const firstGuess = "TUTEE".split("")
+    io.to(uuid).emit("matchMadeChallengeOn", uuid, solution, firstGuess)
 
     // TODO: I think we need to track waitingRooms as well as activeRooms.
     // TODO: activeRooms will track games that are in progress so there's no overlap.
     waitingRooms.delete(uuid)
+
+    // const clientsInRoom = io.sockets.adapter.rooms.get(uuid)
+    // console.log(clientsInRoom)
   })
 
   // Process the board to only display colors ("hiddenBoard")

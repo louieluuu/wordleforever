@@ -41,19 +41,13 @@ function App() {
   )
 
   // ! Socket useEffect
-  // TODO: Passing in states to sockets seems to result in unreliable behaviour.
   useEffect(() => {
     socket.on("connect", () => {
       console.log("Connected to server")
     })
 
-    socket.on("matchMade", (room) => {
-      socket.emit("startNewGame", room)
-    })
-
-    socket.on("wordsGenerated", (room, solution, firstGuess) => {
+    socket.on("matchMadeChallengeOn", (room, solution, firstGuess) => {
       setIsInRoom(true)
-      setIsGameOver(false)
       setRoom(room)
       setSolution(solution)
       const newGameBoard = [...gameBoard]
@@ -67,7 +61,7 @@ function App() {
       setOtherBoard(otherBoard)
     })
 
-    // TODO: more cleanup
+    // TODO: more cleanup?
     return () => {
       socket.off("connect")
     }
@@ -76,8 +70,10 @@ function App() {
   // TODO: Trying to move this to its own effect cause it depends on isGameOver
   // TODO: in other words not all the socket logic can belong under one umbrella
   useEffect(() => {
+    // TODO: For some strange reason this doesn't work with the state
+    // TODO: room, you need to pass in the room. Very very bizarre.
     socket.on("gameOver", (room) => {
-      setIsGameOver(true)
+      setIsGameOver((prev) => !prev)
       socket.emit("revealGameBoard", room, gameBoard)
     })
 
@@ -87,7 +83,6 @@ function App() {
   }, [gameBoard, isGameOver, otherBoard]) // TODO: .....................
 
   // Global keyboard event listener: dependencies in 2nd param
-  // TODO: Needed to remove the 2nd param "[]" for this to work ?
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown)
     setIsChallengeMode(true)
@@ -96,7 +91,7 @@ function App() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
-  })
+  }, [currentTile, isInRoom])
 
   /**
    *
@@ -330,16 +325,6 @@ function App() {
     })
   }
 
-  function handleNewGame() {
-    setCurrentRow(0)
-    setCurrentTile(0)
-    setIsGameOver(false)
-    setUserGuess(["", "", "", "", ""])
-    setGameBoard(new Array(6).fill().map((_) => new Array(5).fill({ letter: "" })))
-    setOtherBoard(new Array(6).fill().map((_) => new Array(5).fill({ letter: "" })))
-    socket.emit("startNewGame", room)
-  }
-
   // TODO: Move Keyboard events into Keyboard component
   // TODO: "Game" component that houses game logic?
   // TODO: Row and Tile components
@@ -372,14 +357,6 @@ function App() {
             ))}
           </div>
 
-          {isGameOver && (
-            <div className="menu">
-              <button className="menu__btn" onClick={handleNewGame}>
-                New Game
-              </button>
-            </div>
-          )}
-
           <div className="game-board">
             {otherBoard.map((row, rowIndex) => (
               <div key={rowIndex} className="guess">
@@ -394,11 +371,7 @@ function App() {
             ))}
           </div>
 
-          {/* <Keyboard
-            onClick={handleKeyboardClick}
-            colorizedGuess={gameBoard[currentRow - 1]}
-            solution={solution}
-          /> */}
+          <Keyboard onClick={handleKeyboardClick} gameBoard={gameBoard} currentRow={currentRow} />
         </>
       ) : (
         <div className="menu">
