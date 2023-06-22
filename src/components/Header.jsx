@@ -8,20 +8,23 @@ import { FaCog } from "react-icons/fa"
 import InfoModal from "./InfoModal"
 
 export default function Header() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   return (
-    <header className="header">
-      <div className="header__left">
-        <HiMenu className="header__svg" />
-      </div>
-      <h1>React-Wordle</h1>
-      <div className="header__right">
-        <RiQuestionLine onClick={() => setIsModalOpen(true)} className="header__svg" />
-        <BiBarChartAlt2 className="header__svg--flipped" />
-        <FaCog className="header__svg" />
-      </div>
-      {isModalOpen && <InfoModal />}
-    </header>
+    <>
+      <header className="header">
+        <div className="header__left">
+          <HiMenu className="header__svg" />
+        </div>
+        <h1>React-Wordle</h1>
+        <div className="header__right">
+          <RiQuestionLine onClick={() => setIsDialogOpen(true)} className="header__svg" />
+          <BiBarChartAlt2 className="header__svg--flipped" />
+          <FaCog className="header__svg" />
+        </div>
+      </header>
+
+      {isDialogOpen && <InfoModal setIsDialogOpen={setIsDialogOpen} />}
+    </>
   )
 }

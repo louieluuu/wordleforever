@@ -146,7 +146,7 @@ function App() {
     return "yes"
   }
 
-  // Three-pass algorithm evaluates the userGuess and assigns colors accordingly.
+  // Three-pass algorithm that evaluates the userGuess and assigns colors accordingly.
   function colorizeGuess(guess, solution) {
     // Create a copy of the solution as an array.
     // As we encounter letters that form part of the solution, we set
