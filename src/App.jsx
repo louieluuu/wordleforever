@@ -7,6 +7,7 @@ import { VALID_GUESSES } from "./data/validGuesses.js"
 import Header from "./components/Header"
 import Keyboard from "./components/Keyboard"
 import GameBoard from "./components/GameBoard"
+import MenuModal from "./components/MenuModal"
 
 // Socket
 import { socket } from "./socket"
@@ -43,7 +44,6 @@ function App() {
   const [isChallengeMode, setIsChallengeMode] = useState(false)
 
   // ! Socket states
-  const [showForm, setShowForm] = useState(false)
   const [room, setRoom] = useState("")
   const [isInRoom, setIsInRoom] = useState(false)
   const [otherBoard, setOtherBoard] = useState(
@@ -344,23 +344,6 @@ function App() {
     }
   }
 
-  function createRoom() {
-    socket.emit("createRoom")
-    socket.on("returnUuid", (room) => {
-      console.log(`copy & paste this code to your friend: ${room}`)
-    })
-  }
-
-  function joinRoom(e) {
-    e.preventDefault()
-    const pastedValue = e.clipboardData.getData("text/plain")
-    socket.emit("joinRoom", pastedValue)
-
-    socket.on("roomError", (room) => {
-      console.log(`Error: Room "${room}" doesn't exist.`)
-    })
-  }
-
   function handleNewGame() {
     setCurrentRow(0)
     setCurrentTile(0)
@@ -412,23 +395,7 @@ function App() {
           <Keyboard onClick={handleKeyboardClick} hints={hints} />
         </>
       ) : (
-        <div className="menu">
-          <button className="menu__btn" onClick={createRoom}>
-            Create
-          </button>
-          <button className="menu__btn" onClick={() => setShowForm((prev) => !prev)}>
-            Join
-          </button>
-
-          {showForm && (
-            <form onPaste={joinRoom}>
-              <label>
-                Enter your code here: {""}
-                <input autoFocus type="text" />
-              </label>
-            </form>
-          )}
-        </div>
+        <MenuModal />
       )}
     </>
   )
