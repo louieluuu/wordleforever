@@ -231,6 +231,8 @@ function App() {
     colorizedGuess.forEach((object) => {
       // TODO: Questionable if these extra conditions even need exist. Keyboard prioritizing
       // TODO: green makes it irrelevant whether the hints are represented accurately or not.
+
+      // TODO: Also, investigate if this state can be just in Keyboard.
       if (object.color === "wrong-position") {
         if (!newGreenHints.has(object.letter)) {
           newYellowHints.add(object.letter)
@@ -399,7 +401,7 @@ function App() {
   return (
     <>
       {isConfettiRunning && (
-        <Confetti numberOfPieces={300} initialVelocityY={-10} tweenDuration={3000} />
+        <Confetti numberOfPieces={150} initialVelocityY={-10} tweenDuration={3000} />
       )}
 
       <Header isChallengeMode={isChallengeMode} setIsChallengeMode={setIsChallengeMode} />

@@ -90,11 +90,8 @@ io.on("connection", (socket) => {
 
   socket.on("startNewGame", (uuid) => {
     // Generate the word(s) required to play, then broadcast them to the room
-    // const solution = getRandomSolution()
-    // const firstGuess = getRandomFirstGuess(solution)
-
-    const solution = "DRIED".split("")
-    const firstGuess = "TUTEE".split("")
+    const solution = getRandomSolution()
+    const firstGuess = getRandomFirstGuess(solution)
 
     io.to(uuid).emit("wordsGenerated", uuid, solution, firstGuess)
 
