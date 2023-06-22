@@ -10,7 +10,12 @@ import Keyboard from "./components/Keyboard"
 // Socket
 import { socket } from "./socket"
 
+// Confetti
+import Confetti from "react-confetti"
+
 function App() {
+  const [isConfettiRunning, setIsConfettiRunning] = useState(false)
+
   const [currentRow, setCurrentRow] = useState(0)
   const [currentTile, setCurrentTile] = useState(0)
   const [isGameOver, setIsGameOver] = useState(false)
@@ -28,6 +33,10 @@ function App() {
   const [gameBoard, setGameBoard] = useState(
     new Array(6).fill().map((_) => new Array(5).fill({ letter: "" }))
   )
+
+  // To be passed into the Keyboard. The logic for coloring Keyboard tiles
+  // is slightly different from the coloring of game tiles.
+  const [hints, setHints] = useState({ green: new Set(), yellow: new Set(), gray: new Set() })
 
   // For use in Challenge Mode
   const [isChallengeMode, setIsChallengeMode] = useState(false)
@@ -56,11 +65,17 @@ function App() {
       setIsGameOver(false)
       setRoom(room)
       setSolution(solution)
+      setIsConfettiRunning(false)
+      setHints({ green: new Set(), yellow: new Set(), gray: new Set() })
       const newGameBoard = [...gameBoard]
-      newGameBoard[0] = colorizeGuess(firstGuess, solution)
+      // TODO: this colorize stuff should belong in the handleEnter instead of being specific
+      // TODO: to the challengeMode case...
+      const colorizedGuess = colorizeGuess(firstGuess, solution)
+      newGameBoard[0] = colorizedGuess
+      updateHints(colorizedGuess)
       setGameBoard(newGameBoard)
       setCurrentRow(1)
-      socket.emit("submitGuess", room, newGameBoard)
+      socket.emit("wrongGuess", room, newGameBoard)
     })
 
     socket.on("showOtherBoard", (otherBoard) => {
@@ -208,6 +223,40 @@ function App() {
     return colorizedGuess
   }
 
+  function updateHints(colorizedGuess) {
+    const newGreenHints = new Set(hints.green)
+    const newYellowHints = new Set(hints.yellow)
+    const newGrayHints = new Set(hints.gray)
+
+    colorizedGuess.forEach((object) => {
+      // TODO: Questionable if these extra conditions even need exist. Keyboard prioritizing
+      // TODO: green makes it irrelevant whether the hints are represented accurately or not.
+      if (object.color === "wrong-position") {
+        if (!newGreenHints.has(object.letter)) {
+          newYellowHints.add(object.letter)
+        }
+      }
+      //
+      else if (object.color === "correct") {
+        newGreenHints.add(object.letter)
+        if (newYellowHints.has(object.letter)) {
+          newYellowHints.delete(object.letter)
+        }
+      }
+      //
+      else if (object.color === "wrong") {
+        newGrayHints.add(object.letter)
+      }
+    })
+
+    console.log(newGreenHints)
+    console.log(newYellowHints)
+    console.log(newGrayHints)
+
+    const newHints = { green: newGreenHints, yellow: newYellowHints, gray: newGrayHints }
+    setHints(newHints)
+  }
+
   function handleEnter() {
     // Guess is too short
     if (currentTile < 5) {
@@ -230,17 +279,20 @@ function App() {
       newGameBoard[currentRow] = colorizedGuess
       setGameBoard(newGameBoard)
 
+      // Update hints to color the Keyboard keys
+      updateHints(colorizedGuess)
+
       // Correct guess: Game Over (win)
       // Direct array comparison won't work with ===, so we must compare their string forms.
       if (userGuess.join("") === solution.join("")) {
         socket.emit("correctGuess", room)
-        console.log("You WIN! YAY!")
+        setIsConfettiRunning(true)
         setIsGameOver(true)
       }
       // Wrong guess
       else {
         // ! Socket
-        socket.emit("submitGuess", room, newGameBoard)
+        socket.emit("wrongGuess", room, newGameBoard)
         // Run out of guesses: Game Over (loss)
         if (currentRow >= 5) {
           console.log(`game over, run out of guesses`)
@@ -346,6 +398,10 @@ function App() {
   // TODO: Look into Context (stores) so props aren't so ugly
   return (
     <>
+      {isConfettiRunning && (
+        <Confetti numberOfPieces={300} initialVelocityY={-10} tweenDuration={3000} />
+      )}
+
       <Header isChallengeMode={isChallengeMode} setIsChallengeMode={setIsChallengeMode} />
 
       {isInRoom ? (
@@ -394,11 +450,7 @@ function App() {
             ))}
           </div>
 
-          {/* <Keyboard
-            onClick={handleKeyboardClick}
-            colorizedGuess={gameBoard[currentRow - 1]}
-            solution={solution}
-          /> */}
+          <Keyboard onClick={handleKeyboardClick} hints={hints} />
         </>
       ) : (
         <div className="menu">

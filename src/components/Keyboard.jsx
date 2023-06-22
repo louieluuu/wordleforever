@@ -2,27 +2,21 @@ import React from "react"
 
 import { IoBackspaceOutline } from "react-icons/io5"
 
-export default function Keyboard({ onClick, gameBoard, greenHints, yellowHints }) {
+export default function Keyboard({ onClick, hints }) {
   function getKeyboardKeyClassName(letter) {
     let keyboardKeyClassName = "keyboard__key"
 
-    if (letter in yellowHints) {
-      keyboardKeyClassName += "--wrong-position"
-    }
-    //
-    else if (greenHints.includes(letter)) {
+    // The order of these hints searches matters. Priotizing green.
+    if (hints.green.has(letter)) {
       keyboardKeyClassName += "--correct"
     }
     //
-    else {
-      gameBoard.some((row) =>
-        row.some((cell) => {
-          if (cell.letter === letter && cell.state === "wrong") {
-            keyboardKeyClassName += "--wrong"
-            return keyboardKeyClassName
-          }
-        })
-      )
+    else if (hints.yellow.has(letter)) {
+      keyboardKeyClassName += "--wrong-position"
+    }
+    //
+    else if (hints.gray.has(letter)) {
+      keyboardKeyClassName += "--wrong"
     }
 
     return keyboardKeyClassName

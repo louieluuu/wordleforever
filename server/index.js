@@ -90,11 +90,11 @@ io.on("connection", (socket) => {
 
   socket.on("startNewGame", (uuid) => {
     // Generate the word(s) required to play, then broadcast them to the room
-    const solution = getRandomSolution()
-    const firstGuess = getRandomFirstGuess(solution)
+    // const solution = getRandomSolution()
+    // const firstGuess = getRandomFirstGuess(solution)
 
-    // const solution = "DRIED".split("")
-    // const firstGuess = "TUTEE".split("")
+    const solution = "DRIED".split("")
+    const firstGuess = "TUTEE".split("")
 
     io.to(uuid).emit("wordsGenerated", uuid, solution, firstGuess)
 
@@ -105,7 +105,7 @@ io.on("connection", (socket) => {
 
   // Process the board to only display colors ("hiddenBoard")
   // Then show that hiddenBoard to the other user
-  socket.on("submitGuess", (uuid, newGameBoard) => {
+  socket.on("wrongGuess", (uuid, newGameBoard) => {
     const hiddenBoard = newGameBoard.map((row) => row.map((tile) => ({ ...tile, letter: "" })))
     socket.to(uuid).emit("showOtherBoard", hiddenBoard)
   })
