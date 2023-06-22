@@ -6,6 +6,7 @@ import { VALID_GUESSES } from "./data/validGuesses.js"
 // Components
 import Header from "./components/Header"
 import Keyboard from "./components/Keyboard"
+import GameBoard from "./components/GameBoard"
 
 // Socket
 import { socket } from "./socket"
@@ -118,30 +119,6 @@ function App() {
    * HELPER FUNCTIONS
    *
    */
-
-  function getGuessTileClassName(gameBoard, row, col) {
-    let guessTileClassName = "guess__tile"
-
-    if (!gameBoard[row][col].color) {
-      if (row === currentRow && col < currentTile && !isGameOver) {
-        guessTileClassName += "--active"
-      }
-    }
-    //
-    else if (gameBoard[row][col].color === "correct") {
-      guessTileClassName += "--correct"
-    }
-    //
-    else if (gameBoard[row][col].color === "wrong-position") {
-      guessTileClassName += "--wrong-position"
-    }
-    //
-    else if (gameBoard[row][col].color === "wrong") {
-      guessTileClassName += "--wrong"
-    }
-
-    return guessTileClassName
-  }
 
   // Checks if the userGuess adheres to the previous hints.
   function usesPreviousHints() {
@@ -408,27 +385,13 @@ function App() {
 
       {isInRoom ? (
         <>
-          <div className="game-board">
-            {gameBoard.map((row, rowIndex) => (
-              <div key={rowIndex} className="guess">
-                {rowIndex === currentRow
-                  ? userGuess.map((letter, index) => (
-                      <div
-                        key={index}
-                        className={getGuessTileClassName(gameBoard, rowIndex, index)}>
-                        {letter}
-                      </div>
-                    ))
-                  : row.map((tile, tileIndex) => (
-                      <div
-                        key={tileIndex}
-                        className={getGuessTileClassName(gameBoard, rowIndex, tileIndex)}>
-                        {tile.letter}
-                      </div>
-                    ))}
-              </div>
-            ))}
-          </div>
+          <GameBoard
+            gameBoard={gameBoard}
+            userGuess={userGuess}
+            currentRow={currentRow}
+            currentTile={currentTile}
+            isGameOver={isGameOver}
+          />
 
           {isGameOver && (
             <div className="menu">
@@ -438,19 +401,13 @@ function App() {
             </div>
           )}
 
-          <div className="game-board">
-            {otherBoard.map((row, rowIndex) => (
-              <div key={rowIndex} className="guess">
-                {row.map((tile, tileIndex) => (
-                  <div
-                    key={tileIndex}
-                    className={getGuessTileClassName(otherBoard, rowIndex, tileIndex)}>
-                    {tile.letter}
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
+          <GameBoard
+            gameBoard={otherBoard}
+            userGuess={userGuess}
+            currentRow={-1}
+            currentTile={currentTile}
+            isGameOver={isGameOver}
+          />
 
           <Keyboard onClick={handleKeyboardClick} hints={hints} />
         </>
