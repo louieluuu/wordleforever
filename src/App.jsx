@@ -16,32 +16,25 @@ import { socket } from "./socket"
 import Confetti from "react-confetti"
 
 function App() {
-  const [isConfettiRunning, setIsConfettiRunning] = useState(false)
-
   const [currentRow, setCurrentRow] = useState(0)
   const [currentTile, setCurrentTile] = useState(0)
-  const [isGameOver, setIsGameOver] = useState(false)
 
   // userGuess and solution are arrays instead of strings because arrays are
-  // easier to manipulate in most cases (ex. to find occurrence of a char).
+  // more useful in many cases, ex. to render via .map().
   const [userGuess, setUserGuess] = useState(["", "", "", "", ""])
   const [solution, setSolution] = useState([])
 
-  // gameBoard is not populated with strings. It's comprised of Objects with a Letter property,
-  // and, as required, a Color property.
-  // The colors cannot be determined all at once; the coloring algorithm takes three passes.
-  // Thus, the color information has to be stored in a buffer somewhere.
-  // That's why we use an Object: the color property will be stored in the Object on demand.
+  // Updates upon every submitted guess, not every key stroke. In this way, the gameBoard
+  // represents the "history" of the game.
   const [gameBoard, setGameBoard] = useState(
-    new Array(6).fill().map((_) => new Array(5).fill({ letter: "" }))
+    new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" }))
   )
 
-  // To be passed into the Keyboard. The logic for coloring Keyboard tiles
-  // is slightly different from the coloring of game tiles.
   const [hints, setHints] = useState({ green: new Set(), yellow: new Set(), gray: new Set() })
 
-  // For use in Challenge Mode
+  const [isGameOver, setIsGameOver] = useState(false)
   const [isChallengeMode, setIsChallengeMode] = useState(false)
+  const [isConfettiRunning, setIsConfettiRunning] = useState(false)
 
   // ! Socket states
   const [room, setRoom] = useState("")
@@ -53,6 +46,9 @@ function App() {
   // ! Socket useEffect
   // TODO: Passing in states to sockets seems to result in unreliable behaviour.
   useEffect(() => {
+    // ! Challenge Mode
+    setIsChallengeMode(true)
+
     socket.on("connect", () => {
       console.log("Connected to server")
     })
@@ -101,18 +97,6 @@ function App() {
       setOtherBoard(finalBoard)
     })
   }, [gameBoard, isGameOver, otherBoard]) // TODO: .....................
-
-  // Global keyboard event listener: dependencies in 2nd param
-  // TODO: Needed to remove the 2nd param "[]" for this to work ?
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown)
-    setIsChallengeMode(true)
-
-    // else
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown)
-    }
-  })
 
   /**
    *
@@ -206,21 +190,12 @@ function App() {
     const newGrayHints = new Set(hints.gray)
 
     colorizedGuess.forEach((object) => {
-      // TODO: Questionable if these extra conditions even need exist. Keyboard prioritizing
-      // TODO: green makes it irrelevant whether the hints are represented accurately or not.
-
-      // TODO: Also, investigate if this state can be just in Keyboard.
-      if (object.color === "wrong-position") {
-        if (!newGreenHints.has(object.letter)) {
-          newYellowHints.add(object.letter)
-        }
+      if (object.color === "correct") {
+        newGreenHints.add(object.letter)
       }
       //
-      else if (object.color === "correct") {
-        newGreenHints.add(object.letter)
-        if (newYellowHints.has(object.letter)) {
-          newYellowHints.delete(object.letter)
-        }
+      else if (object.color === "wrong-position") {
+        newYellowHints.add(object.letter)
       }
       //
       else if (object.color === "wrong") {
@@ -312,38 +287,6 @@ function App() {
     }
   }
 
-  function handleKeyDown(e) {
-    // TODO: Generalize these two handleKey functions using the comments below
-    // const variable = e.key
-    // handleKeyboardClick(e.key)
-
-    const isLetterRegex = /^[a-zA-Z]$/
-
-    if (isGameOver || !isInRoom) {
-      return
-    }
-
-    if (e.key === "Enter") {
-      handleEnter()
-    } else if (e.key === "Backspace") {
-      handleBackspace()
-    } else if (isLetterRegex.test(e.key) === true) {
-      handleLetter(e.key)
-    }
-  }
-
-  function handleKeyboardClick(clicked) {
-    if (!isGameOver) {
-      if (clicked === "Enter") {
-        handleEnter()
-      } else if (clicked === "Backspace") {
-        handleBackspace()
-      } else {
-        handleLetter(clicked)
-      }
-    }
-  }
-
   function handleNewGame() {
     setCurrentRow(0)
     setCurrentTile(0)
@@ -364,7 +307,7 @@ function App() {
         <Confetti numberOfPieces={150} initialVelocityY={-10} tweenDuration={3000} />
       )}
 
-      <Header isChallengeMode={isChallengeMode} setIsChallengeMode={setIsChallengeMode} />
+      <Header />
 
       {isInRoom ? (
         <>
@@ -392,7 +335,14 @@ function App() {
             isGameOver={isGameOver}
           />
 
-          <Keyboard onClick={handleKeyboardClick} hints={hints} />
+          <Keyboard
+            hints={hints}
+            isGameOver={isGameOver}
+            isInRoom={isInRoom}
+            handleLetter={handleLetter}
+            handleEnter={handleEnter}
+            handleBackspace={handleBackspace}
+          />
         </>
       ) : (
         <MenuModal />

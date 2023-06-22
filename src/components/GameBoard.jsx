@@ -4,7 +4,7 @@ function GameBoard({ gameBoard, userGuess, currentRow, currentTile, isGameOver }
   function getGuessTileClassName(gameBoard, row, col) {
     let guessTileClassName = "guess__tile"
 
-    if (!gameBoard[row][col].color) {
+    if (gameBoard[row][col].color === "none") {
       if (row === currentRow && col < currentTile && !isGameOver) {
         guessTileClassName += "--active"
       }
