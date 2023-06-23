@@ -34,6 +34,7 @@ function App() {
   const [hints, setHints] = useState({})
 
   const [isGameOver, setIsGameOver] = useState(false)
+  const [isOutOfGuesses, setIsOutOfGuesses] = useState(false)
   const [isChallengeMode, setIsChallengeMode] = useState(false)
   const [isConfettiRunning, setIsConfettiRunning] = useState(false)
 
@@ -49,6 +50,7 @@ function App() {
       setCurrentRow(0)
       setCurrentTile(0)
       setUserGuess(["", "", "", "", ""])
+      setIsOutOfGuesses(false)
       setIsGameOver(false)
       setGameBoard(new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })))
       setOtherBoards([])
@@ -280,7 +282,8 @@ function App() {
         // Run out of guesses: Game Over (loss)
         if (currentRow >= 5) {
           console.log(`game over, run out of guesses`)
-          setIsGameOver(true)
+          setIsOutOfGuesses(true)
+          socket.emit("outOfGuesses", room)
         }
       }
       // Game continues: note that these states will be changed regardless of whether
@@ -365,6 +368,7 @@ function App() {
 
           <Keyboard
             hints={hints}
+            isOutOfGuesses={isOutOfGuesses}
             isGameOver={isGameOver}
             isInGame={isInGame}
             handleLetter={handleLetter}

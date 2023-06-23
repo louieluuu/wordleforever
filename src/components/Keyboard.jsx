@@ -4,6 +4,7 @@ import { IoBackspaceOutline } from "react-icons/io5"
 
 export default function Keyboard({
   hints,
+  isOutOfGuesses,
   isGameOver,
   isInGame,
   handleLetter,
@@ -32,7 +33,7 @@ export default function Keyboard({
   function handleKeyboardInput(key) {
     const isLetterRegex = /^[a-zA-Z]$/
 
-    if (isGameOver || !isInGame) {
+    if (isOutOfGuesses || isGameOver || !isInGame) {
       return
     }
 

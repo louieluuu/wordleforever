@@ -16,8 +16,8 @@ function MenuModal() {
     const pastedId = e.clipboardData.getData("text/plain")
     socket.emit("joinRoom", pastedId)
 
-    socket.on("roomError", (roomId) => {
-      console.log(`Error: Room "${roomId}" doesn't exist.`)
+    socket.on("roomError", (reason) => {
+      console.log(`Error: ${reason}`)
     })
   }
 

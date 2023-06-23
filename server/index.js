@@ -20,6 +20,7 @@ const io = new Server(httpServer, {
 
 // Global variables
 const waitingRooms = new Set()
+const activeRooms = []
 
 // Random matchmaking (non-lobby)
 const queuedUsers = []
@@ -75,22 +76,44 @@ io.on("connection", (socket) => {
 
   // Join room
   socket.on("joinRoom", (uuid) => {
-    // First check if the submitted ID is actually a waiting room
-    if (!waitingRooms.has(uuid)) {
-      socket.emit("roomError", uuid)
+    // Check validity of room
+    if (activeRooms.some((object) => object.roomId === uuid)) {
+      const reason = "This room is already in progress."
+      socket.emit("roomError", reason)
       return
     }
+
+    if (!waitingRooms.has(uuid)) {
+      const reason = "This room does not exist."
+      socket.emit("roomError", reason)
+      return
+    }
+
     socket.join(uuid)
 
     const countClientsInRoom = io.sockets.adapter.rooms.get(uuid).size
     console.log(`countClientsInRoom: ${countClientsInRoom}`)
 
     if (countClientsInRoom === 2) {
+      // Each active room will keep track of the # of gameOvers in that room;
+      // necessary to deal with the case where all players run out of guesses.
+      const newRoom = {
+        roomId: uuid,
+        size: io.sockets.adapter.rooms.get(uuid).size,
+        countGameOvers: 0,
+      }
+
+      activeRooms.push(newRoom)
+
       socket.emit("matchMade", uuid)
     }
   })
 
   socket.on("startNewGame", (uuid) => {
+    // Reset room values.
+    const relevantRoom = activeRooms.find((object) => object.roomId === uuid)
+    relevantRoom.countGameOvers = 0
+
     // Generate the required number of Boards as determined by the room.
     // Note that for simplicity, just one array of boards (containing all sockets)
     // is broadcasted to all the clients. On the client-side, each client will
@@ -126,6 +149,14 @@ io.on("connection", (socket) => {
   // Game Over logic
   socket.on("correctGuess", (uuid) => {
     io.to(uuid).emit("gameOver", uuid)
+  })
+
+  socket.on("outOfGuesses", (roomId) => {
+    const relevantRoom = activeRooms.find((object) => object.roomId === roomId)
+    relevantRoom.countGameOvers += 1
+    if (relevantRoom.countGameOvers === relevantRoom.size) {
+      io.to(roomId).emit("gameOver", roomId)
+    }
   })
 
   socket.on("revealGameBoard", (uuid, gameBoard) => {
