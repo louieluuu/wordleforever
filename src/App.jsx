@@ -8,6 +8,7 @@ import Header from "./components/Header"
 import Keyboard from "./components/Keyboard"
 import GameBoard from "./components/GameBoard"
 import MenuModal from "./components/MenuModal"
+import CountdownTimer from "./components/CountdownTimer"
 
 // Socket
 import { socket } from "./socket"
@@ -38,7 +39,7 @@ function App() {
 
   // ! Socket states
   const [room, setRoom] = useState("")
-  const [isInRoom, setIsInRoom] = useState(false)
+  const [isInGame, setIsInGame] = useState(false)
   const [otherBoard, setOtherBoard] = useState(
     new Array(6).fill().map((_) => new Array(5).fill({ letter: "" }))
   )
@@ -58,7 +59,7 @@ function App() {
     })
 
     socket.on("wordsGenerated", (room, solution, firstGuess) => {
-      setIsInRoom(true)
+      setIsInGame(true)
       setIsGameOver(false)
       setRoom(room)
       setSolution(solution)
@@ -309,8 +310,10 @@ function App() {
 
       <Header />
 
-      {isInRoom ? (
+      {isInGame ? (
         <>
+          <CountdownTimer isInGame={isInGame} />
+
           <GameBoard
             gameBoard={gameBoard}
             userGuess={userGuess}
@@ -338,7 +341,7 @@ function App() {
           <Keyboard
             hints={hints}
             isGameOver={isGameOver}
-            isInRoom={isInRoom}
+            isInGame={isInGame}
             handleLetter={handleLetter}
             handleEnter={handleEnter}
             handleBackspace={handleBackspace}

@@ -22,6 +22,11 @@ body {
   cursor: default;
 }
 
+a {
+  color: hsl(197, 100%, 40%);
+  text-decoration: none;
+}
+
 // Header
 .header {
   display: flex;
@@ -78,9 +83,16 @@ body {
   padding: 1.5rem;
   max-width: 27.5rem;
 
+  &__right {
+    display: flex;
+    justify-content: flex-end;
+  }
+
   &__btn--close {
     width: 1.4rem;
     height: 1.4rem;
+
+    cursor: pointer;
   }
 }
 
