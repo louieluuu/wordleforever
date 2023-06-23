@@ -58,7 +58,7 @@ io.on("connection", (socket) => {
   // Print info when connections are made (io.engine contains metadata)
   console.log(`User connected: ${socket.id}`)
   const count = io.engine.clientsCount
-  console.log(`Current # total users: ${count}`)
+  console.log(`Current # total users on site: ${count}`)
 
   // Create room
   socket.on("createRoom", () => {
@@ -69,7 +69,7 @@ io.on("connection", (socket) => {
     }
 
     socket.join(newUuid)
-    socket.emit("returnUuid", newUuid)
+    socket.emit("roomCreated", newUuid)
     waitingRooms.add(newUuid)
   })
 
@@ -83,28 +83,44 @@ io.on("connection", (socket) => {
     socket.join(uuid)
 
     const countClientsInRoom = io.sockets.adapter.rooms.get(uuid).size
+    console.log(`countClientsInRoom: ${countClientsInRoom}`)
+
     if (countClientsInRoom === 2) {
-      socket.to(uuid).emit("matchMade", uuid)
+      socket.emit("matchMade", uuid)
     }
   })
 
   socket.on("startNewGame", (uuid) => {
-    // Generate the word(s) required to play, then broadcast them to the room
+    // Generate the required number of Boards as determined by the room.
+    // Note that for simplicity, just one array of boards (containing all sockets)
+    // is broadcasted to all the clients. On the client-side, each client will
+    // filter out their own socket, resulting in their respective "otherBoards".
+    const socketsInRoom = io.sockets.adapter.rooms.get(uuid)
+
+    const allGameBoards = []
+    socketsInRoom.forEach((socketId) => {
+      allGameBoards.push({
+        socketId: socketId,
+        gameBoard: new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })),
+      })
+    })
+
+    // Generate the word(s) required to play, then broadcast them to the room.
     const solution = getRandomSolution()
     const firstGuess = getRandomFirstGuess(solution)
 
-    io.to(uuid).emit("wordsGenerated", uuid, solution, firstGuess)
+    io.to(uuid).emit("gameStarted", uuid, allGameBoards, solution, firstGuess)
 
     // TODO: I think we need to track waitingRooms as well as activeRooms.
     // TODO: activeRooms will track games that are in progress so there's no overlap.
     waitingRooms.delete(uuid)
   })
 
-  // Process the board to only display colors ("hiddenBoard")
+  // Process the board to only display colors
   // Then show that hiddenBoard to the other user
-  socket.on("wrongGuess", (uuid, newGameBoard) => {
-    const hiddenBoard = newGameBoard.map((row) => row.map((tile) => ({ ...tile, letter: "" })))
-    socket.to(uuid).emit("showOtherBoard", hiddenBoard)
+  socket.on("wrongGuess", (socketId, uuid, newGameBoard) => {
+    const noLettersBoard = newGameBoard.map((row) => row.map((tile) => ({ ...tile, letter: "" })))
+    socket.to(uuid).emit("otherBoardUpdated", socketId, noLettersBoard)
   })
 
   // Game Over logic
@@ -113,7 +129,7 @@ io.on("connection", (socket) => {
   })
 
   socket.on("revealGameBoard", (uuid, gameBoard) => {
-    socket.to(uuid).emit("showFinalBoard", gameBoard)
+    socket.to(uuid).emit("gameBoardBroadcasted", socket.id, gameBoard)
   })
 })
 

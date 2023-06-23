@@ -31,7 +31,7 @@ function App() {
     new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" }))
   )
 
-  const [hints, setHints] = useState({ green: new Set(), yellow: new Set(), gray: new Set() })
+  const [hints, setHints] = useState({})
 
   const [isGameOver, setIsGameOver] = useState(false)
   const [isChallengeMode, setIsChallengeMode] = useState(false)
@@ -40,44 +40,51 @@ function App() {
   // ! Socket states
   const [room, setRoom] = useState("")
   const [isInGame, setIsInGame] = useState(false)
-  const [otherBoard, setOtherBoard] = useState(
-    new Array(6).fill().map((_) => new Array(5).fill({ letter: "" }))
-  )
+  const [otherBoards, setOtherBoards] = useState([])
 
   // ! Socket useEffect
   // TODO: Passing in states to sockets seems to result in unreliable behaviour.
   useEffect(() => {
-    // ! Challenge Mode
-    setIsChallengeMode(true)
+    function resetStates() {
+      setCurrentRow(0)
+      setCurrentTile(0)
+      setUserGuess(["", "", "", "", ""])
+      setIsGameOver(false)
+      setGameBoard(new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })))
+      setOtherBoards([])
+      setIsInGame(true)
+      setIsConfettiRunning(false)
+      setHints({ green: new Set(), yellow: new Set(), gray: new Set() })
+    }
 
     socket.on("connect", () => {
       console.log("Connected to server")
     })
 
-    socket.on("matchMade", (room) => {
-      socket.emit("startNewGame", room)
+    socket.on("matchMade", (roomId) => {
+      socket.emit("startNewGame", roomId)
     })
 
-    socket.on("wordsGenerated", (room, solution, firstGuess) => {
-      setIsInGame(true)
-      setIsGameOver(false)
-      setRoom(room)
+    socket.on("gameStarted", (roomId, allGameBoards, solution, firstGuess) => {
+      resetStates()
+
+      setRoom(roomId)
       setSolution(solution)
-      setIsConfettiRunning(false)
-      setHints({ green: new Set(), yellow: new Set(), gray: new Set() })
-      const newGameBoard = [...gameBoard]
-      // TODO: this colorize stuff should belong in the handleEnter instead of being specific
-      // TODO: to the challengeMode case...
-      const colorizedGuess = colorizeGuess(firstGuess, solution)
-      newGameBoard[0] = colorizedGuess
-      updateHints(colorizedGuess)
-      setGameBoard(newGameBoard)
-      setCurrentRow(1)
-      socket.emit("wrongGuess", room, newGameBoard)
-    })
 
-    socket.on("showOtherBoard", (otherBoard) => {
-      setOtherBoard(otherBoard)
+      // Filter out the socket's own gameBoard.
+      const otherBoards = allGameBoards.filter((object) => object.socketId !== socket.id)
+      setOtherBoards(otherBoards)
+
+      // ! Challenge Mode specific
+      // const newGameBoard = [...gameBoard]
+      // // TODO: this colorize stuff should belong in the handleEnter instead of being specific
+      // // TODO: to the challengeMode case...
+      // const colorizedGuess = colorizeGuess(firstGuess, solution)
+      // newGameBoard[0] = colorizedGuess
+      // updateHints(colorizedGuess)
+      // setGameBoard(newGameBoard)
+      // setCurrentRow(1)
+      // socket.emit("wrongGuess", socket.id, roomId, newGameBoard)
     })
 
     // TODO: more cleanup
@@ -85,6 +92,21 @@ function App() {
       socket.off("connect")
     }
   }, [])
+
+  // TODO: Tested, has to belong in its own realm. :)
+  useEffect(() => {
+    socket.on("otherBoardUpdated", (socketId, otherBoard) => {
+      const newOtherBoards = [...otherBoards]
+
+      newOtherBoards.forEach((object) => {
+        if (object.socketId === socketId) {
+          object.gameBoard = otherBoard
+        }
+      })
+
+      setOtherBoards(newOtherBoards)
+    })
+  }, [otherBoards])
 
   // TODO: Trying to move this to its own effect cause it depends on isGameOver
   // TODO: in other words not all the socket logic can belong under one umbrella
@@ -94,10 +116,17 @@ function App() {
       socket.emit("revealGameBoard", room, gameBoard)
     })
 
-    socket.on("showFinalBoard", (finalBoard) => {
-      setOtherBoard(finalBoard)
+    socket.on("gameBoardBroadcasted", (socketId, finalBoard) => {
+      const newOtherBoards = [...otherBoards]
+
+      newOtherBoards.forEach((object) => {
+        if (object.socketId === socketId) {
+          object.gameBoard = finalBoard
+        }
+      })
+      setOtherBoards(newOtherBoards)
     })
-  }, [gameBoard, isGameOver, otherBoard]) // TODO: .....................
+  }, [gameBoard, isGameOver, otherBoards]) // TODO: .....................
 
   /**
    *
@@ -247,7 +276,7 @@ function App() {
       // Wrong guess
       else {
         // ! Socket
-        socket.emit("wrongGuess", room, newGameBoard)
+        socket.emit("wrongGuess", socket.id, room, newGameBoard)
         // Run out of guesses: Game Over (loss)
         if (currentRow >= 5) {
           console.log(`game over, run out of guesses`)
@@ -289,12 +318,6 @@ function App() {
   }
 
   function handleNewGame() {
-    setCurrentRow(0)
-    setCurrentTile(0)
-    setIsGameOver(false)
-    setUserGuess(["", "", "", "", ""])
-    setGameBoard(new Array(6).fill().map((_) => new Array(5).fill({ letter: "" })))
-    setOtherBoard(new Array(6).fill().map((_) => new Array(5).fill({ letter: "" })))
     socket.emit("startNewGame", room)
   }
 
@@ -330,13 +353,15 @@ function App() {
             </div>
           )}
 
-          <GameBoard
-            gameBoard={otherBoard}
-            userGuess={userGuess}
-            currentRow={-1}
-            currentTile={currentTile}
-            isGameOver={isGameOver}
-          />
+          {otherBoards.map((object) => (
+            <GameBoard
+              gameBoard={object.gameBoard}
+              userGuess={userGuess}
+              currentRow={-1}
+              currentTile={currentTile}
+              isGameOver={isGameOver}
+            />
+          ))}
 
           <Keyboard
             hints={hints}

@@ -6,18 +6,18 @@ function MenuModal() {
 
   function createRoom() {
     socket.emit("createRoom")
-    socket.on("returnUuid", (room) => {
-      console.log(`copy & paste this code to your friend: ${room}`)
+    socket.on("roomCreated", (roomId) => {
+      console.log(`copy & paste this code to your friend: ${roomId}`)
     })
   }
 
   function joinRoom(e) {
     e.preventDefault()
-    const pastedValue = e.clipboardData.getData("text/plain")
-    socket.emit("joinRoom", pastedValue)
+    const pastedId = e.clipboardData.getData("text/plain")
+    socket.emit("joinRoom", pastedId)
 
-    socket.on("roomError", (room) => {
-      console.log(`Error: Room "${room}" doesn't exist.`)
+    socket.on("roomError", (roomId) => {
+      console.log(`Error: Room "${roomId}" doesn't exist.`)
     })
   }
 
