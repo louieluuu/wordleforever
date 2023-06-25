@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { socket } from "../socket"
 
-function MenuModal() {
+function MenuModal({ setIsInGame }) {
   const [showForm, setShowForm] = useState(false)
 
   function createRoom() {
@@ -15,21 +15,13 @@ function MenuModal() {
 
   return (
     <div className="menu">
-      <button className="menu__btn" onClick={createRoom}>
-        Create
+      <h1 className="menu__title">Welcome, Wordler!</h1>
+      <button className="menu__btn--online" onClick={createRoom}>
+        PLAY ONLINE
       </button>
-      <button className="menu__btn" onClick={() => setShowForm((prev) => !prev)}>
-        Join
+      <button className="menu__btn--offline" onClick={() => setIsInGame(true)}>
+        OFFLINE
       </button>
-
-      {showForm && (
-        <form onPaste={joinRoom}>
-          <label>
-            Enter your code here: {""}
-            <input autoFocus type="text" />
-          </label>
-        </form>
-      )}
     </div>
   )
 }

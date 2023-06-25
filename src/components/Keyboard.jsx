@@ -7,6 +7,7 @@ export default function Keyboard({
   isOutOfGuesses,
   isGameOver,
   isInGame,
+  isCountdownOver,
   handleLetter,
   handleEnter,
   handleBackspace,
@@ -33,7 +34,20 @@ export default function Keyboard({
   function handleKeyboardInput(key) {
     const isLetterRegex = /^[a-zA-Z]$/
 
-    if (isOutOfGuesses || isGameOver || !isInGame) {
+    // Below logic might be a little confusing, but it's all done so
+    // a user can start a new game by pressing Enter instead of using the mouse,
+    // while also disabling their Enter key if it's not for that specific purpose.
+    if (!isInGame || !isCountdownOver) {
+      return
+    }
+
+    if (isOutOfGuesses) {
+      if (isGameOver && key !== "Enter") {
+        return
+      }
+    }
+
+    if (isGameOver && key !== "Enter") {
       return
     }
 

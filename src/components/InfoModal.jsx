@@ -54,7 +54,7 @@ function InfoModal({ setIsDialogOpen }) {
         <hr />
 
         <p style={{ ...textContent, paddingBottom: 0 }}>
-          Wartortle is a recreation of{" "}
+          Wordle For All is a recreation of{" "}
           <a href="https://www.nytimes.com/games/wordle/index.html" target="_blank">
             Wordle
           </a>{" "}

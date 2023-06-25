@@ -3,8 +3,6 @@
 import { useState, useEffect } from "react"
 import { VALID_GUESSES } from "./data/validGuesses.js"
 
-import axios from "axios"
-
 // Components
 import Header from "./components/Header"
 import Keyboard from "./components/Keyboard"
@@ -33,9 +31,10 @@ function App() {
     new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" }))
   )
 
-  const [hints, setHints] = useState({})
+  const [hints, setHints] = useState({ green: new Set(), yellow: new Set(), gray: new Set() })
 
   const [isGameOver, setIsGameOver] = useState(false)
+  const [isCountdownOver, setIsCountdownOver] = useState(false)
   const [isOutOfGuesses, setIsOutOfGuesses] = useState(false)
   const [isChallengeMode, setIsChallengeMode] = useState(false)
   const [isConfettiRunning, setIsConfettiRunning] = useState(false)
@@ -56,6 +55,7 @@ function App() {
       setUserGuess(["", "", "", "", ""])
       setIsOutOfGuesses(false)
       setIsGameOver(false)
+      setIsCountdownOver(false)
       setGameBoard(new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })))
       setOtherBoards([])
       setIsInGame(true)
@@ -67,8 +67,8 @@ function App() {
       console.log("Connected to server")
 
       // If the socket connects to a pasted link from a friend, parse and join the room.
-      const params = new URLSearchParams(document.location.search)
-      const roomId = params.get("room")
+      const queryParams = new URLSearchParams(document.location.search)
+      const roomId = queryParams.get("room")
 
       if (roomId === null) {
         return
@@ -257,6 +257,11 @@ function App() {
   }
 
   function handleEnter() {
+    // Allows user to start a new game by pressing Enter instead of clicking.
+    if (isGameOver) {
+      handleNewGame()
+    }
+
     // Guess is too short
     if (currentTile < 5) {
       console.log(`currentRow: ${currentRow}`)
@@ -346,51 +351,57 @@ function App() {
       {isConfettiRunning && (
         <Confetti numberOfPieces={150} initialVelocityY={-10} tweenDuration={3000} />
       )}
-
-      <Header />
+      <Header setIsInGame={setIsInGame} />
 
       {isInGame ? (
         <>
-          <CountdownTimer isInGame={isInGame} />
+          <div className="game-container">
+            {!isCountdownOver && (
+              <CountdownTimer
+                isCountdownOver={isCountdownOver}
+                setIsCountdownOver={setIsCountdownOver}
+              />
+            )}
 
-          <GameBoard
-            gameBoard={gameBoard}
-            userGuess={userGuess}
-            currentRow={currentRow}
-            currentTile={currentTile}
-            isGameOver={isGameOver}
-          />
-
-          {isGameOver && (
-            <div className="menu">
-              <button className="menu__btn" onClick={handleNewGame}>
-                New Game
-              </button>
+            <button
+              className={isGameOver ? "btn--new-game" : "btn--new-game--hidden"}
+              onClick={handleNewGame}>
+              NEW GAME
+            </button>
+            <div className="boards-container">
+              <GameBoard
+                gameBoard={gameBoard}
+                userGuess={userGuess}
+                currentRow={currentRow}
+                currentTile={currentTile}
+                isGameOver={isGameOver}
+              />
+              {otherBoards.map((object) => (
+                <GameBoard
+                  key={object.socketId}
+                  gameBoard={object.gameBoard}
+                  userGuess={userGuess}
+                  currentRow={-1}
+                  currentTile={currentTile}
+                  isGameOver={isGameOver}
+                />
+              ))}
             </div>
-          )}
-
-          {otherBoards.map((object) => (
-            <GameBoard
-              gameBoard={object.gameBoard}
-              userGuess={userGuess}
-              currentRow={-1}
-              currentTile={currentTile}
-              isGameOver={isGameOver}
-            />
-          ))}
+          </div>
 
           <Keyboard
             hints={hints}
             isOutOfGuesses={isOutOfGuesses}
             isGameOver={isGameOver}
             isInGame={isInGame}
+            isCountdownOver={isCountdownOver}
             handleLetter={handleLetter}
             handleEnter={handleEnter}
             handleBackspace={handleBackspace}
           />
         </>
       ) : (
-        <MenuModal />
+        <MenuModal setIsInGame={setIsInGame} />
       )}
     </>
   )

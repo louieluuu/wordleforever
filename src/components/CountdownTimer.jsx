@@ -1,41 +1,30 @@
 import React, { useEffect, useState } from "react"
 
-function CountdownTimer({ isInGame }) {
-  const [isOpen, setIsOpen] = useState(true)
-  const [countdown, setCountdown] = useState(3)
+function CountdownTimer({ isCountdownOver, setIsCountdownOver }) {
+  const [seconds, setSeconds] = useState(3)
 
   useEffect(() => {
-    // Start the countdown when the dialog is open
-    if (isInGame) {
-      const timer = setInterval(() => {
-        setCountdown((prevCountdown) => prevCountdown - 1)
-      }, 1000)
+    const timer = setInterval(() => {
+      setSeconds((prev) => prev - 1)
+    }, 1000)
 
-      // Stop the countdown when it reaches 0
-      if (countdown === -1) {
-        clearInterval(timer)
-        closeDialog()
-      }
-
-      // Clean up the timer when the component unmounts or the dialog is closed
-      return () => {
-        clearInterval(timer)
-      }
+    // Stop the countdown when it reaches 0
+    if (seconds === -1) {
+      clearInterval(timer)
+      setIsCountdownOver(true)
+      setSeconds(3)
     }
-  }, [isOpen, countdown])
 
-  const openDialog = () => {
-    setIsOpen(true)
-  }
-
-  const closeDialog = () => {
-    setIsOpen(false)
-  }
+    // Clean up the timer when the component unmounts or the dialog is closed
+    return () => {
+      clearInterval(timer)
+    }
+  }, [seconds])
 
   return (
     <div>
-      <dialog open={isOpen} onClose={closeDialog}>
-        <p>The game will start in... {countdown}</p>
+      <dialog className="countdown-timer" open={!isCountdownOver}>
+        <p>The game will start in... {seconds}</p>
       </dialog>
     </div>
   )
