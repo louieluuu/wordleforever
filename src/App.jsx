@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react"
 import { VALID_GUESSES } from "./data/validGuesses.js"
 
+import axios from "axios"
+
 // Components
 import Header from "./components/Header"
 import Keyboard from "./components/Keyboard"
@@ -44,7 +46,9 @@ function App() {
   const [otherBoards, setOtherBoards] = useState([])
 
   // ! Socket useEffect
-  // TODO: Passing in states to sockets seems to result in unreliable behaviour.
+  // TODO: Passing in states to sockets ** THAT ARE UNDER A useEffect
+  // TODO: HOOK WITHOUT SPECIFIED DEPENDENCIES ** seems to result in unreliable behaviour.
+
   useEffect(() => {
     function resetStates() {
       setCurrentRow(0)
@@ -61,6 +65,19 @@ function App() {
 
     socket.on("connect", () => {
       console.log("Connected to server")
+
+      // If the socket connects to a pasted link from a friend, parse and join the room.
+      const params = new URLSearchParams(document.location.search)
+      const roomId = params.get("room")
+
+      if (roomId === null) {
+        return
+      }
+      socket.emit("joinRoom", roomId)
+
+      socket.on("roomError", (reason) => {
+        console.log(`Error: ${reason}`)
+      })
     })
 
     socket.on("matchMade", (roomId) => {
@@ -138,8 +155,6 @@ function App() {
 
   // Checks if the userGuess adheres to the previous hints.
   function usesPreviousHints() {
-    console.log("usesPreviousHints:")
-    console.log(gameBoard)
     // No previous hints
     if (currentRow === 0) {
       return "yes"
@@ -147,8 +162,6 @@ function App() {
 
     const copyPreviousGuess = [...gameBoard[currentRow - 1]]
     const colorizedGuess = colorizeGuess(userGuess, solution)
-    console.log("colorizedGuess:")
-    console.log(colorizedGuess)
 
     for (let i = 0; i < copyPreviousGuess.length; ++i) {
       if (copyPreviousGuess[i].color === "correct") {

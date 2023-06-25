@@ -5,19 +5,11 @@ function MenuModal() {
   const [showForm, setShowForm] = useState(false)
 
   function createRoom() {
+    const baseUrl = "http://localhost:5173/"
+
     socket.emit("createRoom")
     socket.on("roomCreated", (roomId) => {
-      console.log(`copy & paste this code to your friend: ${roomId}`)
-    })
-  }
-
-  function joinRoom(e) {
-    e.preventDefault()
-    const pastedId = e.clipboardData.getData("text/plain")
-    socket.emit("joinRoom", pastedId)
-
-    socket.on("roomError", (reason) => {
-      console.log(`Error: ${reason}`)
+      console.log(`Copy this link to your friend: ${baseUrl}?room=${roomId}`)
     })
   }
 

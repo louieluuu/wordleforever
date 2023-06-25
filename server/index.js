@@ -1,3 +1,6 @@
+// TODO: managing of rooms when people don't explicitly disconnect (ex. close tab)
+// TODO:
+
 const WORD_LIST = require("./data/wordList")
 const VALID_GUESSES = require("./data/validGuesses")
 
@@ -105,6 +108,7 @@ io.on("connection", (socket) => {
 
       activeRooms.push(newRoom)
 
+      waitingRooms.delete(uuid)
       socket.emit("matchMade", uuid)
     }
   })
@@ -133,10 +137,6 @@ io.on("connection", (socket) => {
     const firstGuess = getRandomFirstGuess(solution)
 
     io.to(uuid).emit("gameStarted", uuid, allGameBoards, solution, firstGuess)
-
-    // TODO: I think we need to track waitingRooms as well as activeRooms.
-    // TODO: activeRooms will track games that are in progress so there's no overlap.
-    waitingRooms.delete(uuid)
   })
 
   // Process the board to only display colors
