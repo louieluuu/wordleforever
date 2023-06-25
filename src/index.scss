@@ -230,6 +230,11 @@ a {
   gap: 0.35rem;
 
   padding: 1rem;
+
+  &--game-over {
+    @extend .game-board;
+    opacity: 50%;
+  }
 }
 
 .guess {

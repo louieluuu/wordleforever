@@ -4,6 +4,11 @@ function CountdownTimer({ isCountdownOver, setIsCountdownOver }) {
   const [seconds, setSeconds] = useState(3)
 
   useEffect(() => {
+    function resetStates() {
+      setIsCountdownOver(true)
+      setSeconds(3)
+    }
+
     const timer = setInterval(() => {
       setSeconds((prev) => prev - 1)
     }, 1000)
@@ -11,8 +16,7 @@ function CountdownTimer({ isCountdownOver, setIsCountdownOver }) {
     // Stop the countdown when it reaches 0
     if (seconds === -1) {
       clearInterval(timer)
-      setIsCountdownOver(true)
-      setSeconds(3)
+      resetStates()
     }
 
     // Clean up the timer when the component unmounts or the dialog is closed

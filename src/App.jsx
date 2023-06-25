@@ -375,6 +375,7 @@ function App() {
                 currentRow={currentRow}
                 currentTile={currentTile}
                 isGameOver={isGameOver}
+                isOutOfGuesses={isOutOfGuesses}
               />
               {otherBoards.map((object) => (
                 <GameBoard

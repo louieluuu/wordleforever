@@ -1,6 +1,6 @@
 import React from "react"
 
-function GameBoard({ gameBoard, userGuess, currentRow, currentTile, isGameOver }) {
+function GameBoard({ gameBoard, userGuess, currentRow, currentTile, isGameOver, isOutOfGuesses }) {
   function getGuessTileClassName(gameBoard, row, col) {
     let guessTileClassName = "guess__tile"
 
@@ -26,7 +26,7 @@ function GameBoard({ gameBoard, userGuess, currentRow, currentTile, isGameOver }
   }
 
   return (
-    <div className="game-board">
+    <div className={`game-board${isOutOfGuesses ? "--game-over" : ""}`}>
       {gameBoard.map((row, rowIndex) => (
         <div key={rowIndex} className="guess">
           {rowIndex === currentRow

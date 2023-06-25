@@ -41,10 +41,9 @@ export default function Keyboard({
       return
     }
 
-    if (isOutOfGuesses) {
-      if (isGameOver && key !== "Enter") {
-        return
-      }
+    // Allow someone who's run out of guesses to restart the game by pressing Enter.
+    if (isOutOfGuesses && !isGameOver) {
+      return
     }
 
     if (isGameOver && key !== "Enter") {
