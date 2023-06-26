@@ -207,6 +207,30 @@ a {
   }
 }
 
+.alert {
+  position: fixed;
+  top: 26.8vh; // slots right in between the guesses
+  z-index: 1;
+
+  padding-inline: 1rem;
+  padding-block: 0.6rem;
+  background-color: hsl(0, 0%, 10%, 95%);
+
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  opacity: 1;
+}
+
+// TODO: can't get it to fade...
+.alert--hidden {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 1s ease-out;
+}
+
 .game-container {
   display: flex;
   flex-direction: column;

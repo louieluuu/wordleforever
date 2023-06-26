@@ -157,6 +157,9 @@ io.on("connection", (socket) => {
     if (relevantRoom.countGameOvers === relevantRoom.size) {
       io.to(roomId).emit("gameOver", roomId)
     }
+    else {
+      io.to(roomId)
+    }
   })
 
   socket.on("revealGameBoard", (uuid, gameBoard) => {

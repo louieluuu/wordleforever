@@ -19,6 +19,7 @@ import { socket } from "./socket"
 
 // Confetti
 import Confetti from "react-confetti"
+import InvalidInputAlert from "./components/InvalidInputAlert"
 
 function App() {
   const [currentRow, setCurrentRow] = useState(0)
@@ -45,6 +46,10 @@ function App() {
   const [isWinMessageOn, setIsWinMessageOn] = useState(false)
   const [isConfettiRunning, setIsConfettiRunning] = useState(false)
   const [numberOfPieces, setNumberOfPieces] = useState(0)
+
+  const [isWordListAlertOn, setIsWordListAlertOn] = useState(false)
+  const [isLengthAlertOn, setIsLengthAlertOn] = useState(false)
+  const [isPrevHintsAlertOn, setIsPrevHintsAlertOn] = useState(false)
 
   // ! Socket states
   const [room, setRoom] = useState("")
@@ -289,16 +294,15 @@ function App() {
 
     // Guess is too short
     if (currentTile < 5) {
-      console.log(`currentRow: ${currentRow}`)
-      console.log(`Not enough letters in: ${userGuess}`)
+      setIsLengthAlertOn(true)
     }
     // Guess is invalid (i.e. doesn't appear in dictionary)
     else if (!VALID_GUESSES.includes(userGuess.join("").toLowerCase())) {
-      console.log(`Guess not in dictionary: ${userGuess}`)
+      setIsWordListAlertOn(true)
     }
     // ! Challenge Mode: guess doesn't adhere to previous hints
     else if (isChallengeMode && usesPreviousHints() !== "yes") {
-      console.log(`Not adherent to: ${usesPreviousHints()}`)
+      setIsPrevHintsAlertOn(true)
     }
     // Guess is valid: submit guess
     else {
@@ -325,7 +329,6 @@ function App() {
         socket.emit("wrongGuess", socket.id, room, newGameBoard)
         // Run out of guesses: Game Over (loss)
         if (currentRow >= 5) {
-          console.log(`game over, run out of guesses`)
           setIsOutOfGuesses(true)
           socket.emit("outOfGuesses", room)
         }
@@ -395,6 +398,23 @@ function App() {
               NEW GAME
               <AiOutlineEnter />
             </button>
+
+            <InvalidInputAlert
+              message={"Not in dictionary!"}
+              isVisible={isWordListAlertOn}
+              setIsVisible={setIsWordListAlertOn}
+            />
+            <InvalidInputAlert
+              message={"Not enough letters!"}
+              isVisible={isLengthAlertOn}
+              setIsVisible={setIsLengthAlertOn}
+            />
+            <InvalidInputAlert
+              message={"Must use previous hints!"}
+              isVisible={isPrevHintsAlertOn}
+              setIsVisible={setIsPrevHintsAlertOn}
+            />
+
             <div className="boards-container">
               <GameBoard
                 gameBoard={gameBoard}
