@@ -1,4 +1,4 @@
-export const VALID_GUESSES = [
+const VALID_GUESSES = [
   "aahed",
   "aalii",
   "aargh",
@@ -12972,3 +12972,5 @@ export const VALID_GUESSES = [
   "rural",
   "shave",
 ]
+
+module.exports = VALID_GUESSES
