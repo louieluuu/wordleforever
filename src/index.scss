@@ -127,6 +127,10 @@ a {
   }
 
   &__btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+
     width: 15rem;
     height: 5rem;
     font-weight: 300;

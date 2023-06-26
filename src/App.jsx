@@ -10,6 +10,9 @@ import GameBoard from "./components/GameBoard"
 import MenuModal from "./components/MenuModal"
 import CountdownTimer from "./components/CountdownTimer"
 
+// React-icons
+import { AiOutlineEnter } from "react-icons/ai"
+
 // Socket
 import { socket } from "./socket"
 
@@ -367,6 +370,7 @@ function App() {
               className={isGameOver ? "btn--new-game" : "btn--new-game--hidden"}
               onClick={handleNewGame}>
               NEW GAME
+              <AiOutlineEnter style={{ strokeWidth: "10px" }} />
             </button>
             <div className="boards-container">
               <GameBoard
