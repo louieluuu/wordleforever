@@ -293,7 +293,7 @@ function App() {
     }
 
     // Guess is too short
-    if (currentTile < 5) {
+    else if (currentTile < 5) {
       setIsLengthAlertOn(true)
     }
     // Guess is invalid (i.e. doesn't appear in dictionary)
