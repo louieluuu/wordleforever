@@ -1,7 +1,8 @@
 // TODO: package.json: changed from "module" to "type" = "commonjs" to support wordlist
 
 import { useState, useEffect } from "react"
-import { VALID_GUESSES } from "./data/validGuesses.js"
+import { VALID_GUESSES } from "./data/validGuesses"
+import { WIN_MESSAGES } from "./data/winMessages"
 
 // Components
 import Header from "./components/Header"
@@ -40,7 +41,10 @@ function App() {
   const [isCountdownOver, setIsCountdownOver] = useState(false)
   const [isOutOfGuesses, setIsOutOfGuesses] = useState(false)
   const [isChallengeMode, setIsChallengeMode] = useState(false)
+  const [winMessage, setWinMessage] = useState("")
+  const [isWinMessageOn, setIsWinMessageOn] = useState(false)
   const [isConfettiRunning, setIsConfettiRunning] = useState(false)
+  const [numberOfPieces, setNumberOfPieces] = useState(0)
 
   // ! Socket states
   const [room, setRoom] = useState("")
@@ -149,6 +153,18 @@ function App() {
       setOtherBoards(newOtherBoards)
     })
   }, [gameBoard, isGameOver, otherBoards]) // TODO: .....................
+
+  useEffect(() => {
+    setNumberOfPieces(150)
+
+    const confettiTimer = setTimeout(() => {
+      setNumberOfPieces(0)
+    }, 5000)
+
+    return () => {
+      clearTimeout(confettiTimer)
+    }
+  }, [isConfettiRunning])
 
   /**
    *
@@ -259,6 +275,12 @@ function App() {
     setHints(newHints)
   }
 
+  function showWinAnimations() {
+    const randomMessage = WIN_MESSAGES[Math.floor(Math.random() * WIN_MESSAGES.length)]
+    setWinMessage(randomMessage)
+    setIsWinMessageOn(true)
+  }
+
   function handleEnter() {
     // Allows user to start a new game by pressing Enter instead of clicking.
     if (isGameOver) {
@@ -293,6 +315,7 @@ function App() {
       // Direct array comparison won't work with ===, so we must compare their string forms.
       if (userGuess.join("") === solution.join("")) {
         socket.emit("correctGuess", room)
+        showWinAnimations()
         setIsConfettiRunning(true)
         setIsGameOver(true)
       }
@@ -352,7 +375,7 @@ function App() {
   return (
     <>
       {isConfettiRunning && (
-        <Confetti numberOfPieces={150} initialVelocityY={-10} tweenDuration={3000} />
+        <Confetti numberOfPieces={numberOfPieces} initialVelocityY={-10} tweenDuration={3000} />
       )}
       <Header setIsInGame={setIsInGame} />
 
@@ -370,7 +393,7 @@ function App() {
               className={isGameOver ? "btn--new-game" : "btn--new-game--hidden"}
               onClick={handleNewGame}>
               NEW GAME
-              <AiOutlineEnter style={{ strokeWidth: "10px" }} />
+              <AiOutlineEnter />
             </button>
             <div className="boards-container">
               <GameBoard
