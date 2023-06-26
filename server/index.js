@@ -123,6 +123,7 @@ io.on("connection", (socket) => {
     // is broadcasted to all the clients. On the client-side, each client will
     // filter out their own socket, resulting in their respective "otherBoards".
     const socketsInRoom = io.sockets.adapter.rooms.get(uuid)
+    console.log(socketsInRoom)
 
     const allGameBoards = []
     socketsInRoom.forEach((socketId) => {
@@ -156,8 +157,7 @@ io.on("connection", (socket) => {
     relevantRoom.countGameOvers += 1
     if (relevantRoom.countGameOvers === relevantRoom.size) {
       io.to(roomId).emit("gameOver", roomId)
-    }
-    else {
+    } else {
       io.to(roomId)
     }
   })

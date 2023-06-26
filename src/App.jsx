@@ -1,6 +1,8 @@
 // TODO: package.json: changed from "module" to "type" = "commonjs" to support wordlist
 
 import { useState, useEffect } from "react"
+import { Route, Routes } from "react-router-dom"
+
 import { VALID_GUESSES } from "./data/validGuesses"
 import { WIN_MESSAGES } from "./data/winMessages"
 
@@ -8,7 +10,7 @@ import { WIN_MESSAGES } from "./data/winMessages"
 import Header from "./components/Header"
 import Keyboard from "./components/Keyboard"
 import GameBoard from "./components/GameBoard"
-import MenuModal from "./components/MenuModal"
+import MenuLandingPage from "./components/MenuLandingPage"
 import CountdownTimer from "./components/CountdownTimer"
 
 // React-icons
@@ -20,6 +22,8 @@ import { socket } from "./socket"
 // Confetti
 import Confetti from "react-confetti"
 import InvalidInputAlert from "./components/InvalidInputAlert"
+import MenuOnlineModes from "./components/MenuOnlineModes"
+import MenuOfflineModes from "./components/MenuOfflineModes"
 
 function App() {
   const [currentRow, setCurrentRow] = useState(0)
@@ -377,80 +381,97 @@ function App() {
   // TODO: Look into Context (stores) so props aren't so ugly
   return (
     <>
-      {isConfettiRunning && (
-        <Confetti numberOfPieces={numberOfPieces} initialVelocityY={-10} tweenDuration={3000} />
-      )}
-      <Header setIsInGame={setIsInGame} />
+      <Header />
+      <h1 className="menu__title" style={{ marginTop: "6rem" }}>
+        Welcome, Wordler!
+      </h1>
 
-      {isInGame ? (
-        <>
-          <div className="game-container">
-            {!isCountdownOver && (
-              <CountdownTimer
-                isCountdownOver={isCountdownOver}
-                setIsCountdownOver={setIsCountdownOver}
+      <Routes>
+        {/* {isInGame ? (
+          <>
+            <div className="game-container">
+              {!isCountdownOver && (
+                <CountdownTimer
+                  isCountdownOver={isCountdownOver}
+                  setIsCountdownOver={setIsCountdownOver}
+                />
+              )}
+
+              <button
+                className={isGameOver ? "btn--new-game" : "btn--new-game--hidden"}
+                onClick={handleNewGame}>
+                NEW GAME
+                <AiOutlineEnter />
+              </button>
+
+              <InvalidInputAlert
+                message={"Not in dictionary!"}
+                isVisible={isWordListAlertOn}
+                setIsVisible={setIsWordListAlertOn}
               />
-            )}
-
-            <button
-              className={isGameOver ? "btn--new-game" : "btn--new-game--hidden"}
-              onClick={handleNewGame}>
-              NEW GAME
-              <AiOutlineEnter />
-            </button>
-
-            <InvalidInputAlert
-              message={"Not in dictionary!"}
-              isVisible={isWordListAlertOn}
-              setIsVisible={setIsWordListAlertOn}
-            />
-            <InvalidInputAlert
-              message={"Not enough letters!"}
-              isVisible={isLengthAlertOn}
-              setIsVisible={setIsLengthAlertOn}
-            />
-            <InvalidInputAlert
-              message={"Must use previous hints!"}
-              isVisible={isPrevHintsAlertOn}
-              setIsVisible={setIsPrevHintsAlertOn}
-            />
-
-            <div className="boards-container">
-              <GameBoard
-                gameBoard={gameBoard}
-                userGuess={userGuess}
-                currentRow={currentRow}
-                currentTile={currentTile}
-                isGameOver={isGameOver}
-                isOutOfGuesses={isOutOfGuesses}
+              <InvalidInputAlert
+                message={"Not enough letters!"}
+                isVisible={isLengthAlertOn}
+                setIsVisible={setIsLengthAlertOn}
               />
-              {otherBoards.map((object) => (
+              <InvalidInputAlert
+                message={"Must use previous hints!"}
+                isVisible={isPrevHintsAlertOn}
+                setIsVisible={setIsPrevHintsAlertOn}
+              />
+
+              <div className="boards-container">
                 <GameBoard
-                  key={object.socketId}
-                  gameBoard={object.gameBoard}
+                  gameBoard={gameBoard}
                   userGuess={userGuess}
-                  currentRow={-1}
+                  currentRow={currentRow}
                   currentTile={currentTile}
                   isGameOver={isGameOver}
+                  isOutOfGuesses={isOutOfGuesses}
                 />
-              ))}
+                {otherBoards.map((object) => (
+                  <GameBoard
+                    key={object.socketId}
+                    gameBoard={object.gameBoard}
+                    userGuess={userGuess}
+                    currentRow={-1}
+                    currentTile={currentTile}
+                    isGameOver={isGameOver}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
 
-          <Keyboard
-            hints={hints}
-            isOutOfGuesses={isOutOfGuesses}
-            isGameOver={isGameOver}
-            isInGame={isInGame}
-            isCountdownOver={isCountdownOver}
-            handleLetter={handleLetter}
-            handleEnter={handleEnter}
-            handleBackspace={handleBackspace}
-          />
-        </>
-      ) : (
-        <MenuModal setIsInGame={setIsInGame} />
-      )}
+            <Keyboard
+              hints={hints}
+              isOutOfGuesses={isOutOfGuesses}
+              isGameOver={isGameOver}
+              isInGame={isInGame}
+              isCountdownOver={isCountdownOver}
+              handleLetter={handleLetter}
+              handleEnter={handleEnter}
+              handleBackspace={handleBackspace}
+            />
+
+            {isConfettiRunning && (
+              <Confetti
+                numberOfPieces={numberOfPieces}
+                initialVelocityY={-10}
+                tweenDuration={3000}
+              />
+            )}
+          </>
+        ) : ( */}
+        <Route path="/" element={<MenuLandingPage />} />
+        <Route
+          path="/online"
+          element={<MenuOnlineModes setIsChallengeMode={setIsChallengeMode} />}
+        />
+        <Route
+          path="/offline"
+          element={<MenuOfflineModes setIsChallengeMode={setIsChallengeMode} />}
+        />
+      </Routes>
     </>
   )
 }

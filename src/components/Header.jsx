@@ -7,16 +7,21 @@ import { FaCog } from "react-icons/fa"
 
 import InfoModal from "./InfoModal"
 
-export default function Header({ setIsInGame }) {
+export default function Header() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+
+  function refreshPage() {
+    window.location.href = "/"
+  }
 
   return (
     <>
       <header className="header">
-        <div className="header__left">
+        {/* <div className="header__left">
           <HiMenu className="header__svg" />
-        </div>
-        <h1 className="header__title" onClick={() => setIsInGame(false)}>
+        </div> */}
+
+        <h1 className="header__title" onClick={refreshPage}>
           Wordle For All
         </h1>
         <div className="header__right">

@@ -93,6 +93,7 @@ a {
 // Dialog
 .dialog {
   border: none;
+  background-color: white;
   border-radius: 0.5rem;
   box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.05), 0 0 10px 4px rgba(0, 0, 0, 0.05),
     0 0 15px 6px rgba(0, 0, 0, 0.05), 0 0 20px 8px rgba(0, 0, 0, 0.05);
@@ -112,18 +113,33 @@ a {
   }
 }
 
+// Modal (lobby)
+.modal {
+  border: 3px solid black;
+  background-color: white;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  min-width: 20rem;
+
+  position: fixed;
+  top: 20vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 // Menu
 .menu {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 6rem;
   gap: 1rem;
 
   &__title {
+    @extend .menu;
     color: hsl(0, 0%, 0%);
     font-size: 2.5rem;
     font-family: "Lobster", sans-serif;
+    margin-bottom: 4rem;
   }
 
   &__btn {
@@ -171,6 +187,32 @@ a {
     &:hover {
       background-color: hsl(197, 89, 36);
       border: 3px solid hsl(197, 89%, 36%);
+    }
+  }
+
+  &__btn--back {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+
+    border: 2px solid hsl(0, 0%, 0%);
+
+    border-radius: 1rem;
+    cursor: pointer;
+
+    font-size: 1.5rem;
+    width: 3rem;
+    height: 3rem;
+    color: black;
+
+    &:active {
+      background-color: hsl(0, 0%, 40%);
+    }
+
+    &:hover {
+      background-color: hsl(0, 0%, 90%);
+      transition-duration: 0.1s;
+      transition-timing-function: ease-in;
     }
   }
 }
