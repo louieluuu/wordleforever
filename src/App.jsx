@@ -1,6 +1,6 @@
 // TODO: package.json: changed from "module" to "type" = "commonjs" to support wordlist
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Route, Routes } from "react-router-dom"
 
 import { WORD_LIST } from "./data/wordList"
@@ -60,22 +60,24 @@ function App() {
   const [room, setRoom] = useState("")
   const [isMultiplayer, setIsMultiplayer] = useState(false)
   const [isInGame, setIsInGame] = useState(false)
+  const [nickname, setNickname] = useState("")
   const [nicknames, setNicknames] = useState([])
   const [otherBoards, setOtherBoards] = useState([])
 
-  function resetStates() {
-    setCurrentRow(0)
-    setCurrentTile(0)
-    setUserGuess(["", "", "", "", ""])
-    setIsOutOfGuesses(false)
-    setIsGameOver(false)
-    setIsCountdownOver(false)
-    setGameBoard(new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })))
-    setOtherBoards([])
-    setIsInGame(true)
-    setIsConfettiRunning(false)
-    setHints({ green: new Set(), yellow: new Set(), gray: new Set() })
-    setShowAlertModal(false)
+  // Nickname stuff
+  useEffect(() => {
+    const storedNickname = localStorage.getItem("nickname")
+    if (storedNickname) {
+      setNickname(storedNickname)
+    }
+  }, [])
+
+  // TODO: move this down later
+  const handleNicknameChange = (e) => {
+    const newNickname = e.target.value
+    setNickname(newNickname)
+    setNicknames([newNickname])
+    localStorage.setItem("nickname", newNickname)
   }
 
   // ! Socket useEffect
@@ -119,15 +121,6 @@ function App() {
       if (challengeModeGuess !== null) {
         setUserGuess(challengeModeGuess)
       }
-      // const newGameBoard = [...gameBoard]
-      // // TODO: this colorize stuff should belong in the handleEnter instead of being specific
-      // // TODO: to the challengeMode case...
-      // const colorizedGuess = colorizeGuess(firstGuess, solution)
-      // newGameBoard[0] = colorizedGuess
-      // updateHints(colorizedGuess)
-      // setGameBoard(newGameBoard)
-      // setCurrentRow(1)
-      // socket.emit("wrongGuess", socket.id, roomId, newGameBoard)
     })
 
     // TODO: more cleanup
@@ -189,6 +182,21 @@ function App() {
    * HELPER FUNCTIONS
    *
    */
+
+  function resetStates() {
+    setCurrentRow(0)
+    setCurrentTile(0)
+    setUserGuess(["", "", "", "", ""])
+    setIsOutOfGuesses(false)
+    setIsGameOver(false)
+    setIsCountdownOver(false)
+    setGameBoard(new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })))
+    setOtherBoards([])
+    setIsInGame(true)
+    setIsConfettiRunning(false)
+    setHints({ green: new Set(), yellow: new Set(), gray: new Set() })
+    setShowAlertModal(false)
+  }
 
   // Generates a random solution
   function getRandomSolution() {
@@ -331,6 +339,8 @@ function App() {
 
   function handleEnter() {
     // Allows user to start a new game by pressing Enter instead of clicking.
+    // Buttons styling using useRef.
+
     if (isGameOver) {
       let mode
       if (isMultiplayer) {
@@ -436,6 +446,7 @@ function App() {
     }
   }
 
+  // TODO: This stuff is a little redundant. Look into refactoring.
   function startNewClassicGame() {
     resetStates()
 
@@ -480,7 +491,7 @@ function App() {
 
             <button
               className={isGameOver ? "btn--new-game" : "btn--new-game--hidden"}
-              onClick={handleNewGame}>
+              onClick={handleEnter}>
               NEW GAME
               <AiOutlineEnter />
             </button>
@@ -532,14 +543,30 @@ function App() {
       ) : (
         <>
           <h1 className="menu__title" style={{ marginTop: "6rem" }}>
-            Welcome, Wordler!
+            Welcome, {nickname || "Wordler"}!
           </h1>
+
+          <input
+            type="text"
+            value={nickname}
+            onChange={handleNicknameChange}
+            placeholder="Enter your name"
+          />
 
           <ChallengeForm setIsChallengeMode={setIsChallengeMode} />
 
           <Routes>
             <Route path="/" element={<MenuLandingPage />} />
-            <Route path="/online" element={<MenuOnlineModes isChallengeMode={isChallengeMode} />} />
+            <Route
+              path="/online"
+              element={
+                <MenuOnlineModes
+                  isChallengeMode={isChallengeMode}
+                  setIsMultiplayer={setIsMultiplayer}
+                  nicknames={nicknames}
+                />
+              }
+            />
             <Route
               path="/offline"
               element={<MenuOfflineModes startNewClassicGame={startNewClassicGame} />}

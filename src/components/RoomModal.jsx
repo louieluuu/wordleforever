@@ -11,16 +11,14 @@ const flexbox = {
   alignItems: "center",
 }
 
-const namesContainer = {
+const nicknamesContainer = {
   ...flexbox,
   fontSize: "0.90rem",
   lineHeight: 0,
   fontWeight: "bold",
 }
 
-const names = ["humans can fly", "Goldjet", "yo momma123", "Jeff"]
-
-function RoomModal({ setShowRoomModal, roomId, isChallengeMode }) {
+function RoomModal({ setShowRoomModal, roomId, isChallengeMode, nicknames }) {
   const [isCopied, setIsCopied] = useState(false)
 
   function copyLink() {
@@ -60,8 +58,8 @@ function RoomModal({ setShowRoomModal, roomId, isChallengeMode }) {
         </button>
         <br></br>
 
-        <div style={namesContainer}>
-          {names.map((name) => (
+        <div style={nicknamesContainer}>
+          {nicknames.map((name) => (
             <p>{name}</p>
           ))}
         </div>
