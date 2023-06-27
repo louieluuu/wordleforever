@@ -24,7 +24,10 @@ function MenuOnlineModes({ isChallengeMode, setIsMultiplayer }) {
   return (
     <>
       <div className="menu">
-        <button className="menu__btn--online" onClick={() => console.log("random")}>
+        <button
+          className="menu__btn--online"
+          style={{ opacity: "25%" }}
+          onClick={() => console.log("random")}>
           QUICK START
         </button>
         <button className="menu__btn--offline" onClick={createRoom}>
