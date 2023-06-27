@@ -53,9 +53,8 @@ function App() {
   const [isConfettiRunning, setIsConfettiRunning] = useState(false)
   const [numberOfPieces, setNumberOfPieces] = useState(0)
 
-  const [isWordListAlertOn, setIsWordListAlertOn] = useState(false)
-  const [isLengthAlertOn, setIsLengthAlertOn] = useState(false)
-  const [isPrevHintsAlertOn, setIsPrevHintsAlertOn] = useState(false)
+  const [alertMessage, setAlertMessage] = useState("")
+  const [showAlertModal, setShowAlertModal] = useState(false)
 
   // ! Socket states
   const [room, setRoom] = useState("")
@@ -76,6 +75,7 @@ function App() {
     setIsInGame(true)
     setIsConfettiRunning(false)
     setHints({ green: new Set(), yellow: new Set(), gray: new Set() })
+    setShowAlertModal(false)
   }
 
   // ! Socket useEffect
@@ -346,15 +346,18 @@ function App() {
 
     // Guess is too short
     if (guessLength < 5) {
-      setIsLengthAlertOn(true)
+      setAlertMessage("Not enough letters!")
+      setShowAlertModal(true)
     }
     // Guess is invalid (i.e. doesn't appear in dictionary)
     else if (!VALID_GUESSES.includes(userGuess.join("").toLowerCase())) {
-      setIsWordListAlertOn(true)
+      setAlertMessage("Not in dictionary!")
+      setShowAlertModal(true)
     }
     // ! Challenge Mode: guess doesn't adhere to previous hints
     else if (isChallengeMode && usesPreviousHints() !== "yes") {
-      setIsPrevHintsAlertOn(true)
+      setAlertMessage("Must adhere to previous hints!")
+      setShowAlertModal(true)
     }
     // Guess is valid: submit guess
     else {
@@ -387,6 +390,8 @@ function App() {
           }
           //
           else {
+            setAlertMessage(solution.join(""))
+            setShowAlertModal(true)
             setIsOutOfGuesses(true)
             setIsGameOver(true)
           }
@@ -476,19 +481,10 @@ function App() {
             </button>
 
             <AlertModal
-              message={"Not in dictionary!"}
-              isVisible={isWordListAlertOn}
-              setIsVisible={setIsWordListAlertOn}
-            />
-            <AlertModal
-              message={"Not enough letters!"}
-              isVisible={isLengthAlertOn}
-              setIsVisible={setIsLengthAlertOn}
-            />
-            <AlertModal
-              message={"Must use previous hints!"}
-              isVisible={isPrevHintsAlertOn}
-              setIsVisible={setIsPrevHintsAlertOn}
+              message={alertMessage}
+              showAlertModal={showAlertModal}
+              setShowAlertModal={setShowAlertModal}
+              isOutOfGuesses={isOutOfGuesses}
             />
 
             <div className="boards-container">

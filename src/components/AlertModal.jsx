@@ -1,24 +1,31 @@
 import React, { useEffect } from "react"
 
-function AlertModal({ message, isVisible, setIsVisible }) {
+function AlertModal({ message, showAlertModal, setShowAlertModal, isOutOfGuesses }) {
   useEffect(() => {
-    if (isVisible) {
+    if (showAlertModal) {
+      // Most of these alerts are temporary (1s). The exception is if
+      // the user is out of guesses; user would want to see the solution
+      // for an extended period of time.
+      if (isOutOfGuesses) {
+        return
+      }
+
       const timer = setTimeout(() => {
-        setIsVisible(false)
+        setShowAlertModal(false)
       }, 1000)
 
       return () => {
         clearTimeout(timer)
       }
     }
-  }, [isVisible, setIsVisible])
+  }, [showAlertModal, setShowAlertModal])
 
   return (
     <>
-      {isVisible && (
+      {showAlertModal && (
         <div
-          className={`alert${isVisible ? "" : "--hidden"}`}
-          onTransitionEnd={() => setIsVisible(false)}>
+          className={`alert${showAlertModal ? "" : "--hidden"}`}
+          onTransitionEnd={() => setShowAlertModal(false)}>
           {message}
         </div>
       )}
