@@ -103,14 +103,14 @@ io.on("connection", (socket) => {
     }
   })
 
-  socket.on("startRoom", (uuid) => {
+  socket.on("startRoom", (uuid, isChallengeMode) => {
     // Each active room will keep track of the # of gameOvers in that room;
     // necessary to deal with the case where all players run out of guesses.
-
     const newRoom = {
       roomId: uuid,
       size: io.sockets.adapter.rooms.get(uuid).size,
       countGameOvers: 0,
+      challengeMode: isChallengeMode,
     }
 
     activeRooms.push(newRoom)
@@ -120,7 +120,7 @@ io.on("connection", (socket) => {
     socket.emit("roomStarted", uuid)
   })
 
-  socket.on("startNewGame", (uuid, isChallengeMode) => {
+  socket.on("startNewGame", (uuid) => {
     // Reset room values.
     const relevantRoom = activeRooms.find((object) => object.roomId === uuid)
     relevantRoom.countGameOvers = 0
@@ -143,8 +143,7 @@ io.on("connection", (socket) => {
     // Generate the word(s) required to play, then broadcast them to the room.
     const solution = getRandomSolution()
 
-    let firstGuess
-    isChallengeMode ? (firstGuess = getRandomFirstGuess(solution)) : (firstGuess = null)
+    let firstGuess = relevantRoom.challengeMode ? getRandomFirstGuess(solution) : null
 
     io.to(uuid).emit("gameStarted", uuid, allGameBoards, solution, firstGuess)
   })

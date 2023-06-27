@@ -101,7 +101,7 @@ function App() {
       socket.emit("startNewGame", roomId)
     })
 
-    socket.on("gameStarted", (roomId, allGameBoards, solution, firstGuess) => {
+    socket.on("gameStarted", (roomId, allGameBoards, solution, challengeModeGuess) => {
       resetStates()
 
       // Filter out the socket's own gameBoard.
@@ -112,6 +112,10 @@ function App() {
       setSolution(solution)
 
       // ! Challenge Mode specific
+      if (challengeModeGuess !== null) {
+        setUserGuess(challengeModeGuess)
+        handleEnter()
+      }
       // const newGameBoard = [...gameBoard]
       // // TODO: this colorize stuff should belong in the handleEnter instead of being specific
       // // TODO: to the challengeMode case...
@@ -296,10 +300,13 @@ function App() {
     // Allows user to start a new game by pressing Enter instead of clicking.
     if (isGameOver) {
       handleNewGame()
+      return
     }
 
+    const guessLength = userGuess.filter((letter) => letter !== "").length
+
     // Guess is too short
-    else if (currentTile < 5) {
+    if (guessLength < 5) {
       setIsLengthAlertOn(true)
     }
     // Guess is invalid (i.e. doesn't appear in dictionary)

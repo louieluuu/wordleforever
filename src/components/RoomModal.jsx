@@ -31,10 +31,10 @@ function RoomModal({ setShowRoomModal, roomId, isChallengeMode }) {
   }
 
   function startRoom() {
-    socket.emit("startRoom", roomId)
+    socket.emit("startRoom", roomId, isChallengeMode)
 
     socket.on("roomStarted", (roomId) => {
-      socket.emit("startNewGame", roomId, isChallengeMode)
+      socket.emit("startNewGame", roomId)
       setShowRoomModal(false)
     })
   }
