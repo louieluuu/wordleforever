@@ -348,63 +348,68 @@ function App() {
     if (guessLength < 5) {
       setAlertMessage("Not enough letters!")
       setShowAlertModal(true)
+      return
     }
     // Guess is invalid (i.e. doesn't appear in dictionary)
     else if (!VALID_GUESSES.includes(userGuess.join("").toLowerCase())) {
       setAlertMessage("Not in dictionary!")
       setShowAlertModal(true)
+      return
     }
     // ! Challenge Mode: guess doesn't adhere to previous hints
-    else if (isChallengeMode && usesPreviousHints() !== "yes") {
-      setAlertMessage("Must adhere to previous hints!")
-      setShowAlertModal(true)
-    }
-    // Guess is valid: submit guess
-    else {
-      // Update the gameBoard with the colorized guess
-      const colorizedGuess = colorizeGuess(userGuess, solution)
-      const newGameBoard = [...gameBoard]
-      newGameBoard[currentRow] = colorizedGuess
-      setGameBoard(newGameBoard)
-
-      // Update hints to color the Keyboard keys
-      updateHints(colorizedGuess)
-
-      // Correct guess: Game Over (win)
-      // Direct array comparison won't work with ===, so we must compare their string forms.
-      if (userGuess.join("") === solution.join("")) {
-        socket.emit("correctGuess", room)
-        showWinAnimations()
-        setIsConfettiRunning(true)
-        setIsGameOver(true)
+    else if (isChallengeMode) {
+      const result = usesPreviousHints()
+      if (result !== "yes") {
+        setAlertMessage(`Must adhere to ${result} hints!`)
+        setShowAlertModal(true)
+        return
       }
-      // Wrong guess
-      else {
-        // ! Socket
-        socket.emit("wrongGuess", socket.id, room, newGameBoard)
-        // Run out of guesses: Game Over (loss)
-        if (currentRow >= 5) {
-          if (isMultiplayer) {
-            setIsOutOfGuesses(true)
-            socket.emit("outOfGuesses", room)
-          }
-          //
-          else {
-            setAlertMessage(solution.join(""))
-            setShowAlertModal(true)
-            setIsOutOfGuesses(true)
-            setIsGameOver(true)
-          }
+    }
+
+    // Guess is valid: submit guess
+    // Update the gameBoard with the colorized guess
+    const colorizedGuess = colorizeGuess(userGuess, solution)
+    const newGameBoard = [...gameBoard]
+    newGameBoard[currentRow] = colorizedGuess
+    setGameBoard(newGameBoard)
+
+    // Update hints to color the Keyboard keys
+    updateHints(colorizedGuess)
+
+    // Correct guess: Game Over (win)
+    // Direct array comparison won't work with ===, so we must compare their string forms.
+    if (userGuess.join("") === solution.join("")) {
+      socket.emit("correctGuess", room)
+      showWinAnimations()
+      setIsConfettiRunning(true)
+      setIsGameOver(true)
+    }
+    // Wrong guess
+    else {
+      // ! Socket
+      socket.emit("wrongGuess", socket.id, room, newGameBoard)
+      // Run out of guesses: Game Over (loss)
+      if (currentRow >= 5) {
+        if (isMultiplayer) {
+          setIsOutOfGuesses(true)
+          socket.emit("outOfGuesses", room)
+        }
+        //
+        else {
+          setAlertMessage(solution.join(""))
+          setShowAlertModal(true)
+          setIsOutOfGuesses(true)
+          setIsGameOver(true)
         }
       }
-      // Game continues: note that these states will be changed regardless of whether
-      // the game is over or not. This allows the winning row to be properly rendered as well.
-      setCurrentRow((currentRow) => currentRow + 1)
-      setCurrentTile(0)
-      setUserGuess(["", "", "", "", ""])
-      console.log(`Valid guess submitted: ${userGuess}`)
-      console.log(`currentRow: ${currentRow}`)
     }
+    // Game continues: note that these states will be changed regardless of whether
+    // the game is over or not. This allows the winning row to be properly rendered as well.
+    setCurrentRow((currentRow) => currentRow + 1)
+    setCurrentTile(0)
+    setUserGuess(["", "", "", "", ""])
+    console.log(`Valid guess submitted: ${userGuess}`)
+    console.log(`currentRow: ${currentRow}`)
   }
 
   function handleBackspace() {
