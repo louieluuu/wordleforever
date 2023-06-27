@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react"
 
-function CountdownTimer({ isCountdownOver, setIsCountdownOver }) {
+function CountdownTimer({ isCountdownOver, setIsCountdownOver, isChallengeMode, handleEnter }) {
   const [seconds, setSeconds] = useState(3)
 
   useEffect(() => {
-    function resetStates() {
+    function resetCountdown() {
       setIsCountdownOver(true)
       setSeconds(3)
     }
@@ -16,7 +16,10 @@ function CountdownTimer({ isCountdownOver, setIsCountdownOver }) {
     // Stop the countdown when it reaches 0
     if (seconds === -1) {
       clearInterval(timer)
-      resetStates()
+      resetCountdown()
+      if (isChallengeMode) {
+        handleEnter()
+      }
     }
 
     // Clean up the timer when the component unmounts or the dialog is closed

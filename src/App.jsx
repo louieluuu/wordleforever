@@ -114,7 +114,6 @@ function App() {
       // ! Challenge Mode specific
       if (challengeModeGuess !== null) {
         setUserGuess(challengeModeGuess)
-        handleEnter()
       }
       // const newGameBoard = [...gameBoard]
       // // TODO: this colorize stuff should belong in the handleEnter instead of being specific
@@ -399,6 +398,8 @@ function App() {
               <CountdownTimer
                 isCountdownOver={isCountdownOver}
                 setIsCountdownOver={setIsCountdownOver}
+                isChallengeMode={isChallengeMode}
+                handleEnter={handleEnter}
               />
             )}
 
