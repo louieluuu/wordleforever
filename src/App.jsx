@@ -163,6 +163,7 @@ function App() {
     })
   }, [gameBoard, isGameOver, otherBoards]) // TODO: .....................
 
+  // Confetti timer
   useEffect(() => {
     setNumberOfPieces(150)
 
@@ -386,92 +387,89 @@ function App() {
         Welcome, Wordler!
       </h1>
 
-      <Routes>
-        {/* {isInGame ? (
-          <>
-            <div className="game-container">
-              {!isCountdownOver && (
-                <CountdownTimer
-                  isCountdownOver={isCountdownOver}
-                  setIsCountdownOver={setIsCountdownOver}
-                />
-              )}
-
-              <button
-                className={isGameOver ? "btn--new-game" : "btn--new-game--hidden"}
-                onClick={handleNewGame}>
-                NEW GAME
-                <AiOutlineEnter />
-              </button>
-
-              <InvalidInputAlert
-                message={"Not in dictionary!"}
-                isVisible={isWordListAlertOn}
-                setIsVisible={setIsWordListAlertOn}
-              />
-              <InvalidInputAlert
-                message={"Not enough letters!"}
-                isVisible={isLengthAlertOn}
-                setIsVisible={setIsLengthAlertOn}
-              />
-              <InvalidInputAlert
-                message={"Must use previous hints!"}
-                isVisible={isPrevHintsAlertOn}
-                setIsVisible={setIsPrevHintsAlertOn}
-              />
-
-              <div className="boards-container">
-                <GameBoard
-                  gameBoard={gameBoard}
-                  userGuess={userGuess}
-                  currentRow={currentRow}
-                  currentTile={currentTile}
-                  isGameOver={isGameOver}
-                  isOutOfGuesses={isOutOfGuesses}
-                />
-                {otherBoards.map((object) => (
-                  <GameBoard
-                    key={object.socketId}
-                    gameBoard={object.gameBoard}
-                    userGuess={userGuess}
-                    currentRow={-1}
-                    currentTile={currentTile}
-                    isGameOver={isGameOver}
-                  />
-                ))}
-              </div>
-            </div>
-
-            <Keyboard
-              hints={hints}
-              isOutOfGuesses={isOutOfGuesses}
-              isGameOver={isGameOver}
-              isInGame={isInGame}
-              isCountdownOver={isCountdownOver}
-              handleLetter={handleLetter}
-              handleEnter={handleEnter}
-              handleBackspace={handleBackspace}
-            />
-
-            {isConfettiRunning && (
-              <Confetti
-                numberOfPieces={numberOfPieces}
-                initialVelocityY={-10}
-                tweenDuration={3000}
+      {isInGame ? (
+        <>
+          <div className="game-container">
+            {!isCountdownOver && (
+              <CountdownTimer
+                isCountdownOver={isCountdownOver}
+                setIsCountdownOver={setIsCountdownOver}
               />
             )}
-          </>
-        ) : ( */}
-        <Route path="/" element={<MenuLandingPage />} />
-        <Route
-          path="/online"
-          element={<MenuOnlineModes setIsChallengeMode={setIsChallengeMode} />}
-        />
-        <Route
-          path="/offline"
-          element={<MenuOfflineModes setIsChallengeMode={setIsChallengeMode} />}
-        />
-      </Routes>
+
+            <button
+              className={isGameOver ? "btn--new-game" : "btn--new-game--hidden"}
+              onClick={handleNewGame}>
+              NEW GAME
+              <AiOutlineEnter />
+            </button>
+
+            <InvalidInputAlert
+              message={"Not in dictionary!"}
+              isVisible={isWordListAlertOn}
+              setIsVisible={setIsWordListAlertOn}
+            />
+            <InvalidInputAlert
+              message={"Not enough letters!"}
+              isVisible={isLengthAlertOn}
+              setIsVisible={setIsLengthAlertOn}
+            />
+            <InvalidInputAlert
+              message={"Must use previous hints!"}
+              isVisible={isPrevHintsAlertOn}
+              setIsVisible={setIsPrevHintsAlertOn}
+            />
+
+            <div className="boards-container">
+              <GameBoard
+                gameBoard={gameBoard}
+                userGuess={userGuess}
+                currentRow={currentRow}
+                currentTile={currentTile}
+                isGameOver={isGameOver}
+                isOutOfGuesses={isOutOfGuesses}
+              />
+              {otherBoards.map((object) => (
+                <GameBoard
+                  key={object.socketId}
+                  gameBoard={object.gameBoard}
+                  userGuess={userGuess}
+                  currentRow={-1}
+                  currentTile={currentTile}
+                  isGameOver={isGameOver}
+                />
+              ))}
+            </div>
+          </div>
+
+          <Keyboard
+            hints={hints}
+            isOutOfGuesses={isOutOfGuesses}
+            isGameOver={isGameOver}
+            isInGame={isInGame}
+            isCountdownOver={isCountdownOver}
+            handleLetter={handleLetter}
+            handleEnter={handleEnter}
+            handleBackspace={handleBackspace}
+          />
+
+          {isConfettiRunning && (
+            <Confetti numberOfPieces={numberOfPieces} initialVelocityY={-10} tweenDuration={3000} />
+          )}
+        </>
+      ) : (
+        <Routes>
+          <Route path="/" element={<MenuLandingPage />} />
+          <Route
+            path="/online"
+            element={<MenuOnlineModes setIsChallengeMode={setIsChallengeMode} />}
+          />
+          <Route
+            path="/offline"
+            element={<MenuOfflineModes setIsChallengeMode={setIsChallengeMode} />}
+          />
+        </Routes>
+      )}
     </>
   )
 }

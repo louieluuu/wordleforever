@@ -98,19 +98,26 @@ io.on("connection", (socket) => {
     console.log(`countClientsInRoom: ${countClientsInRoom}`)
 
     if (countClientsInRoom === 2) {
-      // Each active room will keep track of the # of gameOvers in that room;
-      // necessary to deal with the case where all players run out of guesses.
-      const newRoom = {
-        roomId: uuid,
-        size: io.sockets.adapter.rooms.get(uuid).size,
-        countGameOvers: 0,
-      }
-
-      activeRooms.push(newRoom)
-
-      waitingRooms.delete(uuid)
-      socket.emit("matchMade", uuid)
+      // TODO: Random matchmaking
+      // socket.emit("matchMade", uuid)
     }
+  })
+
+  socket.on("startRoom", (uuid) => {
+    // Each active room will keep track of the # of gameOvers in that room;
+    // necessary to deal with the case where all players run out of guesses.
+
+    const newRoom = {
+      roomId: uuid,
+      size: io.sockets.adapter.rooms.get(uuid).size,
+      countGameOvers: 0,
+    }
+
+    activeRooms.push(newRoom)
+
+    waitingRooms.delete(uuid)
+
+    socket.emit("roomStarted", uuid)
   })
 
   socket.on("startNewGame", (uuid) => {

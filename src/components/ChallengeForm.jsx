@@ -10,14 +10,16 @@ const formStyle = {
   paddingBottom: "0.5rem",
 }
 
-function ChallengeForm() {
+function ChallengeForm({ isVisible }) {
   return (
-    <form>
-      <label style={formStyle}>
-        <input type="checkbox" />
-        &nbsp;Challenge Mode&nbsp; <FaQuestionCircle />
-      </label>
-    </form>
+    isVisible && (
+      <form>
+        <label style={formStyle}>
+          <input type="checkbox" />
+          &nbsp;Challenge Mode&nbsp; <FaQuestionCircle />
+        </label>
+      </form>
+    )
   )
 }
 

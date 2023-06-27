@@ -1,6 +1,8 @@
 import React, { useState } from "react"
 import { Dialog } from "@headlessui/react"
 
+import { socket } from "../socket"
+
 // Styles
 const flexbox = {
   display: "flex",
@@ -18,8 +20,24 @@ const namesContainer = {
 
 const names = ["humans can fly", "Goldjet", "yo momma123", "Jeff"]
 
-function RoomModal({ setShowRoomModal }) {
+function RoomModal({ setShowRoomModal, roomId }) {
   const [isCopied, setIsCopied] = useState(false)
+
+  function copyLink() {
+    const baseUrl = "http://localhost:5173/"
+    const roomLink = `${baseUrl}?room=${roomId}`
+    navigator.clipboard.writeText(roomLink)
+    setIsCopied(true)
+  }
+
+  function startRoom() {
+    socket.emit("startRoom", roomId)
+
+    socket.on("roomStarted", (roomId) => {
+      socket.emit("startNewGame", roomId)
+      setShowRoomModal(false)
+    })
+  }
 
   return (
     <Dialog className="modal" open={true} onClose={() => setShowRoomModal(false)}>
@@ -37,7 +55,7 @@ function RoomModal({ setShowRoomModal }) {
             color: "black",
             fontWeight: "400",
           }}
-          onClick={() => setIsCopied(true)}>
+          onClick={copyLink}>
           {isCopied ? "LINK COPIED" : "COPY LINK"}
         </button>
         <br></br>
@@ -52,7 +70,7 @@ function RoomModal({ setShowRoomModal }) {
           <span style={{ fontWeight: "bold", fontSize: "1.2rem" }}>2.</span> Start the game when
           you're ready.
         </p>
-        <button className="btn--new-game" onClick={() => console.log("Game started hehe")}>
+        <button className="btn--new-game" onClick={startRoom}>
           START GAME
         </button>
         <br></br>

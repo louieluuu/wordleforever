@@ -7,8 +7,18 @@ import { socket } from "../socket"
 
 import RoomModal from "./RoomModal"
 
-function MenuOnlineModes({ setIsChallengeMode }) {
+function MenuOnlineModes() {
   const [showRoomModal, setShowRoomModal] = useState(false)
+  const [roomId, setRoomId] = useState("")
+
+  function createRoom() {
+    socket.emit("createRoom")
+    socket.on("roomCreated", (roomId) => {
+      setRoomId(roomId)
+    })
+
+    setShowRoomModal(true)
+  }
 
   return (
     <>
@@ -16,7 +26,7 @@ function MenuOnlineModes({ setIsChallengeMode }) {
         <button className="menu__btn--online" onClick={() => console.log("random")}>
           QUICK START
         </button>
-        <button className="menu__btn--offline" onClick={() => setShowRoomModal(true)}>
+        <button className="menu__btn--offline" onClick={createRoom}>
           CREATE A ROOM
         </button>
         <Link to="/">
@@ -25,7 +35,7 @@ function MenuOnlineModes({ setIsChallengeMode }) {
           </button>
         </Link>
 
-        {showRoomModal && <RoomModal setShowRoomModal={setShowRoomModal} />}
+        {showRoomModal && <RoomModal setShowRoomModal={setShowRoomModal} roomId={roomId} />}
       </div>
     </>
   )

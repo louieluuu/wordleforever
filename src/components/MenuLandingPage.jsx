@@ -3,17 +3,23 @@ import { Link } from "react-router-dom"
 import ChallengeForm from "./ChallengeForm"
 
 function MenuLandingPage() {
+  const [showChallengeForm, setShowChallengeForm] = useState(false)
+
   return (
     <>
-      <ChallengeForm />
+      <ChallengeForm isVisible={showChallengeForm} />
 
       <div className="menu">
         <Link to="/online">
-          <button className="menu__btn--online">PLAY ONLINE</button>
+          <button className="menu__btn--online" onClick={() => setShowChallengeForm(true)}>
+            PLAY ONLINE
+          </button>
         </Link>
 
         <Link to="/offline">
-          <button className="menu__btn--offline">OFFLINE</button>
+          <button className="menu__btn--offline" onClick={() => setShowChallengeForm(true)}>
+            OFFLINE
+          </button>
         </Link>
       </div>
     </>
