@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 
-function InvalidInputAlert({ message, isVisible, setIsVisible }) {
+function AlertModal({ message, isVisible, setIsVisible }) {
   useEffect(() => {
     if (isVisible) {
       const timer = setTimeout(() => {
@@ -26,4 +26,4 @@ function InvalidInputAlert({ message, isVisible, setIsVisible }) {
   )
 }
 
-export default InvalidInputAlert
+export default AlertModal

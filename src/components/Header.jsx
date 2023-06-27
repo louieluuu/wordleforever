@@ -7,6 +7,8 @@ import { FaCog } from "react-icons/fa"
 
 import InfoModal from "./InfoModal"
 
+import Logo3 from "../assets/LogoGradient.svg"
+
 export default function Header() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
@@ -20,7 +22,7 @@ export default function Header() {
         {/* <div className="header__left">
           <HiMenu className="header__svg" />
         </div> */}
-
+        <img src={Logo3} style={{ width: "3rem" }} />
         <h1 className="header__title" onClick={refreshPage}>
           Wordle For All
         </h1>

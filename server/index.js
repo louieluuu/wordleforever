@@ -28,6 +28,8 @@ const activeRooms = []
 // Random matchmaking (non-lobby)
 const queuedUsers = []
 
+// TODO: These functions need to be written on the client-side for solo mode.
+// TODO: Wonder if it's possible to pass those functions here so less repeating?
 // Generates a random solution
 function getRandomSolution() {
   const randomSolution = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)]
@@ -165,9 +167,11 @@ io.on("connection", (socket) => {
     relevantRoom.countGameOvers += 1
     if (relevantRoom.countGameOvers === relevantRoom.size) {
       io.to(roomId).emit("gameOver", roomId)
-    } else {
-      io.to(roomId)
     }
+    // TODO: Uhhh... not sure what this is
+    // else {
+    //   io.to(roomId)
+    // }
   })
 
   socket.on("revealGameBoard", (uuid, gameBoard) => {

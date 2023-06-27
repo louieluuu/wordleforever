@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react"
+import { socket } from "../socket"
 
 function CountdownTimer({ isCountdownOver, setIsCountdownOver, isChallengeMode, handleEnter }) {
   const [seconds, setSeconds] = useState(3)

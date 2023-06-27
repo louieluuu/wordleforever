@@ -7,7 +7,7 @@ import { socket } from "../socket"
 
 import RoomModal from "./RoomModal"
 
-function MenuOnlineModes({ isChallengeMode }) {
+function MenuOnlineModes({ isChallengeMode, setIsMultiplayer }) {
   const [showRoomModal, setShowRoomModal] = useState(false)
   const [roomId, setRoomId] = useState("")
 
@@ -15,6 +15,7 @@ function MenuOnlineModes({ isChallengeMode }) {
     socket.emit("createRoom")
     socket.on("roomCreated", (roomId) => {
       setRoomId(roomId)
+      setIsMultiplayer(true)
     })
 
     setShowRoomModal(true)

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Route, Routes } from "react-router-dom"
 
+import { WORD_LIST } from "./data/wordList"
 import { VALID_GUESSES } from "./data/validGuesses"
 import { WIN_MESSAGES } from "./data/winMessages"
 
@@ -22,7 +23,7 @@ import { socket } from "./socket"
 
 // Confetti
 import Confetti from "react-confetti"
-import InvalidInputAlert from "./components/InvalidInputAlert"
+import AlertModal from "./components/AlertModal"
 import MenuOnlineModes from "./components/MenuOnlineModes"
 import MenuOfflineModes from "./components/MenuOfflineModes"
 
@@ -58,28 +59,30 @@ function App() {
 
   // ! Socket states
   const [room, setRoom] = useState("")
+  const [isMultiplayer, setIsMultiplayer] = useState(false)
   const [isInGame, setIsInGame] = useState(false)
+  const [nicknames, setNicknames] = useState([])
   const [otherBoards, setOtherBoards] = useState([])
+
+  function resetStates() {
+    setCurrentRow(0)
+    setCurrentTile(0)
+    setUserGuess(["", "", "", "", ""])
+    setIsOutOfGuesses(false)
+    setIsGameOver(false)
+    setIsCountdownOver(false)
+    setGameBoard(new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })))
+    setOtherBoards([])
+    setIsInGame(true)
+    setIsConfettiRunning(false)
+    setHints({ green: new Set(), yellow: new Set(), gray: new Set() })
+  }
 
   // ! Socket useEffect
   // TODO: Passing in states to sockets ** THAT ARE UNDER A useEffect
   // TODO: HOOK WITHOUT SPECIFIED DEPENDENCIES ** seems to result in unreliable behaviour.
 
   useEffect(() => {
-    function resetStates() {
-      setCurrentRow(0)
-      setCurrentTile(0)
-      setUserGuess(["", "", "", "", ""])
-      setIsOutOfGuesses(false)
-      setIsGameOver(false)
-      setIsCountdownOver(false)
-      setGameBoard(new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })))
-      setOtherBoards([])
-      setIsInGame(true)
-      setIsConfettiRunning(false)
-      setHints({ green: new Set(), yellow: new Set(), gray: new Set() })
-    }
-
     socket.on("connect", () => {
       console.log("Connected to server")
 
@@ -91,6 +94,7 @@ function App() {
         return
       }
       socket.emit("joinRoom", roomId)
+      setIsMultiplayer(true)
 
       socket.on("roomError", (reason) => {
         console.log(`Error: ${reason}`)
@@ -185,6 +189,36 @@ function App() {
    * HELPER FUNCTIONS
    *
    */
+
+  // Generates a random solution
+  function getRandomSolution() {
+    const randomSolution = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)]
+      .toUpperCase()
+      .split("")
+    console.log(`Solution: ${randomSolution}`)
+    return randomSolution
+  }
+
+  // ! Challenge mode
+  // Generates a random starting word that always has exactly one green match
+  function getRandomFirstGuess(solution) {
+    let randomFirstGuess
+    while (true) {
+      randomFirstGuess =
+        VALID_GUESSES[Math.floor(Math.random() * VALID_GUESSES.length)].toUpperCase()
+      let countGreenLetters = 0
+      for (let i = 0; i < randomFirstGuess.length; ++i) {
+        if (randomFirstGuess[i] === solution[i]) {
+          countGreenLetters += 1
+        }
+      }
+      if (countGreenLetters === 1) {
+        console.log(`firstGuess: ${randomFirstGuess}`)
+        break
+      }
+    }
+    return randomFirstGuess.split("")
+  }
 
   // Checks if the userGuess adheres to the previous hints.
   function usesPreviousHints() {
@@ -298,7 +332,13 @@ function App() {
   function handleEnter() {
     // Allows user to start a new game by pressing Enter instead of clicking.
     if (isGameOver) {
-      handleNewGame()
+      let mode
+      if (isMultiplayer) {
+        mode = "online-multi"
+      } else {
+        mode = "offline-classic"
+      }
+      handleNewGame(mode)
       return
     }
 
@@ -341,8 +381,15 @@ function App() {
         socket.emit("wrongGuess", socket.id, room, newGameBoard)
         // Run out of guesses: Game Over (loss)
         if (currentRow >= 5) {
-          setIsOutOfGuesses(true)
-          socket.emit("outOfGuesses", room)
+          if (isMultiplayer) {
+            setIsOutOfGuesses(true)
+            socket.emit("outOfGuesses", room)
+          }
+          //
+          else {
+            setIsOutOfGuesses(true)
+            setIsGameOver(true)
+          }
         }
       }
       // Game continues: note that these states will be changed regardless of whether
@@ -379,8 +426,26 @@ function App() {
     }
   }
 
-  function handleNewGame() {
-    socket.emit("startNewGame", room)
+  function startNewClassicGame() {
+    resetStates()
+
+    const solution = getRandomSolution()
+    if (isChallengeMode) {
+      const firstGuess = getRandomFirstGuess(solution)
+      setUserGuess(firstGuess)
+    }
+    setSolution(solution)
+    setIsInGame(true)
+  }
+
+  function handleNewGame(mode) {
+    if (mode === "online-multi") {
+      socket.emit("startNewGame", room)
+    }
+    //
+    else if (mode === "offline-classic") {
+      startNewClassicGame()
+    }
   }
 
   // TODO: Move Keyboard events into Keyboard component
@@ -410,17 +475,17 @@ function App() {
               <AiOutlineEnter />
             </button>
 
-            <InvalidInputAlert
+            <AlertModal
               message={"Not in dictionary!"}
               isVisible={isWordListAlertOn}
               setIsVisible={setIsWordListAlertOn}
             />
-            <InvalidInputAlert
+            <AlertModal
               message={"Not enough letters!"}
               isVisible={isLengthAlertOn}
               setIsVisible={setIsLengthAlertOn}
             />
-            <InvalidInputAlert
+            <AlertModal
               message={"Must use previous hints!"}
               isVisible={isPrevHintsAlertOn}
               setIsVisible={setIsPrevHintsAlertOn}
@@ -474,7 +539,10 @@ function App() {
           <Routes>
             <Route path="/" element={<MenuLandingPage />} />
             <Route path="/online" element={<MenuOnlineModes isChallengeMode={isChallengeMode} />} />
-            <Route path="/offline" element={<MenuOfflineModes />} />
+            <Route
+              path="/offline"
+              element={<MenuOfflineModes startNewClassicGame={startNewClassicGame} />}
+            />
           </Routes>
         </>
       )}
