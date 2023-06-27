@@ -12,6 +12,7 @@ import Keyboard from "./components/Keyboard"
 import GameBoard from "./components/GameBoard"
 import MenuLandingPage from "./components/MenuLandingPage"
 import CountdownTimer from "./components/CountdownTimer"
+import ChallengeForm from "./components/ChallengeForm"
 
 // React-icons
 import { AiOutlineEnter } from "react-icons/ai"
@@ -103,12 +104,12 @@ function App() {
     socket.on("gameStarted", (roomId, allGameBoards, solution, firstGuess) => {
       resetStates()
 
-      setRoom(roomId)
-      setSolution(solution)
-
       // Filter out the socket's own gameBoard.
       const otherBoards = allGameBoards.filter((object) => object.socketId !== socket.id)
       setOtherBoards(otherBoards)
+
+      setRoom(roomId)
+      setSolution(solution)
 
       // ! Challenge Mode specific
       // const newGameBoard = [...gameBoard]
@@ -383,9 +384,6 @@ function App() {
   return (
     <>
       <Header />
-      <h1 className="menu__title" style={{ marginTop: "6rem" }}>
-        Welcome, Wordler!
-      </h1>
 
       {isInGame ? (
         <>
@@ -458,17 +456,19 @@ function App() {
           )}
         </>
       ) : (
-        <Routes>
-          <Route path="/" element={<MenuLandingPage />} />
-          <Route
-            path="/online"
-            element={<MenuOnlineModes setIsChallengeMode={setIsChallengeMode} />}
-          />
-          <Route
-            path="/offline"
-            element={<MenuOfflineModes setIsChallengeMode={setIsChallengeMode} />}
-          />
-        </Routes>
+        <>
+          <h1 className="menu__title" style={{ marginTop: "6rem" }}>
+            Welcome, Wordler!
+          </h1>
+
+          <ChallengeForm setIsChallengeMode={setIsChallengeMode} />
+
+          <Routes>
+            <Route path="/" element={<MenuLandingPage />} />
+            <Route path="/online" element={<MenuOnlineModes isChallengeMode={isChallengeMode} />} />
+            <Route path="/offline" element={<MenuOfflineModes />} />
+          </Routes>
+        </>
       )}
     </>
   )

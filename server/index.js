@@ -120,7 +120,7 @@ io.on("connection", (socket) => {
     socket.emit("roomStarted", uuid)
   })
 
-  socket.on("startNewGame", (uuid) => {
+  socket.on("startNewGame", (uuid, isChallengeMode) => {
     // Reset room values.
     const relevantRoom = activeRooms.find((object) => object.roomId === uuid)
     relevantRoom.countGameOvers = 0
@@ -142,7 +142,9 @@ io.on("connection", (socket) => {
 
     // Generate the word(s) required to play, then broadcast them to the room.
     const solution = getRandomSolution()
-    const firstGuess = getRandomFirstGuess(solution)
+
+    let firstGuess
+    isChallengeMode ? (firstGuess = getRandomFirstGuess(solution)) : (firstGuess = null)
 
     io.to(uuid).emit("gameStarted", uuid, allGameBoards, solution, firstGuess)
   })

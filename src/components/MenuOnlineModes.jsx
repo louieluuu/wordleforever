@@ -7,7 +7,7 @@ import { socket } from "../socket"
 
 import RoomModal from "./RoomModal"
 
-function MenuOnlineModes() {
+function MenuOnlineModes({ isChallengeMode }) {
   const [showRoomModal, setShowRoomModal] = useState(false)
   const [roomId, setRoomId] = useState("")
 
@@ -35,7 +35,13 @@ function MenuOnlineModes() {
           </button>
         </Link>
 
-        {showRoomModal && <RoomModal setShowRoomModal={setShowRoomModal} roomId={roomId} />}
+        {showRoomModal && (
+          <RoomModal
+            setShowRoomModal={setShowRoomModal}
+            roomId={roomId}
+            isChallengeMode={isChallengeMode}
+          />
+        )}
       </div>
     </>
   )

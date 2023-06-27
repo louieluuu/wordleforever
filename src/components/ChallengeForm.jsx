@@ -10,16 +10,14 @@ const formStyle = {
   paddingBottom: "0.5rem",
 }
 
-function ChallengeForm({ isVisible }) {
+function ChallengeForm({ setIsChallengeMode }) {
   return (
-    isVisible && (
-      <form>
-        <label style={formStyle}>
-          <input type="checkbox" />
-          &nbsp;Challenge Mode&nbsp; <FaQuestionCircle />
-        </label>
-      </form>
-    )
+    <form>
+      <label style={formStyle}>
+        <input type="checkbox" onChange={() => setIsChallengeMode((prev) => !prev)} />
+        &nbsp;Challenge Mode&nbsp; <FaQuestionCircle />
+      </label>
+    </form>
   )
 }
 

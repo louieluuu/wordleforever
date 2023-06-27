@@ -20,7 +20,7 @@ const namesContainer = {
 
 const names = ["humans can fly", "Goldjet", "yo momma123", "Jeff"]
 
-function RoomModal({ setShowRoomModal, roomId }) {
+function RoomModal({ setShowRoomModal, roomId, isChallengeMode }) {
   const [isCopied, setIsCopied] = useState(false)
 
   function copyLink() {
@@ -34,7 +34,7 @@ function RoomModal({ setShowRoomModal, roomId }) {
     socket.emit("startRoom", roomId)
 
     socket.on("roomStarted", (roomId) => {
-      socket.emit("startNewGame", roomId)
+      socket.emit("startNewGame", roomId, isChallengeMode)
       setShowRoomModal(false)
     })
   }
