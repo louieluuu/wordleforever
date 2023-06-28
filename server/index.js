@@ -22,8 +22,7 @@ const io = new Server(httpServer, {
 })
 
 // Global variables
-const waitingRooms = new Set()
-const activeRooms = []
+const Rooms = new Map()
 
 // Random matchmaking (non-lobby)
 const queuedUsers = []
@@ -67,65 +66,65 @@ io.on("connection", (socket) => {
   console.log(`Current # total users on site: ${count}`)
 
   // Create room
-  socket.on("createRoom", () => {
+  socket.on("createRoom", (nickname, isChallengeMode) => {
     let newUuid = uuidv4()
     // Guarantees non-colliding rooms (even though the chance is infinitely small)
-    while (waitingRooms.has(newUuid)) {
+    while (Rooms.has(newUuid)) {
       newUuid = uuidv4()
     }
 
     socket.join(newUuid)
     socket.emit("roomCreated", newUuid)
-    waitingRooms.add(newUuid)
+    Rooms.set(newUuid, { nicknames: [nickname], isChallengeMode: isChallengeMode, isInGame: false })
+    console.log(Rooms)
   })
 
+  // TODO: Random matchmaking
   // Join room
-  socket.on("joinRoom", (uuid) => {
+  socket.on("joinRoom", (uuid, nickname) => {
     // Check validity of room
-    if (activeRooms.some((object) => object.roomId === uuid)) {
-      const reason = "This room is already in progress."
-      socket.emit("roomError", reason)
-      return
-    }
-
-    if (!waitingRooms.has(uuid)) {
+    if (!Rooms.has(uuid)) {
       const reason = "This room does not exist."
       socket.emit("roomError", reason)
       return
     }
 
-    socket.join(uuid)
+    if (Rooms.get(uuid).isInGame === true) {
+      const reason = "This room is already in progress."
+      socket.emit("roomError", reason)
+      return
+    }
 
+    // TODO: Need to remove nicknames when people leave.
+    // Add user to room
+    socket.join(uuid)
+    const nicknames = Rooms.get(uuid).nicknames
+    nicknames.push(nickname)
+    io.to(uuid).emit("roomJoined", nicknames)
+
+    // TODO: Delete later, just logging
     const countClientsInRoom = io.sockets.adapter.rooms.get(uuid).size
     console.log(`countClientsInRoom: ${countClientsInRoom}`)
-
-    if (countClientsInRoom === 2) {
-      // TODO: Random matchmaking
-      // socket.emit("matchMade", uuid)
-    }
   })
 
-  socket.on("startRoom", (uuid, isChallengeMode) => {
+  socket.on("initializeRoom", (uuid) => {
     // Each active room will keep track of the # of gameOvers in that room;
     // necessary to deal with the case where all players run out of guesses.
-    const newRoom = {
-      roomId: uuid,
+    const previousValue = Rooms.get(uuid)
+    Rooms.set(uuid, {
+      ...previousValue,
+      isInGame: true,
       size: io.sockets.adapter.rooms.get(uuid).size,
       countGameOvers: 0,
-      challengeMode: isChallengeMode,
-    }
+    })
 
-    activeRooms.push(newRoom)
-
-    waitingRooms.delete(uuid)
-
-    socket.emit("roomStarted", uuid)
+    socket.emit("roomInitialized", uuid)
   })
 
   socket.on("startNewGame", (uuid) => {
     // Reset room values.
-    const relevantRoom = activeRooms.find((object) => object.roomId === uuid)
-    relevantRoom.countGameOvers = 0
+    // TODO: Might need to update nicknames as well when people disconnect/leave
+    Rooms.get(uuid).countGameOvers = 0
 
     // Generate the required number of Boards as determined by the room.
     // Note that for simplicity, just one array of boards (containing all sockets)
@@ -134,6 +133,7 @@ io.on("connection", (socket) => {
     const socketsInRoom = io.sockets.adapter.rooms.get(uuid)
     console.log(socketsInRoom)
 
+    // TODO: Match nicknames up to the socket ids
     const allGameBoards = []
     socketsInRoom.forEach((socketId) => {
       allGameBoards.push({
@@ -144,14 +144,13 @@ io.on("connection", (socket) => {
 
     // Generate the word(s) required to play, then broadcast them to the room.
     const solution = getRandomSolution()
+    let challengeModeGuess = Rooms.get(uuid).isChallengeMode ? getRandomFirstGuess(solution) : null
 
-    let firstGuess = relevantRoom.challengeMode ? getRandomFirstGuess(solution) : null
-
-    io.to(uuid).emit("gameStarted", uuid, allGameBoards, solution, firstGuess)
+    io.to(uuid).emit("gameStarted", uuid, allGameBoards, solution, challengeModeGuess)
   })
 
-  // Process the board to only display colors
-  // Then show that hiddenBoard to the other user
+  // Process the board to hide the letters but still display the colors
+  // Then show that hiddenBoard to the other users
   socket.on("wrongGuess", (socketId, uuid, newGameBoard) => {
     const noLettersBoard = newGameBoard.map((row) => row.map((tile) => ({ ...tile, letter: "" })))
     socket.to(uuid).emit("otherBoardUpdated", socketId, noLettersBoard)
@@ -162,16 +161,12 @@ io.on("connection", (socket) => {
     io.to(uuid).emit("gameOver", uuid)
   })
 
-  socket.on("outOfGuesses", (roomId) => {
-    const relevantRoom = activeRooms.find((object) => object.roomId === roomId)
-    relevantRoom.countGameOvers += 1
-    if (relevantRoom.countGameOvers === relevantRoom.size) {
-      io.to(roomId).emit("gameOver", roomId)
+  socket.on("outOfGuesses", (uuid) => {
+    Rooms.get(uuid).countGameOvers += 1
+
+    if (Rooms.get(uuid).countGameOvers === Rooms.get(uuid).size) {
+      io.to(uuid).emit("gameOver", uuid)
     }
-    // TODO: Uhhh... not sure what this is
-    // else {
-    //   io.to(roomId)
-    // }
   })
 
   socket.on("revealGameBoard", (uuid, gameBoard) => {

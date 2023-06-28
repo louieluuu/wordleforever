@@ -60,8 +60,7 @@ function App() {
   const [room, setRoom] = useState("")
   const [isMultiplayer, setIsMultiplayer] = useState(false)
   const [isInGame, setIsInGame] = useState(false)
-  const [nickname, setNickname] = useState("")
-  const [nicknames, setNicknames] = useState([])
+  const [nickname, setNickname] = useState("Wordler")
   const [otherBoards, setOtherBoards] = useState([])
 
   // Nickname stuff
@@ -76,8 +75,11 @@ function App() {
   const handleNicknameChange = (e) => {
     const newNickname = e.target.value
     setNickname(newNickname)
-    setNicknames([newNickname])
     localStorage.setItem("nickname", newNickname)
+
+    if (isMultiplayer) {
+      socket.emit("nicknameChange", room, socket.id, newNickname)
+    }
   }
 
   // ! Socket useEffect
@@ -95,7 +97,7 @@ function App() {
       if (roomId === null) {
         return
       }
-      socket.emit("joinRoom", roomId)
+      socket.emit("joinRoom", roomId, nickname)
       setIsMultiplayer(true)
 
       socket.on("roomError", (reason) => {
@@ -336,7 +338,7 @@ function App() {
   function showWinAnimations() {
     const randomMessage = WIN_MESSAGES[Math.floor(Math.random() * WIN_MESSAGES.length)]
     setWinMessage(randomMessage)
-    setShowWinModal(true)
+    // setShowWinModal(true)
   }
 
   function handleEnter() {
@@ -485,7 +487,7 @@ function App() {
               <CountdownTimer
                 isCountdownOver={isCountdownOver}
                 setIsCountdownOver={setIsCountdownOver}
-                isChallengeMode={isChallengeMode}
+                userGuess={userGuess}
                 handleEnter={handleEnter}
               />
             )}
@@ -507,6 +509,7 @@ function App() {
             <div className="boards-container">
               <GameBoard
                 gameBoard={gameBoard}
+                nickname={nickname}
                 userGuess={userGuess}
                 currentRow={currentRow}
                 currentTile={currentTile}
@@ -544,7 +547,7 @@ function App() {
       ) : (
         <>
           <h1 className="menu__title" style={{ marginTop: "6rem" }}>
-            Welcome, {nickname || "Wordler"}!
+            Welcome, {nickname}!
           </h1>
 
           <input
@@ -564,7 +567,7 @@ function App() {
                 <MenuOnlineModes
                   isChallengeMode={isChallengeMode}
                   setIsMultiplayer={setIsMultiplayer}
-                  nicknames={nicknames}
+                  nickname={nickname}
                 />
               }
             />

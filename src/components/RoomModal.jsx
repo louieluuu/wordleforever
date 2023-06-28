@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { Dialog } from "@headlessui/react"
 
 import { socket } from "../socket"
+import { useEffect } from "react"
 
 // Styles
 const flexbox = {
@@ -18,8 +19,16 @@ const nicknamesContainer = {
   fontWeight: "bold",
 }
 
-function RoomModal({ setShowRoomModal, roomId, isChallengeMode, nicknames }) {
+function RoomModal({ setShowRoomModal, roomId, isChallengeMode }) {
   const [isCopied, setIsCopied] = useState(false)
+  const [nicknames, setNicknames] = useState([])
+
+  // Update names as people join
+  useEffect(() => {
+    socket.on("roomJoined", (nicknames) => {
+      setNicknames(nicknames)
+    })
+  })
 
   function copyLink() {
     const baseUrl = "http://localhost:5173/"
@@ -28,10 +37,10 @@ function RoomModal({ setShowRoomModal, roomId, isChallengeMode, nicknames }) {
     setIsCopied(true)
   }
 
-  function startRoom() {
-    socket.emit("startRoom", roomId, isChallengeMode)
+  function initializeRoom() {
+    socket.emit("initializeRoom", roomId)
 
-    socket.on("roomStarted", (roomId) => {
+    socket.on("roomInitialized", (roomId) => {
       socket.emit("startNewGame", roomId)
       setShowRoomModal(false)
     })
@@ -59,8 +68,8 @@ function RoomModal({ setShowRoomModal, roomId, isChallengeMode, nicknames }) {
         <br></br>
 
         <div style={nicknamesContainer}>
-          {nicknames.map((name) => (
-            <p>{name}</p>
+          {nicknames.map((nickname) => (
+            <p>{nickname}</p>
           ))}
         </div>
 
@@ -68,7 +77,7 @@ function RoomModal({ setShowRoomModal, roomId, isChallengeMode, nicknames }) {
           <span style={{ fontWeight: "bold", fontSize: "1.2rem" }}>2.</span> Start the game when
           you're ready.
         </p>
-        <button className="btn--new-game" onClick={startRoom}>
+        <button className="btn--new-game" onClick={initializeRoom}>
           START GAME
         </button>
         <br></br>

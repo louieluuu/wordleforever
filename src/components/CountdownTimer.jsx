@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { socket } from "../socket"
 
-function CountdownTimer({ isCountdownOver, setIsCountdownOver, isChallengeMode, handleEnter }) {
+function CountdownTimer({ isCountdownOver, setIsCountdownOver, userGuess, handleEnter }) {
   const [seconds, setSeconds] = useState(3)
 
   useEffect(() => {
@@ -18,7 +18,7 @@ function CountdownTimer({ isCountdownOver, setIsCountdownOver, isChallengeMode, 
     if (seconds === -1) {
       clearInterval(timer)
       resetCountdown()
-      if (isChallengeMode) {
+      if (userGuess[0] !== "") {
         handleEnter()
       }
     }
