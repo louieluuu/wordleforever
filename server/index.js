@@ -76,7 +76,6 @@ io.on("connection", (socket) => {
     socket.join(newUuid)
     socket.emit("roomCreated", newUuid)
     Rooms.set(newUuid, { nicknames: [nickname], isChallengeMode: isChallengeMode, isInGame: false })
-    console.log(Rooms)
   })
 
   // TODO: Random matchmaking
@@ -146,7 +145,14 @@ io.on("connection", (socket) => {
     const solution = getRandomSolution()
     let challengeModeGuess = Rooms.get(uuid).isChallengeMode ? getRandomFirstGuess(solution) : null
 
-    io.to(uuid).emit("gameStarted", uuid, allGameBoards, solution, challengeModeGuess)
+    io.to(uuid).emit(
+      "gameStarted",
+      uuid,
+      allGameBoards,
+      solution,
+      Rooms.get(uuid).isChallengeMode,
+      challengeModeGuess
+    )
   })
 
   // Process the board to hide the letters but still display the colors

@@ -109,21 +109,25 @@ function App() {
       socket.emit("startNewGame", roomId)
     })
 
-    socket.on("gameStarted", (roomId, allGameBoards, solution, challengeModeGuess) => {
-      resetStates()
+    socket.on(
+      "gameStarted",
+      (roomId, allGameBoards, solution, isChallengeMode, challengeModeGuess) => {
+        resetStates()
 
-      // Filter out the socket's own gameBoard.
-      const otherBoards = allGameBoards.filter((object) => object.socketId !== socket.id)
-      setOtherBoards(otherBoards)
+        // Filter out the socket's own gameBoard.
+        const otherBoards = allGameBoards.filter((object) => object.socketId !== socket.id)
+        setOtherBoards(otherBoards)
 
-      setRoom(roomId)
-      setSolution(solution)
+        setRoom(roomId)
+        setSolution(solution)
+        setIsChallengeMode(isChallengeMode)
 
-      // ! Challenge Mode specific
-      if (challengeModeGuess !== null) {
-        setUserGuess(challengeModeGuess)
+        // ! Challenge Mode specific
+        if (challengeModeGuess !== null) {
+          setUserGuess(challengeModeGuess)
+        }
       }
-    })
+    )
 
     // TODO: more cleanup
     return () => {
