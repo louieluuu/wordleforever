@@ -246,7 +246,9 @@ function App() {
       }
       //
       else if (copyPreviousGuess[i].color === "wrong-position") {
-        const index = colorizedGuess.findIndex((obj) => obj.letter === copyPreviousGuess[i].letter)
+        const index = colorizedGuess.findIndex(
+          (obj) => obj.color !== "correct" && obj.letter === copyPreviousGuess[i].letter
+        )
         if (index === -1) {
           return "yellow"
         }
@@ -334,13 +336,11 @@ function App() {
   function showWinAnimations() {
     const randomMessage = WIN_MESSAGES[Math.floor(Math.random() * WIN_MESSAGES.length)]
     setWinMessage(randomMessage)
-    setIsWinMessageOn(true)
+    setShowWinModal(true)
   }
 
   function handleEnter() {
     // Allows user to start a new game by pressing Enter instead of clicking.
-    // Buttons styling using useRef.
-
     if (isGameOver) {
       let mode
       if (isMultiplayer) {
@@ -456,6 +456,7 @@ function App() {
       setUserGuess(firstGuess)
     }
     setSolution(solution)
+
     setIsInGame(true)
   }
 
