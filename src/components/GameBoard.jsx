@@ -36,7 +36,7 @@ function GameBoard({
   return (
     <>
       <div className={`game-board${isOutOfGuesses ? "--game-over" : ""}`}>
-        {nickname}
+        <div style={{ fontFamily: "Roboto Slab" }}>{nickname}</div>
         {gameBoard.map((row, rowIndex) => (
           <div key={rowIndex} className="guess">
             {rowIndex === currentRow

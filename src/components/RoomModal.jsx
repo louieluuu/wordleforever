@@ -25,10 +25,11 @@ function RoomModal({ setShowRoomModal, roomId, isChallengeMode }) {
 
   // Update names as people join
   useEffect(() => {
-    socket.on("roomJoined", (nicknames) => {
-      setNicknames(nicknames)
+    socket.on("nicknamesChanged", (newNicknames) => {
+      console.log(newNicknames)
+      setNicknames(newNicknames)
     })
-  })
+  }, [])
 
   function copyLink() {
     const baseUrl = "http://localhost:5173/"

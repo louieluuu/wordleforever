@@ -12,7 +12,7 @@ function MenuOnlineModes({ isChallengeMode, setIsMultiplayer, nickname }) {
   const [roomId, setRoomId] = useState("")
 
   function createRoom() {
-    socket.emit("createRoom", nickname, isChallengeMode)
+    socket.emit("createRoom", socket.id, nickname, isChallengeMode)
     socket.on("roomCreated", (roomId) => {
       setRoomId(roomId)
       setIsMultiplayer(true)

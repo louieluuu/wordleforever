@@ -22,6 +22,7 @@ import { AiOutlineEnter } from "react-icons/ai"
 import { socket } from "./socket"
 
 // Confetti
+// TODO: Confetti isn't adjusting its width based on viewport
 import Confetti from "react-confetti"
 import AlertModal from "./components/AlertModal"
 import MenuOnlineModes from "./components/MenuOnlineModes"
@@ -60,16 +61,16 @@ function App() {
   const [room, setRoom] = useState("")
   const [isMultiplayer, setIsMultiplayer] = useState(false)
   const [isInGame, setIsInGame] = useState(false)
-  const [nickname, setNickname] = useState("Wordler")
+  const [nickname, setNickname] = useState(localStorage.getItem("nickname") || "Wordler")
   const [otherBoards, setOtherBoards] = useState([])
 
-  // Nickname stuff
-  useEffect(() => {
-    const storedNickname = localStorage.getItem("nickname")
-    if (storedNickname) {
-      setNickname(storedNickname)
-    }
-  }, [])
+  // // Nickname stuff
+  // useEffect(() => {
+  //   const storedNickname = localStorage.getItem("nickname")
+  //   if (storedNickname) {
+  //     setNickname(storedNickname)
+  //   }
+  // }, [])
 
   // TODO: move this down later
   const handleNicknameChange = (e) => {
@@ -97,8 +98,9 @@ function App() {
       if (roomId === null) {
         return
       }
-      socket.emit("joinRoom", roomId, nickname)
+      socket.emit("joinRoom", roomId, socket.id, nickname)
       setIsMultiplayer(true)
+      setRoom(roomId)
 
       socket.on("roomError", (reason) => {
         console.log(`Error: ${reason}`)
@@ -523,6 +525,7 @@ function App() {
               {otherBoards.map((object) => (
                 <GameBoard
                   key={object.socketId}
+                  nickname={object.nickname}
                   gameBoard={object.gameBoard}
                   userGuess={userGuess}
                   currentRow={-1}

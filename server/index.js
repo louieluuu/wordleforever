@@ -66,21 +66,33 @@ io.on("connection", (socket) => {
   console.log(`Current # total users on site: ${count}`)
 
   // Create room
-  socket.on("createRoom", (nickname, isChallengeMode) => {
+  socket.on("createRoom", (socketId, nickname, isChallengeMode) => {
     let newUuid = uuidv4()
     // Guarantees non-colliding rooms (even though the chance is infinitely small)
     while (Rooms.has(newUuid)) {
       newUuid = uuidv4()
     }
 
+    // More properties will be added to the Room later, but this is all we need for now.
+    Rooms.set(newUuid, {
+      Nicknames: new Map([[socketId, nickname]]),
+      isChallengeMode: isChallengeMode,
+      isInGame: false,
+    })
+
+    // TODO: Can refactor this to a helper function "changeNicknames()"
+    // Socket.IO does not emit Maps or Iterators, so we need to convert it to an Array first.
+    const nicknamesMap = Rooms.get(newUuid).Nicknames
+    const nicknamesArray = Array.from(nicknamesMap.values())
+    socket.emit("nicknamesChanged", nicknamesArray)
+
     socket.join(newUuid)
     socket.emit("roomCreated", newUuid)
-    Rooms.set(newUuid, { nicknames: [nickname], isChallengeMode: isChallengeMode, isInGame: false })
   })
 
   // TODO: Random matchmaking
   // Join room
-  socket.on("joinRoom", (uuid, nickname) => {
+  socket.on("joinRoom", (uuid, socketId, nickname) => {
     // Check validity of room
     if (!Rooms.has(uuid)) {
       const reason = "This room does not exist."
@@ -97,16 +109,27 @@ io.on("connection", (socket) => {
     // TODO: Need to remove nicknames when people leave.
     // Add user to room
     socket.join(uuid)
-    const nicknames = Rooms.get(uuid).nicknames
-    nicknames.push(nickname)
-    io.to(uuid).emit("roomJoined", nicknames)
+    const nicknamesMap = Rooms.get(uuid).Nicknames
+    nicknamesMap.set(socketId, nickname)
+
+    // Socket.IO does not emit Maps or Iterators, so we need to convert it to an Array first.
+    const nicknamesArray = Array.from(nicknamesMap.values())
+    io.to(uuid).emit("nicknamesChanged", nicknamesArray)
 
     // TODO: Delete later, just logging
     const countClientsInRoom = io.sockets.adapter.rooms.get(uuid).size
     console.log(`countClientsInRoom: ${countClientsInRoom}`)
   })
 
+  socket.on("nicknameChange", (uuid, socketId, newNickname) => {
+    const nicknamesMap = Rooms.get(uuid).Nicknames
+    nicknamesMap.set(socketId, newNickname)
+    const nicknamesArray = Array.from(nicknamesMap.values())
+    io.to(uuid).emit("nicknamesChanged", nicknamesArray)
+  })
+
   socket.on("initializeRoom", (uuid) => {
+    // Adding some more properties to the Room.
     // Each active room will keep track of the # of gameOvers in that room;
     // necessary to deal with the case where all players run out of guesses.
     const previousValue = Rooms.get(uuid)
@@ -132,11 +155,11 @@ io.on("connection", (socket) => {
     const socketsInRoom = io.sockets.adapter.rooms.get(uuid)
     console.log(socketsInRoom)
 
-    // TODO: Match nicknames up to the socket ids
     const allGameBoards = []
     socketsInRoom.forEach((socketId) => {
       allGameBoards.push({
         socketId: socketId,
+        nickname: Rooms.get(uuid).Nicknames.get(socketId),
         gameBoard: new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })),
       })
     })
@@ -181,9 +204,10 @@ io.on("connection", (socket) => {
 })
 
 // This has to be different from the client port
+const IP = "192.168.1.72"
 const PORT = 4000
 
-httpServer.listen(PORT, () => {
+httpServer.listen(PORT, IP, () => {
   console.log(`Server is running on port ${PORT}`)
 })
 
