@@ -150,6 +150,46 @@ a {
   }
 }
 
+.flexbox1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.3rem;
+}
+
+.flexbox2 {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: solid 3px black;
+  box-shadow: 0.5rem 0.75rem 1rem hsl(0deg 0% 0% / 0.15);
+  flex-basis: content;
+  padding-inline: 5rem;
+  padding-top: 3rem;
+  padding-bottom: 5rem;
+  border-radius: 1rem;
+
+  background-image: url("https://images.unsplash.com/photo-1551376347-075b0121a65b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8fA%3D%3D&w=1000&q=80");
+  background-size: cover;
+  background-repeat: none;
+}
+
+.flexbox3 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 10rem;
+  border: 2px dashed hsl(0, 0%, 50%);
+  padding-inline: 5rem;
+  padding-block: 0.5rem;
+  font-size: 1.1rem;
+  line-height: 0;
+  font-weight: 600;
+  font-family: "Roboto";
+}
+
 // Modal (lobby)
 .modal {
   border: 3px solid black;
@@ -159,7 +199,7 @@ a {
   min-width: 20rem;
 
   position: fixed;
-  top: 20vh;
+  top: 30vh;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -176,6 +216,7 @@ a {
     font-size: 3.5rem;
     font-family: "Lobster", sans-serif;
     font-weight: lighter;
+    margin-top: 6rem;
     margin-bottom: 4rem;
   }
 

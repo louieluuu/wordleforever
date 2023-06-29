@@ -76,10 +76,12 @@ function App() {
     const newNickname = e.target.value
 
     // Enforce nickname length limit
-    if (newNickname.length <= 20) {
-      setNickname(newNickname)
-      localStorage.setItem("nickname", newNickname)
+    if (newNickname.length > 20) {
+      return
     }
+
+    setNickname(newNickname)
+    localStorage.setItem("nickname", newNickname)
 
     if (isMultiplayer) {
       socket.emit("nicknameChange", room, socket.id, newNickname)
@@ -560,14 +562,11 @@ function App() {
         </>
       ) : (
         <>
-          <h1 className="menu__title" style={{ marginTop: "6rem" }}>
+          <h1 className="menu__title">
             <WelcomeMessage nickname={nickname} handleNicknameChange={handleNicknameChange} />
           </h1>
-          {/* <h1 className="menu__title" style={{ marginTop: "6rem" }}>
-            Welcome, {nickname}!
-          </h1> */}
 
-          <ChallengeForm setIsChallengeMode={setIsChallengeMode} />
+          {/* <ChallengeForm setIsChallengeMode={setIsChallengeMode} /> */}
 
           <AnimatePresence mode="wait">
             <Routes key={location.pathname} location={location}>

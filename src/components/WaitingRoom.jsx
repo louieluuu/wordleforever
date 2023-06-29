@@ -34,13 +34,21 @@ function WaitingRoom({ setIsMultiplayer, setRoom, nickname }) {
     })
   })
 
+  // TODO: This is such a mess :) (to get a border around the flexbox that
+  // TODO: doesn't span the whole width...)
   return (
-    <>
-      <h1>These bitches better be ready...</h1>
-      {nicknames.map((nickname) => (
-        <p>{nickname}</p>
-      ))}
-    </>
+    <div className="flexbox1">
+      <div className="flexbox2">
+        <h1 style={{ fontFamily: "Faustina", color: "hsl(0, 0%, 15%)" }}>
+          A battle is surely brewing...
+        </h1>
+        <div className="flexbox3">
+          {nicknames.map((nickname) => (
+            <p>{nickname}</p>
+          ))}
+        </div>
+      </div>
+    </div>
   )
 }
 
