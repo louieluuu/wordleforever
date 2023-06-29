@@ -37,7 +37,7 @@ function MenuOnlineModes({ isChallengeMode, setIsMultiplayer, nickname }) {
         </button>
         <Link to="/">
           <button className="menu__btn--back">
-            <HiOutlineArrowUturnLeft />
+            <HiOutlineArrowUturnLeft strokeWidth={"2px"} />
           </button>
         </Link>
 
