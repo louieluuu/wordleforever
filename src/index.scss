@@ -31,18 +31,27 @@ a {
 // TODO: I don't think React allows inline animation/keyframes?
 .nickname-form {
   &:hover {
-    opacity: 93%;
+    opacity: 95%;
   }
 
-  animation: pulse 10s infinite;
+  animation: pulse 20s infinite;
 
   @keyframes pulse {
     0%,
     100% {
-      color: #f56a3f;
+      color: rgb(233, 114, 122);
     }
+
+    25% {
+      color: rgb(238, 139, 122);
+    }
+
     50% {
-      color: #9e42b0;
+      color: rgb(194, 135, 191);
+    }
+
+    75% {
+      color: rgb(199, 160, 191);
     }
   }
 }
@@ -58,6 +67,15 @@ a {
   font-family: "Calistoga", serif;
 
   border-bottom: 1px solid $color-primary;
+
+  &__logo {
+    width: 3rem;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 85%;
+    }
+  }
 
   &__title {
     margin: 0.5rem;

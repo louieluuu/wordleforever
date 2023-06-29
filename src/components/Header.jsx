@@ -16,13 +16,14 @@ export default function Header() {
     window.location.href = "/"
   }
 
+  // TODO: The logo and title should be connected somehow
   return (
     <>
       <header className="header">
         {/* <div className="header__left">
           <HiMenu className="header__svg" />
         </div> */}
-        <img src={Logo3} style={{ width: "3rem" }} />
+        <img src={Logo3} className="header__logo" onClick={refreshPage} />
         <h1 className="header__title" onClick={refreshPage}>
           Wordle For All
         </h1>

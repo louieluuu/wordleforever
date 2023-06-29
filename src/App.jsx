@@ -173,7 +173,7 @@ function App() {
 
   // Confetti timer
   useEffect(() => {
-    setNumberOfPieces(150)
+    setNumberOfPieces(200)
 
     const confettiTimer = setTimeout(() => {
       setNumberOfPieces(0)
@@ -464,14 +464,14 @@ function App() {
     }
   }
 
-  // TODO: This stuff is a little redundant. Look into refactoring.
+  // TODO: This startNewClassicGame/handleNewGame is a little redundant. Look into refactoring.
   function startNewClassicGame() {
     resetStates()
 
-    const solution = ["S", "A", "T", "I", "N"]
+    const solution = getRandomSolution()
     if (isChallengeMode) {
       const firstGuess = getRandomFirstGuess(solution)
-      setUserGuess(["S", "C", "R", "A", "Y"])
+      setUserGuess(firstGuess)
     }
     setSolution(solution)
   }
@@ -556,9 +556,7 @@ function App() {
             handleBackspace={handleBackspace}
           />
 
-          {isConfettiRunning && (
-            <Confetti numberOfPieces={numberOfPieces} initialVelocityY={-10} tweenDuration={3000} />
-          )}
+          {isConfettiRunning && <Confetti numberOfPieces={numberOfPieces} initialVelocityY={-10} />}
         </>
       ) : (
         <>
