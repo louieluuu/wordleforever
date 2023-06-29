@@ -25,7 +25,7 @@ export default function Header() {
         </div> */}
         <img src={Logo3} className="header__logo" onClick={refreshPage} />
         <h1 className="header__title" onClick={refreshPage}>
-          Wordle For All
+          Wordle Forever
         </h1>
         <div className="header__right">
           <RiQuestionLine onClick={() => setIsDialogOpen(true)} className="header__svg" />

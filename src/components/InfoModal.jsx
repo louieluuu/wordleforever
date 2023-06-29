@@ -54,13 +54,11 @@ function InfoModal({ setIsDialogOpen }) {
         <hr />
 
         <p style={{ ...textContent, paddingBottom: 0 }}>
-          Wordle For All is a recreation of{" "}
+          Wordle Forever is a multiplayer recreation of{" "}
           <a href="https://www.nytimes.com/games/wordle/index.html" target="_blank">
-            Wordle
-          </a>{" "}
-          with a focus on competition.
-          <br></br>
-          Built by Louie Lu using React and Socket.IO.
+            Wordle&nbsp;
+          </a>
+          with additional QOL features. Built from scratch using React and Socket.IO.
         </p>
       </dialog>
     </div>
