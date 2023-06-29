@@ -21,7 +21,7 @@ function ChallengeForm({ setIsChallengeMode }) {
           <FaQuestionCircle color="hsl(0,0%,22.5%)" />
         </a>
         <Tooltip id="challenge-tooltip">
-          <ul style={{ paddingLeft: "1rem", margin: 0 }}>
+          <ul style={{ fontSize: "0.85rem", paddingLeft: "1rem", margin: 0 }}>
             <li>random starting word</li>
             <li>must use previous hints</li>
           </ul>
