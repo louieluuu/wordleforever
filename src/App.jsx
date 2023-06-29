@@ -1,7 +1,6 @@
 // TODO: package.json: changed from "module" to "type" = "commonjs" to support wordlist
 
 import { useState, useEffect } from "react"
-import { Route, Routes } from "react-router-dom"
 
 import { WORD_LIST } from "./data/wordList"
 import { VALID_GUESSES } from "./data/validGuesses"
@@ -20,6 +19,12 @@ import Test from "./components/Test"
 // React-icons
 import { AiOutlineEnter } from "react-icons/ai"
 
+// Framer-Motion
+import MenuOnlineModes from "./components/MenuOnlineModes"
+import MenuOfflineModes from "./components/MenuOfflineModes"
+import { Route, Routes, useLocation } from "react-router-dom"
+import { AnimatePresence } from "framer-motion"
+
 // Socket
 import { socket } from "./socket"
 
@@ -27,8 +32,6 @@ import { socket } from "./socket"
 // TODO: Confetti isn't adjusting its width based on viewport
 import Confetti from "react-confetti"
 import AlertModal from "./components/AlertModal"
-import MenuOnlineModes from "./components/MenuOnlineModes"
-import MenuOfflineModes from "./components/MenuOfflineModes"
 
 function App() {
   const [currentRow, setCurrentRow] = useState(0)
@@ -64,13 +67,8 @@ function App() {
   const [nickname, setNickname] = useState(localStorage.getItem("nickname") || "Wordler")
   const [otherBoards, setOtherBoards] = useState([])
 
-  // // Nickname stuff
-  // useEffect(() => {
-  //   const storedNickname = localStorage.getItem("nickname")
-  //   if (storedNickname) {
-  //     setNickname(storedNickname)
-  //   }
-  // }, [])
+  // Framer-Motion fade out
+  const location = useLocation()
 
   // TODO: move this down later
   const handleNicknameChange = (e) => {
@@ -566,36 +564,38 @@ function App() {
 
           <ChallengeForm setIsChallengeMode={setIsChallengeMode} />
 
-          <Routes>
-            <Route path="/" element={<MenuLandingPage />} />
-            <Route
-              path="/online"
-              element={
-                <MenuOnlineModes
-                  isChallengeMode={isChallengeMode}
-                  setIsMultiplayer={setIsMultiplayer}
-                  nickname={nickname}
-                />
-              }
-            />
-            <Route
-              path="/room/:roomId"
-              element={
-                <WaitingRoom
-                  setIsMultiplayer={setIsMultiplayer}
-                  setRoom={setRoom}
-                  nickname={nickname}
-                />
-              }
-            />
+          <AnimatePresence mode="wait">
+            <Routes key={location.pathname} location={location}>
+              <Route path="/" element={<MenuLandingPage />} />
+              <Route
+                path="/online"
+                element={
+                  <MenuOnlineModes
+                    isChallengeMode={isChallengeMode}
+                    setIsMultiplayer={setIsMultiplayer}
+                    nickname={nickname}
+                  />
+                }
+              />
+              <Route
+                path="/room/:roomId"
+                element={
+                  <WaitingRoom
+                    setIsMultiplayer={setIsMultiplayer}
+                    setRoom={setRoom}
+                    nickname={nickname}
+                  />
+                }
+              />
 
-            <Route path="/test" element={<Test />} />
+              <Route path="/test" element={<Test />} />
 
-            <Route
-              path="/offline"
-              element={<MenuOfflineModes startNewClassicGame={startNewClassicGame} />}
-            />
-          </Routes>
+              <Route
+                path="/offline"
+                element={<MenuOfflineModes startNewClassicGame={startNewClassicGame} />}
+              />
+            </Routes>
+          </AnimatePresence>
         </>
       )}
     </>

@@ -7,6 +7,8 @@ import { socket } from "../socket"
 
 import RoomModal from "./RoomModal"
 
+import AnimatedPage from "./AnimatedPage"
+
 function MenuOnlineModes({ isChallengeMode, setIsMultiplayer, nickname }) {
   const [showRoomModal, setShowRoomModal] = useState(false)
   const [roomId, setRoomId] = useState("")
@@ -22,7 +24,7 @@ function MenuOnlineModes({ isChallengeMode, setIsMultiplayer, nickname }) {
   }
 
   return (
-    <>
+    <AnimatedPage>
       <div className="menu">
         <button
           className="menu__btn--online"
@@ -47,7 +49,7 @@ function MenuOnlineModes({ isChallengeMode, setIsMultiplayer, nickname }) {
           />
         )}
       </div>
-    </>
+    </AnimatedPage>
   )
 }
 
