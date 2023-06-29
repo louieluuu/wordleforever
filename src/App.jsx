@@ -51,8 +51,6 @@ function App() {
   const [isCountdownOver, setIsCountdownOver] = useState(false)
   const [isOutOfGuesses, setIsOutOfGuesses] = useState(false)
   const [isChallengeMode, setIsChallengeMode] = useState(false)
-  const [winMessage, setWinMessage] = useState("")
-  const [isWinMessageOn, setIsWinMessageOn] = useState(false)
   const [isConfettiRunning, setIsConfettiRunning] = useState(false)
   const [numberOfPieces, setNumberOfPieces] = useState(0)
 
@@ -343,9 +341,9 @@ function App() {
   }
 
   function showWinAnimations() {
-    const randomMessage = WIN_MESSAGES[Math.floor(Math.random() * WIN_MESSAGES.length)]
-    setWinMessage(randomMessage)
-    // setShowWinModal(true)
+    const winMessage = WIN_MESSAGES[Math.floor(Math.random() * WIN_MESSAGES.length)]
+    setAlertMessage(winMessage)
+    setShowAlertModal(true)
   }
 
   function handleEnter() {
@@ -379,7 +377,7 @@ function App() {
     else if (isChallengeMode) {
       const result = usesPreviousHints()
       if (result !== "yes") {
-        setAlertMessage(`Must adhere to ${result} hints!`)
+        setAlertMessage(`Must use ${result} hints!`)
         setShowAlertModal(true)
         return
       }
@@ -511,6 +509,7 @@ function App() {
               showAlertModal={showAlertModal}
               setShowAlertModal={setShowAlertModal}
               isOutOfGuesses={isOutOfGuesses}
+              isConfettiRunning={isConfettiRunning}
             />
 
             <div className="boards-container">

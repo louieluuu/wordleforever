@@ -1,18 +1,26 @@
 import React, { useEffect } from "react"
 
-function AlertModal({ message, showAlertModal, setShowAlertModal, isOutOfGuesses }) {
+function AlertModal({
+  message,
+  showAlertModal,
+  setShowAlertModal,
+  isOutOfGuesses,
+  isConfettiRunning,
+}) {
   useEffect(() => {
     if (showAlertModal) {
-      // Most of these alerts are temporary (1s). The exception is if
-      // the user is out of guesses; user would want to see the solution
-      // for an extended period of time.
+      // Most of these alerts are temporary (1s). The exceptions are:
+      // - out of guesses (infinite time)
+      // - win (8000ms, which just happens to be when the confetti disappears)
       if (isOutOfGuesses) {
         return
       }
 
+      const ms = isConfettiRunning ? 8000 : 1000
+
       const timer = setTimeout(() => {
         setShowAlertModal(false)
-      }, 1000)
+      }, ms)
 
       return () => {
         clearTimeout(timer)

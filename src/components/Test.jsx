@@ -1,63 +1,63 @@
-import React, { useState } from "react"
-
-const pulse = {
-  animation: "pulse 20s infinite",
-  "@keyframes pulse": {
-    "0%, 100%": {
-      color: "#f56a3f",
-    },
-    "50%": {
-      color: "#9e42b0",
-    },
-  },
-
-  cursor: "pointer",
-}
+import React, { useState, useEffect, useRef } from "react"
 
 const WelcomeMessage = () => {
-  const [isEditing, setIsEditing] = useState(false)
-  const [username, setUsername] = useState("Wordler")
+  const textBoxRef = useRef(null)
 
-  const handleUsernameClick = () => {
-    setIsEditing(true)
-  }
+  // useEffect(() => {
+  //   function resizeInput() {
+  //     const length = textBoxRef.current.value.length
 
-  const handleUsernameChange = (e) => {
-    setUsername(e.target.value)
-  }
+  //     let modifier
 
-  const handleUsernameBlur = () => {
-    setIsEditing(false)
-  }
+  //     switch (true) {
+  //       case length >= 0 && length <= 4:
+  //         modifier = 0.95
+  //         break
+  //       case length >= 5 && length <= 9:
+  //         modifier = 0.9
+  //         break
+  //       case length >= 10 && length <= 14:
+  //         modifier = 0.85
+  //         break
+  //       case length >= 15 && length <= 19:
+  //         modifier = 0.8
+  //         break
+  //       default:
+  //         modifier = 0
+  //         break
+  //     }
+
+  //     textBoxRef.current.style.width = `${length * modifier}ch`
+  //     console.log(textBoxRef.current.style.width)
+  //   }
+
+  //   const textBox = textBoxRef.current
+  //   textBox.addEventListener("input", resizeInput)
+  //   resizeInput.call(textBox)
+  // }, [textBoxRef])
 
   return (
-    <div style={{ display: "flex", alignItems: "center", fontFamily: "Lobster", fontSize: "3rem" }}>
-      <span style={{ marginRight: "5px" }}>Welcome,</span>
-      <div style={{ position: "relative" }}>
-        {isEditing ? (
-          <input
-            type="text"
-            value={`${username}!`}
-            onChange={handleUsernameChange}
-            onBlur={handleUsernameBlur}
-            style={{
-              border: "none",
-              outline: "none",
-              padding: "0",
-              margin: "0",
-              fontSize: "inherit",
-              fontFamily: "inherit",
-              background: "transparent",
-            }}
-            autoFocus
-          />
-        ) : (
-          <span onClick={handleUsernameClick} style={pulse}>
-            {username}
-          </span>
-        )}
-        {!isEditing && <span>!</span>}
-      </div>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        fontFamily: "Lobster",
+        fontSize: "3rem",
+      }}>
+      <label>
+        Welcome,&nbsp;
+        <input
+          ref={textBoxRef}
+          defaultValue={"Wordler!"}
+          style={{
+            border: "none",
+            outline: "none",
+            font: "inherit",
+            // boxSizing: "content-box",
+            paddingRight: 0,
+          }}
+        />
+      </label>
     </div>
   )
 }

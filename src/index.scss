@@ -136,9 +136,9 @@ a {
 
   &__title {
     @extend .menu;
-    color: hsl(0, 0%, 0%);
-    font-size: 2.5rem;
+    font-size: 3.5rem;
     font-family: "Lobster", sans-serif;
+    font-weight: lighter;
     margin-bottom: 4rem;
   }
 
@@ -251,7 +251,7 @@ a {
 
 .alert {
   position: fixed;
-  top: 26.8vh; // slots right in between the guesses
+  top: 28.74vh; // slots right in between the guesses
   z-index: 1;
 
   padding-inline: 1rem;
@@ -284,7 +284,7 @@ a {
 
 .countdown-timer {
   position: fixed;
-  top: 24%;
+  top: 26.1vh;
 }
 
 .boards-container {
