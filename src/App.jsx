@@ -1,6 +1,6 @@
 // TODO: package.json: changed from "module" to "type" = "commonjs" to support wordlist
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { Route, Routes } from "react-router-dom"
 
 import { WORD_LIST } from "./data/wordList"
@@ -14,6 +14,8 @@ import GameBoard from "./components/GameBoard"
 import MenuLandingPage from "./components/MenuLandingPage"
 import CountdownTimer from "./components/CountdownTimer"
 import ChallengeForm from "./components/ChallengeForm"
+import WaitingRoom from "./components/WaitingRoom"
+import Test from "./components/Test"
 
 // React-icons
 import { AiOutlineEnter } from "react-icons/ai"
@@ -75,8 +77,11 @@ function App() {
   // TODO: move this down later
   const handleNicknameChange = (e) => {
     const newNickname = e.target.value
-    setNickname(newNickname)
-    localStorage.setItem("nickname", newNickname)
+
+    if (newNickname.length <= 20) {
+      setNickname(newNickname)
+      localStorage.setItem("nickname", newNickname)
+    }
 
     if (isMultiplayer) {
       socket.emit("nicknameChange", room, socket.id, newNickname)
@@ -88,28 +93,24 @@ function App() {
   // TODO: HOOK WITHOUT SPECIFIED DEPENDENCIES ** seems to result in unreliable behaviour.
 
   useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Connected to server")
+    // socket.on("connect", () => {
+    //   console.log("Connected to server")
 
-      // If the socket connects to a pasted link from a friend, parse and join the room.
-      const queryParams = new URLSearchParams(document.location.search)
-      const roomId = queryParams.get("room")
+    //   // If the socket connects to a pasted link from a friend, parse and join the room.
+    //   const queryParams = new URLSearchParams(document.location.search)
+    //   const roomId = queryParams.get("room")
 
-      if (roomId === null) {
-        return
-      }
-      socket.emit("joinRoom", roomId, socket.id, nickname)
-      setIsMultiplayer(true)
-      setRoom(roomId)
+    //   if (roomId === null) {
+    //     return
+    //   }
+    //   socket.emit("joinRoom", roomId, socket.id, nickname)
+    //   setIsMultiplayer(true)
+    //   setRoom(roomId)
 
-      socket.on("roomError", (reason) => {
-        console.log(`Error: ${reason}`)
-      })
-    })
-
-    socket.on("matchMade", (roomId) => {
-      socket.emit("startNewGame", roomId)
-    })
+    //   socket.on("roomError", (reason) => {
+    //     console.log(`Error: ${reason}`)
+    //   })
+    // })
 
     socket.on(
       "gameStarted",
@@ -578,6 +579,19 @@ function App() {
                 />
               }
             />
+            <Route
+              path="/room/:roomId"
+              element={
+                <WaitingRoom
+                  setIsMultiplayer={setIsMultiplayer}
+                  setRoom={setRoom}
+                  nickname={nickname}
+                />
+              }
+            />
+
+            <Route path="/test" element={<Test />} />
+
             <Route
               path="/offline"
               element={<MenuOfflineModes startNewClassicGame={startNewClassicGame} />}

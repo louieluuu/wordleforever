@@ -121,6 +121,7 @@ io.on("connection", (socket) => {
     console.log(`countClientsInRoom: ${countClientsInRoom}`)
   })
 
+  // Handle nickname changes
   socket.on("nicknameChange", (uuid, socketId, newNickname) => {
     const nicknamesMap = Rooms.get(uuid).Nicknames
     nicknamesMap.set(socketId, newNickname)

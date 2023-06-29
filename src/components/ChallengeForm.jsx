@@ -1,6 +1,7 @@
 import React from "react"
 
 import { FaQuestionCircle } from "react-icons/fa"
+import { Tooltip } from "react-tooltip"
 
 const formStyle = {
   display: "flex",
@@ -12,10 +13,19 @@ const formStyle = {
 
 function ChallengeForm({ setIsChallengeMode }) {
   return (
-    <form>
-      <label style={formStyle}>
+    <form style={formStyle}>
+      <label>
         <input type="checkbox" onChange={() => setIsChallengeMode((prev) => !prev)} />
-        &nbsp;Challenge Mode&nbsp; <FaQuestionCircle />
+        &nbsp;Challenge Mode&nbsp;
+        <a data-tooltip-id="challenge-tooltip" style={{ verticalAlign: "middle" }}>
+          <FaQuestionCircle color="hsl(0,0%,22.5%)" />
+        </a>
+        <Tooltip id="challenge-tooltip">
+          <ul style={{ paddingLeft: "1rem", margin: 0 }}>
+            <li>random starting word</li>
+            <li>must use previous hints</li>
+          </ul>
+        </Tooltip>
       </label>
     </form>
   )

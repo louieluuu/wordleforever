@@ -26,14 +26,13 @@ function RoomModal({ setShowRoomModal, roomId, isChallengeMode }) {
   // Update names as people join
   useEffect(() => {
     socket.on("nicknamesChanged", (newNicknames) => {
-      console.log(newNicknames)
       setNicknames(newNicknames)
     })
   }, [])
 
   function copyLink() {
-    const baseUrl = "http://localhost:5173/"
-    const roomLink = `${baseUrl}?room=${roomId}`
+    const baseUrl = "http://localhost:5173"
+    const roomLink = `${baseUrl}/room/${roomId}`
     navigator.clipboard.writeText(roomLink)
     setIsCopied(true)
   }
