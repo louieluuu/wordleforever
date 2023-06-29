@@ -14,7 +14,7 @@ import MenuLandingPage from "./components/MenuLandingPage"
 import CountdownTimer from "./components/CountdownTimer"
 import ChallengeForm from "./components/ChallengeForm"
 import WaitingRoom from "./components/WaitingRoom"
-import Test from "./components/Test"
+import WelcomeMessage from "./components/WelcomeMessage"
 
 // React-icons
 import { AiOutlineEnter } from "react-icons/ai"
@@ -32,6 +32,7 @@ import { socket } from "./socket"
 // TODO: Confetti isn't adjusting its width based on viewport
 import Confetti from "react-confetti"
 import AlertModal from "./components/AlertModal"
+import { color } from "framer-motion"
 
 function App() {
   const [currentRow, setCurrentRow] = useState(0)
@@ -74,6 +75,7 @@ function App() {
   const handleNicknameChange = (e) => {
     const newNickname = e.target.value
 
+    // Enforce nickname length limit
     if (newNickname.length <= 20) {
       setNickname(newNickname)
       localStorage.setItem("nickname", newNickname)
@@ -240,33 +242,44 @@ function App() {
       return "yes"
     }
 
-    const copyPreviousGuess = [...gameBoard[currentRow - 1]]
+    // Creating a deep copy of a row in a 2d matrix is surprisingly elusive...
+    // const copyPreviousGuess = [...gameBoard[currentRow - 1]] does not work.
+    // This JSON method is one way I found to do it.
+    const copyPreviousGuess = JSON.parse(JSON.stringify(gameBoard[currentRow - 1]))
+    console.log(copyPreviousGuess)
     const colorizedGuess = colorizeGuess(userGuess, solution)
+    console.log(colorizedGuess)
 
+    // Pass 1: Green
     for (let i = 0; i < copyPreviousGuess.length; ++i) {
       if (copyPreviousGuess[i].color === "correct") {
         if (colorizedGuess[i].letter !== copyPreviousGuess[i].letter) {
           return "green"
         }
+        // Remove the letter so it won't affect the next pass
+        colorizedGuess[i].letter = ""
       }
-      //
-      else if (copyPreviousGuess[i].color === "wrong-position") {
-        const index = colorizedGuess.findIndex(
-          (obj) => obj.color !== "correct" && obj.letter === copyPreviousGuess[i].letter
-        )
+    }
+
+    console.log(copyPreviousGuess)
+    console.log(colorizedGuess)
+
+    // Pass 2: Yellow
+    for (let i = 0; i < copyPreviousGuess.length; ++i) {
+      if (copyPreviousGuess[i].color === "wrong-position") {
+        const index = colorizedGuess.findIndex((obj) => obj.letter === copyPreviousGuess[i].letter)
         if (index === -1) {
           return "yellow"
         }
-        copyPreviousGuess[i] = null
+        copyPreviousGuess[i].color = "none"
         colorizedGuess[index].letter = null
       }
     }
 
+    // Pass 3: If there are still yellows remaining, fails the test
     for (let i = 0; i < copyPreviousGuess.length; ++i) {
-      if (copyPreviousGuess[i] !== null) {
-        if (copyPreviousGuess[i].color === "wrong-position") {
-          return "yellow"
-        }
+      if (copyPreviousGuess[i].color === "wrong-position") {
+        return "yellow"
       }
     }
 
@@ -455,14 +468,12 @@ function App() {
   function startNewClassicGame() {
     resetStates()
 
-    const solution = getRandomSolution()
+    const solution = ["S", "A", "T", "I", "N"]
     if (isChallengeMode) {
       const firstGuess = getRandomFirstGuess(solution)
-      setUserGuess(firstGuess)
+      setUserGuess(["S", "C", "R", "A", "Y"])
     }
     setSolution(solution)
-
-    setIsInGame(true)
   }
 
   function handleNewGame(mode) {
@@ -552,15 +563,11 @@ function App() {
       ) : (
         <>
           <h1 className="menu__title" style={{ marginTop: "6rem" }}>
-            Welcome, {nickname}!
+            <WelcomeMessage nickname={nickname} handleNicknameChange={handleNicknameChange} />
           </h1>
-
-          <input
-            type="text"
-            value={nickname}
-            onChange={handleNicknameChange}
-            placeholder="Enter your name"
-          />
+          {/* <h1 className="menu__title" style={{ marginTop: "6rem" }}>
+            Welcome, {nickname}!
+          </h1> */}
 
           <ChallengeForm setIsChallengeMode={setIsChallengeMode} />
 
@@ -587,8 +594,6 @@ function App() {
                   />
                 }
               />
-
-              <Route path="/test" element={<Test />} />
 
               <Route
                 path="/offline"

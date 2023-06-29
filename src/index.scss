@@ -20,12 +20,31 @@ $color-hover: hsl(0, 0, 80%);
 body {
   margin: 0;
   cursor: default;
-  // background-color: hsl(72, 29%, 97%);
 }
 
 a {
   color: hsl(197, 100%, 40%);
   text-decoration: none;
+}
+
+// TODO: I would write these styles in the WelcomeMessage component, but
+// TODO: I don't think React allows inline animation/keyframes?
+.nickname-form {
+  &:hover {
+    opacity: 93%;
+  }
+
+  animation: pulse 10s infinite;
+
+  @keyframes pulse {
+    0%,
+    100% {
+      color: #f56a3f;
+    }
+    50% {
+      color: #9e42b0;
+    }
+  }
 }
 
 // Header
