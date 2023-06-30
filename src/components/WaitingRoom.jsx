@@ -39,8 +39,8 @@ function WaitingRoom({ setIsMultiplayer, setRoom, nickname }) {
   return (
     <div className="flexbox1">
       <div className="flexbox2">
-        <h1 style={{ fontFamily: "Faustina", color: "hsl(0, 0%, 15%)" }}>
-          A battle is surely brewing...
+        <h1 style={{ fontFamily: "Suwannaphum", color: "hsl(0, 0%, 15%)" }}>
+          a battle is surely brewing...
         </h1>
         <div className="flexbox3">
           {nicknames.map((nickname) => (

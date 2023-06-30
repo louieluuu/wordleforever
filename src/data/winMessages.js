@@ -33,9 +33,10 @@ export const WIN_MESSAGES = [
   "Flying colors. 🌈",
   "Skill difference. 📈",
   "Tip-top triumph. 🗻",
-  "Born a winner. 🏅",
+  "Born to win. 🏅",
   "GOATed. 🐐",
   "911? Murder. 🔪",
   "Shine on! 💎",
   "EZ 👏",
+  "Holy BRSH 🃏",
 ]

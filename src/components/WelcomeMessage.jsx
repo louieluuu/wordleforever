@@ -56,6 +56,7 @@ function WelcomeMessage({ nickname, handleNicknameChange }) {
             border: "none",
             outline: "none",
             font: "inherit",
+            fontFamily: "Lobster",
             cursor: "pointer",
           }}
         />

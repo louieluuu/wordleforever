@@ -17,7 +17,7 @@ import WaitingRoom from "./components/WaitingRoom"
 import WelcomeMessage from "./components/WelcomeMessage"
 
 // React-icons
-import { AiOutlineEnter } from "react-icons/ai"
+import { IoReturnDownBackSharp } from "react-icons/io5"
 
 // Framer-Motion
 import MenuOnlineModes from "./components/MenuOnlineModes"
@@ -512,7 +512,7 @@ function App() {
               className={isGameOver ? "btn--new-game" : "btn--new-game--hidden"}
               onClick={handleEnter}>
               NEW GAME
-              <AiOutlineEnter />
+              <IoReturnDownBackSharp />
             </button>
 
             <AlertModal

@@ -172,8 +172,16 @@ a {
   border-radius: 1rem;
 
   background-image: url("https://images.unsplash.com/photo-1551376347-075b0121a65b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8fA%3D%3D&w=1000&q=80");
-  background-size: cover;
-  background-repeat: none;
+  background-position: 0 10%;
+  background-repeat: repeat-x;
+  background-attachment: fixed;
+  animation: slide 30s linear infinite;
+}
+
+@keyframes slide {
+  to {
+    background-position: -1000px 10%;
+  }
 }
 
 .flexbox3 {
