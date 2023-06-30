@@ -18,7 +18,6 @@ function WaitingRoom({ setIsMultiplayer, setRoom, nickname }) {
   useEffect(() => {
     socket.on("connect", () => {
       console.log("Connected to server")
-      console.log(roomId)
 
       socket.emit("joinRoom", roomId, socket.id, nickname)
       setIsMultiplayer(true)
@@ -36,15 +35,17 @@ function WaitingRoom({ setIsMultiplayer, setRoom, nickname }) {
 
   // TODO: This is such a mess :) (to get a border around the flexbox that
   // TODO: doesn't span the whole width...)
+  // TODO: Also, index isn't a reliable key - actually need the socket.id
+  // TODO: But that's not available in the nicknames array... Lol
   return (
     <div className="flexbox1">
       <div className="flexbox2">
         <h1 style={{ fontFamily: "Suwannaphum", color: "hsl(0, 0%, 15%)" }}>
-          a battle is surely brewing...
+          [a brawl is surely brewing...]
         </h1>
         <div className="flexbox3">
-          {nicknames.map((nickname) => (
-            <p>{nickname}</p>
+          {nicknames.map((nickname, index) => (
+            <p key={index}>{nickname}</p>
           ))}
         </div>
       </div>

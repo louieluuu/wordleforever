@@ -6,10 +6,11 @@ const bodyStyle = {
   gap: "none",
   flexDirection: "column",
   alignItems: "center",
-  fontFamily: "Lobster",
-  fontSize: "3.5rem",
+  fontFamily: "Bebas Neue",
+  fontSize: "4rem",
+  letterSpacing: "0.05rem",
   paddingBottom: 0,
-  lineHeight: "0.8",
+  lineHeight: "0.85",
 }
 
 function WelcomeMessage({ nickname, handleNicknameChange }) {
@@ -42,7 +43,7 @@ function WelcomeMessage({ nickname, handleNicknameChange }) {
   return (
     <div>
       <label style={bodyStyle}>
-        Welcome back!
+        Welcome back,
         <input
           className="nickname-form"
           ref={textBoxRef}
@@ -57,6 +58,7 @@ function WelcomeMessage({ nickname, handleNicknameChange }) {
             outline: "none",
             font: "inherit",
             fontFamily: "Lobster",
+            fontSize: "3.5rem",
             cursor: "pointer",
           }}
         />
