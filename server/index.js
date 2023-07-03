@@ -65,6 +65,29 @@ io.on("connection", (socket) => {
   const count = io.engine.clientsCount
   console.log(`Current # total users on site: ${count}`)
 
+  // TODO: just for debugging
+  socket.on("disconnect", (reason) => {
+    console.log(`User disconnected: ${socket.id}; ${reason}`)
+  })
+
+  // Note that we use the special event "disconnecting" here instead of "disconnect",
+  // as we can still access the socket's info before the actual disconnect occurs.
+  socket.on("disconnecting", () => {
+    // socket.rooms[1] returns the room the socket is in
+    const roomId = Array.from(socket.rooms)[1]
+
+    // This occurs if the user disconnects and never joined a room during the session
+    if (roomId === undefined) {
+      return
+    }
+
+    // Cleanup Rooms if the user is the last to leave (i.e. size === 1).
+    // This way, Rooms doesn't needlessly keep track of empty rooms.
+    if (io.sockets.adapter.rooms.get(roomId).size === 1) {
+      Rooms.delete(roomId)
+    }
+  })
+
   // Create room
   socket.on("createRoom", (socketId, nickname, isChallengeMode) => {
     let newUuid = uuidv4()
@@ -80,13 +103,6 @@ io.on("connection", (socket) => {
       isInGame: false,
     })
 
-    // TODO: Can refactor this to a helper function "changeNicknames()"
-    // Socket.IO does not emit Maps or Iterators, so we need to convert it to an Array first.
-    const nicknamesMap = Rooms.get(newUuid).Nicknames
-    const nicknamesArray = Array.from(nicknamesMap.values())
-    socket.emit("nicknamesChanged", nicknamesArray)
-
-    socket.join(newUuid)
     socket.emit("roomCreated", newUuid)
   })
 
@@ -106,19 +122,18 @@ io.on("connection", (socket) => {
       return
     }
 
+    console.log(socketId)
+
     // TODO: Need to remove nicknames when people leave.
     // Add user to room
     socket.join(uuid)
     const nicknamesMap = Rooms.get(uuid).Nicknames
     nicknamesMap.set(socketId, nickname)
+    console.log(nicknamesMap)
 
     // Socket.IO does not emit Maps or Iterators, so we need to convert it to an Array first.
     const nicknamesArray = Array.from(nicknamesMap.values())
     io.to(uuid).emit("nicknamesChanged", nicknamesArray)
-
-    // TODO: Delete later, just logging
-    const countClientsInRoom = io.sockets.adapter.rooms.get(uuid).size
-    console.log(`countClientsInRoom: ${countClientsInRoom}`)
   })
 
   // Handle nickname changes

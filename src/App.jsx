@@ -1,38 +1,35 @@
-// TODO: package.json: changed from "module" to "type" = "commonjs" to support wordlist
-
 import { useState, useEffect } from "react"
 
+// Socket
+import { socket } from "./socket"
+
+// Data
 import { WORD_LIST } from "./data/wordList"
 import { VALID_GUESSES } from "./data/validGuesses"
 import { WIN_MESSAGES } from "./data/winMessages"
 
 // Components
 import Header from "./components/Header"
-import Keyboard from "./components/Keyboard"
-import GameBoard from "./components/GameBoard"
-import MenuLandingPage from "./components/MenuLandingPage"
-import CountdownTimer from "./components/CountdownTimer"
-import ChallengeForm from "./components/ChallengeForm"
-import WaitingRoom from "./components/WaitingRoom"
 import WelcomeMessage from "./components/WelcomeMessage"
+import GameBoard from "./components/GameBoard"
+import Keyboard from "./components/Keyboard"
+
+import ChallengeForm from "./components/ChallengeForm"
+import MenuLandingPage from "./components/MenuLandingPage"
+import MenuOnlineModes from "./components/MenuOnlineModes"
+import MenuOfflineModes from "./components/MenuOfflineModes"
+import WaitingRoom from "./components/WaitingRoom"
+
+import AlertModal from "./components/AlertModal"
+import CountdownTimer from "./components/CountdownTimer"
+import Confetti from "react-confetti"
 
 // React-icons
 import { IoReturnDownBackSharp } from "react-icons/io5"
 
 // Framer-Motion
-import MenuOnlineModes from "./components/MenuOnlineModes"
-import MenuOfflineModes from "./components/MenuOfflineModes"
 import { Route, Routes, useLocation } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
-
-// Socket
-import { socket } from "./socket"
-
-// Confetti
-// TODO: Confetti isn't adjusting its width based on viewport
-import Confetti from "react-confetti"
-import AlertModal from "./components/AlertModal"
-import { color } from "framer-motion"
 
 function App() {
   const [currentRow, setCurrentRow] = useState(0)
@@ -44,7 +41,7 @@ function App() {
   const [solution, setSolution] = useState([])
 
   // Updates upon every submitted guess, not every key stroke. In this way, the gameBoard
-  // represents the "history" of the game.
+  // represents the "history" of the game, and the userGuess represents the "current" state.
   const [gameBoard, setGameBoard] = useState(
     new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" }))
   )
@@ -52,18 +49,23 @@ function App() {
   const [hints, setHints] = useState({ green: new Set(), yellow: new Set(), gray: new Set() })
 
   const [isGameOver, setIsGameOver] = useState(false)
-  const [isCountdownOver, setIsCountdownOver] = useState(false)
   const [isOutOfGuesses, setIsOutOfGuesses] = useState(false)
   const [isChallengeMode, setIsChallengeMode] = useState(false)
+
+  // Countdown states
+  const [isCountdownOver, setIsCountdownOver] = useState(false)
   const [isConfettiRunning, setIsConfettiRunning] = useState(false)
   const [numberOfPieces, setNumberOfPieces] = useState(0)
 
+  // Alert states
   const [alertMessage, setAlertMessage] = useState("")
   const [showAlertModal, setShowAlertModal] = useState(false)
 
   // ! Socket states
   const [room, setRoom] = useState("")
   const [isMultiplayer, setIsMultiplayer] = useState(false)
+  const [mode, setMode] = useState("")
+  const [isHost, setIsHost] = useState(false)
   const [isInGame, setIsInGame] = useState(false)
   const [nickname, setNickname] = useState(localStorage.getItem("nickname") || "Wordler")
   const [otherBoards, setOtherBoards] = useState([])
@@ -71,47 +73,11 @@ function App() {
   // Framer-Motion fade out
   const location = useLocation()
 
-  // TODO: move this down later
-  const handleNicknameChange = (e) => {
-    const newNickname = e.target.value
-
-    // Enforce nickname length limit
-    if (newNickname.length > 20) {
-      return
-    }
-
-    setNickname(newNickname)
-    localStorage.setItem("nickname", newNickname)
-
-    if (isMultiplayer) {
-      socket.emit("nicknameChange", room, socket.id, newNickname)
-    }
-  }
-
   // ! Socket useEffect
   // TODO: Passing in states to sockets ** THAT ARE UNDER A useEffect
   // TODO: HOOK WITHOUT SPECIFIED DEPENDENCIES ** seems to result in unreliable behaviour.
 
   useEffect(() => {
-    // socket.on("connect", () => {
-    //   console.log("Connected to server")
-
-    //   // If the socket connects to a pasted link from a friend, parse and join the room.
-    //   const queryParams = new URLSearchParams(document.location.search)
-    //   const roomId = queryParams.get("room")
-
-    //   if (roomId === null) {
-    //     return
-    //   }
-    //   socket.emit("joinRoom", roomId, socket.id, nickname)
-    //   setIsMultiplayer(true)
-    //   setRoom(roomId)
-
-    //   socket.on("roomError", (reason) => {
-    //     console.log(`Error: ${reason}`)
-    //   })
-    // })
-
     socket.on(
       "gameStarted",
       (roomId, allGameBoards, solution, isChallengeMode, challengeModeGuess) => {
@@ -138,7 +104,8 @@ function App() {
     }
   }, [])
 
-  // TODO: Tested, has to belong in its own realm. :)
+  // Unlike the server-side, not all socket logic can be grouped under one umbrella.
+  // The dependencies are specific to this particular event.
   useEffect(() => {
     socket.on("otherBoardUpdated", (socketId, otherBoard) => {
       const newOtherBoards = [...otherBoards]
@@ -153,8 +120,6 @@ function App() {
     })
   }, [otherBoards])
 
-  // TODO: Trying to move this to its own effect cause it depends on isGameOver
-  // TODO: in other words not all the socket logic can belong under one umbrella
   useEffect(() => {
     socket.on("gameOver", (room) => {
       setIsGameOver(true)
@@ -171,7 +136,7 @@ function App() {
       })
       setOtherBoards(newOtherBoards)
     })
-  }, [gameBoard, isGameOver, otherBoards]) // TODO: .....................
+  }, [gameBoard, isGameOver, otherBoards]) // ? Dependencies could be buggy
 
   // Confetti timer
   useEffect(() => {
@@ -191,6 +156,22 @@ function App() {
    * HELPER FUNCTIONS
    *
    */
+
+  function handleNicknameChange(e) {
+    const newNickname = e.target.value
+
+    // Enforce nickname length limit
+    if (newNickname.length > 20) {
+      return
+    }
+
+    if (isMultiplayer) {
+      socket.emit("nicknameChange", room, socket.id, newNickname)
+    }
+
+    setNickname(newNickname)
+    localStorage.setItem("nickname", newNickname)
+  }
 
   function resetStates() {
     setCurrentRow(0)
@@ -230,11 +211,9 @@ function App() {
         }
       }
       if (countGreenLetters === 1) {
-        console.log(`firstGuess: ${randomFirstGuess}`)
-        break
+        return randomFirstGuess.split("")
       }
     }
-    return randomFirstGuess.split("")
   }
 
   // Checks if the userGuess adheres to the previous hints.
@@ -248,9 +227,7 @@ function App() {
     // const copyPreviousGuess = [...gameBoard[currentRow - 1]] does not work.
     // This JSON method is one way I found to do it.
     const copyPreviousGuess = JSON.parse(JSON.stringify(gameBoard[currentRow - 1]))
-    console.log(copyPreviousGuess)
     const colorizedGuess = colorizeGuess(userGuess, solution)
-    console.log(colorizedGuess)
 
     // Pass 1: Green
     for (let i = 0; i < copyPreviousGuess.length; ++i) {
@@ -262,9 +239,6 @@ function App() {
         colorizedGuess[i].letter = ""
       }
     }
-
-    console.log(copyPreviousGuess)
-    console.log(colorizedGuess)
 
     // Pass 2: Yellow
     for (let i = 0; i < copyPreviousGuess.length; ++i) {
@@ -345,10 +319,6 @@ function App() {
       }
     })
 
-    console.log(newGreenHints)
-    console.log(newYellowHints)
-    console.log(newGrayHints)
-
     const newHints = { green: newGreenHints, yellow: newYellowHints, gray: newGrayHints }
     setHints(newHints)
   }
@@ -362,12 +332,6 @@ function App() {
   function handleEnter() {
     // Allows user to start a new game by pressing Enter instead of clicking.
     if (isGameOver) {
-      let mode
-      if (isMultiplayer) {
-        mode = "online-multi"
-      } else {
-        mode = "offline-classic"
-      }
       handleNewGame(mode)
       return
     }
@@ -386,7 +350,7 @@ function App() {
       setShowAlertModal(true)
       return
     }
-    // ! Challenge Mode: guess doesn't adhere to previous hints
+    // Challenge Mode: guess doesn't adhere to previous hints
     else if (isChallengeMode) {
       const result = usesPreviousHints()
       if (result !== "yes") {
@@ -420,15 +384,14 @@ function App() {
       socket.emit("wrongGuess", socket.id, room, newGameBoard)
       // Run out of guesses: Game Over (loss)
       if (currentRow >= 5) {
+        setIsOutOfGuesses(true)
         if (isMultiplayer) {
-          setIsOutOfGuesses(true)
           socket.emit("outOfGuesses", room)
         }
         //
         else {
           setAlertMessage(solution.join(""))
           setShowAlertModal(true)
-          setIsOutOfGuesses(true)
           setIsGameOver(true)
         }
       }
@@ -438,8 +401,6 @@ function App() {
     setCurrentRow((currentRow) => currentRow + 1)
     setCurrentTile(0)
     setUserGuess(["", "", "", "", ""])
-    console.log(`Valid guess submitted: ${userGuess}`)
-    console.log(`currentRow: ${currentRow}`)
   }
 
   function handleBackspace() {
@@ -448,7 +409,6 @@ function App() {
 
       const newGuess = [...userGuess]
       newGuess[currentTile - 1] = ""
-      console.log(`user guess so far: ${newGuess}`)
       setUserGuess(newGuess)
     }
   }
@@ -460,9 +420,6 @@ function App() {
       setUserGuess(newGuess)
 
       setCurrentTile((currentTile) => currentTile + 1)
-
-      console.log(`user guess so far: ${newGuess}`)
-      console.log(`currentTile changed from: ${currentTile} to ${currentTile + 1}`)
     }
   }
 
@@ -478,13 +435,21 @@ function App() {
     setSolution(solution)
   }
 
-  function handleNewGame(mode) {
-    if (mode === "online-multi") {
+  function handleNewGame() {
+    if (mode === "online-public") {
+      console.log("in development")
+    }
+    //
+    else if (mode === "online-private") {
       socket.emit("startNewGame", room)
     }
     //
     else if (mode === "offline-classic") {
       startNewClassicGame()
+    }
+    //
+    else if (mode === "offline-vsBot") {
+      console.log("in development")
     }
   }
 
@@ -575,16 +540,20 @@ function App() {
                 path="/online"
                 element={
                   <MenuOnlineModes
+                    setIsHost={setIsHost}
                     isChallengeMode={isChallengeMode}
                     setIsMultiplayer={setIsMultiplayer}
                     nickname={nickname}
+                    setMode={setMode}
                   />
                 }
               />
+
               <Route
                 path="/room/:roomId"
                 element={
                   <WaitingRoom
+                    isHost={isHost}
                     setIsMultiplayer={setIsMultiplayer}
                     setRoom={setRoom}
                     nickname={nickname}
@@ -594,7 +563,7 @@ function App() {
 
               <Route
                 path="/offline"
-                element={<MenuOfflineModes startNewClassicGame={startNewClassicGame} />}
+                element={<MenuOfflineModes setMode={setMode} handleNewGame={handleNewGame} />}
               />
             </Routes>
           </AnimatePresence>

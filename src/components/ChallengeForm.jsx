@@ -12,10 +12,14 @@ const formStyle = {
 }
 
 function ChallengeForm({ setIsChallengeMode }) {
+  function handleClick() {
+    setIsChallengeMode((prev) => !prev)
+  }
+
   return (
     <form style={formStyle}>
       <label>
-        <input type="checkbox" onChange={() => setIsChallengeMode((prev) => !prev)} />
+        <input type="checkbox" onChange={handleClick} />
         &nbsp;Challenge Mode&nbsp;
         <a data-tooltip-id="challenge-tooltip" style={{ verticalAlign: "middle" }}>
           <FaQuestionCircle color="hsl(0,0%,22.5%)" />

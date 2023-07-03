@@ -6,4 +6,5 @@ const URL = process.env.NODE_ENV === "production" ? undefined : "http://192.168.
 
 export const socket = io(URL, {
   transports: ["websocket"], // required when using Vite
+  // autoConnect: false,
 })

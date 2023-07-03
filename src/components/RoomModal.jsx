@@ -30,27 +30,27 @@ function RoomModal({ setShowRoomModal, roomId, isChallengeMode }) {
     })
   }, [])
 
-  function copyLink() {
-    const baseUrl = "http://localhost:5173"
-    const roomLink = `${baseUrl}/room/${roomId}`
-    navigator.clipboard.writeText(roomLink)
-    setIsCopied(true)
-  }
+  // function copyLink() {
+  //   const baseUrl = "http://localhost:5173"
+  //   const roomLink = `${baseUrl}/room/${roomId}`
+  //   navigator.clipboard.writeText(roomLink)
+  //   setIsCopied(true)
+  // }
 
-  function initializeRoom() {
-    socket.emit("initializeRoom", roomId)
+  // function initializeRoom() {
+  //   socket.emit("initializeRoom", roomId)
 
-    socket.on("roomInitialized", (roomId) => {
-      socket.emit("startNewGame", roomId)
-      setShowRoomModal(false)
-    })
-  }
+  //   socket.on("roomInitialized", (roomId) => {
+  //     socket.emit("startNewGame", roomId)
+  //     setShowRoomModal(false)
+  //   })
+  // }
 
   return (
     <Dialog className="modal" open={true} onClose={() => setShowRoomModal(false)}>
       <Dialog.Panel style={flexbox}>
         <Dialog.Title style={{ fontFamily: "Calistoga" }}>Room created!</Dialog.Title>
-        <p>
+        {/* <p>
           <span style={{ fontWeight: "bold", fontSize: "1.2rem" }}>1.</span> Send the room link to
           your friends.
         </p>
@@ -64,7 +64,7 @@ function RoomModal({ setShowRoomModal, roomId, isChallengeMode }) {
           }}
           onClick={copyLink}>
           {isCopied ? "LINK COPIED" : "COPY LINK"}
-        </button>
+        </button> */}
         <br></br>
 
         <div style={nicknamesContainer}>

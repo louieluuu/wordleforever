@@ -1,13 +1,19 @@
-import React, { useState } from "react"
+import React from "react"
 import { Link } from "react-router-dom"
 import AnimatedPage from "./AnimatedPage"
 
+import { socket } from "../socket"
+
 function MenuLandingPage() {
+  function handleClick() {
+    socket.connect()
+  }
+
   return (
     <AnimatedPage>
       <div className="menu">
         <Link to="/online">
-          <button className="menu__btn--online">PLAY ONLINE</button>
+          <button className="menu__btn--online">ONLINE</button>
         </Link>
 
         <Link to="/offline">
