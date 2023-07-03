@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react"
-import { socket } from "../socket"
 
 function CountdownTimer({ isCountdownOver, setIsCountdownOver, userGuess, handleEnter }) {
   const [seconds, setSeconds] = useState(3)
@@ -18,6 +17,8 @@ function CountdownTimer({ isCountdownOver, setIsCountdownOver, userGuess, handle
     if (seconds === -1) {
       clearInterval(timer)
       resetCountdown()
+
+      // TODO: Change this to isChallengeMode, not sure why this cond.....
       if (userGuess[0] !== "") {
         handleEnter()
       }

@@ -76,7 +76,7 @@ io.on("connection", (socket) => {
     // socket.rooms[1] returns the room the socket is in
     const roomId = Array.from(socket.rooms)[1]
 
-    // This occurs if the user disconnects and never joined a room during the session
+    // This occurs if the user disconnects and never played online during the session
     if (roomId === undefined) {
       return
     }
@@ -103,10 +103,17 @@ io.on("connection", (socket) => {
       isInGame: false,
     })
 
+    // I tried desperately to get the flow to work like this:
+    // -client: createRoom
+    // -server: roomCreated
+    // -client: joinRoom
+
+    // But it didn't work, so here we are...
+    // (another consequence is nicknames state has to start as [nickname])
+    socket.join(newUuid)
     socket.emit("roomCreated", newUuid)
   })
 
-  // TODO: Random matchmaking
   // Join room
   socket.on("joinRoom", (uuid, socketId, nickname) => {
     // Check validity of room

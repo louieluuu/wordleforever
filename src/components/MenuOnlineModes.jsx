@@ -7,7 +7,7 @@ import { socket } from "../socket"
 
 import AnimatedPage from "./AnimatedPage"
 
-function MenuOnlineModes({ setIsHost, isChallengeMode, setIsMultiplayer, nickname, setMode }) {
+function MenuOnlineModes({ setIsHost, isChallengeMode, nickname, setMode }) {
   const navigate = useNavigate()
 
   function handleClick(mode) {
@@ -24,12 +24,7 @@ function MenuOnlineModes({ setIsHost, isChallengeMode, setIsMultiplayer, nicknam
 
   function seekMatch() {
     socket.emit("seekMatch", socket.id, nickname, isChallengeMode)
-
-    socket.on("matchFound", (roomId) => {
-      setIsMultiplayer(true)
-      navigate(`/room/${roomId}`)
-      // socket.emit("joinRoom", roomId, socket.id, nickname)
-    })
+    // TODO
   }
 
   function createRoom() {
@@ -37,19 +32,14 @@ function MenuOnlineModes({ setIsHost, isChallengeMode, setIsMultiplayer, nicknam
 
     socket.on("roomCreated", (roomId) => {
       setIsHost(true)
-      setIsMultiplayer(true)
       navigate(`/room/${roomId}`)
-      // socket.emit("joinRoom", roomId, socket.id, nickname)
     })
   }
 
   return (
     <AnimatedPage>
       <div className="menu">
-        <button
-          className="menu__btn--online"
-          style={{ opacity: "25%" }}
-          onClick={() => handleClick("online-public")}>
+        <button className="menu__btn--online" onClick={() => handleClick("online-public")}>
           QUICK START
         </button>
         <button className="menu__btn--offline" onClick={() => handleClick("online-private")}>

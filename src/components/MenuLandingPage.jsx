@@ -2,13 +2,7 @@ import React from "react"
 import { Link } from "react-router-dom"
 import AnimatedPage from "./AnimatedPage"
 
-import { socket } from "../socket"
-
 function MenuLandingPage() {
-  function handleClick() {
-    socket.connect()
-  }
-
   return (
     <AnimatedPage>
       <div className="menu">

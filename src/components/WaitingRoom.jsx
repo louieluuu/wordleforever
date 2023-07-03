@@ -5,9 +5,9 @@ import { WAITING_ROOM_MESSAGES } from "../data/waitingRoomMessages"
 
 import { socket } from "../socket"
 
-function WaitingRoom({ isHost, setIsMultiplayer, setRoom, nickname }) {
+function WaitingRoom({ isHost, setMode, setRoom, nickname }) {
   const { roomId } = useParams()
-  const [nicknames, setNicknames] = useState([])
+  const [nicknames, setNicknames] = useState([nickname])
   const [waitingMessage, setWaitingMessage] = useState("")
   const [isCopied, setIsCopied] = useState(false)
 
@@ -19,15 +19,13 @@ function WaitingRoom({ isHost, setIsMultiplayer, setRoom, nickname }) {
   }, [])
 
   useEffect(() => {
-    socket.connect()
-
     socket.on("connect", () => {
-      console.log(socket.id)
+      socket.emit("joinRoom", roomId, socket.id, nickname)
     })
 
-    socket.emit("joinRoom", roomId, socket.id, nickname)
-
-    setIsMultiplayer(true)
+    // TODO: Uh oh....... check if the mode is "" -> means joined url from clicking link
+    // TODO: else if mode is already set to "online-public", then joined from clicking a menu
+    setMode("online-private")
     setRoom(roomId)
     const randomWaitingMessage =
       WAITING_ROOM_MESSAGES[Math.floor(Math.random() * WAITING_ROOM_MESSAGES.length)]
@@ -63,8 +61,8 @@ function WaitingRoom({ isHost, setIsMultiplayer, setRoom, nickname }) {
         <h1 style={{ fontFamily: "Suwannaphum", color: "hsl(0, 0%, 15%)" }}>[{waitingMessage}]</h1>
 
         {isHost && (
-          <div style={{ display: "flexbox" }}>
-            <b>1.&nbsp;&nbsp;</b>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <b style={{ fontWeight: 900 }}>1.&nbsp;&nbsp;</b>
             <button
               className="btn--new-game"
               style={{
@@ -86,8 +84,8 @@ function WaitingRoom({ isHost, setIsMultiplayer, setRoom, nickname }) {
         </div>
 
         {isHost && (
-          <div style={{ display: "flexbox" }}>
-            <b>2.&nbsp;&nbsp;</b>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <b style={{ fontWeight: 900 }}>2.&nbsp;&nbsp;</b>
 
             <button className="btn--new-game" onClick={initializeRoom}>
               START GAME

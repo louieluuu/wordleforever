@@ -63,7 +63,6 @@ function App() {
 
   // ! Socket states
   const [room, setRoom] = useState("")
-  const [isMultiplayer, setIsMultiplayer] = useState(false)
   const [mode, setMode] = useState("")
   const [isHost, setIsHost] = useState(false)
   const [isInGame, setIsInGame] = useState(false)
@@ -165,7 +164,7 @@ function App() {
       return
     }
 
-    if (isMultiplayer) {
+    if (mode.includes("online")) {
       socket.emit("nicknameChange", room, socket.id, newNickname)
     }
 
@@ -385,7 +384,7 @@ function App() {
       // Run out of guesses: Game Over (loss)
       if (currentRow >= 5) {
         setIsOutOfGuesses(true)
-        if (isMultiplayer) {
+        if (mode.includes("online")) {
           socket.emit("outOfGuesses", room)
         }
         //
@@ -542,7 +541,6 @@ function App() {
                   <MenuOnlineModes
                     setIsHost={setIsHost}
                     isChallengeMode={isChallengeMode}
-                    setIsMultiplayer={setIsMultiplayer}
                     nickname={nickname}
                     setMode={setMode}
                   />
@@ -554,7 +552,7 @@ function App() {
                 element={
                   <WaitingRoom
                     isHost={isHost}
-                    setIsMultiplayer={setIsMultiplayer}
+                    setMode={setMode}
                     setRoom={setRoom}
                     nickname={nickname}
                   />

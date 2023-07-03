@@ -158,6 +158,7 @@ a {
   justify-content: center;
   align-items: center;
   // border: solid 3px black;
+  min-width: 30rem;
   box-shadow: 0.75rem 0.75rem 1rem hsl(0deg 0% 0% / 0.15);
   flex-basis: content;
   padding-inline: 5rem;
@@ -166,14 +167,14 @@ a {
   border-radius: 2rem;
 
   background-image: url("./assets/unsplashPastel.jpg");
-  background-position: 0px 25%;
+  background-position: 0px 10%;
   background-repeat: repeat-x;
   animation: slide 40s linear infinite;
 }
 
 @keyframes slide {
   to {
-    background-position: -1920px 25%;
+    background-position: -1920px 10%;
   }
 }
 
@@ -191,20 +192,6 @@ a {
   line-height: 0;
   font-weight: 600;
   font-family: "Roboto";
-}
-
-// Modal (lobby)
-.modal {
-  border: 3px solid black;
-  background-color: white;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-  min-width: 20rem;
-
-  position: fixed;
-  top: 30vh;
-  left: 50%;
-  transform: translateX(-50%);
 }
 
 // Menu
