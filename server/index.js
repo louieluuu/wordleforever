@@ -1,5 +1,4 @@
-// TODO: managing of rooms when people don't explicitly disconnect (ex. close tab)
-// TODO:
+// TODO: don't need to pass in socketId, pretty sure you can just do socket.id
 
 const WORD_LIST = require("./data/wordList")
 const VALID_GUESSES = require("./data/validGuesses")
@@ -22,12 +21,10 @@ const io = new Server(httpServer, {
 })
 
 // Global variables
-// const Public = new Map()
-// const Private = new Map()
+const Public = new Map()
+const Private = new Map()
 
-// const Rooms = { Public, Private }
-
-const Rooms = new Map()
+const Rooms = { Public, Private }
 
 // TODO: These functions need to be written on the client-side for solo mode.
 // TODO: Wonder if it's possible to pass those functions here so less repeating?
@@ -60,17 +57,41 @@ function getRandomFirstGuess(solution) {
   return randomFirstGuess.split("")
 }
 
+// Helper function
+function getPublicOrPrivateRooms(roomId) {
+  if (Rooms.Public.has(roomId)) {
+    return Rooms.Public
+  }
+  //
+  else if (Rooms.Private.has(roomId)) {
+    return Rooms.Private
+  }
+  // Not sure when this would happen, but...
+  else {
+    return undefined
+  }
+}
+
+// Cleans up Rooms if the user is the last to leave (i.e. size === 1).
+// This way, Rooms doesn't needlessly keep track of empty rooms.
+function cleanupRooms(roomId) {
+  if (io.sockets.adapter.rooms.get(roomId).size === 1) {
+    const relevantRooms = getPublicOrPrivateRooms(roomId)
+    if (relevantRooms === undefined) {
+      console.log("Error: cleanupRooms() called on invalid roomId")
+      return
+    }
+
+    relevantRooms.delete(roomId)
+  }
+}
+
 // All server-side socket logic is, by design, wrapped in the io.on("connection") function.
 io.on("connection", (socket) => {
   // Print info when connections are made (io.engine contains metadata)
   console.log(`User connected: ${socket.id}`)
   const count = io.engine.clientsCount
   console.log(`Current # total users on site: ${count}`)
-
-  // TODO: just for debugging
-  socket.on("disconnect", (reason) => {
-    console.log(`User disconnected: ${socket.id}; ${reason}`)
-  })
 
   // Note that we use the special event "disconnecting" here instead of "disconnect",
   // as we can still access the socket's info before the actual disconnect occurs.
@@ -83,23 +104,31 @@ io.on("connection", (socket) => {
       return
     }
 
-    // Cleanup Rooms if the user is the last to leave (i.e. size === 1).
-    // This way, Rooms doesn't needlessly keep track of empty rooms.
-    if (io.sockets.adapter.rooms.get(roomId).size === 1) {
-      Rooms.delete(roomId)
-    }
+    cleanupRooms(roomId)
   })
 
   // Create room
   socket.on("createRoom", (socketId, nickname, gameMode, isChallengeOn) => {
     let newUuid = uuidv4()
     // Guarantees non-colliding rooms (even though the chance is infinitely small)
-    while (Rooms.has(newUuid)) {
+    while (Rooms.Public.has(newUuid) || Rooms.Private.has(newUuid)) {
       newUuid = uuidv4()
     }
 
+    // getPublicOrPrivateRooms() only works on roomIds, but when you're creating a room,
+    // the roomId hasn't been established yet - we'll use the gameMode instead to decide
+    // whether it should be a Public or Private game.
+    let relevantRooms
+    if (gameMode.includes("public")) {
+      relevantRooms = Rooms.Public
+    }
+    //
+    else if (gameMode.includes("private")) {
+      relevantRooms = Rooms.Private
+    }
+
     // More properties will be added to the Room later, but this is all we need for now.
-    Rooms.set(newUuid, {
+    relevantRooms.set(newUuid, {
       Nicknames: new Map([[socketId, nickname]]),
       isChallengeOn: isChallengeOn,
       isInGame: false,
@@ -110,86 +139,99 @@ io.on("connection", (socket) => {
     // -server: roomCreated
     // -client: joinRoom
 
-    // But it didn't work, so here we are...
+    // But it didn't work, so here we are... joining manually
     // (another consequence is nicknames state has to start as [nickname])
     socket.join(newUuid)
     socket.emit("roomCreated", newUuid)
+
+    console.log("From createRoom:")
+    console.log(Rooms)
   })
 
   // Join room
   socket.on("joinRoom", (uuid, socketId, nickname) => {
+    const relevantRooms = getPublicOrPrivateRooms(uuid)
+    console.log(relevantRooms)
+
     // Check validity of room
-    if (!Rooms.has(uuid)) {
+    if (relevantRooms === undefined) {
       const reason = "This room does not exist."
       socket.emit("roomError", reason)
       return
     }
 
-    if (Rooms.get(uuid).isInGame === true) {
+    if (relevantRooms.get(uuid).isInGame === true) {
       const reason = "This room is already in progress."
       socket.emit("roomError", reason)
       return
     }
 
-    console.log(socketId)
-
-    // TODO: Need to remove nicknames when people leave.
     // Add user to room
     socket.join(uuid)
-    const nicknamesMap = Rooms.get(uuid).Nicknames
+    const nicknamesMap = relevantRooms.get(uuid).Nicknames
     nicknamesMap.set(socketId, nickname)
     console.log(nicknamesMap)
 
     // Socket.IO does not emit Maps or Iterators, so we need to convert it to an Array first.
     const nicknamesArray = Array.from(nicknamesMap.values())
     io.to(uuid).emit("nicknamesChanged", nicknamesArray)
+
+    console.log("From joinRoom:")
+    console.log(Rooms)
   })
 
   // Handle nickname changes
   socket.on("nicknameChange", (uuid, socketId, newNickname) => {
-    const nicknamesMap = Rooms.get(uuid).Nicknames
+    const relevantRooms = getPublicOrPrivateRooms(uuid)
+
+    const nicknamesMap = relevantRooms.get(uuid).Nicknames
     nicknamesMap.set(socketId, newNickname)
     const nicknamesArray = Array.from(nicknamesMap.values())
     io.to(uuid).emit("nicknamesChanged", nicknamesArray)
   })
 
-  // Seek match
-  // socket.on("seekMatch", (isChallengeOn) => {
-  //   if (Rooms.Public.forEach((room) => {
-  //     if (room.isChallengeOn === isChallengeOn) {
-  //       return room
-  //     }
-  //   })
+  //Seek match
+  socket.on("seekMatch", (isChallengeOn) => {})
 
   // Leave room
   socket.on("leaveRoom", (uuid) => {
-    // Cleanup
-    if (io.sockets.adapter.rooms.get(uuid).size === 1) {
-      Rooms.delete(uuid)
-    }
+    const relevantRooms = getPublicOrPrivateRooms(uuid)
+
+    // Update nicknames
+    const nicknamesMap = relevantRooms.get(uuid).Nicknames
+    nicknamesMap.delete(socket.id)
+    const nicknamesArray = Array.from(nicknamesMap.values())
+    io.to(uuid).emit("nicknamesChanged", nicknamesArray)
+
+    cleanupRooms(uuid)
 
     socket.leave(uuid)
   })
 
   socket.on("initializeRoom", (uuid) => {
+    const relevantRooms = getPublicOrPrivateRooms(uuid)
+
     // Adding some more properties to the Room.
     // Each active room will keep track of the # of gameOvers in that room;
     // necessary to deal with the case where all players run out of guesses.
-    const previousValue = Rooms.get(uuid)
-    Rooms.set(uuid, {
+    const previousValue = relevantRooms.get(uuid)
+    relevantRooms.set(uuid, {
       ...previousValue,
       isInGame: true,
-      size: io.sockets.adapter.rooms.get(uuid).size,
       countGameOvers: 0,
     })
 
     socket.emit("roomInitialized", uuid)
+
+    console.log("From initializeRoom")
+    console.log(Rooms)
   })
 
   socket.on("startNewGame", (uuid) => {
+    const relevantRooms = getPublicOrPrivateRooms(uuid)
+
     // Reset room values.
-    // TODO: Might need to update nicknames as well when people disconnect/leave
-    Rooms.get(uuid).countGameOvers = 0
+    relevantRooms.get(uuid).countGameOvers = 0
 
     // Generate the required number of Boards as determined by the room.
     // Note that for simplicity, just one array of boards (containing all sockets)
@@ -202,23 +244,29 @@ io.on("connection", (socket) => {
     socketsInRoom.forEach((socketId) => {
       allGameBoards.push({
         socketId: socketId,
-        nickname: Rooms.get(uuid).Nicknames.get(socketId),
+        nickname: relevantRooms.get(uuid).Nicknames.get(socketId),
         gameBoard: new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })),
       })
     })
 
     // Generate the word(s) required to play, then broadcast them to the room.
     const solution = getRandomSolution()
-    let challengeModeGuess = Rooms.get(uuid).isChallengeOn ? getRandomFirstGuess(solution) : null
+    let challengeModeGuess = relevantRooms.get(uuid).isChallengeOn
+      ? getRandomFirstGuess(solution)
+      : null
 
     io.to(uuid).emit(
       "gameStarted",
       uuid,
       allGameBoards,
       solution,
-      Rooms.get(uuid).isChallengeOn,
+      relevantRooms.get(uuid).isChallengeOn,
       challengeModeGuess
     )
+
+    // TODO: delete later
+    console.log("From startNewGame")
+    console.log(Rooms)
   })
 
   // Process the board to hide the letters but still display the colors
@@ -234,9 +282,11 @@ io.on("connection", (socket) => {
   })
 
   socket.on("outOfGuesses", (uuid) => {
-    Rooms.get(uuid).countGameOvers += 1
+    const relevantRooms = getPublicOrPrivateRooms(uuid)
 
-    if (Rooms.get(uuid).countGameOvers === Rooms.get(uuid).size) {
+    relevantRooms.get(uuid).countGameOvers += 1
+
+    if (relevantRooms.get(uuid).countGameOvers === io.sockets.adapter.rooms.get(uuid).size) {
       io.to(uuid).emit("gameOver", uuid)
     }
   })

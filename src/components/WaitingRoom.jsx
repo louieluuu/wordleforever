@@ -15,7 +15,7 @@ function WaitingRoom({ isHost, setGameMode, setRoom, nickname }) {
 
   useEffect(() => {
     // Necessary to wrap joinRoom in connect event handler, because otherwise
-    // the socket.id is undefined
+    // "joinRoom" will fire before the socket.id is actually defined
     socket.on("connect", () => {
       socket.emit("joinRoom", roomId, socket.id, nickname)
 
@@ -55,7 +55,8 @@ function WaitingRoom({ isHost, setGameMode, setRoom, nickname }) {
   }
 
   function leaveRoom() {
-    socket.emit("leaveRoom", roomId, socket.id)
+    socket.emit("leaveRoom", roomId)
+    setGameMode("")
     navigate("/online")
   }
 
