@@ -3,7 +3,7 @@ export const WAITING_ROOM_MESSAGES = [
   "leave no tile unturned...",
   "mind your head...",
   "let us set sail...",
-  "once more unto the board...",
+  "once more unto the words...",
   "the colors are calling...",
   "the tiles are restless...",
   "the tiles reveal all...",

@@ -210,11 +210,13 @@ a {
 
   &__btn {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
 
     width: 15rem;
     height: 5rem;
+
     font-weight: 300;
     font-family: "Oswald", sans-serif;
     font-size: 1.5rem;
@@ -236,6 +238,7 @@ a {
 
   &__btn--online {
     @extend .menu__btn;
+
     background-color: hsl(93, 77%, 38%);
     border: 3px solid hsl(93, 77%, 35%);
 
@@ -247,6 +250,7 @@ a {
 
   &__btn--offline {
     @extend .menu__btn;
+
     background-color: hsl(197, 89%, 26%);
     border: 3px solid hsl(197, 89%, 23%);
 
@@ -285,6 +289,8 @@ a {
 
 .btn--new-game {
   @extend .menu__btn;
+
+  flex-direction: row;
 
   width: 10rem;
   height: 2.5rem;

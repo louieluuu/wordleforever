@@ -50,7 +50,7 @@ function App() {
 
   const [isGameOver, setIsGameOver] = useState(false)
   const [isOutOfGuesses, setIsOutOfGuesses] = useState(false)
-  const [isChallengeMode, setIsChallengeMode] = useState(false)
+  const [isChallengeOn, setIsChallengeOn] = useState(false)
 
   // Countdown states
   const [isCountdownOver, setIsCountdownOver] = useState(false)
@@ -63,7 +63,7 @@ function App() {
 
   // ! Socket states
   const [room, setRoom] = useState("")
-  const [mode, setMode] = useState("")
+  const [gameMode, setGameMode] = useState("")
   const [isHost, setIsHost] = useState(false)
   const [isInGame, setIsInGame] = useState(false)
   const [nickname, setNickname] = useState(localStorage.getItem("nickname") || "Wordler")
@@ -79,7 +79,7 @@ function App() {
   useEffect(() => {
     socket.on(
       "gameStarted",
-      (roomId, allGameBoards, solution, isChallengeMode, challengeModeGuess) => {
+      (roomId, allGameBoards, solution, isChallengeOn, challengeModeGuess) => {
         resetStates()
 
         // Filter out the socket's own gameBoard.
@@ -88,7 +88,7 @@ function App() {
 
         setRoom(roomId)
         setSolution(solution)
-        setIsChallengeMode(isChallengeMode)
+        setIsChallengeOn(isChallengeOn)
 
         // ! Challenge Mode specific
         if (challengeModeGuess !== null) {
@@ -164,7 +164,7 @@ function App() {
       return
     }
 
-    if (mode.includes("online")) {
+    if (gameMode.includes("online")) {
       socket.emit("nicknameChange", room, socket.id, newNickname)
     }
 
@@ -331,7 +331,7 @@ function App() {
   function handleEnter() {
     // Allows user to start a new game by pressing Enter instead of clicking.
     if (isGameOver) {
-      handleNewGame(mode)
+      handleNewGame(gameMode)
       return
     }
 
@@ -350,7 +350,7 @@ function App() {
       return
     }
     // Challenge Mode: guess doesn't adhere to previous hints
-    else if (isChallengeMode) {
+    else if (isChallengeOn) {
       const result = usesPreviousHints()
       if (result !== "yes") {
         setAlertMessage(`Must use ${result} hints!`)
@@ -384,7 +384,7 @@ function App() {
       // Run out of guesses: Game Over (loss)
       if (currentRow >= 5) {
         setIsOutOfGuesses(true)
-        if (mode.includes("online")) {
+        if (gameMode.includes("online")) {
           socket.emit("outOfGuesses", room)
         }
         //
@@ -427,7 +427,7 @@ function App() {
     resetStates()
 
     const solution = getRandomSolution()
-    if (isChallengeMode) {
+    if (isChallengeOn) {
       const firstGuess = getRandomFirstGuess(solution)
       setUserGuess(firstGuess)
     }
@@ -435,19 +435,19 @@ function App() {
   }
 
   function handleNewGame() {
-    if (mode === "online-public") {
+    if (gameMode === "online-public") {
       console.log("in development")
     }
     //
-    else if (mode === "online-private") {
+    else if (gameMode === "online-private") {
       socket.emit("startNewGame", room)
     }
     //
-    else if (mode === "offline-classic") {
+    else if (gameMode === "offline-classic") {
       startNewClassicGame()
     }
     //
-    else if (mode === "offline-vsBot") {
+    else if (gameMode === "offline-vsBot") {
       console.log("in development")
     }
   }
@@ -530,7 +530,7 @@ function App() {
             <WelcomeMessage nickname={nickname} handleNicknameChange={handleNicknameChange} />
           </h1>
 
-          {/* <ChallengeForm setIsChallengeMode={setIsChallengeMode} /> */}
+          <ChallengeForm setIsChallengeOn={setIsChallengeOn} />
 
           <AnimatePresence mode="wait">
             <Routes key={location.pathname} location={location}>
@@ -540,9 +540,9 @@ function App() {
                 element={
                   <MenuOnlineModes
                     setIsHost={setIsHost}
-                    isChallengeMode={isChallengeMode}
+                    isChallengeOn={isChallengeOn}
                     nickname={nickname}
-                    setMode={setMode}
+                    setGameMode={setGameMode}
                   />
                 }
               />
@@ -552,7 +552,7 @@ function App() {
                 element={
                   <WaitingRoom
                     isHost={isHost}
-                    setMode={setMode}
+                    setGameMode={setGameMode}
                     setRoom={setRoom}
                     nickname={nickname}
                   />
@@ -561,7 +561,9 @@ function App() {
 
               <Route
                 path="/offline"
-                element={<MenuOfflineModes setMode={setMode} handleNewGame={handleNewGame} />}
+                element={
+                  <MenuOfflineModes setGameMode={setGameMode} handleNewGame={handleNewGame} />
+                }
               />
             </Routes>
           </AnimatePresence>

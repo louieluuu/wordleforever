@@ -22,10 +22,12 @@ const io = new Server(httpServer, {
 })
 
 // Global variables
-const Rooms = new Map()
+// const Public = new Map()
+// const Private = new Map()
 
-// Random matchmaking (non-lobby)
-const queuedUsers = []
+// const Rooms = { Public, Private }
+
+const Rooms = new Map()
 
 // TODO: These functions need to be written on the client-side for solo mode.
 // TODO: Wonder if it's possible to pass those functions here so less repeating?
@@ -89,7 +91,7 @@ io.on("connection", (socket) => {
   })
 
   // Create room
-  socket.on("createRoom", (socketId, nickname, isChallengeMode) => {
+  socket.on("createRoom", (socketId, nickname, gameMode, isChallengeOn) => {
     let newUuid = uuidv4()
     // Guarantees non-colliding rooms (even though the chance is infinitely small)
     while (Rooms.has(newUuid)) {
@@ -99,7 +101,7 @@ io.on("connection", (socket) => {
     // More properties will be added to the Room later, but this is all we need for now.
     Rooms.set(newUuid, {
       Nicknames: new Map([[socketId, nickname]]),
-      isChallengeMode: isChallengeMode,
+      isChallengeOn: isChallengeOn,
       isInGame: false,
     })
 
@@ -151,6 +153,24 @@ io.on("connection", (socket) => {
     io.to(uuid).emit("nicknamesChanged", nicknamesArray)
   })
 
+  // Seek match
+  // socket.on("seekMatch", (isChallengeOn) => {
+  //   if (Rooms.Public.forEach((room) => {
+  //     if (room.isChallengeOn === isChallengeOn) {
+  //       return room
+  //     }
+  //   })
+
+  // Leave room
+  socket.on("leaveRoom", (uuid) => {
+    // Cleanup
+    if (io.sockets.adapter.rooms.get(uuid).size === 1) {
+      Rooms.delete(uuid)
+    }
+
+    socket.leave(uuid)
+  })
+
   socket.on("initializeRoom", (uuid) => {
     // Adding some more properties to the Room.
     // Each active room will keep track of the # of gameOvers in that room;
@@ -189,14 +209,14 @@ io.on("connection", (socket) => {
 
     // Generate the word(s) required to play, then broadcast them to the room.
     const solution = getRandomSolution()
-    let challengeModeGuess = Rooms.get(uuid).isChallengeMode ? getRandomFirstGuess(solution) : null
+    let challengeModeGuess = Rooms.get(uuid).isChallengeOn ? getRandomFirstGuess(solution) : null
 
     io.to(uuid).emit(
       "gameStarted",
       uuid,
       allGameBoards,
       solution,
-      Rooms.get(uuid).isChallengeMode,
+      Rooms.get(uuid).isChallengeOn,
       challengeModeGuess
     )
   })

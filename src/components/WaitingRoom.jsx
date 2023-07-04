@@ -1,39 +1,42 @@
 import React, { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 
 import { WAITING_ROOM_MESSAGES } from "../data/waitingRoomMessages"
 
 import { socket } from "../socket"
 
-function WaitingRoom({ isHost, setMode, setRoom, nickname }) {
+function WaitingRoom({ isHost, setGameMode, setRoom, nickname }) {
   const { roomId } = useParams()
   const [nicknames, setNicknames] = useState([nickname])
   const [waitingMessage, setWaitingMessage] = useState("")
   const [isCopied, setIsCopied] = useState(false)
 
-  // Update names as people join
+  const navigate = useNavigate()
+
   useEffect(() => {
+    // Necessary to wrap joinRoom in connect event handler, because otherwise
+    // the socket.id is undefined
+    socket.on("connect", () => {
+      socket.emit("joinRoom", roomId, socket.id, nickname)
+
+      socket.on("roomError", (reason) => {
+        console.log(`Error: ${reason}`)
+      })
+    })
+
     socket.on("nicknamesChanged", (newNicknames) => {
       setNicknames(newNicknames)
     })
   }, [])
 
   useEffect(() => {
-    socket.on("connect", () => {
-      socket.emit("joinRoom", roomId, socket.id, nickname)
-    })
-
-    // TODO: Uh oh....... check if the mode is "" -> means joined url from clicking link
-    // TODO: else if mode is already set to "online-public", then joined from clicking a menu
-    setMode("online-private")
+    // TODO: Uh oh....... check if the gameMode is "" -> means joined url from clicking link
+    // TODO: else if gameMode is already set to "online-public", then joined from clicking a menu
+    setGameMode("online-private")
     setRoom(roomId)
     const randomWaitingMessage =
       WAITING_ROOM_MESSAGES[Math.floor(Math.random() * WAITING_ROOM_MESSAGES.length)]
     setWaitingMessage(randomWaitingMessage)
-
-    socket.on("roomError", (reason) => {
-      console.log(`Error: ${reason}`)
-    })
   }, [])
 
   function copyLink() {
@@ -49,6 +52,11 @@ function WaitingRoom({ isHost, setMode, setRoom, nickname }) {
     socket.on("roomInitialized", (roomId) => {
       socket.emit("startNewGame", roomId)
     })
+  }
+
+  function leaveRoom() {
+    socket.emit("leaveRoom", roomId, socket.id)
+    navigate("/online")
   }
 
   // TODO: This is such a mess :) (to get a border around the flexbox that
@@ -93,7 +101,7 @@ function WaitingRoom({ isHost, setMode, setRoom, nickname }) {
           </div>
         )}
         <button
-          onClick={() => navigate("/online")}
+          onClick={leaveRoom}
           style={{
             border: "1px solid black",
             borderRadius: "0.3rem",

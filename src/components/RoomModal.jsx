@@ -19,7 +19,7 @@ const nicknamesContainer = {
   fontWeight: "bold",
 }
 
-function RoomModal({ setShowRoomModal, roomId, isChallengeMode }) {
+function RoomModal({ setShowRoomModal, roomId, isChallengeOn }) {
   const [isCopied, setIsCopied] = useState(false)
   const [nicknames, setNicknames] = useState([])
 

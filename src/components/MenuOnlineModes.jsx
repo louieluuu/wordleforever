@@ -7,28 +7,27 @@ import { socket } from "../socket"
 
 import AnimatedPage from "./AnimatedPage"
 
-function MenuOnlineModes({ setIsHost, isChallengeMode, nickname, setMode }) {
+function MenuOnlineModes({ setIsHost, isChallengeOn, nickname, setGameMode }) {
   const navigate = useNavigate()
 
-  function handleClick(mode) {
-    setMode(mode)
+  function handleClick(gameMode) {
+    setGameMode(gameMode)
 
-    if (mode === "online-public") {
+    if (gameMode === "online-public") {
       seekMatch()
     }
     //
-    else if (mode === "online-private") {
-      createRoom()
+    else if (gameMode === "online-private") {
+      createRoom(gameMode)
     }
   }
 
   function seekMatch() {
-    socket.emit("seekMatch", socket.id, nickname, isChallengeMode)
-    // TODO
+    socket.emit("seekMatch", isChallengeOn)
   }
 
-  function createRoom() {
-    socket.emit("createRoom", socket.id, nickname, isChallengeMode)
+  function createRoom(gameMode) {
+    socket.emit("createRoom", socket.id, nickname, gameMode, isChallengeOn)
 
     socket.on("roomCreated", (roomId) => {
       setIsHost(true)
@@ -40,10 +39,10 @@ function MenuOnlineModes({ setIsHost, isChallengeMode, nickname, setMode }) {
     <AnimatedPage>
       <div className="menu">
         <button className="menu__btn--online" onClick={() => handleClick("online-public")}>
-          QUICK START
+          FIND A MATCH
         </button>
         <button className="menu__btn--offline" onClick={() => handleClick("online-private")}>
-          CREATE A ROOM
+          <span style={{ lineHeight: "0" }}>PLAY WITH FRIENDS</span>
         </button>
         <Link to="/">
           <button className="menu__btn--back">

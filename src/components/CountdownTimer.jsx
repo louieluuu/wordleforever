@@ -18,7 +18,7 @@ function CountdownTimer({ isCountdownOver, setIsCountdownOver, userGuess, handle
       clearInterval(timer)
       resetCountdown()
 
-      // TODO: Change this to isChallengeMode, not sure why this cond.....
+      // TODO: Change this to isChallengeOn, not sure why this cond.....
       if (userGuess[0] !== "") {
         handleEnter()
       }

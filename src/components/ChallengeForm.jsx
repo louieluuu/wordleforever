@@ -11,15 +11,19 @@ const formStyle = {
   paddingBottom: "0.5rem",
 }
 
-function ChallengeForm({ setIsChallengeMode }) {
+function ChallengeForm({ setIsChallengeOn }) {
   function handleClick() {
-    setIsChallengeMode((prev) => !prev)
+    setIsChallengeOn((prev) => !prev)
   }
 
   return (
     <form style={formStyle}>
       <label>
-        <input type="checkbox" onChange={handleClick} />
+        <input
+          type="checkbox"
+          style={{ accentColor: "hsl(197, 89%, 30%)" }}
+          onChange={handleClick}
+        />
         &nbsp;Challenge Mode&nbsp;
         <a data-tooltip-id="challenge-tooltip" style={{ verticalAlign: "middle" }}>
           <FaQuestionCircle color="hsl(0,0%,22.5%)" />

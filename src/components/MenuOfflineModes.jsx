@@ -4,9 +4,9 @@ import { HiOutlineArrowUturnLeft } from "react-icons/hi2"
 import { Link } from "react-router-dom"
 import AnimatedPage from "./AnimatedPage"
 
-function MenuOfflineModes({ setMode, handleNewGame }) {
-  function handleClick(mode) {
-    setMode(mode)
+function MenuOfflineModes({ setGameMode, handleNewGame }) {
+  function handleClick(gameMode) {
+    setGameMode(gameMode)
     handleNewGame()
   }
 
