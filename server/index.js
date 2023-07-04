@@ -105,6 +105,9 @@ io.on("connection", (socket) => {
     }
 
     cleanupRooms(roomId)
+
+    console.log("From disconnecting:")
+    console.log(Rooms)
   })
 
   // Create room
@@ -190,8 +193,40 @@ io.on("connection", (socket) => {
     io.to(uuid).emit("nicknamesChanged", nicknamesArray)
   })
 
-  //Seek match
-  socket.on("seekMatch", (isChallengeOn) => {})
+  // Seek match
+  socket.on("seekMatch", (isChallengeOn) => {
+    // Seeking a match is exclusively a Public Rooms action, so that's what we'll be working with.
+
+    // If there are no Public Rooms, create a new one
+    if (Rooms.Public.size === 0) {
+      socket.emit("noMatchesFound")
+      console.log("no matches found, reason: size of PublicRooms = 0")
+      return
+    }
+
+    console.log("I AM ACTIVATING AGAIN!!!!!!!!!!!!!!!!")
+
+    // If there are existing Public Rooms, try to find one that matches the user's criteria, namely:
+    // 1 - the Room must not already be in progress
+    // 2 - the ChallengeOn must match
+    const publicRoomsArray = Array.from(Rooms.Public.entries())
+    const matchingRoom = publicRoomsArray.find(
+      ([roomId, roomObj]) => roomObj.isInGame === false && roomObj.isChallengeOn === isChallengeOn
+    )
+
+    // If no matches are found, create a new Public Room
+    if (matchingRoom === undefined) {
+      socket.emit("noMatchesFound")
+      return
+    }
+
+    // If a match is found, join the room
+    const matchingRoomId = matchingRoom[0]
+    console.log(`matchingRoomid: ${matchingRoomId}`)
+    socket.emit("matchFound", matchingRoomId)
+
+    console.log(Rooms)
+  })
 
   // Leave room
   socket.on("leaveRoom", (uuid) => {
@@ -206,6 +241,9 @@ io.on("connection", (socket) => {
     cleanupRooms(uuid)
 
     socket.leave(uuid)
+
+    console.log("From leaveRoom:")
+    console.log(Rooms)
   })
 
   socket.on("initializeRoom", (uuid) => {
@@ -227,6 +265,7 @@ io.on("connection", (socket) => {
     console.log(Rooms)
   })
 
+  // TODO: Naming of this could probably be more on point. Maybe startNewPrivateGame?
   socket.on("startNewGame", (uuid) => {
     const relevantRooms = getPublicOrPrivateRooms(uuid)
 

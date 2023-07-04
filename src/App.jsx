@@ -422,7 +422,7 @@ function App() {
     }
   }
 
-  // TODO: This startNewClassicGame/handleNewGame is a little redundant. Look into refactoring.
+  // Using only client-side.
   function startNewClassicGame() {
     resetStates()
 
@@ -436,7 +436,8 @@ function App() {
 
   function handleNewGame() {
     if (gameMode === "online-public") {
-      console.log("in development")
+      socket.emit("leaveRoom", room)
+      socket.emit("seekMatch", isChallengeOn)
     }
     //
     else if (gameMode === "online-private") {

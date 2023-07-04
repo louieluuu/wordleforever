@@ -12,6 +12,14 @@ function MenuOnlineModes({ setIsHost, isChallengeOn, nickname, setGameMode }) {
 
   function seekMatch() {
     socket.emit("seekMatch", isChallengeOn)
+
+    socket.on("noMatchesFound", () => {
+      createRoom("online-public")
+    })
+
+    socket.on("matchFound", (roomId) => {
+      navigate(`/room/${roomId}`)
+    })
   }
 
   function createRoom(gameMode) {
@@ -20,7 +28,10 @@ function MenuOnlineModes({ setIsHost, isChallengeOn, nickname, setGameMode }) {
     socket.emit("createRoom", socket.id, nickname, gameMode, isChallengeOn)
 
     socket.on("roomCreated", (roomId) => {
-      setIsHost(true)
+      // Only private rooms require hosts. Public rooms will start on a shared timer.
+      if (gameMode === "online-private") {
+        setIsHost(true)
+      }
       navigate(`/room/${roomId}`)
     })
   }
