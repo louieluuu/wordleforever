@@ -14,6 +14,7 @@ function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, setRoom, nickna
   const navigate = useNavigate()
 
   useEffect(() => {
+    // TODO: Not sure if this is "hacky" or not.
     if (socket.id === undefined) {
       socket.on("connect", () => {
         console.log("socket.id undefined, emitting from in here")
@@ -49,6 +50,7 @@ function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, setRoom, nickna
       socket.off("connect")
       socket.off("roomError")
       socket.off("nicknamesChanged")
+      socket.off("roomInitialized")
     }
   }, [])
 

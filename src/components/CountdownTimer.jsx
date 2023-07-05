@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 
-function CountdownTimer({ isCountdownOver, setIsCountdownOver, userGuess, handleEnter }) {
+function CountdownTimer({ isCountdownOver, setIsCountdownOver, isChallengeOn, handleEnter }) {
   const [seconds, setSeconds] = useState(3)
 
   useEffect(() => {
@@ -18,8 +18,7 @@ function CountdownTimer({ isCountdownOver, setIsCountdownOver, userGuess, handle
       clearInterval(timer)
       resetCountdown()
 
-      // TODO: Change this to isChallengeOn, not sure why this cond.....
-      if (userGuess[0] !== "") {
+      if (isChallengeOn) {
         handleEnter()
       }
     }

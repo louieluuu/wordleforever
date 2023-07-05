@@ -434,7 +434,7 @@ function App() {
     setSolution(solution)
   }
 
-  function handleNewGame() {
+  function handleNewGame(gameMode) {
     if (gameMode === "online-public") {
       socket.emit("leaveRoom", room)
       socket.emit("seekMatch", isChallengeOn)
@@ -468,7 +468,7 @@ function App() {
               <CountdownTimer
                 isCountdownOver={isCountdownOver}
                 setIsCountdownOver={setIsCountdownOver}
-                userGuess={userGuess}
+                isChallengeOn={isChallengeOn}
                 handleEnter={handleEnter}
               />
             )}

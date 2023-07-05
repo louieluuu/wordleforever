@@ -150,6 +150,8 @@ io.on("connection", (socket) => {
     // (another consequence is nicknames state has to start as [nickname])
 
     // socket.join(newUuid)
+    // ! ^ update, I got it to work with an if statement in the useEffect
+
     socket.emit("roomCreated", newUuid)
 
     console.log("From createRoom:")
@@ -213,12 +215,16 @@ io.on("connection", (socket) => {
     console.log("I AM ACTIVATING AGAIN!!!!!!!!!!!!!!!!")
     console.log("--------------------------------------")
 
-    // If there are existing Public Rooms, try to find one that matches the user's criteria, namely:
+    // If there are existing Public Rooms, try to find a valid matching room, namely:
     // 1 - the Room must not already be in progress
-    // 2 - the ChallengeOn must match
+    // 2 - the Room must not be full (i.e. > 4)
+    // 3 - the ChallengeOn must match
     const publicRoomsArray = Array.from(Rooms.Public.entries())
     const matchingRoom = publicRoomsArray.find(
-      ([roomId, roomObj]) => roomObj.isInGame === false && roomObj.isChallengeOn === isChallengeOn
+      ([roomId, roomObj]) =>
+        roomObj.isInGame === false &&
+        io.sockets.adapter.rooms.get(roomId).size < 4 &&
+        roomObj.isChallengeOn === isChallengeOn
     )
 
     // If no matches are found, create a new Public Room

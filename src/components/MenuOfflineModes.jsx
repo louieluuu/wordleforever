@@ -7,7 +7,7 @@ import AnimatedPage from "./AnimatedPage"
 function MenuOfflineModes({ setGameMode, handleNewGame }) {
   function handleClick(gameMode) {
     setGameMode(gameMode)
-    handleNewGame()
+    handleNewGame(gameMode)
   }
 
   return (
