@@ -87,6 +87,34 @@ function cleanupRooms(roomId) {
   }
 }
 
+function startCountdown(roomId) {
+  let seconds = 9
+
+  const timer = setInterval(() => {
+    if (seconds < 3) {
+      // As the countdown ends, if the room is still populated (people haven't left),
+      // go ahead and initialize the room.
+
+      // The system here is admittedly scuffed because the countdown is broadcasted
+      // to all sockets in the room, but I only want one socket to initialize the room.
+      // This wasn't a problem in the private lobbies, because there is no countdown
+      // in a private lobby - the host gets to control when to initialize the room.
+
+      // So... I'm just going to pick a random socket in the room to initialize the room.
+      const socketIds = Array.from(io.sockets.adapter.rooms.get(roomId))
+      if (socketIds.size !== 0) {
+        const randomSocket = socketIds[Math.floor(Math.random() * socketIds.length)]
+        io.to(randomSocket).emit("roomCountdownOver")
+      }
+      clearInterval(timer)
+      return
+    }
+
+    io.to(roomId).emit("countdownTick", seconds)
+    seconds -= 1
+  }, 1000) // TODO: Consider making this 1500 instead, lobby feels pretty fast
+}
+
 // All server-side socket logic is, by design, wrapped in the io.on("connection") function.
 io.on("connection", (socket) => {
   // Print info when connections are made (io.engine contains metadata)
@@ -186,6 +214,13 @@ io.on("connection", (socket) => {
     const nicknamesArray = Array.from(nicknamesMap.values())
     io.to(uuid).emit("nicknamesChanged", nicknamesArray)
 
+    // In Private Rooms, the host gets to choose when to start the game.
+    // However, in Public Rooms, the room will initiate a 10s countdown
+    // when 2+ players have been matched.
+    if (relevantRooms === Rooms.Public && io.sockets.adapter.rooms.get(uuid).size > 1) {
+      startCountdown(uuid)
+    }
+
     console.log("From joinRoom:")
     console.log(Rooms)
   })
@@ -282,7 +317,7 @@ io.on("connection", (socket) => {
     console.log(Rooms)
   })
 
-  // TODO: Naming of this could probably be more on point. Maybe startNewPrivateGame?
+  // TODO: Naming of this could probably be more on point. Maybe startNewOnlineGame?
   socket.on("startNewGame", (uuid) => {
     const relevantRooms = getPublicOrPrivateRooms(uuid)
 

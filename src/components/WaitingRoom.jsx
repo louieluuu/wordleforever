@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom"
 import { WAITING_ROOM_MESSAGES } from "../data/waitingRoomMessages"
 
 import { socket } from "../socket"
+import CountdownNumber from "./CountdownNumber"
 
 function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, setRoom, nickname }) {
   const { roomId } = useParams()
@@ -44,6 +45,10 @@ function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, setRoom, nickna
 
     socket.on("nicknamesChanged", (newNicknames) => {
       setNicknames(newNicknames)
+    })
+
+    socket.on("roomCountdownOver", () => {
+      initializeRoom()
     })
 
     return () => {
@@ -100,6 +105,8 @@ function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, setRoom, nickna
   // TODO: But that's not available in the nicknames array... Lol
   return (
     <div className="flexbox1">
+      <CountdownNumber />
+
       <div className="flexbox2">
         <h1 style={{ fontFamily: "Suwannaphum", color: "hsl(0, 0%, 15%)" }}>[{waitingMessage}]</h1>
 

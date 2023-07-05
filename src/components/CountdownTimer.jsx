@@ -14,7 +14,7 @@ function CountdownTimer({ isCountdownOver, setIsCountdownOver, isChallengeOn, ha
     }, 1000)
 
     // Stop the countdown when it reaches 0
-    if (seconds === -1) {
+    if (seconds < 0) {
       clearInterval(timer)
       resetCountdown()
 
