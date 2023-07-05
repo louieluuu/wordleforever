@@ -5,35 +5,65 @@ import { WAITING_ROOM_MESSAGES } from "../data/waitingRoomMessages"
 
 import { socket } from "../socket"
 
-function WaitingRoom({ isHost, setGameMode, setRoom, nickname }) {
+function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, setRoom, nickname }) {
   const { roomId } = useParams()
-  const [nicknames, setNicknames] = useState([nickname])
+  const [nicknames, setNicknames] = useState([])
   const [waitingMessage, setWaitingMessage] = useState("")
   const [isCopied, setIsCopied] = useState(false)
 
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Necessary to wrap joinRoom in connect event handler, because otherwise
-    // "joinRoom" will fire before the socket.id is actually defined
-    socket.on("connect", () => {
-      socket.emit("joinRoom", roomId, socket.id, nickname)
-
-      socket.on("roomError", (reason) => {
-        console.log(`Error: ${reason}`)
+    if (socket.id === undefined) {
+      socket.on("connect", () => {
+        console.log("socket.id undefined, emitting from in here")
+        socket.emit("joinRoom", roomId, socket.id, nickname)
       })
+    }
+    //
+    else {
+      console.log("else: just emitting right away")
+      socket.emit("joinRoom", roomId, socket.id, nickname)
+    }
+
+    socket.on("roomError", (reason) => {
+      console.log(`Error: ${reason}`)
     })
+    // // Necessary to wrap joinRoom in connect event handler, because otherwise
+    // // "joinRoom" will fire before the socket.id is actually defined
+    // socket.on("connect", () => {
+    //   console.log("WaitingRoom 1st useEffect (socket.on) firing...")
+
+    //   socket.emit("joinRoom", roomId, socket.id, nickname)
+
+    //   socket.on("roomError", (reason) => {
+    //     console.log(`Error: ${reason}`)
+    //   })
+    // })
 
     socket.on("nicknamesChanged", (newNicknames) => {
       setNicknames(newNicknames)
     })
+
+    return () => {
+      socket.off("connect")
+      socket.off("roomError")
+      socket.off("nicknamesChanged")
+    }
   }, [])
 
   useEffect(() => {
-    // TODO: Uh oh....... check if the gameMode is "" -> means joined url from clicking link
-    // TODO: else if gameMode is already set to "online-public", then joined from clicking a menu
-    setGameMode("online-private")
+    console.log("WaitingRoom 2nd useEffect firing...")
+
+    // If the user navigates to the waiting room directly (i.e. received a link
+    // from a friend), set the gameMode to online-private.
+    if (gameMode === "") {
+      setGameMode("online-private")
+    }
+
+    console.log(`roomId: ${roomId}`)
     setRoom(roomId)
+
     const randomWaitingMessage =
       WAITING_ROOM_MESSAGES[Math.floor(Math.random() * WAITING_ROOM_MESSAGES.length)]
     setWaitingMessage(randomWaitingMessage)
@@ -56,7 +86,9 @@ function WaitingRoom({ isHost, setGameMode, setRoom, nickname }) {
 
   function leaveRoom() {
     socket.emit("leaveRoom", roomId)
+    console.log(`Leaving room ${roomId}`)
     setGameMode("")
+    setIsHost(false)
     navigate("/online")
   }
 

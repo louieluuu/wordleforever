@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 
 import { HiOutlineArrowUturnLeft } from "react-icons/hi2"
@@ -14,20 +14,26 @@ function MenuOnlineModes({ setIsHost, isChallengeOn, nickname, setGameMode }) {
     socket.emit("seekMatch", isChallengeOn)
 
     socket.on("noMatchesFound", () => {
+      console.log("Received noMatchesFound. Creating online-public room...\n")
       createRoom("online-public")
     })
 
     socket.on("matchFound", (roomId) => {
+      console.log("MATCHFOUND MATCH FOUND MATCH FOUND")
       navigate(`/room/${roomId}`)
     })
   }
 
   function createRoom(gameMode) {
+    console.log("createRoom called.")
     setGameMode(gameMode)
 
+    console.log("CALLING CREATEROOM ONCE!!!!!!!!!!!!!!!!!!!!")
     socket.emit("createRoom", socket.id, nickname, gameMode, isChallengeOn)
 
     socket.on("roomCreated", (roomId) => {
+      console.log("roomCreated called.")
+
       // Only private rooms require hosts. Public rooms will start on a shared timer.
       if (gameMode === "online-private") {
         setIsHost(true)
@@ -35,6 +41,15 @@ function MenuOnlineModes({ setIsHost, isChallengeOn, nickname, setGameMode }) {
       navigate(`/room/${roomId}`)
     })
   }
+
+  // Socket cleanup
+  useEffect(() => {
+    return () => {
+      socket.off("noMatchesFound")
+      socket.off("matchFound")
+      socket.off("roomCreated")
+    }
+  }, [])
 
   return (
     <AnimatedPage>

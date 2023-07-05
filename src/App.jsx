@@ -553,6 +553,8 @@ function App() {
                 element={
                   <WaitingRoom
                     isHost={isHost}
+                    setIsHost={setIsHost}
+                    gameMode={gameMode}
                     setGameMode={setGameMode}
                     setRoom={setRoom}
                     nickname={nickname}

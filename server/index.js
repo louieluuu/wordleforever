@@ -10,6 +10,7 @@ const { v4: uuidv4 } = require("uuid")
 const express = require("express")
 const { createServer } = require("http")
 const { Server } = require("socket.io")
+const { BiCloudLightRain } = require("react-icons/bi")
 
 const app = express()
 const httpServer = createServer(app)
@@ -112,6 +113,9 @@ io.on("connection", (socket) => {
 
   // Create room
   socket.on("createRoom", (socketId, nickname, gameMode, isChallengeOn) => {
+    console.log("First:")
+    console.log(Rooms)
+
     let newUuid = uuidv4()
     // Guarantees non-colliding rooms (even though the chance is infinitely small)
     while (Rooms.Public.has(newUuid) || Rooms.Private.has(newUuid)) {
@@ -144,7 +148,8 @@ io.on("connection", (socket) => {
 
     // But it didn't work, so here we are... joining manually
     // (another consequence is nicknames state has to start as [nickname])
-    socket.join(newUuid)
+
+    // socket.join(newUuid)
     socket.emit("roomCreated", newUuid)
 
     console.log("From createRoom:")
@@ -204,7 +209,9 @@ io.on("connection", (socket) => {
       return
     }
 
+    console.log("--------------------------------------")
     console.log("I AM ACTIVATING AGAIN!!!!!!!!!!!!!!!!")
+    console.log("--------------------------------------")
 
     // If there are existing Public Rooms, try to find one that matches the user's criteria, namely:
     // 1 - the Room must not already be in progress
@@ -240,7 +247,11 @@ io.on("connection", (socket) => {
 
     cleanupRooms(uuid)
 
+    console.log("LEAVING SOON...................")
+    console.log(io.sockets.adapter.rooms.get(uuid))
+    console.log(io.sockets.adapter.rooms.get(uuid).size)
     socket.leave(uuid)
+    console.log("LEAVINGGGGGGGGGGGGGGGGGGG")
 
     console.log("From leaveRoom:")
     console.log(Rooms)
@@ -342,31 +353,3 @@ const PORT = 4000
 httpServer.listen(PORT, IP, () => {
   console.log(`Server is running on port ${PORT}`)
 })
-
-// TODO: random matchmaking
-// Queueing up random users logic
-// // Prevent duplicate queueing (double clicking)
-// if (queuedUsers.includes(lobbyId)) {
-//   return
-// }
-// queuedUsers.push(lobbyId)
-
-// console.log(`List of queued users now: ${queuedUsers}`)
-
-// // if there are 2 players queued, then make them join a room together
-// if (queuedUsers.length == 2) {
-//   // pop twice
-//   queuedUsers.pop()
-//   queuedUsers.pop()
-//   // // Should leave your room before joining another one;
-//   // // doesn't automatically leave, I've tested it
-//   // socket.leave(lobbyId)
-//   // console.log(`You have left the room: ${lobbyId}`)
-//   // console.log(`You have joined the room: ${roomId}`)
-//   console.log(`List of queued users now: ${queuedUsers}`)
-
-//   io.to(roomId).emit("matchMade")
-
-//   const clientsInRoom = io.sockets.adapter.rooms.get(roomId)
-//   console.log(clientsInRoom)
-// }
