@@ -28,10 +28,12 @@ import Confetti from "react-confetti"
 import { IoReturnDownBackSharp } from "react-icons/io5"
 
 // Framer-Motion
-import { Route, Routes, useLocation } from "react-router-dom"
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 
 function App() {
+  const navigate = useNavigate()
+
   const [currentRow, setCurrentRow] = useState(0)
   const [currentTile, setCurrentTile] = useState(0)
 
@@ -62,7 +64,7 @@ function App() {
   const [showAlertModal, setShowAlertModal] = useState(false)
 
   // ! Socket states
-  const [room, setRoom] = useState("")
+  const [roomId, setRoomId] = useState("")
   const [gameMode, setGameMode] = useState("")
   const [isHost, setIsHost] = useState(false)
   const [isInGame, setIsInGame] = useState(false)
@@ -86,7 +88,7 @@ function App() {
         const otherBoards = allGameBoards.filter((object) => object.socketId !== socket.id)
         setOtherBoards(otherBoards)
 
-        setRoom(roomId)
+        setRoomId(roomId)
         setSolution(solution)
         setIsChallengeOn(isChallengeOn)
 
@@ -100,6 +102,18 @@ function App() {
     // TODO: more cleanup
     return () => {
       socket.off("connect")
+    }
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      socket.off("gameStarted")
+      socket.off("noMatchesFound")
+      socket.off("matchFound")
+      socket.off("gameOver")
+      socket.off("gameBoardBroadcasted")
+      socket.off("otherBoardUpdated")
+      socket.off("roomCreated")
     }
   }, [])
 
@@ -120,9 +134,9 @@ function App() {
   }, [otherBoards])
 
   useEffect(() => {
-    socket.on("gameOver", (room) => {
+    socket.on("gameOver", (roomId) => {
       setIsGameOver(true)
-      socket.emit("revealGameBoard", room, gameBoard)
+      socket.emit("revealGameBoard", roomId, gameBoard)
     })
 
     socket.on("gameBoardBroadcasted", (socketId, finalBoard) => {
@@ -165,7 +179,7 @@ function App() {
     }
 
     if (gameMode.includes("online")) {
-      socket.emit("nicknameChange", room, socket.id, newNickname)
+      socket.emit("nicknameChange", roomId, socket.id, newNickname)
     }
 
     setNickname(newNickname)
@@ -331,6 +345,7 @@ function App() {
   function handleEnter() {
     // Allows user to start a new game by pressing Enter instead of clicking.
     if (isGameOver) {
+      console.log(`gameMode: ${gameMode}`)
       handleNewGame(gameMode)
       return
     }
@@ -372,7 +387,7 @@ function App() {
     // Correct guess: Game Over (win)
     // Direct array comparison won't work with ===, so we must compare their string forms.
     if (userGuess.join("") === solution.join("")) {
-      socket.emit("correctGuess", room)
+      socket.emit("correctGuess", roomId)
       showWinAnimations()
       setIsConfettiRunning(true)
       setIsGameOver(true)
@@ -380,12 +395,12 @@ function App() {
     // Wrong guess
     else {
       // ! Socket
-      socket.emit("wrongGuess", socket.id, room, newGameBoard)
+      socket.emit("wrongGuess", socket.id, roomId, newGameBoard)
       // Run out of guesses: Game Over (loss)
       if (currentRow >= 5) {
         setIsOutOfGuesses(true)
         if (gameMode.includes("online")) {
-          socket.emit("outOfGuesses", room)
+          socket.emit("outOfGuesses", roomId)
         }
         //
         else {
@@ -434,14 +449,58 @@ function App() {
     setSolution(solution)
   }
 
+  // seekMatch() and leaveRoom() used to exist at the MenuOnlineModes level,
+  // but since the New Game button requires these functions, they have to be out here.
+
+  function seekMatch() {
+    socket.emit("seekMatch", isChallengeOn)
+    setGameMode("online-public")
+
+    socket.on("noMatchesFound", () => {
+      console.log("Received noMatchesFound. Creating online-public room...\n")
+      createRoom("online-public")
+    })
+
+    socket.on("matchFound", (roomId) => {
+      console.log("MATCHFOUND MATCH FOUND MATCH FOUND")
+      navigate(`/room/${roomId}`)
+    })
+  }
+
+  function createRoom(gameMode) {
+    console.log(`gameMode from createRoom: ${gameMode}`)
+    setGameMode(gameMode)
+
+    socket.emit("createRoom", socket.id, nickname, gameMode, isChallengeOn)
+
+    socket.on("roomCreated", (roomId) => {
+      console.log("roomCreated called.")
+
+      // Only private rooms require hosts. Public rooms will start on a shared timer.
+      if (gameMode === "online-private") {
+        setIsHost(true)
+      }
+      navigate(`/room/${roomId}`)
+    })
+  }
+
+  function leaveRoom() {
+    socket.emit("leaveRoom", roomId)
+    console.log(`Leaving room ${roomId}`)
+    setGameMode("")
+    setIsHost(false)
+    setIsInGame(false)
+  }
+
   function handleNewGame(gameMode) {
     if (gameMode === "online-public") {
-      socket.emit("leaveRoom", room)
-      socket.emit("seekMatch", isChallengeOn)
+      console.log("Online-public in here!")
+      leaveRoom()
+      seekMatch()
     }
     //
     else if (gameMode === "online-private") {
-      socket.emit("startNewGame", room)
+      socket.emit("startNewGame", roomId)
     }
     //
     else if (gameMode === "offline-classic") {
@@ -535,7 +594,7 @@ function App() {
 
           <AnimatePresence mode="wait">
             <Routes key={location.pathname} location={location}>
-              <Route path="/" element={<MenuLandingPage />} />
+              <Route path="/" element={<MenuLandingPage setIsChallengeOn={setIsChallengeOn} />} />
               <Route
                 path="/online"
                 element={
@@ -544,6 +603,8 @@ function App() {
                     isChallengeOn={isChallengeOn}
                     nickname={nickname}
                     setGameMode={setGameMode}
+                    seekMatch={seekMatch}
+                    createRoom={createRoom}
                   />
                 }
               />
@@ -556,8 +617,9 @@ function App() {
                     setIsHost={setIsHost}
                     gameMode={gameMode}
                     setGameMode={setGameMode}
-                    setRoom={setRoom}
+                    setRoomId={setRoomId}
                     nickname={nickname}
+                    leaveRoom={leaveRoom}
                   />
                 }
               />

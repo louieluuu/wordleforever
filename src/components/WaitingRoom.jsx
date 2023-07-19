@@ -6,7 +6,7 @@ import { WAITING_ROOM_MESSAGES } from "../data/waitingRoomMessages"
 import { socket } from "../socket"
 import CountdownNumber from "./CountdownNumber"
 
-function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, setRoom, nickname }) {
+function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, setRoomId, nickname, leaveRoom }) {
   const { roomId } = useParams()
   const [nicknames, setNicknames] = useState([])
   const [waitingMessage, setWaitingMessage] = useState("")
@@ -25,6 +25,7 @@ function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, setRoom, nickna
     //
     else {
       console.log("else: just emitting right away")
+      console.log(`first useEffect: ${roomId}`)
       socket.emit("joinRoom", roomId, socket.id, nickname)
     }
 
@@ -56,6 +57,7 @@ function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, setRoom, nickna
       socket.off("roomError")
       socket.off("nicknamesChanged")
       socket.off("roomInitialized")
+      socket.off("roomCountdownOver")
     }
   }, [])
 
@@ -69,7 +71,7 @@ function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, setRoom, nickna
     }
 
     console.log(`roomId: ${roomId}`)
-    setRoom(roomId)
+    setRoomId(roomId)
 
     const randomWaitingMessage =
       WAITING_ROOM_MESSAGES[Math.floor(Math.random() * WAITING_ROOM_MESSAGES.length)]
@@ -85,17 +87,15 @@ function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, setRoom, nickna
 
   function initializeRoom() {
     socket.emit("initializeRoom", roomId)
+    console.log(`From initializeRoom: ${roomId}`)
 
     socket.on("roomInitialized", (roomId) => {
       socket.emit("startNewGame", roomId)
     })
   }
 
-  function leaveRoom() {
-    socket.emit("leaveRoom", roomId)
-    console.log(`Leaving room ${roomId}`)
-    setGameMode("")
-    setIsHost(false)
+  function cancelRoom() {
+    leaveRoom()
     navigate("/online")
   }
 
@@ -105,9 +105,11 @@ function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, setRoom, nickna
   // TODO: But that's not available in the nicknames array... Lol
   return (
     <div className="flexbox1">
-      <CountdownNumber />
-
       <div className="flexbox2">
+        <div className="flexbox2__countdown">
+          <CountdownNumber />
+        </div>
+
         <h1 style={{ fontFamily: "Suwannaphum", color: "hsl(0, 0%, 15%)" }}>[{waitingMessage}]</h1>
 
         {isHost && (
@@ -143,7 +145,7 @@ function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, setRoom, nickna
           </div>
         )}
         <button
-          onClick={leaveRoom}
+          onClick={cancelRoom}
           style={{
             border: "1px solid black",
             borderRadius: "0.3rem",

@@ -10,7 +10,6 @@ const { v4: uuidv4 } = require("uuid")
 const express = require("express")
 const { createServer } = require("http")
 const { Server } = require("socket.io")
-const { BiCloudLightRain } = require("react-icons/bi")
 
 const app = express()
 const httpServer = createServer(app)
@@ -91,7 +90,7 @@ function startCountdown(roomId) {
   let seconds = 9
 
   const timer = setInterval(() => {
-    if (seconds < 3) {
+    if (seconds < 4) {
       // As the countdown ends, if the room is still populated (people haven't left),
       // go ahead and initialize the room.
 
@@ -112,7 +111,7 @@ function startCountdown(roomId) {
 
     io.to(roomId).emit("countdownTick", seconds)
     seconds -= 1
-  }, 1000) // TODO: Consider making this 1500 instead, lobby feels pretty fast
+  }, 1250)
 }
 
 // All server-side socket logic is, by design, wrapped in the io.on("connection") function.
@@ -141,9 +140,6 @@ io.on("connection", (socket) => {
 
   // Create room
   socket.on("createRoom", (socketId, nickname, gameMode, isChallengeOn) => {
-    console.log("First:")
-    console.log(Rooms)
-
     let newUuid = uuidv4()
     // Guarantees non-colliding rooms (even though the chance is infinitely small)
     while (Rooms.Public.has(newUuid) || Rooms.Private.has(newUuid)) {
@@ -181,15 +177,11 @@ io.on("connection", (socket) => {
     // ! ^ update, I got it to work with an if statement in the useEffect
 
     socket.emit("roomCreated", newUuid)
-
-    console.log("From createRoom:")
-    console.log(Rooms)
   })
 
   // Join room
   socket.on("joinRoom", (uuid, socketId, nickname) => {
     const relevantRooms = getPublicOrPrivateRooms(uuid)
-    console.log(relevantRooms)
 
     // Check validity of room
     if (relevantRooms === undefined) {
@@ -208,7 +200,6 @@ io.on("connection", (socket) => {
     socket.join(uuid)
     const nicknamesMap = relevantRooms.get(uuid).Nicknames
     nicknamesMap.set(socketId, nickname)
-    console.log(nicknamesMap)
 
     // Socket.IO does not emit Maps or Iterators, so we need to convert it to an Array first.
     const nicknamesArray = Array.from(nicknamesMap.values())
@@ -220,9 +211,6 @@ io.on("connection", (socket) => {
     if (relevantRooms === Rooms.Public && io.sockets.adapter.rooms.get(uuid).size > 1) {
       startCountdown(uuid)
     }
-
-    console.log("From joinRoom:")
-    console.log(Rooms)
   })
 
   // Handle nickname changes
@@ -242,13 +230,8 @@ io.on("connection", (socket) => {
     // If there are no Public Rooms, create a new one
     if (Rooms.Public.size === 0) {
       socket.emit("noMatchesFound")
-      console.log("no matches found, reason: size of PublicRooms = 0")
       return
     }
-
-    console.log("--------------------------------------")
-    console.log("I AM ACTIVATING AGAIN!!!!!!!!!!!!!!!!")
-    console.log("--------------------------------------")
 
     // If there are existing Public Rooms, try to find a valid matching room, namely:
     // 1 - the Room must not already be in progress
@@ -270,10 +253,7 @@ io.on("connection", (socket) => {
 
     // If a match is found, join the room
     const matchingRoomId = matchingRoom[0]
-    console.log(`matchingRoomid: ${matchingRoomId}`)
     socket.emit("matchFound", matchingRoomId)
-
-    console.log(Rooms)
   })
 
   // Leave room
@@ -288,11 +268,7 @@ io.on("connection", (socket) => {
 
     cleanupRooms(uuid)
 
-    console.log("LEAVING SOON...................")
-    console.log(io.sockets.adapter.rooms.get(uuid))
-    console.log(io.sockets.adapter.rooms.get(uuid).size)
     socket.leave(uuid)
-    console.log("LEAVINGGGGGGGGGGGGGGGGGGG")
 
     console.log("From leaveRoom:")
     console.log(Rooms)
@@ -312,9 +288,6 @@ io.on("connection", (socket) => {
     })
 
     socket.emit("roomInitialized", uuid)
-
-    console.log("From initializeRoom")
-    console.log(Rooms)
   })
 
   // TODO: Naming of this could probably be more on point. Maybe startNewOnlineGame?
@@ -329,7 +302,6 @@ io.on("connection", (socket) => {
     // is broadcasted to all the clients. On the client-side, each client will
     // filter out their own socket, resulting in their respective "otherBoards".
     const socketsInRoom = io.sockets.adapter.rooms.get(uuid)
-    console.log(socketsInRoom)
 
     const allGameBoards = []
     socketsInRoom.forEach((socketId) => {
@@ -354,10 +326,6 @@ io.on("connection", (socket) => {
       relevantRooms.get(uuid).isChallengeOn,
       challengeModeGuess
     )
-
-    // TODO: delete later
-    console.log("From startNewGame")
-    console.log(Rooms)
   })
 
   // Process the board to hide the letters but still display the colors
