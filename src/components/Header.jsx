@@ -15,7 +15,6 @@ export default function Header() {
     window.location.href = "/"
   }
 
-  // TODO: The logo and title should be connected somehow
   return (
     <>
       <header className="header">

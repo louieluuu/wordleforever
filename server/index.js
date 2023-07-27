@@ -87,7 +87,7 @@ function cleanupRooms(roomId) {
 }
 
 function startCountdown(roomId) {
-  let seconds = 9
+  let seconds = 5
 
   const timer = setInterval(() => {
     if (seconds < 4) {
@@ -150,6 +150,7 @@ io.on("connection", (socket) => {
     // the roomId hasn't been established yet - we'll use the gameMode instead to decide
     // whether it should be a Public or Private game.
     let relevantRooms
+
     if (gameMode.includes("public")) {
       relevantRooms = Rooms.Public
     }
@@ -160,7 +161,8 @@ io.on("connection", (socket) => {
 
     // More properties will be added to the Room later, but this is all we need for now.
     relevantRooms.set(newUuid, {
-      Nicknames: new Map([[socketId, nickname]]),
+      // Nicknames: new Map([[socketId, nickname]]),
+      Nicknames: new Map(),
       isChallengeOn: isChallengeOn,
       isInGame: false,
     })
@@ -336,7 +338,9 @@ io.on("connection", (socket) => {
   })
 
   // Game Over logic
-  socket.on("correctGuess", (uuid) => {
+  socket.on("correctGuess", (socketId, uuid) => {
+    socket.emit("updateScoreWinner", socketId)
+    // socket.to(uuid).emit("updateScoreLoser")
     io.to(uuid).emit("gameOver", uuid)
   })
 
@@ -359,6 +363,6 @@ io.on("connection", (socket) => {
 const IP = "192.168.1.72"
 const PORT = 4000
 
-httpServer.listen(PORT, IP, () => {
+httpServer.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
 })

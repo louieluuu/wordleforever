@@ -1,4 +1,5 @@
 import React from "react"
+import Score from "./Score"
 
 function GameBoard({
   gameBoard,
@@ -8,6 +9,7 @@ function GameBoard({
   currentTile,
   isGameOver,
   isOutOfGuesses,
+  gameMode,
 }) {
   function getGuessTileClassName(gameBoard, row, col) {
     let guessTileClassName = "guess__tile"
@@ -36,7 +38,10 @@ function GameBoard({
   return (
     <>
       <div className={`game-board${isOutOfGuesses ? "--game-over" : ""}`}>
-        <div style={{ fontFamily: "Roboto Slab" }}>{nickname}</div>
+        <div style={{ fontFamily: "Roboto Slab", display: "flex" }}>
+          {`${nickname}` + ": "}
+          <Score isGameOver={isGameOver} gameMode={gameMode} />
+        </div>
         {gameBoard.map((row, rowIndex) => (
           <div key={rowIndex} className="guess">
             {rowIndex === currentRow

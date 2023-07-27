@@ -333,6 +333,7 @@ function App() {
     })
 
     const newHints = { green: newGreenHints, yellow: newYellowHints, gray: newGrayHints }
+
     setHints(newHints)
   }
 
@@ -387,7 +388,7 @@ function App() {
     // Correct guess: Game Over (win)
     // Direct array comparison won't work with ===, so we must compare their string forms.
     if (userGuess.join("") === solution.join("")) {
-      socket.emit("correctGuess", roomId)
+      socket.emit("correctGuess", socket.id, roomId)
       showWinAnimations()
       setIsConfettiRunning(true)
       setIsGameOver(true)
@@ -556,6 +557,7 @@ function App() {
                 currentTile={currentTile}
                 isGameOver={isGameOver}
                 isOutOfGuesses={isOutOfGuesses}
+                gameMode={gameMode}
               />
               {otherBoards.map((object) => (
                 <GameBoard
@@ -566,6 +568,7 @@ function App() {
                   currentRow={-1}
                   currentTile={currentTile}
                   isGameOver={isGameOver}
+                  gameMode={gameMode}
                 />
               ))}
             </div>
