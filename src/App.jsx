@@ -55,7 +55,7 @@ function App() {
   const [isChallengeOn, setIsChallengeOn] = useState(false)
 
   // Countdown states
-  const [isCountdownOver, setIsCountdownOver] = useState(false)
+  const [isCountdownRunning, setIsCountdownRunning] = useState(true)
   const [isConfettiRunning, setIsConfettiRunning] = useState(false)
   const [numberOfPieces, setNumberOfPieces] = useState(0)
 
@@ -192,7 +192,7 @@ function App() {
     setUserGuess(["", "", "", "", ""])
     setIsOutOfGuesses(false)
     setIsGameOver(false)
-    setIsCountdownOver(false)
+    setIsCountdownRunning(true)
     setGameBoard(new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })))
     setOtherBoards([])
     setIsInGame(true)
@@ -524,10 +524,10 @@ function App() {
       {isInGame ? (
         <>
           <div className="game-container">
-            {!isCountdownOver && (
+            {isCountdownRunning && (
               <CountdownTimer
-                isCountdownOver={isCountdownOver}
-                setIsCountdownOver={setIsCountdownOver}
+                isCountdownRunning={isCountdownRunning}
+                setIsCountdownRunning={setIsCountdownRunning}
                 isChallengeOn={isChallengeOn}
                 handleEnter={handleEnter}
               />
@@ -579,7 +579,7 @@ function App() {
             isOutOfGuesses={isOutOfGuesses}
             isGameOver={isGameOver}
             isInGame={isInGame}
-            isCountdownOver={isCountdownOver}
+            isCountdownRunning={isCountdownRunning}
             handleLetter={handleLetter}
             handleEnter={handleEnter}
             handleBackspace={handleBackspace}

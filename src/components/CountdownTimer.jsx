@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react"
 
-function CountdownTimer({ isCountdownOver, setIsCountdownOver, isChallengeOn, handleEnter }) {
+function CountdownTimer({ isCountdownRunning, setIsCountdownRunning, isChallengeOn, handleEnter }) {
   const [seconds, setSeconds] = useState(3)
 
   useEffect(() => {
     function resetCountdown() {
-      setIsCountdownOver(true)
+      setIsCountdownRunning(false)
       setSeconds(3)
     }
 
@@ -31,7 +31,7 @@ function CountdownTimer({ isCountdownOver, setIsCountdownOver, isChallengeOn, ha
 
   return (
     <div>
-      <dialog className="countdown-timer" open={!isCountdownOver}>
+      <dialog className="countdown-timer" open={isCountdownRunning}>
         <p>The game will start in... {seconds}</p>
       </dialog>
     </div>

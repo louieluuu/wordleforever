@@ -7,7 +7,7 @@ export default function Keyboard({
   isOutOfGuesses,
   isGameOver,
   isInGame,
-  isCountdownOver,
+  isCountdownRunning,
   handleLetter,
   handleEnter,
   handleBackspace,
@@ -37,7 +37,7 @@ export default function Keyboard({
     // Below logic might be a little confusing, but it's all done so
     // a user can start a new game by pressing Enter instead of using the mouse,
     // while also disabling their Enter key if it's not for that specific purpose.
-    if (!isInGame || !isCountdownOver) {
+    if (!isInGame || isCountdownRunning) {
       return
     }
 

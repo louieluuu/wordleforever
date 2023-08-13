@@ -203,6 +203,12 @@ io.on("connection", (socket) => {
     const nicknamesMap = relevantRooms.get(uuid).Nicknames
     nicknamesMap.set(socketId, nickname)
 
+    // TODO: demo for Thomas
+    // const socketsMap = relevantRooms.get(uuid).Sockets
+    // const socketInfo = socketsMap.get(socketId)
+    // socketInfo.nickname = nickname
+    // ...
+
     // Socket.IO does not emit Maps or Iterators, so we need to convert it to an Array first.
     const nicknamesArray = Array.from(nicknamesMap.values())
     io.to(uuid).emit("nicknamesChanged", nicknamesArray)
