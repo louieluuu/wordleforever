@@ -1,5 +1,8 @@
 // TODO: don't need to pass in socketId, pretty sure you can just do socket.id
 
+// TODO: Big server-crashing bug: if both users leave a public matchmaking room,
+// TODO: the server just crashes.
+
 const WORD_LIST = require("./data/wordList")
 const VALID_GUESSES = require("./data/validGuesses")
 
@@ -21,6 +24,9 @@ const io = new Server(httpServer, {
 })
 
 // Global variables
+
+// We split the Rooms into Public and Private, as this is more extensible.
+// ex. if we want to display the number of active users in the public online matchmaking mode.
 const Public = new Map()
 const Private = new Map()
 
@@ -72,7 +78,7 @@ function getPublicOrPrivateRooms(roomId) {
   }
 }
 
-// Cleans up Rooms if the user is the last to leave (i.e. size === 1).
+// Cleans up the Rooms object if the user is the last to leave (i.e. size === 1).
 // This way, Rooms doesn't needlessly keep track of empty rooms.
 function cleanupRooms(roomId) {
   if (io.sockets.adapter.rooms.get(roomId).size === 1) {
@@ -86,6 +92,8 @@ function cleanupRooms(roomId) {
   }
 }
 
+// TODO: Still handling the case where a player leaves as the countdown is going.
+// TODO: An important bug, as it crashes the server currently.
 function startCountdown(roomId) {
   let seconds = 5
 
@@ -93,6 +101,11 @@ function startCountdown(roomId) {
     if (seconds < 4) {
       // As the countdown ends, if the room is still populated (people haven't left),
       // go ahead and initialize the room.
+      if (io.sockets.adapter.rooms.get(roomId) === undefined) {
+        console.log("Fking gg. Clearing interval.")
+        clearInterval(timer)
+        return
+      }
 
       // The system here is admittedly scuffed because the countdown is broadcasted
       // to all sockets in the room, but I only want one socket to initialize the room.
@@ -127,8 +140,10 @@ io.on("connection", (socket) => {
     // socket.rooms[1] returns the room the socket is in
     const roomId = Array.from(socket.rooms)[1]
 
-    // This occurs if the user disconnects and never played online during the session
+    // This occurs if the user disconnects and never played online (i.e. joined a room)
+    // during the session.
     if (roomId === undefined) {
+      console.log(`Socket ${socket.id} disconnected without joining a room.`)
       return
     }
 
@@ -140,15 +155,17 @@ io.on("connection", (socket) => {
 
   // Create room
   socket.on("createRoom", (socketId, nickname, gameMode, isChallengeOn) => {
+    // Generate a new room ID using the uuidv4 function.
     let newUuid = uuidv4()
+
     // Guarantees non-colliding rooms (even though the chance is infinitely small)
     while (Rooms.Public.has(newUuid) || Rooms.Private.has(newUuid)) {
       newUuid = uuidv4()
     }
 
-    // getPublicOrPrivateRooms() only works on roomIds, but when you're creating a room,
-    // the roomId hasn't been established yet - we'll use the gameMode instead to decide
-    // whether it should be a Public or Private game.
+    // createRoom() has no knowledge of whether the Room being created is public or private.
+    // So, we'll use the gameMode that's being passed in from client to server
+    // in order to determine whether it should be a Public or Private game.
     let relevantRooms
 
     if (gameMode.includes("public")) {
@@ -159,10 +176,12 @@ io.on("connection", (socket) => {
       relevantRooms = Rooms.Private
     }
 
-    // More properties will be added to the Room later, but this is all we need for now.
+    // More properties will be added to the Room later in initializeRoom. For now, the Room
+    // only needs to contain the info of sockets that join (to display in the WaitingRoom),
+    // as well as properties that are relevant to users looking to match and join the Room.
     relevantRooms.set(newUuid, {
       // Nicknames: new Map([[socketId, nickname]]),
-      Nicknames: new Map(),
+      SocketsInfo: new Map(),
       isChallengeOn: isChallengeOn,
       isInGame: false,
     })
@@ -178,11 +197,16 @@ io.on("connection", (socket) => {
     // socket.join(newUuid)
     // ! ^ update, I got it to work with an if statement in the useEffect
 
+    console.log(`Creating a new Room with roomId: ${newUuid}`)
+
     socket.emit("roomCreated", newUuid)
   })
 
   // Join room
-  socket.on("joinRoom", (uuid, socketId, nickname) => {
+  socket.on("joinRoom", (uuid, socketId, nickname, streak) => {
+    console.log(`${socket.id} joining room: ${uuid}`)
+    console.log(streak)
+
     const relevantRooms = getPublicOrPrivateRooms(uuid)
 
     // Check validity of room
@@ -200,23 +224,22 @@ io.on("connection", (socket) => {
 
     // Add user to room
     socket.join(uuid)
-    const nicknamesMap = relevantRooms.get(uuid).Nicknames
-    nicknamesMap.set(socketId, nickname)
-
-    // TODO: demo for Thomas
-    // const socketsMap = relevantRooms.get(uuid).Sockets
-    // const socketInfo = socketsMap.get(socketId)
-    // socketInfo.nickname = nickname
-    // ...
+    const socketsInfoMap = relevantRooms.get(uuid).SocketsInfo
+    socketsInfoMap.set(socketId, {
+      nickname: nickname,
+      streak: streak,
+      points: 0,
+    })
 
     // Socket.IO does not emit Maps or Iterators, so we need to convert it to an Array first.
-    const nicknamesArray = Array.from(nicknamesMap.values())
-    io.to(uuid).emit("nicknamesChanged", nicknamesArray)
+    const socketsInfoArray = Array.from(socketsInfoMap.values())
+    io.to(uuid).emit("socketsInfoChanged", socketsInfoArray)
 
     // In Private Rooms, the host gets to choose when to start the game.
     // However, in Public Rooms, the room will initiate a 10s countdown
     // when 2+ players have been matched.
     if (relevantRooms === Rooms.Public && io.sockets.adapter.rooms.get(uuid).size > 1) {
+      console.log(`${socket.id} starting countdown!`)
       startCountdown(uuid)
     }
   })
@@ -225,10 +248,15 @@ io.on("connection", (socket) => {
   socket.on("nicknameChange", (uuid, socketId, newNickname) => {
     const relevantRooms = getPublicOrPrivateRooms(uuid)
 
-    const nicknamesMap = relevantRooms.get(uuid).Nicknames
-    nicknamesMap.set(socketId, newNickname)
-    const nicknamesArray = Array.from(nicknamesMap.values())
-    io.to(uuid).emit("nicknamesChanged", nicknamesArray)
+    const socketsInfoMap = relevantRooms.get(uuid).SocketsInfo
+    const previousValue = socketsInfoMap.get(socketId)
+
+    socketsInfoMap.set(socketId, {
+      ...previousValue,
+      nickname: newNickname,
+    })
+    const socketsInfoArray = Array.from(socketsInfoMap.values())
+    io.to(uuid).emit("socketsInfoChanged", socketsInfoArray)
   })
 
   // Seek match
@@ -237,13 +265,14 @@ io.on("connection", (socket) => {
 
     // If there are no Public Rooms, create a new one
     if (Rooms.Public.size === 0) {
+      console.log("No Public Rooms found.")
       socket.emit("noMatchesFound")
       return
     }
 
     // If there are existing Public Rooms, try to find a valid matching room, namely:
     // 1 - the Room must not already be in progress
-    // 2 - the Room must not be full (i.e. > 4)
+    // 2 - the Room must not be full (i.e. room size < 4)
     // 3 - the ChallengeOn must match
     const publicRoomsArray = Array.from(Rooms.Public.entries())
     const matchingRoom = publicRoomsArray.find(
@@ -253,8 +282,9 @@ io.on("connection", (socket) => {
         roomObj.isChallengeOn === isChallengeOn
     )
 
-    // If no matches are found, create a new Public Room
+    // If there are no rooms that match the above criteria, create a new Public Room
     if (matchingRoom === undefined) {
+      console.log("No Rooms fit the criteria. Creating a new room...")
       socket.emit("noMatchesFound")
       return
     }
@@ -269,10 +299,10 @@ io.on("connection", (socket) => {
     const relevantRooms = getPublicOrPrivateRooms(uuid)
 
     // Update nicknames
-    const nicknamesMap = relevantRooms.get(uuid).Nicknames
-    nicknamesMap.delete(socket.id)
-    const nicknamesArray = Array.from(nicknamesMap.values())
-    io.to(uuid).emit("nicknamesChanged", nicknamesArray)
+    const socketsInfoMap = relevantRooms.get(uuid).SocketsInfo
+    socketsInfoMap.delete(socket.id)
+    const socketsInfoArray = Array.from(socketsInfoMap.values())
+    io.to(uuid).emit("socketsInfoChanged", socketsInfoArray)
 
     cleanupRooms(uuid)
 
@@ -285,37 +315,52 @@ io.on("connection", (socket) => {
   socket.on("initializeRoom", (uuid) => {
     const relevantRooms = getPublicOrPrivateRooms(uuid)
 
-    // Adding some more properties to the Room.
-    // Each active room will keep track of the # of gameOvers in that room;
-    // necessary to deal with the case where all players run out of guesses.
+    // Altering and adding some more properties to the Room.
+    // Each active room will add two additional properties:
+
+    // countGameOvers: the number of players who have gameOver'd,
+    // either having guessed correctly or run out of guesses.
+    // Will be used as a condition to signal the end of the game in a Private room,
+    // since Private rooms continue until all players have finished their game.
+
+    // countOutOfGuesses: the number of players who have run out of guesses.
+    // Will be used in conjunction with the countGameOvers to calculate points correctly.
     const previousValue = relevantRooms.get(uuid)
     relevantRooms.set(uuid, {
       ...previousValue,
       isInGame: true,
       countGameOvers: 0,
+      countOutOfGuesses: 0,
     })
 
     socket.emit("roomInitialized", uuid)
   })
 
-  // TODO: Naming of this could probably be more on point. Maybe startNewOnlineGame?
-  socket.on("startNewGame", (uuid) => {
+  socket.on("startNewOnlineGame", (uuid) => {
     const relevantRooms = getPublicOrPrivateRooms(uuid)
 
     // Reset room values.
     relevantRooms.get(uuid).countGameOvers = 0
+    relevantRooms.get(uuid).countOutOfGuesses = 0
 
-    // Generate the required number of Boards as determined by the room.
-    // Note that for simplicity, just one array of boards (containing all sockets)
-    // is broadcasted to all the clients. On the client-side, each client will
-    // filter out their own socket, resulting in their respective "otherBoards".
-    const socketsInRoom = io.sockets.adapter.rooms.get(uuid)
+    /* Generate the required number of Boards as determined by the room.
+    Note that for simplicity, just one array of boards (containing all sockets)
+    is broadcasted to all the clients. On the client-side, each client will
+    sort allBoards to place theirs in front. */
 
+    // Also note that allGameBoards is generated anew every time the call to start a new
+    // online game is made. This is intended; if 2 of 4 players leave a private room during a
+    // session and the other 2 want to continue playing, only the 2 boards should show then.
     const allGameBoards = []
-    socketsInRoom.forEach((socketId) => {
+
+    const socketsInfoMap = relevantRooms.get(uuid).SocketsInfo
+
+    socketsInfoMap.forEach((obj, socketId) => {
       allGameBoards.push({
         socketId: socketId,
-        nickname: relevantRooms.get(uuid).Nicknames.get(socketId),
+        nickname: obj.nickname,
+        streak: obj.streak,
+        points: obj.points,
         gameBoard: new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })),
       })
     })
@@ -340,13 +385,48 @@ io.on("connection", (socket) => {
   // Then show that hiddenBoard to the other users
   socket.on("wrongGuess", (socketId, uuid, newGameBoard) => {
     const noLettersBoard = newGameBoard.map((row) => row.map((tile) => ({ ...tile, letter: "" })))
-    socket.to(uuid).emit("otherBoardUpdated", socketId, noLettersBoard)
+    io.to(uuid).emit("gameBoardsUpdated", socketId, noLettersBoard)
   })
 
   // Game Over logic
   socket.on("correctGuess", (socketId, uuid) => {
-    socket.emit("updateScoreWinner", socketId)
-    // socket.to(uuid).emit("updateScoreLoser")
+    const relevantRooms = getPublicOrPrivateRooms(uuid)
+
+    if (relevantRooms === Rooms.Public) {
+      // ...
+    }
+    //
+    else if (relevantRooms === Rooms.Private) {
+      // Affect the actual value stored in relevantRooms
+      relevantRooms.get(uuid).countGameOvers += 1
+
+      // Create variables to make the points calculation more readable
+      const roomSize = io.sockets.adapter.rooms.get(uuid).size
+      const countOutOfGuesses = relevantRooms.get(uuid).countOutOfGuesses
+      const countGameOvers = relevantRooms.get(uuid).countGameOvers
+
+      // Formula to calculate points correctly.
+      // ex. in a room of 4 players,
+      // if P1 and P2 both get outOfGuesses, P3 should still get 4 points (4 - 2 + 2), not 2.
+      const pointsEarned = roomSize - countGameOvers + countOutOfGuesses
+
+      // Update the points in the relevantRooms object (to be tracked as long as the Room persists)
+      const socketsInfoMap = relevantRooms.get(uuid).SocketsInfo
+      const previousValue = socketsInfoMap.get(socketId)
+      socketsInfoMap.set(socketId, {
+        ...previousValue,
+        points: previousValue.points + pointsEarned,
+      })
+
+      if (relevantRooms.get(uuid).countGameOvers === io.sockets.adapter.rooms.get(uuid).size) {
+        io.to(uuid).emit("gameOver", uuid)
+      }
+    }
+
+    // if it's Private then the points should update on everyone's screen,
+    // and the countGameOvers / outofGuesses etc should be updated, but
+    // the game should only truly end when everyone's game is complete.
+
     io.to(uuid).emit("gameOver", uuid)
   })
 
@@ -354,8 +434,10 @@ io.on("connection", (socket) => {
     const relevantRooms = getPublicOrPrivateRooms(uuid)
 
     relevantRooms.get(uuid).countGameOvers += 1
+    relevantRooms.get(uuid).countOutOfGuesses += 1
 
-    if (relevantRooms.get(uuid).countGameOvers === io.sockets.adapter.rooms.get(uuid).size) {
+    // Edge case: if all players run out of guesses, the game should end.
+    if (relevantRooms.get(uuid).countOutOfGuesses === io.sockets.adapter.rooms.get(uuid).size) {
       io.to(uuid).emit("gameOver", uuid)
     }
   })

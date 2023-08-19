@@ -17,6 +17,7 @@ function MenuOnlineModes({
 }) {
   const navigate = useNavigate()
 
+  // TODO: Uhhh... why is this here?
   // Socket cleanup
   useEffect(() => {
     return () => {

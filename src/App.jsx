@@ -55,7 +55,7 @@ function App() {
   const [isChallengeOn, setIsChallengeOn] = useState(false)
 
   // Countdown states
-  const [isCountdownRunning, setIsCountdownRunning] = useState(true)
+  const [isCountdownRunning, setIsCountdownRunning] = useState(false)
   const [isConfettiRunning, setIsConfettiRunning] = useState(false)
   const [numberOfPieces, setNumberOfPieces] = useState(0)
 
@@ -69,7 +69,8 @@ function App() {
   const [isHost, setIsHost] = useState(false)
   const [isInGame, setIsInGame] = useState(false)
   const [nickname, setNickname] = useState(localStorage.getItem("nickname") || "Wordler")
-  const [otherBoards, setOtherBoards] = useState([])
+  const [streak, setStreak] = useState(localStorage.getItem("streak") || 0)
+  const [gameBoards, setGameBoards] = useState([])
 
   // Framer-Motion fade out
   const location = useLocation()
@@ -84,9 +85,16 @@ function App() {
       (roomId, allGameBoards, solution, isChallengeOn, challengeModeGuess) => {
         resetStates()
 
-        // Filter out the socket's own gameBoard.
-        const otherBoards = allGameBoards.filter((object) => object.socketId !== socket.id)
-        setOtherBoards(otherBoards)
+        // Sort gameBoards so that the client's board is always first.
+        const sortedGameBoards = allGameBoards.sort((objA, objB) => {
+          if (objA.socketId === socket.id) {
+            return -1
+          } else {
+            return 1
+          }
+        })
+
+        setGameBoards(sortedGameBoards)
 
         setRoomId(roomId)
         setSolution(solution)
@@ -120,18 +128,20 @@ function App() {
   // Unlike the server-side, not all socket logic can be grouped under one umbrella.
   // The dependencies are specific to this particular event.
   useEffect(() => {
-    socket.on("otherBoardUpdated", (socketId, otherBoard) => {
-      const newOtherBoards = [...otherBoards]
+    socket.on("gameBoardsUpdated", (socketId, updatedBoard) => {
+      const newGameBoards = [...gameBoards]
 
-      newOtherBoards.forEach((object) => {
+      newGameBoards.forEach((object) => {
         if (object.socketId === socketId) {
-          object.gameBoard = otherBoard
+          object.gameBoard = updatedBoard
         }
       })
 
-      setOtherBoards(newOtherBoards)
+      setGameBoards(newGameBoards)
     })
-  }, [otherBoards])
+
+    socket.on
+  }, [gameBoards])
 
   useEffect(() => {
     socket.on("gameOver", (roomId) => {
@@ -148,6 +158,14 @@ function App() {
         }
       })
       setOtherBoards(newOtherBoards)
+    })
+
+    // TODO: This logic might not belong in this useEffect umbrella.
+    // TODO: Check dependencies, or just place it in a separate useEffect if buggy.
+    socket.on("loseStreak", () => {
+      const newStreak = 0
+      setStreak(0)
+      socket.emit("streakChanged", roomId, socket.id, newStreak)
     })
   }, [gameBoard, isGameOver, otherBoards]) // ? Dependencies could be buggy
 
@@ -388,6 +406,12 @@ function App() {
     // Correct guess: Game Over (win)
     // Direct array comparison won't work with ===, so we must compare their string forms.
     if (userGuess.join("") === solution.join("")) {
+      if (gameMode === "online-public") {
+        const newStreak = streak + 1
+        localStorage.setItem("streak", newStreak)
+        setStreak((streak) => streak + 1)
+      }
+
       socket.emit("correctGuess", socket.id, roomId)
       showWinAnimations()
       setIsConfettiRunning(true)
@@ -458,29 +482,28 @@ function App() {
     setGameMode("online-public")
 
     socket.on("noMatchesFound", () => {
-      console.log("Received noMatchesFound. Creating online-public room...\n")
       createRoom("online-public")
     })
 
     socket.on("matchFound", (roomId) => {
-      console.log("MATCHFOUND MATCH FOUND MATCH FOUND")
       navigate(`/room/${roomId}`)
     })
   }
 
   function createRoom(gameMode) {
-    console.log(`gameMode from createRoom: ${gameMode}`)
     setGameMode(gameMode)
 
     socket.emit("createRoom", socket.id, nickname, gameMode, isChallengeOn)
 
     socket.on("roomCreated", (roomId) => {
-      console.log("roomCreated called.")
+      console.log("Howdy! Room created!")
 
       // Only private rooms require hosts. Public rooms will start on a shared timer.
       if (gameMode === "online-private") {
         setIsHost(true)
       }
+
+      console.log("Navigating to /roomId!")
       navigate(`/room/${roomId}`)
     })
   }
@@ -495,13 +518,12 @@ function App() {
 
   function handleNewGame(gameMode) {
     if (gameMode === "online-public") {
-      console.log("Online-public in here!")
       leaveRoom()
       seekMatch()
     }
     //
     else if (gameMode === "online-private") {
-      socket.emit("startNewGame", roomId)
+      socket.emit("startNewOnlineGame", roomId)
     }
     //
     else if (gameMode === "offline-classic") {
@@ -548,29 +570,36 @@ function App() {
               isConfettiRunning={isConfettiRunning}
             />
 
+            {/* TODO: will need to conditionally pass in prop of gameBoard 
+            as well so that the client's own board renders live on the client's side. */}
+
             <div className="boards-container">
-              <GameBoard
-                gameBoard={gameBoard}
-                nickname={nickname}
-                userGuess={userGuess}
-                currentRow={currentRow}
-                currentTile={currentTile}
-                isGameOver={isGameOver}
-                isOutOfGuesses={isOutOfGuesses}
-                gameMode={gameMode}
-              />
-              {otherBoards.map((object) => (
+              {gameMode.includes("offline") ? (
                 <GameBoard
-                  key={object.socketId}
-                  nickname={object.nickname}
-                  gameBoard={object.gameBoard}
+                  gameBoard={gameBoard}
+                  nickname={nickname}
                   userGuess={userGuess}
-                  currentRow={-1}
+                  currentRow={currentRow}
                   currentTile={currentTile}
                   isGameOver={isGameOver}
-                  gameMode={gameMode}
+                  isOutOfGuesses={isOutOfGuesses}
                 />
-              ))}
+              ) : (
+                gameBoards.map((object) => (
+                  <GameBoard
+                    key={object.socketId}
+                    gameBoard={object.gameBoard}
+                    nickname={object.nickname}
+                    streak={object.streak}
+                    points={object.points}
+                    userGuess={userGuess}
+                    currentRow={object.socketId === socket.id ? currentRow : -1}
+                    currentTile={currentTile}
+                    isGameOver={isGameOver}
+                    isOutOfGuesses={isOutOfGuesses}
+                  />
+                ))
+              )}
             </div>
           </div>
 
@@ -622,6 +651,7 @@ function App() {
                     setGameMode={setGameMode}
                     setRoomId={setRoomId}
                     nickname={nickname}
+                    streak={streak}
                     leaveRoom={leaveRoom}
                   />
                 }

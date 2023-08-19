@@ -6,46 +6,57 @@ import { WAITING_ROOM_MESSAGES } from "../data/waitingRoomMessages"
 import { socket } from "../socket"
 import CountdownNumber from "./CountdownNumber"
 
-function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, setRoomId, nickname, leaveRoom }) {
+function WaitingRoom({
+  isHost,
+  setIsHost,
+  gameMode,
+  setGameMode,
+  setRoomId,
+  nickname,
+  streak,
+  leaveRoom,
+}) {
   const { roomId } = useParams()
-  const [nicknames, setNicknames] = useState([])
+  const [socketsInfo, setSocketsInfo] = useState([])
   const [waitingMessage, setWaitingMessage] = useState("")
   const [isCopied, setIsCopied] = useState(false)
 
   const navigate = useNavigate()
 
   useEffect(() => {
-    // TODO: Not sure if this is "hacky" or not.
+    console.log("useEffect1 activates.")
+    // TODO: Not sure if this is "hacky" or not. Scared to put if statements
+    // TODO: in useEffect hooks...
+
+    // It might seem redundant, but in the case that the user navigates to the
+    // waiting room directly (i.e. received a link from a friend), we need to
+    // make sure that the socket.id is defined before we emit the "joinRoom".
     if (socket.id === undefined) {
       socket.on("connect", () => {
-        console.log("socket.id undefined, emitting from in here")
-        socket.emit("joinRoom", roomId, socket.id, nickname)
+        socket.emit("joinRoom", roomId, socket.id, nickname, streak)
+
+        // Additionally, a user who navigates directly to the waiting room
+        // won't have a gameMode defined. I'm not sure if this practically affects
+        // anything, but I'm setting it to "online-private" just in case.
+        if (gameMode === "") {
+          console.log("I've navigated directly from a user link, so my gameMode is ''.")
+          setGameMode("online-private")
+        }
       })
     }
     //
     else {
-      console.log("else: just emitting right away")
-      console.log(`first useEffect: ${roomId}`)
-      socket.emit("joinRoom", roomId, socket.id, nickname)
+      console.log(`From client: emit joinRoom on ${roomId}.`)
+      console.log(streak)
+      socket.emit("joinRoom", roomId, socket.id, nickname, streak)
     }
 
     socket.on("roomError", (reason) => {
       console.log(`Error: ${reason}`)
     })
-    // // Necessary to wrap joinRoom in connect event handler, because otherwise
-    // // "joinRoom" will fire before the socket.id is actually defined
-    // socket.on("connect", () => {
-    //   console.log("WaitingRoom 1st useEffect (socket.on) firing...")
 
-    //   socket.emit("joinRoom", roomId, socket.id, nickname)
-
-    //   socket.on("roomError", (reason) => {
-    //     console.log(`Error: ${reason}`)
-    //   })
-    // })
-
-    socket.on("nicknamesChanged", (newNicknames) => {
-      setNicknames(newNicknames)
+    socket.on("socketsInfoChanged", (newSocketsInfo) => {
+      setSocketsInfo(newSocketsInfo)
     })
 
     socket.on("roomCountdownOver", () => {
@@ -53,6 +64,8 @@ function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, setRoomId, nick
     })
 
     return () => {
+      console.log("I'm unmounting!")
+
       socket.off("connect")
       socket.off("roomError")
       socket.off("nicknamesChanged")
@@ -62,13 +75,7 @@ function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, setRoomId, nick
   }, [])
 
   useEffect(() => {
-    console.log("WaitingRoom 2nd useEffect firing...")
-
-    // If the user navigates to the waiting room directly (i.e. received a link
-    // from a friend), set the gameMode to online-private.
-    if (gameMode === "") {
-      setGameMode("online-private")
-    }
+    console.log("useEffect2 activates.")
 
     console.log(`roomId: ${roomId}`)
     setRoomId(roomId)
@@ -130,8 +137,16 @@ function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, setRoomId, nick
         )}
 
         <div className="flexbox3">
-          {nicknames.map((nickname, index) => (
-            <p key={index}>{nickname}</p>
+          {socketsInfo.map((socketInfoObject, index) => (
+            <div className="socketInfo">
+              <div className="socketInfo__left" key={index}>
+                {socketInfoObject.nickname}
+              </div>
+              &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+              <div className="socketInfo__right" key={index}>
+                {socketInfoObject.streak} 🔥
+              </div>
+            </div>
           ))}
         </div>
 
