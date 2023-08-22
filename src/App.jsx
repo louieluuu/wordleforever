@@ -120,7 +120,6 @@ function App() {
       socket.off("matchFound")
       socket.off("gameOver")
       socket.off("gameBoardBroadcasted")
-      socket.off("otherBoardUpdated")
       socket.off("roomCreated")
     }
   }, [])
@@ -139,35 +138,35 @@ function App() {
 
       setGameBoards(newGameBoards)
     })
-
-    socket.on
   }, [gameBoards])
 
   useEffect(() => {
     socket.on("gameOver", (roomId) => {
       setIsGameOver(true)
-      socket.emit("revealGameBoard", roomId, gameBoard)
+      socket.emit("revealFinalGameBoards", roomId)
     })
 
-    socket.on("gameBoardBroadcasted", (socketId, finalBoard) => {
-      const newOtherBoards = [...otherBoards]
-
-      newOtherBoards.forEach((object) => {
-        if (object.socketId === socketId) {
-          object.gameBoard = finalBoard
+    socket.on("finalGameBoardsRevealed", (socketId, finalGameBoards) => {
+      // Sort finalGameBoards so that the client's board is always first.
+      const sortedFinalGameBoards = finalGameBoards.sort((objA, objB) => {
+        if (objA.socketId === socket.id) {
+          return -1
+        } else {
+          return 1
         }
       })
-      setOtherBoards(newOtherBoards)
+
+      setGameBoards(sortedFinalGameBoards)
     })
 
     // TODO: This logic might not belong in this useEffect umbrella.
     // TODO: Check dependencies, or just place it in a separate useEffect if buggy.
     socket.on("loseStreak", () => {
-      const newStreak = 0
+      // TODO: could create a function "updateStreak" that handles localStorage & state
+      localStorage.setItem("streak", 0)
       setStreak(0)
-      socket.emit("streakChanged", roomId, socket.id, newStreak)
     })
-  }, [gameBoard, isGameOver, otherBoards]) // ? Dependencies could be buggy
+  }, [gameBoard, isGameOver, gameBoards]) // ? Dependencies could be buggy
 
   // Confetti timer
   useEffect(() => {
@@ -412,7 +411,7 @@ function App() {
         setStreak((streak) => streak + 1)
       }
 
-      socket.emit("correctGuess", socket.id, roomId)
+      socket.emit("correctGuess", socket.id, roomId, newGameBoard)
       showWinAnimations()
       setIsConfettiRunning(true)
       setIsGameOver(true)
@@ -588,7 +587,7 @@ function App() {
                 gameBoards.map((object) => (
                   <GameBoard
                     key={object.socketId}
-                    gameBoard={object.gameBoard}
+                    gameBoard={object.socketId === socket.id ? gameBoard : object.gameBoard}
                     nickname={object.nickname}
                     streak={object.streak}
                     points={object.points}

@@ -245,6 +245,7 @@ io.on("connection", (socket) => {
       nickname: nickname,
       streak: streak,
       points: 0,
+      gameBoard: new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })),
     })
 
     // Socket.IO does not emit Maps or Iterators, so we need to convert it to an Array first.
@@ -377,7 +378,7 @@ io.on("connection", (socket) => {
         nickname: obj.nickname,
         streak: obj.streak,
         points: obj.points,
-        gameBoard: new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })),
+        gameBoard: obj.gameBoard,
       })
     })
 
@@ -397,20 +398,58 @@ io.on("connection", (socket) => {
     )
   })
 
-  // Process the board to hide the letters but still display the colors
-  // Then show that hiddenBoard to the other users
   socket.on("wrongGuess", (socketId, uuid, newGameBoard) => {
+    // Update the corresponding gameBoard in the Room. This will become useful later,
+    // when the game ends and all boards must be displayed to all users.
+    // By updating the socketsInfoMap, we have one source that we can reference
+    // to get the gameBoard of each socket.
+    const socketsInfoMap = getPublicOrPrivateRooms(uuid).get(uuid).SocketsInfo
+    const previousValue = socketsInfoMap.get(socketId)
+
+    socketsInfoMap.set(socketId, {
+      ...previousValue,
+      gameBoard: newGameBoard,
+    })
+
+    // Process the board to hide the letters but still display the colors.
+    // Then, show that noLettersBoard to the other users.
     const noLettersBoard = newGameBoard.map((row) => row.map((tile) => ({ ...tile, letter: "" })))
-    io.to(uuid).emit("gameBoardsUpdated", socketId, noLettersBoard)
+    socket.to(uuid).emit("gameBoardsUpdated", socketId, noLettersBoard)
   })
 
-  // Game Over logic
-  socket.on("correctGuess", (socketId, uuid) => {
+  socket.on("correctGuess", (correctGuessSocketId, uuid, newGameBoard) => {
     const relevantRooms = getPublicOrPrivateRooms(uuid)
 
     if (relevantRooms === Rooms.Public) {
-      // ...
+      const socketsInfoMap = relevantRooms.get(uuid).SocketsInfo
+
+      // Update streaks for all players. The player who guessed correctly gets +1,
+      // while all other players get reset to 0.
+      // Additionally, update the gameBoard for the player who guessed correctly.
+      socketsInfoMap.forEach((previousValue, socketId) => {
+        if (socketId === correctGuessSocketId) {
+          socketsInfoMap.set(socketId, {
+            ...previousValue,
+            streak: previousValue.streak + 1,
+            gameBoard: newGameBoard,
+          })
+        }
+        //
+        else {
+          socketsInfoMap.set(socketId, {
+            ...previousValue,
+            streak: 0,
+          })
+        }
+      })
+
+      // Emit an event to the losers to get them to set their streak state to 0.
+      socket.to(uuid).emit("loseStreak")
+
+      // Always end the game upon the first correctGuess in a Public Room.
+      io.to(uuid).emit("gameOver", uuid)
     }
+
     //
     else if (relevantRooms === Rooms.Private) {
       // Affect the actual value stored in relevantRooms
@@ -427,23 +466,20 @@ io.on("connection", (socket) => {
       const pointsEarned = roomSize - countGameOvers + countOutOfGuesses
 
       // Update the points in the relevantRooms object (to be tracked as long as the Room persists)
+      // and also update the gameBoard.
       const socketsInfoMap = relevantRooms.get(uuid).SocketsInfo
-      const previousValue = socketsInfoMap.get(socketId)
-      socketsInfoMap.set(socketId, {
+      const previousValue = socketsInfoMap.get(correctGuessSocketId)
+      socketsInfoMap.set(correctGuessSocketId, {
         ...previousValue,
         points: previousValue.points + pointsEarned,
+        gameBoard: newGameBoard,
       })
 
+      // Only end the game if all players have finished in a Private Room.
       if (relevantRooms.get(uuid).countGameOvers === io.sockets.adapter.rooms.get(uuid).size) {
         io.to(uuid).emit("gameOver", uuid)
       }
     }
-
-    // if it's Private then the points should update on everyone's screen,
-    // and the countGameOvers / outofGuesses etc should be updated, but
-    // the game should only truly end when everyone's game is complete.
-
-    io.to(uuid).emit("gameOver", uuid)
   })
 
   socket.on("outOfGuesses", (uuid) => {
@@ -458,8 +494,22 @@ io.on("connection", (socket) => {
     }
   })
 
-  socket.on("revealGameBoard", (uuid, gameBoard) => {
-    socket.to(uuid).emit("gameBoardBroadcasted", socket.id, gameBoard)
+  socket.on("revealFinalGameBoards", (uuid) => {
+    const finalGameBoards = []
+
+    const socketsInfoMap = getPublicOrPrivateRooms(uuid).SocketsInfo
+
+    socketsInfoMap.forEach((obj, socketId) => {
+      finalGameBoards.push({
+        socketId: socketId,
+        nickname: obj.nickname,
+        streak: obj.streak,
+        points: obj.points,
+        gameBoard: obj.gameBoard,
+      })
+    })
+
+    socket.to(uuid).emit("finalGameBoardsRevealed", socket.id, finalGameBoards)
   })
 })
 
