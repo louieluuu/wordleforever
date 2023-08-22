@@ -420,10 +420,11 @@ io.on("connection", (socket) => {
     const noLettersBoard = newGameBoard.map((row) => row.map((tile) => ({ ...tile, letter: "" })))
     const pointsEarned = 0
 
+    // TODO: Actually - io and socket both work, but maybe socket makes more sense.
     // Note that we're emitting this noLettersBoard & points to ALL clients with io.emit, including
     // the client who submitted it. That's fine, because on the client-side,
     // all clients render their own letters-included gameBoard.
-    io.to(uuid).emit("gameBoardsUpdated", socketId, noLettersBoard, pointsEarned)
+    socket.to(uuid).emit("gameBoardsUpdated", socketId, noLettersBoard, pointsEarned)
   })
 
   socket.on("correctGuess", (correctGuessSocketId, uuid, newGameBoard) => {
@@ -511,6 +512,14 @@ io.on("connection", (socket) => {
   })
 
   socket.on("revealFinalGameBoards", (uuid) => {
+    // Throughout the rest of the server, socketsInfoMap is being updated
+    // as guesses are emitted from the client. The information in socketsInfoMap,
+    // namely scoring and gameBoards, is accurate when the game ends.
+
+    // Therefore, similar to how allGameBoards is created in the beginning of the game,
+    // we'll use the accurate information from socketsInfoMap to build and emit a
+    // "finalGameBoards" array, which clients will .sort() to display their own board first.
+
     const finalGameBoards = []
 
     const socketsInfoMap = getPublicOrPrivateRooms(uuid).get(uuid).SocketsInfo
@@ -525,7 +534,7 @@ io.on("connection", (socket) => {
       })
     })
 
-    socket.to(uuid).emit("finalGameBoardsRevealed", socket.id, finalGameBoards)
+    io.to(uuid).emit("finalGameBoardsRevealed", finalGameBoards)
   })
 })
 

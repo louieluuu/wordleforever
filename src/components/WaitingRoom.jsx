@@ -145,7 +145,7 @@ function WaitingRoom({
               </div>
               &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
               <div className="socketInfo__right" key={index}>
-                {socketInfoObject.streak}🔥
+                {socketInfoObject.streak === 0 ? "" : `${socketInfoObject.streak}🔥`}
               </div>
             </div>
           ))}

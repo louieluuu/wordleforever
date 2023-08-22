@@ -125,27 +125,28 @@ function App() {
     }
   }, [])
 
-  // Unlike the server-side, not all socket logic can be grouped under one umbrella.
-  // The dependencies are specific to this particular event.
   useEffect(() => {
-    socket.on("gameBoardsUpdated", (socketId, updatedBoard, pointsEarned) => {
-      console.log(`pointsEarned: ${pointsEarned}`)
-
+    socket.on("gameBoardsUpdated", (updatedSocketId, updatedBoard, pointsEarned) => {
       const newGameBoards = [...gameBoards]
 
+      console.log(newGameBoards)
+
       newGameBoards.forEach((object) => {
-        if (object.socketId === socketId) {
+        if (object.socketId === updatedSocketId) {
           object.gameBoard = updatedBoard
+          console.log(`object.points before: ${object.points}`)
           object.points = object.points + pointsEarned
+          console.log(`object.points after: ${object.points}`)
         }
       })
 
       setGameBoards(newGameBoards)
-
-      return () => {
-        socket.off("gameBoardsUpdated")
-      }
     })
+
+    return () => {
+      console.log("gamesBoardUpdated useEffect unmounting!")
+      socket.off("gameBoardsUpdated")
+    }
   }, [gameBoards])
 
   useEffect(() => {
@@ -154,8 +155,8 @@ function App() {
       socket.emit("revealFinalGameBoards", roomId)
     })
 
-    socket.on("finalGameBoardsRevealed", (socketId, finalGameBoards) => {
-      // Sort finalGameBoards so that the client's board is always first.
+    socket.on("finalGameBoardsRevealed", (finalGameBoards) => {
+      // Sort finalGameBoards so that the client's own board is always first.
       const sortedFinalGameBoards = finalGameBoards.sort((objA, objB) => {
         if (objA.socketId === socket.id) {
           return -1
@@ -413,6 +414,7 @@ function App() {
     // Correct guess: Game Over (win)
     // Direct array comparison won't work with ===, so we must compare their string forms.
     if (userGuess.join("") === solution.join("")) {
+      // Update streak
       if (gameMode === "online-public") {
         const newStreak = streak + 1
         localStorage.setItem("streak", newStreak)
@@ -430,6 +432,7 @@ function App() {
       // Run out of guesses: Game Over (loss)
       if (currentRow >= 5) {
         setIsOutOfGuesses(true)
+
         if (gameMode.includes("online")) {
           socket.emit("outOfGuesses", roomId)
         }
