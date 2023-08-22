@@ -32,7 +32,7 @@ const Private = new Map()
 
 const Rooms = { Public, Private }
 
-// TODO: These functions need to be written on the client-side for solo mode.
+// TODO: These functions need to be written on the client-side for offline (solo) mode.
 // TODO: Wonder if it's possible to pass those functions here so less repeating?
 // Generates a random solution
 function getRandomSolution() {
@@ -78,7 +78,7 @@ function getPublicOrPrivateRooms(roomId) {
   }
 }
 
-// Cleans up the Rooms object if the user is the last to leave (i.e. size === 1).
+// Cleans up the Rooms object if the user is the last to leave.
 // This way, Rooms doesn't needlessly keep track of empty rooms.
 function cleanupRooms(roomId) {
   if (io.sockets.adapter.rooms.get(roomId).size === 1) {
@@ -92,21 +92,13 @@ function cleanupRooms(roomId) {
   }
 }
 
-// TODO: Still handling the case where a player leaves as the countdown is going.
-// TODO: An important bug, as it crashes the server currently.
+// TODO: I think the bug where 2 players leaving while game is starting is fixed? Test.
 function startCountdown(roomId) {
-  let seconds = 5
+  let seconds = 9
 
   const timer = setInterval(() => {
+    // If the countdown gets this low, it means that the game will actually be starting.
     if (seconds < 4) {
-      // As the countdown ends, if the room is still populated (people haven't left),
-      // go ahead and initialize the room.
-      if (io.sockets.adapter.rooms.get(roomId) === undefined) {
-        console.log("Fking gg. Clearing interval.")
-        clearInterval(timer)
-        return
-      }
-
       // The system here is admittedly scuffed because the countdown is broadcasted
       // to all sockets in the room, but I only want one socket to initialize the room.
       // This wasn't a problem in the private lobbies, because there is no countdown
@@ -114,16 +106,40 @@ function startCountdown(roomId) {
 
       // So... I'm just going to pick a random socket in the room to initialize the room.
       const socketIds = Array.from(io.sockets.adapter.rooms.get(roomId))
-      if (socketIds.size !== 0) {
-        const randomSocket = socketIds[Math.floor(Math.random() * socketIds.length)]
-        io.to(randomSocket).emit("roomCountdownOver")
+
+      // Not sure how this would happen, but...
+      if (socketIds.length === 0) {
+        console.log("Error: startCountdown() called on invalid roomId")
+        return
       }
+
+      const randomSocket = socketIds[Math.floor(Math.random() * socketIds.length)]
+      io.to(randomSocket).emit("roomCountdownOver")
+
       clearInterval(timer)
       return
     }
+    //
+    else {
+      // On each tick, check if the Room has lost eligibility to actually start.
+      // (i.e. Rooms.size < 2 due to players leaving.)
 
-    io.to(roomId).emit("countdownTick", seconds)
-    seconds -= 1
+      // Note that there is no need to manually delete the Room
+      // because cleanupRooms will have already been called.
+      // (cleanupRooms is called when the last user leaves the room.)
+
+      const socketsInRoom = io.sockets.adapter.rooms.get(roomId)
+
+      if (socketsInRoom === undefined || socketsInRoom.size === 1) {
+        console.log("Enough people have left so the Room can't start! Stopping countdown...")
+        clearInterval(timer)
+        return
+      }
+
+      // If the Room is still eligible to start, broadcast the countdown to the room.
+      io.to(roomId).emit("countdownTick", seconds)
+      seconds -= 1
+    }
   }, 1250)
 }
 
