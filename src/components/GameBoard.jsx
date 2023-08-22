@@ -10,6 +10,7 @@ function GameBoard({
   currentTile,
   isGameOver,
   isOutOfGuesses,
+  gameMode,
 }) {
   function getGuessTileClassName(gameBoard, row, col) {
     let guessTileClassName = "guess__tile"
@@ -38,7 +39,15 @@ function GameBoard({
   return (
     <>
       <div className={`game-board${isOutOfGuesses ? "--game-over" : ""}`}>
-        <div style={{ fontFamily: "Roboto Slab", display: "flex" }}>{`${nickname}:`}</div>
+        <div style={{ fontFamily: "Roboto Slab", display: "flex" }}>
+          {nickname}
+          {gameMode.includes("online") && (
+            <>
+              {" - "}
+              {gameMode === "online-public" ? `${streak}🔥` : points}
+            </>
+          )}
+        </div>
         {gameBoard.map((row, rowIndex) => (
           <div key={rowIndex} className="guess">
             {rowIndex === currentRow

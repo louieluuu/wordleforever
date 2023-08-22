@@ -69,7 +69,7 @@ function App() {
   const [isHost, setIsHost] = useState(false)
   const [isInGame, setIsInGame] = useState(false)
   const [nickname, setNickname] = useState(localStorage.getItem("nickname") || "Wordler")
-  const [streak, setStreak] = useState(localStorage.getItem("streak") || 0)
+  const [streak, setStreak] = useState(localStorage.getItem("streak") || 10)
   const [gameBoards, setGameBoards] = useState([])
 
   // Framer-Motion fade out
@@ -119,7 +119,8 @@ function App() {
       socket.off("noMatchesFound")
       socket.off("matchFound")
       socket.off("gameOver")
-      socket.off("gameBoardBroadcasted")
+      // socket.off("gameBoardsUpdated")
+      socket.off("finalGameBoardsRevealed")
       socket.off("roomCreated")
     }
   }, [])
@@ -127,16 +128,23 @@ function App() {
   // Unlike the server-side, not all socket logic can be grouped under one umbrella.
   // The dependencies are specific to this particular event.
   useEffect(() => {
-    socket.on("gameBoardsUpdated", (socketId, updatedBoard) => {
+    socket.on("gameBoardsUpdated", (socketId, updatedBoard, pointsEarned) => {
+      console.log(`pointsEarned: ${pointsEarned}`)
+
       const newGameBoards = [...gameBoards]
 
       newGameBoards.forEach((object) => {
         if (object.socketId === socketId) {
           object.gameBoard = updatedBoard
+          object.points = object.points + pointsEarned
         }
       })
 
       setGameBoards(newGameBoards)
+
+      return () => {
+        socket.off("gameBoardsUpdated")
+      }
     })
   }, [gameBoards])
 
@@ -211,7 +219,7 @@ function App() {
     setIsGameOver(false)
     setIsCountdownRunning(true)
     setGameBoard(new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })))
-    setOtherBoards([])
+    setGameBoards([])
     setIsInGame(true)
     setIsConfettiRunning(false)
     setHints({ green: new Set(), yellow: new Set(), gray: new Set() })
@@ -414,7 +422,6 @@ function App() {
       socket.emit("correctGuess", socket.id, roomId, newGameBoard)
       showWinAnimations()
       setIsConfettiRunning(true)
-      setIsGameOver(true)
     }
     // Wrong guess
     else {
@@ -582,6 +589,7 @@ function App() {
                   currentTile={currentTile}
                   isGameOver={isGameOver}
                   isOutOfGuesses={isOutOfGuesses}
+                  gameMode={gameMode}
                 />
               ) : (
                 gameBoards.map((object) => (
@@ -596,6 +604,7 @@ function App() {
                     currentTile={currentTile}
                     isGameOver={isGameOver}
                     isOutOfGuesses={isOutOfGuesses}
+                    gameMode={gameMode}
                   />
                 ))
               )}

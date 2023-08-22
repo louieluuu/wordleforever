@@ -372,13 +372,17 @@ io.on("connection", (socket) => {
 
     const socketsInfoMap = relevantRooms.get(uuid).SocketsInfo
 
+    // Note that the gameBoard isn't being borrowed from obj.gameBoard; that's because upon
+    // starting a new game, the gameBoard should be reset to an empty board. However,
+    // the other information should be preserved.
+    // ex. Private Room -> points should be taken from the previous games.
     socketsInfoMap.forEach((obj, socketId) => {
       allGameBoards.push({
         socketId: socketId,
         nickname: obj.nickname,
         streak: obj.streak,
         points: obj.points,
-        gameBoard: obj.gameBoard,
+        gameBoard: new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })),
       })
     })
 
@@ -414,7 +418,12 @@ io.on("connection", (socket) => {
     // Process the board to hide the letters but still display the colors.
     // Then, show that noLettersBoard to the other users.
     const noLettersBoard = newGameBoard.map((row) => row.map((tile) => ({ ...tile, letter: "" })))
-    socket.to(uuid).emit("gameBoardsUpdated", socketId, noLettersBoard)
+    const pointsEarned = 0
+
+    // Note that we're emitting this noLettersBoard & points to ALL clients with io.emit, including
+    // the client who submitted it. That's fine, because on the client-side,
+    // all clients render their own letters-included gameBoard.
+    io.to(uuid).emit("gameBoardsUpdated", socketId, noLettersBoard, pointsEarned)
   })
 
   socket.on("correctGuess", (correctGuessSocketId, uuid, newGameBoard) => {
@@ -452,9 +461,6 @@ io.on("connection", (socket) => {
 
     //
     else if (relevantRooms === Rooms.Private) {
-      // Affect the actual value stored in relevantRooms
-      relevantRooms.get(uuid).countGameOvers += 1
-
       // Create variables to make the points calculation more readable
       const roomSize = io.sockets.adapter.rooms.get(uuid).size
       const countOutOfGuesses = relevantRooms.get(uuid).countOutOfGuesses
@@ -474,6 +480,16 @@ io.on("connection", (socket) => {
         points: previousValue.points + pointsEarned,
         gameBoard: newGameBoard,
       })
+
+      // After updating the server-side, broadcast the new information so clients can render it.
+
+      // Process the board to hide the letters but still display the colors.
+      // Then, show that noLettersBoard to the other users.
+      const noLettersBoard = newGameBoard.map((row) => row.map((tile) => ({ ...tile, letter: "" })))
+      io.to(uuid).emit("gameBoardsUpdated", correctGuessSocketId, noLettersBoard, pointsEarned)
+
+      // Update countGameOvers after the points have been calculated.
+      relevantRooms.get(uuid).countGameOvers += 1
 
       // Only end the game if all players have finished in a Private Room.
       if (relevantRooms.get(uuid).countGameOvers === io.sockets.adapter.rooms.get(uuid).size) {
@@ -497,7 +513,7 @@ io.on("connection", (socket) => {
   socket.on("revealFinalGameBoards", (uuid) => {
     const finalGameBoards = []
 
-    const socketsInfoMap = getPublicOrPrivateRooms(uuid).SocketsInfo
+    const socketsInfoMap = getPublicOrPrivateRooms(uuid).get(uuid).SocketsInfo
 
     socketsInfoMap.forEach((obj, socketId) => {
       finalGameBoards.push({

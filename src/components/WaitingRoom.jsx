@@ -97,7 +97,7 @@ function WaitingRoom({
     console.log(`From initializeRoom: ${roomId}`)
 
     socket.on("roomInitialized", (roomId) => {
-      socket.emit("startNewGame", roomId)
+      socket.emit("startNewOnlineGame", roomId)
     })
   }
 
@@ -136,6 +136,7 @@ function WaitingRoom({
           </div>
         )}
 
+        {/* TODO: CSS fix + React map key complaining */}
         <div className="flexbox3">
           {socketsInfo.map((socketInfoObject, index) => (
             <div className="socketInfo">
@@ -144,7 +145,7 @@ function WaitingRoom({
               </div>
               &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
               <div className="socketInfo__right" key={index}>
-                {socketInfoObject.streak} 🔥
+                {socketInfoObject.streak}🔥
               </div>
             </div>
           ))}
