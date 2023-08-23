@@ -1,8 +1,5 @@
 // TODO: don't need to pass in socketId, pretty sure you can just do socket.id
 
-// TODO: Big server-crashing bug: if both users leave a public matchmaking room,
-// TODO: the server just crashes.
-
 const WORD_LIST = require("./data/wordList")
 const VALID_GUESSES = require("./data/validGuesses")
 
@@ -32,8 +29,6 @@ const Private = new Map()
 
 const Rooms = { Public, Private }
 
-// TODO: These functions need to be written on the client-side for offline (solo) mode.
-// TODO: Wonder if it's possible to pass those functions here so less repeating?
 // Generates a random solution
 function getRandomSolution() {
   const randomSolution = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)]
@@ -92,9 +87,8 @@ function cleanupRooms(roomId) {
   }
 }
 
-// TODO: I think the bug where 2 players leaving while game is starting is fixed? Test.
 function startCountdown(roomId) {
-  let seconds = 9
+  let seconds = 6
 
   const timer = setInterval(() => {
     // If the countdown gets this low, it means that the game will actually be starting.

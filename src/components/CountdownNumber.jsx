@@ -17,6 +17,7 @@ function CountdownNumber() {
 
     return () => {
       socket.off("countdownTick")
+      socket.off("notEnoughPlayers")
     }
   }, [])
 
