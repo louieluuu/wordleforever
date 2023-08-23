@@ -32,6 +32,7 @@ function ChallengeForm({ setIsChallengeOn }) {
           <ul style={{ fontSize: "0.85rem", paddingLeft: "1rem", margin: 0 }}>
             <li>random starting word</li>
             <li>must use previous hints</li>
+            <li>will only match vs others with same mode</li>
           </ul>
         </Tooltip>
       </label>

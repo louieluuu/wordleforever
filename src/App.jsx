@@ -119,7 +119,6 @@ function App() {
       socket.off("noMatchesFound")
       socket.off("matchFound")
       socket.off("gameOver")
-      // socket.off("gameBoardsUpdated")
       socket.off("finalGameBoardsRevealed")
       socket.off("roomCreated")
     }
