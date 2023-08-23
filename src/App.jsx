@@ -52,7 +52,10 @@ function App() {
 
   const [isGameOver, setIsGameOver] = useState(false)
   const [isOutOfGuesses, setIsOutOfGuesses] = useState(false)
-  const [isChallengeOn, setIsChallengeOn] = useState(false)
+  // localStorage stores items as strings, so we use JSON.parse to convert it back to bool
+  const [isChallengeOn, setIsChallengeOn] = useState(
+    JSON.parse(localStorage.getItem("isChallengeOn")) || false
+  )
 
   // Countdown states
   const [isCountdownRunning, setIsCountdownRunning] = useState(false)
@@ -69,7 +72,7 @@ function App() {
   const [isHost, setIsHost] = useState(false)
   const [isInGame, setIsInGame] = useState(false)
   const [nickname, setNickname] = useState(localStorage.getItem("nickname") || "Wordler")
-  const [streak, setStreak] = useState(localStorage.getItem("streak") || 10)
+  const [streak, setStreak] = useState(localStorage.getItem("streak") || 0)
   const [gameBoards, setGameBoards] = useState([])
 
   // Framer-Motion fade out
@@ -143,7 +146,6 @@ function App() {
     })
 
     return () => {
-      console.log("gamesBoardUpdated useEffect unmounting!")
       socket.off("gameBoardsUpdated")
     }
   }, [gameBoards])
