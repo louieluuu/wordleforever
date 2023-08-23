@@ -43,7 +43,7 @@ function GameBoard({
           {nickname}
           {gameMode.includes("online") && (
             <>
-              {" - "}
+              &nbsp;-&nbsp;
               {gameMode === "online-public" ? `${streak}🔥` : points}
             </>
           )}

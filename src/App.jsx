@@ -52,7 +52,7 @@ function App() {
 
   const [isGameOver, setIsGameOver] = useState(false)
   const [isOutOfGuesses, setIsOutOfGuesses] = useState(false)
-  // localStorage stores items as strings, so we use JSON.parse to convert it back to bool
+  // localStorage stores items as strings, so we use JSON.parse to convert it back to its original type.
   const [isChallengeOn, setIsChallengeOn] = useState(
     JSON.parse(localStorage.getItem("isChallengeOn")) || false
   )
@@ -72,7 +72,7 @@ function App() {
   const [isHost, setIsHost] = useState(false)
   const [isInGame, setIsInGame] = useState(false)
   const [nickname, setNickname] = useState(localStorage.getItem("nickname") || "Wordler")
-  const [streak, setStreak] = useState(localStorage.getItem("streak") || 0)
+  const [streak, setStreak] = useState(JSON.parse(localStorage.getItem("streak")) || 0)
   const [gameBoards, setGameBoards] = useState([])
 
   // Framer-Motion fade out
@@ -81,6 +81,8 @@ function App() {
   // ! Socket useEffect
   // TODO: Passing in states to sockets ** THAT ARE UNDER A useEffect
   // TODO: HOOK WITHOUT SPECIFIED DEPENDENCIES ** seems to result in unreliable behaviour.
+
+  // TODO: Could probably order these socket useEffects in a way that makes more sense.
 
   useEffect(() => {
     socket.on(
@@ -110,20 +112,8 @@ function App() {
       }
     )
 
-    // TODO: more cleanup
-    return () => {
-      socket.off("connect")
-    }
-  }, [])
-
-  useEffect(() => {
     return () => {
       socket.off("gameStarted")
-      socket.off("noMatchesFound")
-      socket.off("matchFound")
-      socket.off("gameOver")
-      socket.off("finalGameBoardsRevealed")
-      socket.off("roomCreated")
     }
   }, [])
 
@@ -131,14 +121,10 @@ function App() {
     socket.on("gameBoardsUpdated", (updatedSocketId, updatedBoard, pointsEarned) => {
       const newGameBoards = [...gameBoards]
 
-      console.log(newGameBoards)
-
       newGameBoards.forEach((object) => {
         if (object.socketId === updatedSocketId) {
           object.gameBoard = updatedBoard
-          console.log(`object.points before: ${object.points}`)
           object.points = object.points + pointsEarned
-          console.log(`object.points after: ${object.points}`)
         }
       })
 
@@ -172,11 +158,15 @@ function App() {
     // TODO: This logic might not belong in this useEffect umbrella.
     // TODO: Check dependencies, or just place it in a separate useEffect if buggy.
     socket.on("loseStreak", () => {
-      // TODO: could create a function "updateStreak" that handles localStorage & state
-      localStorage.setItem("streak", 0)
-      setStreak(0)
+      updateStreak(0)
     })
-  }, [gameBoard, isGameOver, gameBoards]) // ? Dependencies could be buggy
+
+    return () => {
+      socket.off("gameOver")
+      socket.off("finalGameBoardsRevealed")
+      socket.off("loseStreak")
+    }
+  }, [gameBoard, isGameOver, gameBoards]) // TODO: Dependencies could be buggy
 
   // Confetti timer
   useEffect(() => {
@@ -196,6 +186,11 @@ function App() {
    * HELPER FUNCTIONS
    *
    */
+
+  function updateStreak(newStreak) {
+    localStorage.setItem("streak", newStreak)
+    setStreak(newStreak)
+  }
 
   function handleNicknameChange(e) {
     const newNickname = e.target.value
@@ -418,8 +413,7 @@ function App() {
       // Update streak
       if (gameMode === "online-public") {
         const newStreak = streak + 1
-        localStorage.setItem("streak", newStreak)
-        setStreak((streak) => streak + 1)
+        updateStreak(newStreak)
       }
 
       socket.emit("correctGuess", socket.id, roomId, newGameBoard)
@@ -545,10 +539,10 @@ function App() {
     }
   }
 
-  // TODO: Move Keyboard events into Keyboard component
-  // TODO: "Game" component that houses game logic?
-  // TODO: Row and Tile components
-  // TODO: Look into Context (stores) so props aren't so ugly
+  // TODO: 1. Move Keyboard events into Keyboard component
+  // TODO: 2. "Game" component that houses game logic?
+  // TODO: 3. Row and Tile components
+  // TODO: 4. Look into Context (stores) so props aren't so ugly
   return (
     <>
       <Header />
@@ -580,9 +574,6 @@ function App() {
               isConfettiRunning={isConfettiRunning}
             />
 
-            {/* TODO: will need to conditionally pass in prop of gameBoard 
-            as well so that the client's own board renders live on the client's side. */}
-
             <div className="boards-container">
               {gameMode.includes("offline") ? (
                 <GameBoard
@@ -597,6 +588,9 @@ function App() {
                 />
               ) : (
                 gameBoards.map((object) => (
+                  // We conditionally pass in props here to give the client's own gameBoard a
+                  // "special" view. Ex., its letters should always show (unlike other gameBoards,
+                  // which have their letters hidden until the game is over).
                   <GameBoard
                     key={object.socketId}
                     gameBoard={object.socketId === socket.id ? gameBoard : object.gameBoard}

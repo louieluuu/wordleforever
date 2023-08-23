@@ -3,10 +3,16 @@ import { socket } from "../socket"
 
 function CountdownNumber() {
   const [seconds, setSeconds] = useState("")
+  const [enoughPlayers, setEnoughPlayers] = useState(true)
 
   useEffect(() => {
     socket.on("countdownTick", (newSeconds) => {
+      setEnoughPlayers(true)
       setSeconds(newSeconds)
+    })
+
+    socket.on("notEnoughPlayers", () => {
+      setEnoughPlayers(false)
     })
 
     return () => {
@@ -14,7 +20,7 @@ function CountdownNumber() {
     }
   }, [])
 
-  return <b>{seconds}</b>
+  return <b>{enoughPlayers && seconds}</b>
 }
 
 export default CountdownNumber

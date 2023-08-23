@@ -14,6 +14,7 @@ const formStyle = {
 function ChallengeForm({ setIsChallengeOn }) {
   function handleClick() {
     setIsChallengeOn((prev) => !prev)
+
     // localStorage stores items as strings, so we use JSON.parse to convert it back to bool
     const previousBool = JSON.parse(localStorage.getItem("isChallengeOn"))
     localStorage.setItem("isChallengeOn", !previousBool)

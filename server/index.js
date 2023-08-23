@@ -132,6 +132,7 @@ function startCountdown(roomId) {
 
       if (socketsInRoom === undefined || socketsInRoom.size === 1) {
         console.log("Enough people have left so the Room can't start! Stopping countdown...")
+        io.to(roomId).emit("notEnoughPlayers")
         clearInterval(timer)
         return
       }
