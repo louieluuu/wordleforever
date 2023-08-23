@@ -3,9 +3,13 @@ import { useState, useEffect } from "react"
 // Socket
 import { socket } from "./socket"
 
+// Utils
+import { getRandomSolution, getRandomFirstGuess, isValidGuess } from "../shared/utils/wordleUtils"
+
 // Data
-import { WORD_LIST } from "./data/wordList"
-import { VALID_GUESSES } from "./data/validGuesses"
+// TODO: If imports are successful, delete these
+// import { WORD_LIST } from "./data/wordList"
+// import { VALID_GUESSES } from "./data/validGuesses"
 import { WIN_MESSAGES } from "./data/winMessages"
 
 // Components
@@ -223,34 +227,6 @@ function App() {
     setShowAlertModal(false)
   }
 
-  // Generates a random solution
-  function getRandomSolution() {
-    const randomSolution = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)]
-      .toUpperCase()
-      .split("")
-    console.log(`Solution: ${randomSolution}`)
-    return randomSolution
-  }
-
-  // ! Challenge mode
-  // Generates a random starting word that always has exactly one green match
-  function getRandomFirstGuess(solution) {
-    let randomFirstGuess
-    while (true) {
-      randomFirstGuess =
-        VALID_GUESSES[Math.floor(Math.random() * VALID_GUESSES.length)].toUpperCase()
-      let countGreenLetters = 0
-      for (let i = 0; i < randomFirstGuess.length; ++i) {
-        if (randomFirstGuess[i] === solution[i]) {
-          countGreenLetters += 1
-        }
-      }
-      if (countGreenLetters === 1) {
-        return randomFirstGuess.split("")
-      }
-    }
-  }
-
   // Checks if the userGuess adheres to the previous hints.
   function usesPreviousHints() {
     // No previous hints
@@ -382,7 +358,7 @@ function App() {
       return
     }
     // Guess is invalid (i.e. doesn't appear in dictionary)
-    else if (!VALID_GUESSES.includes(userGuess.join("").toLowerCase())) {
+    else if (!isValidGuess(userGuess.join("").toLowerCase())) {
       setAlertMessage("Not in dictionary!")
       setShowAlertModal(true)
       return
@@ -407,23 +383,34 @@ function App() {
     // Update hints to color the Keyboard keys
     updateHints(colorizedGuess)
 
-    // Correct guess: Game Over (win)
+    // Correct guess
     // Direct array comparison won't work with ===, so we must compare their string forms.
     if (userGuess.join("") === solution.join("")) {
-      // Update streak
-      if (gameMode === "online-public") {
-        const newStreak = streak + 1
-        updateStreak(newStreak)
+      if (gameMode.includes("online")) {
+        // Only update streak if in public lobby
+        if (gameMode === "online-public") {
+          const newStreak = streak + 1
+          updateStreak(newStreak)
+        }
+        // Always emit correctGuess in any online mode
+        socket.emit("correctGuess", socket.id, roomId, newGameBoard)
+      }
+      // gameOver shouldn't always be true upon correctGuess in online modes
+      // depending on public vs. private. However, in offline, it's always true.
+      else if (gameMode.includes("offline")) {
+        setIsGameOver(true)
       }
 
-      socket.emit("correctGuess", socket.id, roomId, newGameBoard)
       showWinAnimations()
       setIsConfettiRunning(true)
     }
     // Wrong guess
     else {
       // ! Socket
-      socket.emit("wrongGuess", socket.id, roomId, newGameBoard)
+      if (gameMode.includes("online")) {
+        socket.emit("wrongGuess", socket.id, roomId, newGameBoard)
+      }
+
       // Run out of guesses: Game Over (loss)
       if (currentRow >= 5) {
         setIsOutOfGuesses(true)
@@ -432,6 +419,7 @@ function App() {
           socket.emit("outOfGuesses", roomId)
         }
         //
+        // TODO: This logic might be a little funky. (the else clause)
         else {
           setAlertMessage(solution.join(""))
           setShowAlertModal(true)
