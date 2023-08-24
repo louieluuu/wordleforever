@@ -2,19 +2,20 @@ import React, { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 
 import { WAITING_ROOM_MESSAGES } from "../data/waitingRoomMessages"
-
 import { socket } from "../socket"
+
 import CountdownNumber from "./CountdownNumber"
+import Streak from "./Streak"
 
 function WaitingRoom({
   isHost,
-  setIsHost,
   gameMode,
   setGameMode,
   setRoomId,
   nickname,
   streak,
   leaveRoom,
+  startNewGame,
 }) {
   const { roomId } = useParams()
   const [socketsInfo, setSocketsInfo] = useState([])
@@ -29,8 +30,12 @@ function WaitingRoom({
     // TODO: in useEffect hooks...
 
     // It might seem redundant, but in the case that the user navigates to the
-    // waiting room directly (i.e. received a link from a friend), we need to
-    // make sure that the socket.id is defined before we emit the "joinRoom".
+    // WaitingRoom directly (i.e. received a link from a friend), it's possible
+    // to join the room and emit a socket.id before it's actually been defined.
+
+    // So we'll cover both cases. For the above case, we'll wait until the
+    // socket's connected using the built-in socket.on("connect").
+    // Otherwise, we'll just emit the socket.id immediately.
     if (socket.id === undefined) {
       socket.on("connect", () => {
         socket.emit("joinRoom", roomId, socket.id, nickname, streak)
@@ -39,7 +44,6 @@ function WaitingRoom({
         // won't have a gameMode defined. I'm not sure if this practically affects
         // anything, but I'm setting it to "online-private" just in case.
         if (gameMode === "") {
-          console.log("I've navigated directly from a user link, so my gameMode is ''.")
           setGameMode("online-private")
         }
       })
@@ -47,7 +51,6 @@ function WaitingRoom({
     //
     else {
       console.log(`From client: emit joinRoom on ${roomId}.`)
-      console.log(streak)
       socket.emit("joinRoom", roomId, socket.id, nickname, streak)
     }
 
@@ -60,7 +63,7 @@ function WaitingRoom({
     })
 
     socket.on("roomCountdownOver", () => {
-      initializeRoom()
+      startNewGame(gameMode)
     })
 
     return () => {
@@ -89,15 +92,6 @@ function WaitingRoom({
     const roomLink = `${baseUrl}/room/${roomId}`
     navigator.clipboard.writeText(roomLink)
     setIsCopied(true)
-  }
-
-  function initializeRoom() {
-    socket.emit("initializeRoom", roomId)
-    console.log(`From initializeRoom: ${roomId}`)
-
-    socket.on("roomInitialized", (roomId) => {
-      socket.emit("startNewOnlineGame", roomId)
-    })
   }
 
   function cancelRoom() {
@@ -154,7 +148,7 @@ function WaitingRoom({
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
             <b style={{ fontWeight: 900 }}>2.&nbsp;&nbsp;</b>
 
-            <button className="btn--new-game" onClick={initializeRoom}>
+            <button className="btn--new-game" onClick={() => startNewGame(gameMode)}>
               START GAME
             </button>
           </div>

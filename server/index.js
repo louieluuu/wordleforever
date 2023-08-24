@@ -144,7 +144,7 @@ io.on("connection", (socket) => {
   })
 
   // Create room
-  socket.on("createRoom", (socketId, nickname, gameMode, isChallengeOn) => {
+  socket.on("createRoom", (gameMode, isChallengeOn) => {
     // Generate a new room ID using the uuidv4 function.
     let newUuid = uuidv4()
 
@@ -158,34 +158,29 @@ io.on("connection", (socket) => {
     // in order to determine whether it should be a Public or Private game.
     let relevantRooms
 
-    if (gameMode.includes("public")) {
+    if (gameMode === "online-public") {
       relevantRooms = Rooms.Public
     }
     //
-    else if (gameMode.includes("private")) {
+    else if (gameMode === "online-private") {
       relevantRooms = Rooms.Private
     }
 
-    // More properties will be added to the Room later in initializeRoom. For now, the Room
-    // only needs to contain the info of sockets that join (to display in the WaitingRoom),
-    // as well as properties that are relevant to users looking to match and join the Room.
+    // Initialize properties of the Room.
     relevantRooms.set(newUuid, {
-      // Nicknames: new Map([[socketId, nickname]]),
+      // SocketsInfo will be used to store any information attached to a socket, i.e.
+      // their nickname, streak, points, and gameBoard.
       SocketsInfo: new Map(),
+
+      // These properties will be used as checks for a socket seeking a match.
       isChallengeOn: isChallengeOn,
       isInGame: false,
+
+      // These properties will be used for gameOver logic, as well as
+      // calculating points.
+      countGameOvers: 0,
+      countOutOfGuesses: 0,
     })
-
-    // I tried desperately to get the flow to work like this:
-    // -client: createRoom
-    // -server: roomCreated
-    // -client: joinRoom
-
-    // But it didn't work, so here we are... joining manually
-    // (another consequence is nicknames state has to start as [nickname])
-
-    // socket.join(newUuid)
-    // ! ^ update, I got it to work with an if statement in the useEffect
 
     console.log(`Creating a new Room with roomId: ${newUuid}`)
 
@@ -195,7 +190,6 @@ io.on("connection", (socket) => {
   // Join room
   socket.on("joinRoom", (uuid, socketId, nickname, streak) => {
     console.log(`${socket.id} joining room: ${uuid}`)
-    console.log(streak)
 
     const relevantRooms = getPublicOrPrivateRooms(uuid)
 
@@ -303,32 +297,10 @@ io.on("connection", (socket) => {
     console.log(Rooms)
   })
 
-  socket.on("initializeRoom", (uuid) => {
-    const relevantRooms = getPublicOrPrivateRooms(uuid)
-
-    // Altering and adding some more properties to the Room.
-    // Each active room will add two additional properties:
-
-    // countGameOvers: the number of players who have gameOver'd,
-    // either having guessed correctly or run out of guesses.
-    // Will be used as a condition to signal the end of the game in a Private room,
-    // since Private rooms continue until all players have finished their game.
-
-    // countOutOfGuesses: the number of players who have run out of guesses.
-    // Will be used in conjunction with the countGameOvers to calculate points correctly.
-    const previousValue = relevantRooms.get(uuid)
-    relevantRooms.set(uuid, {
-      ...previousValue,
-      isInGame: true,
-      countGameOvers: 0,
-      countOutOfGuesses: 0,
-    })
-
-    socket.emit("roomInitialized", uuid)
-  })
-
   socket.on("startNewOnlineGame", (uuid) => {
     const relevantRooms = getPublicOrPrivateRooms(uuid)
+
+    relevantRooms.get(uuid).isInGame = true
 
     // Reset room values.
     relevantRooms.get(uuid).countGameOvers = 0

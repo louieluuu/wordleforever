@@ -91,6 +91,8 @@ function App() {
       (roomId, allGameBoards, solution, isChallengeOn, challengeModeGuess) => {
         resetStates()
 
+        console.log("gameStarted")
+
         // Sort gameBoards so that the client's board is always first.
         const sortedGameBoards = allGameBoards.sort((objA, objB) => {
           if (objA.socketId === socket.id) {
@@ -182,10 +184,8 @@ function App() {
     }
   }, [isConfettiRunning])
 
-  /**
-   *
+  /*
    * HELPER FUNCTIONS
-   *
    */
 
   function updateStreak(newStreak) {
@@ -451,16 +451,23 @@ function App() {
     }
   }
 
-  // Using only client-side.
-  function startNewClassicGame() {
-    resetStates()
-
-    const solution = getRandomSolution()
-    if (isChallengeOn) {
-      const firstGuess = getRandomFirstGuess(solution)
-      setUserGuess(firstGuess)
+  function startNewGame(gameMode) {
+    if (gameMode.includes("online")) {
+      socket.emit("startNewOnlineGame", roomId)
     }
-    setSolution(solution)
+
+    // Note that the offlineMode calls resetStates() here; online
+    // modes will have resetStates() called when io emits "gameStarted".
+    else if (gameMode.includes("offline")) {
+      resetStates()
+
+      const solution = getRandomSolution()
+      if (isChallengeOn) {
+        const firstGuess = getRandomFirstGuess(solution)
+        setUserGuess(firstGuess)
+      }
+      setSolution(solution)
+    }
   }
 
   // seekMatch() and leaveRoom() used to exist at the MenuOnlineModes level,
@@ -482,7 +489,7 @@ function App() {
   function createRoom(gameMode) {
     setGameMode(gameMode)
 
-    socket.emit("createRoom", socket.id, nickname, gameMode, isChallengeOn)
+    socket.emit("createRoom", gameMode, isChallengeOn)
 
     socket.on("roomCreated", (roomId) => {
       console.log("Howdy! Room created!")
@@ -506,21 +513,15 @@ function App() {
   }
 
   function handleNewGame(gameMode) {
+    // Online-public is the only mode that requires a new room to be created
+    // after a game is over. All other modes can simply start a new game.
     if (gameMode === "online-public") {
       leaveRoom()
       seekMatch()
     }
     //
-    else if (gameMode === "online-private") {
-      socket.emit("startNewOnlineGame", roomId)
-    }
-    //
-    else if (gameMode === "offline-classic") {
-      startNewClassicGame()
-    }
-    //
-    else if (gameMode === "offline-vsBot") {
-      console.log("in development")
+    else {
+      startNewGame(gameMode)
     }
   }
 
@@ -628,13 +629,13 @@ function App() {
                 element={
                   <WaitingRoom
                     isHost={isHost}
-                    setIsHost={setIsHost}
                     gameMode={gameMode}
                     setGameMode={setGameMode}
                     setRoomId={setRoomId}
                     nickname={nickname}
                     streak={streak}
                     leaveRoom={leaveRoom}
+                    startNewGame={startNewGame}
                   />
                 }
               />
