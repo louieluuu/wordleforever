@@ -1,15 +1,14 @@
 // TODO: don't need to pass in socketId, pretty sure you can just do socket.id
 
-const WORD_LIST = require("./data/wordList")
-const VALID_GUESSES = require("./data/validGuesses")
+import { getRandomSolution, getRandomFirstGuess } from "../shared/utils/wordleUtils.js"
 
-// Generate uuids
-const { v4: uuidv4 } = require("uuid")
+// Generate uuids, which we'll use as roomIds
+import { v4 as uuidv4 } from "uuid"
 
-// WebSockets
-const express = require("express")
-const { createServer } = require("http")
-const { Server } = require("socket.io")
+// Initiating WebSockets using Express
+import express from "express"
+import { createServer } from "http"
+import { Server } from "socket.io"
 
 const app = express()
 const httpServer = createServer(app)
@@ -29,36 +28,11 @@ const Private = new Map()
 
 const Rooms = { Public, Private }
 
-// Generates a random solution
-function getRandomSolution() {
-  const randomSolution = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)]
-    .toUpperCase()
-    .split("")
-  console.log(`Solution: ${randomSolution}`)
-  return randomSolution
-}
+/*
+ * HELPER FUNCTIONS
+ */
 
-// ! Challenge mode
-// Generates a random starting word that always has exactly one green match
-function getRandomFirstGuess(solution) {
-  let randomFirstGuess
-  while (true) {
-    randomFirstGuess = VALID_GUESSES[Math.floor(Math.random() * VALID_GUESSES.length)].toUpperCase()
-    let countGreenLetters = 0
-    for (let i = 0; i < randomFirstGuess.length; ++i) {
-      if (randomFirstGuess[i] === solution[i]) {
-        countGreenLetters += 1
-      }
-    }
-    if (countGreenLetters === 1) {
-      console.log(`firstGuess: ${randomFirstGuess}`)
-      break
-    }
-  }
-  return randomFirstGuess.split("")
-}
-
-// Helper function
+// Returns whether a roomId holds a Public or Private Room.
 function getPublicOrPrivateRooms(roomId) {
   if (Rooms.Public.has(roomId)) {
     return Rooms.Public
@@ -73,7 +47,7 @@ function getPublicOrPrivateRooms(roomId) {
   }
 }
 
-// Cleans up the Rooms object if the user is the last to leave.
+// Cleans up the Rooms object if a user is the last to leave.
 // This way, Rooms doesn't needlessly keep track of empty rooms.
 function cleanupRooms(roomId) {
   if (io.sockets.adapter.rooms.get(roomId).size === 1) {
@@ -87,6 +61,7 @@ function cleanupRooms(roomId) {
   }
 }
 
+// Controls the starting and stopping of a Public Room countdown.
 function startCountdown(roomId) {
   let seconds = 6
 
@@ -138,7 +113,11 @@ function startCountdown(roomId) {
   }, 1250)
 }
 
-// All server-side socket logic is, by design, wrapped in the io.on("connection") function.
+/*
+ * SOCKET.IO LOGIC
+ */
+
+// All server-side socket logic is, by design, wrapped under the io.on("connection") function.
 io.on("connection", (socket) => {
   // Print info when connections are made (io.engine contains metadata)
   console.log(`User connected: ${socket.id}`)

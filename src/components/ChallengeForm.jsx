@@ -11,7 +11,7 @@ const formStyle = {
   paddingBottom: "0.5rem",
 }
 
-function ChallengeForm({ setIsChallengeOn }) {
+function ChallengeForm({ isChallengeOn, setIsChallengeOn }) {
   function handleClick() {
     setIsChallengeOn((prev) => !prev)
 
@@ -26,6 +26,7 @@ function ChallengeForm({ setIsChallengeOn }) {
         <input
           type="checkbox"
           style={{ accentColor: "hsl(197, 89%, 30%)" }}
+          checked={isChallengeOn}
           onChange={handleClick}
         />
         &nbsp;Challenge Mode&nbsp;

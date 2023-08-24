@@ -70,8 +70,6 @@ function WaitingRoom({
       socket.off("roomError")
       socket.off("socketsInfoChanged")
       socket.off("roomCountdownOver")
-      // TODO: Don't think this last one does anything here.
-      socket.off("roomInitialized")
     }
   }, [])
 

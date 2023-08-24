@@ -7,9 +7,6 @@ import { socket } from "./socket"
 import { getRandomSolution, getRandomFirstGuess, isValidGuess } from "../shared/utils/wordleUtils"
 
 // Data
-// TODO: If imports are successful, delete these
-// import { WORD_LIST } from "./data/wordList"
-// import { VALID_GUESSES } from "./data/validGuesses"
 import { WIN_MESSAGES } from "./data/winMessages"
 
 // Components
@@ -616,23 +613,14 @@ function App() {
             <WelcomeMessage nickname={nickname} handleNicknameChange={handleNicknameChange} />
           </h1>
 
-          <ChallengeForm setIsChallengeOn={setIsChallengeOn} />
+          <ChallengeForm isChallengeOn={isChallengeOn} setIsChallengeOn={setIsChallengeOn} />
 
           <AnimatePresence mode="wait">
             <Routes key={location.pathname} location={location}>
               <Route path="/" element={<MenuLandingPage setIsChallengeOn={setIsChallengeOn} />} />
               <Route
                 path="/online"
-                element={
-                  <MenuOnlineModes
-                    setIsHost={setIsHost}
-                    isChallengeOn={isChallengeOn}
-                    nickname={nickname}
-                    setGameMode={setGameMode}
-                    seekMatch={seekMatch}
-                    createRoom={createRoom}
-                  />
-                }
+                element={<MenuOnlineModes seekMatch={seekMatch} createRoom={createRoom} />}
               />
 
               <Route

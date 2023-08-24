@@ -1,11 +1,11 @@
 // Defining functions that are shared between both the client and server
 // (owing to the fact that you can play offline and online).
 
-import { WORD_LIST } from "../data/wordList"
-import { VALID_GUESSES } from "../data/validGuesses"
+import { WORD_LIST } from "../data/wordList.js"
+import { VALID_GUESSES } from "../data/validGuesses.js"
 
 // Generates a random solution
-function getRandomSolution() {
+export function getRandomSolution() {
   const randomSolution = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)]
     .toUpperCase()
     .split("")
@@ -15,7 +15,7 @@ function getRandomSolution() {
 
 // Challenge Mode:
 // generates a random starting word that always has exactly one green match
-function getRandomFirstGuess(solution) {
+export function getRandomFirstGuess(solution) {
   let randomFirstGuess
 
   while (true) {
@@ -34,8 +34,9 @@ function getRandomFirstGuess(solution) {
 
 // Technically not a shared function. It's only used on the client-side, but all the other
 // VALID_GUESSES logic is here, so...
-function isValidGuess(guess) {
+export function isValidGuess(guess) {
   return VALID_GUESSES.includes(guess)
 }
 
-export { getRandomSolution, getRandomFirstGuess, isValidGuess }
+// TODO: this causes issues, but exporting them all individually works fine. Huh.
+// export { getRandomSolution, getRandomFirstGuess, isValidGuess }

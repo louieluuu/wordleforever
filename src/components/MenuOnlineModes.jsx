@@ -1,31 +1,12 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { Link, useNavigate } from "react-router-dom"
 
 import { HiOutlineArrowUturnLeft } from "react-icons/hi2"
 
-import { socket } from "../socket"
-
 import AnimatedPage from "./AnimatedPage"
 
-function MenuOnlineModes({
-  setIsHost,
-  isChallengeOn,
-  nickname,
-  setGameMode,
-  seekMatch,
-  createRoom,
-}) {
+function MenuOnlineModes({ seekMatch, createRoom }) {
   const navigate = useNavigate()
-
-  // TODO: Uhhh... why is this here?
-  // Socket cleanup
-  useEffect(() => {
-    return () => {
-      socket.off("noMatchesFound")
-      socket.off("matchFound")
-      socket.off("roomCreated")
-    }
-  }, [])
 
   return (
     <AnimatedPage>
