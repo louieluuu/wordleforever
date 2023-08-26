@@ -8,7 +8,7 @@ Wordle Forever is a multiplayer recreation of [Wordle](https://www.nytimes.com/g
 
 - **Multiplayer**: Compete against up to 4 other friends (or strangers)!
 - **Challenge Mode**: Tired of _STARE_-ing at *CLOUD*s? Get a random starting word every time and stick to the hints!
-- **QOL**: Unlimited words, quick restarts, and a pretty interface!
+- **QOL**: Unlimited words, quick restarts, and a new interface!
 
 ## Coming Soon<sup>TM</sup>
 
