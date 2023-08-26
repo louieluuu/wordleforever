@@ -15,7 +15,7 @@ function WaitingRoom({
   nickname,
   streak,
   leaveRoom,
-  startNewGame,
+  handleNewGame,
 }) {
   const { roomId } = useParams()
   const [socketsInfo, setSocketsInfo] = useState([])
@@ -62,13 +62,12 @@ function WaitingRoom({
       setSocketsInfo(newSocketsInfo)
     })
 
-    socket.on("roomCountdownOver", () => {
-      startNewGame(gameMode)
+    // TODO: passing in the roomId here because the roomId state can't be trusted...
+    socket.on("roomCountdownOver", (roomId) => {
+      handleNewGame(gameMode, roomId)
     })
 
     return () => {
-      console.log("I'm unmounting!")
-
       socket.off("connect")
       socket.off("roomError")
       socket.off("socketsInfoChanged")
@@ -77,8 +76,6 @@ function WaitingRoom({
   }, [])
 
   useEffect(() => {
-    console.log("useEffect2 activates.")
-
     console.log(`roomId: ${roomId}`)
     setRoomId(roomId)
 
@@ -148,7 +145,7 @@ function WaitingRoom({
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
             <b style={{ fontWeight: 900 }}>2.&nbsp;&nbsp;</b>
 
-            <button className="btn--new-game" onClick={() => startNewGame(gameMode)}>
+            <button className="btn--new-game" onClick={() => handleNewGame(gameMode, roomId)}>
               START GAME
             </button>
           </div>

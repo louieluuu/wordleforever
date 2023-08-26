@@ -1,6 +1,7 @@
 // TODO: don't need to pass in socketId, pretty sure you can just do socket.id
 
-import { getRandomSolution, getRandomFirstGuess } from "../shared/utils/wordleUtils.js"
+import { WORD_LIST } from "./data/wordList.js"
+import { VALID_GUESSES } from "./data/validGuesses.js"
 
 // Generate uuids, which we'll use as roomIds
 import { v4 as uuidv4 } from "uuid"
@@ -32,6 +33,34 @@ const Rooms = { Public, Private }
  * HELPER FUNCTIONS
  */
 
+// Generates a random solution
+function getRandomSolution() {
+  const randomSolution = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)]
+    .toUpperCase()
+    .split("")
+  console.log(`Solution: ${randomSolution}`)
+  return randomSolution
+}
+
+// Challenge Mode:
+// generates a random starting word that always has exactly one green match
+function getRandomFirstGuess(solution) {
+  let randomFirstGuess
+
+  while (true) {
+    randomFirstGuess = VALID_GUESSES[Math.floor(Math.random() * VALID_GUESSES.length)].toUpperCase()
+    let countGreenLetters = 0
+    for (let i = 0; i < randomFirstGuess.length; ++i) {
+      if (randomFirstGuess[i] === solution[i]) {
+        countGreenLetters += 1
+      }
+    }
+    if (countGreenLetters === 1) {
+      return randomFirstGuess.split("")
+    }
+  }
+}
+
 // Returns whether a roomId holds a Public or Private Room.
 function getPublicOrPrivateRooms(roomId) {
   if (Rooms.Public.has(roomId)) {
@@ -43,6 +72,7 @@ function getPublicOrPrivateRooms(roomId) {
   }
   // Not sure when this would happen, but...
   else {
+    console.log("ERROR! ERROR! ERROR!")
     return undefined
   }
 }
@@ -83,7 +113,7 @@ function startCountdown(roomId) {
       }
 
       const randomSocket = socketIds[Math.floor(Math.random() * socketIds.length)]
-      io.to(randomSocket).emit("roomCountdownOver")
+      io.to(randomSocket).emit("roomCountdownOver", roomId)
 
       clearInterval(timer)
       return
@@ -280,7 +310,7 @@ io.on("connection", (socket) => {
   })
 
   // Leave room
-  socket.on("leaveRoom", (uuid) => {
+  socket.on("leaveRoom", (uuid, isInGame) => {
     const relevantRooms = getPublicOrPrivateRooms(uuid)
 
     // Update nicknames
@@ -295,6 +325,11 @@ io.on("connection", (socket) => {
 
     console.log("From leaveRoom:")
     console.log(Rooms)
+
+    if (isInGame) {
+      console.log("isInGame is true")
+      socket.emit("roomLeft")
+    }
   })
 
   socket.on("startNewOnlineGame", (uuid) => {

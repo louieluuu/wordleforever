@@ -3,10 +3,9 @@ import { useState, useEffect } from "react"
 // Socket
 import { socket } from "./socket"
 
-// Utils
-import { getRandomSolution, getRandomFirstGuess, isValidGuess } from "../shared/utils/wordleUtils"
-
 // Data
+import { WORD_LIST } from "./data/wordList"
+import { VALID_GUESSES } from "./data/validGuesses"
 import { WIN_MESSAGES } from "./data/winMessages"
 
 // Components
@@ -84,6 +83,43 @@ function App() {
   // TODO: HOOK WITHOUT SPECIFIED DEPENDENCIES ** seems to result in unreliable behaviour.
 
   // TODO: Could probably order these socket useEffects in a way that makes more sense.
+
+  useEffect(() => {
+    socket.on("roomLeft", () => {
+      console.log("ROOM LEFT!!!!!!!!!!!!!!!!!!!")
+      seekMatch()
+    })
+
+    return () => {
+      socket.off("roomLeft")
+    }
+  }, [])
+
+  useEffect(() => {
+    socket.on("roomCreated", (roomId) => {
+      // Only private rooms require hosts. Public rooms will start on a shared timer.
+      if (gameMode === "online-private") {
+        setIsHost(true)
+      }
+
+      console.log("Navigating to /roomId!")
+      navigate(`/room/${roomId}`)
+    })
+
+    socket.on("noMatchesFound", () => {
+      createRoom("online-public")
+    })
+
+    socket.on("matchFound", (roomId) => {
+      navigate(`/room/${roomId}`)
+    })
+
+    return () => {
+      socket.off("roomCreated")
+      socket.off("noMatchesFound")
+      socket.off("matchFound")
+    }
+  }, [gameMode]) // TODO: If you don't add gameMode as a dep here, it'll be stale. Wowee
 
   useEffect(() => {
     socket.on(
@@ -187,6 +223,39 @@ function App() {
   /*
    * HELPER FUNCTIONS
    */
+
+  // Generates a random solution
+  function getRandomSolution() {
+    const randomSolution = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)]
+      .toUpperCase()
+      .split("")
+    console.log(`Solution: ${randomSolution}`)
+    return randomSolution
+  }
+
+  // Challenge Mode:
+  // generates a random starting word that always has exactly one green match
+  function getRandomFirstGuess(solution) {
+    let randomFirstGuess
+
+    while (true) {
+      randomFirstGuess =
+        VALID_GUESSES[Math.floor(Math.random() * VALID_GUESSES.length)].toUpperCase()
+      let countGreenLetters = 0
+      for (let i = 0; i < randomFirstGuess.length; ++i) {
+        if (randomFirstGuess[i] === solution[i]) {
+          countGreenLetters += 1
+        }
+      }
+      if (countGreenLetters === 1) {
+        return randomFirstGuess.split("")
+      }
+    }
+  }
+
+  function isValidGuess(guess) {
+    return VALID_GUESSES.includes(guess)
+  }
 
   function updateStreak(newStreak) {
     localStorage.setItem("streak", newStreak)
@@ -342,7 +411,7 @@ function App() {
     // Allows user to start a new game by pressing Enter instead of clicking.
     if (isGameOver) {
       console.log(`gameMode: ${gameMode}`)
-      handleNewGame(gameMode)
+      handleNewGame(gameMode, roomId) // TODO: Can this roomId be trusted?
       return
     }
 
@@ -451,7 +520,11 @@ function App() {
     }
   }
 
-  function startNewGame(gameMode) {
+  // TODO: Very odd, but passing in the roomId state below doesn't work.
+  // TODO: Have to maintain and pass around the roomId in the sockets.
+  // TODO: Extra strange, because handleNicknameChange() is able to use
+  // TODO: the roomId state just fine. Huh.
+  function startNewGame(gameMode, roomId) {
     if (gameMode.includes("online")) {
       socket.emit("startNewOnlineGame", roomId)
     }
@@ -470,59 +543,40 @@ function App() {
     }
   }
 
+  // Note that there's a difference between handleNewGame and startNewGame.
+  // When you click the NEW GAME button in online-public, you're not actually
+  // starting a new game right away. You have to leave the room and seek a new match.
+  function handleNewGame(gameMode, roomId = undefined) {
+    if (isInGame && gameMode === "online-public") {
+      leaveRoom()
+    }
+    //
+    else {
+      startNewGame(gameMode, roomId)
+    }
+  }
+
   // seekMatch() and leaveRoom() used to exist at the MenuOnlineModes level,
   // but since the New Game button requires these functions, they have to be out here.
 
   function seekMatch() {
-    socket.emit("seekMatch", isChallengeOn)
     setGameMode("online-public")
-
-    socket.on("noMatchesFound", () => {
-      createRoom("online-public")
-    })
-
-    socket.on("matchFound", (roomId) => {
-      navigate(`/room/${roomId}`)
-    })
+    socket.emit("seekMatch", isChallengeOn)
   }
 
   function createRoom(gameMode) {
     setGameMode(gameMode)
-
+    console.log("Creating room from Client...")
     socket.emit("createRoom", gameMode, isChallengeOn)
-
-    socket.on("roomCreated", (roomId) => {
-      console.log("Howdy! Room created!")
-
-      // Only private rooms require hosts. Public rooms will start on a shared timer.
-      if (gameMode === "online-private") {
-        setIsHost(true)
-      }
-
-      console.log("Navigating to /roomId!")
-      navigate(`/room/${roomId}`)
-    })
   }
 
   function leaveRoom() {
-    socket.emit("leaveRoom", roomId)
-    console.log(`Leaving room ${roomId}`)
+    socket.emit("leaveRoom", roomId, isInGame)
+    console.log(`Leaving room ${roomId} with isInGame: ${isInGame}`)
     setGameMode("")
+    setRoomId("")
     setIsHost(false)
     setIsInGame(false)
-  }
-
-  function handleNewGame(gameMode) {
-    // Online-public is the only mode that requires a new room to be created
-    // after a game is over. All other modes can simply start a new game.
-    if (gameMode === "online-public") {
-      leaveRoom()
-      seekMatch()
-    }
-    //
-    else {
-      startNewGame(gameMode)
-    }
   }
 
   // TODO: 1. Move Keyboard events into Keyboard component
@@ -635,7 +689,7 @@ function App() {
                     nickname={nickname}
                     streak={streak}
                     leaveRoom={leaveRoom}
-                    startNewGame={startNewGame}
+                    handleNewGame={handleNewGame}
                   />
                 }
               />

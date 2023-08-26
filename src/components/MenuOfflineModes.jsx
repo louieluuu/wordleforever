@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React from "react"
 import { HiOutlineArrowUturnLeft } from "react-icons/hi2"
 
 import { Link } from "react-router-dom"
@@ -24,7 +24,7 @@ function MenuOfflineModes({ setGameMode, handleNewGame }) {
         </button>
 
         <Link to="/">
-          <button className="menu__btn--back" onClick={() => handleClick("offline-vsBot")}>
+          <button className="menu__btn--back">
             <HiOutlineArrowUturnLeft />
           </button>
         </Link>
