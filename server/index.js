@@ -13,10 +13,13 @@ import { Server } from "socket.io"
 
 const app = express()
 const httpServer = createServer(app)
+
+const CORS_ORIGIN =
+  process.env.NODE_ENV === "production" ? "https://wordleforever.com" : "http://localhost:5173"
+
 const io = new Server(httpServer, {
   cors: {
-    // Client-side URL
-    origin: "http://localhost:5173",
+    origin: CORS_ORIGIN,
   },
 })
 
@@ -93,11 +96,25 @@ function cleanupRooms(roomId) {
 
 // Controls the starting and stopping of a Public Room countdown.
 function startCountdown(roomId) {
-  let seconds = 6
+  let seconds = 9
 
   const timer = setInterval(() => {
-    // If the countdown gets this low, it means that the game will actually be starting.
+    // If the countdown gets this low, it means that the game should actually be starting.
     if (seconds < 4) {
+      // There's one exception: if a player leaves *right* as the countdown is about to end,
+      // (i.e. when "4" is on screen) it's possible for the game to start with just
+      // 1 player in a Public Room. Therefore, we need an explicit check for room start eligibility
+      // in this condition as well, despite that situation being covered below in the else condition.
+      const socketsInRoom = io.sockets.adapter.rooms.get(roomId)
+
+      if (socketsInRoom === undefined || socketsInRoom.size === 1) {
+        console.log("Enough people have left so the Room can't start! Stopping countdown...")
+        io.to(roomId).emit("notEnoughPlayers")
+        clearInterval(timer)
+        return
+      }
+
+      // If we clear that final check, then the game can start.
       // The system here is admittedly scuffed because the countdown is broadcasted
       // to all sockets in the room, but I only want one socket to initialize the room.
       // This wasn't a problem in the private lobbies, because there is no countdown
@@ -168,6 +185,8 @@ io.on("connection", (socket) => {
     }
 
     cleanupRooms(roomId)
+
+    socket.leave(roomId)
 
     console.log("From disconnecting:")
     console.log(Rooms)
@@ -246,14 +265,19 @@ io.on("connection", (socket) => {
       gameBoard: new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })),
     })
 
+    // TODO: Small thing - don't need to emit all socketsInfoMap values, just the ones we need
+    // TODO i.e. nickname & streak (we don't need points or gameBoard on client-side)
     // Socket.IO does not emit Maps or Iterators, so we need to convert it to an Array first.
     const socketsInfoArray = Array.from(socketsInfoMap.values())
     io.to(uuid).emit("socketsInfoChanged", socketsInfoArray)
 
     // In Private Rooms, the host gets to choose when to start the game.
     // However, in Public Rooms, the room will initiate a 10s countdown
-    // when 2+ players have been matched.
-    if (relevantRooms === Rooms.Public && io.sockets.adapter.rooms.get(uuid).size > 1) {
+    // when exactly 2 players have been matched.
+
+    // Note that the condition is exactly 2 players, not > 1 for example. We only want
+    // the countdown to start once. If a third player joins, the countdown should not restart.
+    if (relevantRooms === Rooms.Public && io.sockets.adapter.rooms.get(uuid).size == 2) {
       console.log(`${socket.id} starting countdown!`)
       startCountdown(uuid)
     }
@@ -346,6 +370,7 @@ io.on("connection", (socket) => {
     is broadcasted to all the clients. On the client-side, each client will
     sort allBoards to place theirs in front. */
 
+    // TODO: This isn't working upon disconnect for some reason.
     // Also note that allGameBoards is generated anew every time the call to start a new
     // online game is made. This is intended; if 2 of 4 players leave a private room during a
     // session and the other 2 want to continue playing, only the 2 boards should show then.
@@ -520,7 +545,7 @@ io.on("connection", (socket) => {
 })
 
 // This has to be different from the client port
-const IP = "192.168.1.72"
+// TODO: Not sure how to configure this with EC2
 const PORT = 4000
 
 httpServer.listen(PORT, () => {
