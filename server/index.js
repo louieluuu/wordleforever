@@ -96,7 +96,7 @@ function cleanupRooms(roomId) {
 
 // Controls the starting and stopping of a Public Room countdown.
 function startCountdown(roomId) {
-  let seconds = 9
+  let seconds = 5
 
   const timer = setInterval(() => {
     // If the countdown gets this low, it means that the game should actually be starting.
