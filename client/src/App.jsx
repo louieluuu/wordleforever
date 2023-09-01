@@ -36,6 +36,11 @@ function App() {
   const [gameMode, setGameMode] = useState("") // set the game mode upon clicking buttons in the menu,
   // as opposed to when you get in the WaitingRoom.
 
+  // This roomId is exclusively used for the function handleNicknameChange(), which
+  // unfortunately belongs at the App level since you can change your nickname anywhere.
+  // In general though, we're using the param roomId from the URL in WaitingRoom.
+  const [roomId, setRoomId] = useState("")
+
   // ! Socket states
   const [isHost, setIsHost] = useState(false)
 
@@ -164,8 +169,8 @@ function App() {
               <WaitingRoom
                 isHost={isHost}
                 setIsHost={setIsHost}
-                gameMode={gameMode}
                 setGameMode={setGameMode}
+                setRoomId={setRoomId}
                 nickname={nickname}
                 streak={streak}
                 leaveRoom={leaveRoom}

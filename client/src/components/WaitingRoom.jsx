@@ -7,7 +7,7 @@ import { socket } from "../socket"
 import CountdownNumber from "./CountdownNumber"
 import Streak from "./Streak"
 
-function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, nickname, streak, leaveRoom }) {
+function WaitingRoom({ isHost, setIsHost, setGameMode, setRoomId, nickname, streak, leaveRoom }) {
   const navigate = useNavigate()
   const { roomId } = useParams()
 
@@ -15,11 +15,11 @@ function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, nickname, strea
   const [waitingMessage, setWaitingMessage] = useState("")
   const [isCopied, setIsCopied] = useState(false)
 
-  useEffect(() => {
-    console.log("useEffect1 activates.")
-    // TODO: Not sure if this is "hacky" or not. Scared to put if statements
-    // TODO: in useEffect hooks...
+  /*
+   * USE EFFECTS
+   */
 
+  useEffect(() => {
     // It might seem redundant, but in the case that the user navigates to the
     // WaitingRoom directly (i.e. received a link from a friend), it's possible
     // to join the room and emit a socket.id before it's actually been defined.
@@ -33,18 +33,16 @@ function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, nickname, strea
 
         // Additionally, a user who navigates directly to the waiting room
         // won't have a gameMode defined. I'm not sure if this practically affects
-        // anything, but I'm setting it to "online-private" just in case.
-        if (gameMode === "") {
-          setGameMode("online-private")
-        }
+        // anything, but I'll set it to "online-private" just in case.
+        setGameMode("online-private")
       })
     }
     //
     else {
-      console.log(`From client: emit joinRoom on ${roomId}.`)
       socket.emit("joinRoom", roomId, socket.id, nickname, streak)
     }
 
+    // TODO: This should be an Alert instead of a clog.
     socket.on("roomError", (reason) => {
       console.log(`Error: ${reason}`)
     })
@@ -53,13 +51,15 @@ function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, nickname, strea
       setSocketsInfo(newSocketsInfo)
     })
 
-    // TODO: Naming could probably be better.
+    // In a Public room, one socket gets randomly chosen to be the Host.
+    // The Host will eventually send the sole request to the server
+    // to start the game in the Game component.
+    // TODO: Naming of "roomCountdownOver" could probably be better.
     socket.on("roomCountdownOver", () => {
       setIsHost(true)
     })
 
     socket.on("roomStarted", () => {
-      console.log("Navigating to /game/")
       navigate(`/game/${roomId}`)
     })
 
@@ -68,14 +68,21 @@ function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, nickname, strea
       socket.off("roomError")
       socket.off("socketsInfoChanged")
       socket.off("roomCountdownOver")
+      socket.off("roomStarted")
     }
   }, [])
 
   useEffect(() => {
+    setRoomId(roomId)
+
     const randomWaitingMessage =
       WAITING_ROOM_MESSAGES[Math.floor(Math.random() * WAITING_ROOM_MESSAGES.length)]
     setWaitingMessage(randomWaitingMessage)
   }, [])
+
+  /*
+   * HELPER FUNCTIONS
+   */
 
   function copyLink() {
     const baseUrl =
