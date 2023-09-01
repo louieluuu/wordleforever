@@ -101,13 +101,13 @@ function WaitingRoom({ isHost, setIsHost, setGameMode, setRoomId, nickname, stre
   // TODO: Also, index isn't a reliable key - actually need the socket.id
   // TODO: But that's not available in the nicknames array... Lol
   return (
-    <div className="flexbox1">
-      <div className="flexbox2">
-        <div className="flexbox2__countdown">
+    <div className="outer-container">
+      <div className="inner-container">
+        <div className="inner-container__countdown">
           <CountdownNumber />
         </div>
 
-        <h1 style={{ fontFamily: "Suwannaphum", color: "hsl(0, 0%, 15%)" }}>[{waitingMessage}]</h1>
+        <h1 style={{ fontFamily: "Suwannaphum", color: "hsl(0, 0%, 25%)" }}>[{waitingMessage}]</h1>
 
         {isHost && (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -127,16 +127,12 @@ function WaitingRoom({ isHost, setIsHost, setGameMode, setRoomId, nickname, stre
         )}
 
         {/* TODO: CSS fix + React map key complaining */}
-        <div className="flexbox3">
+        <div className="socket-container">
           {socketsInfo.map((socketInfoObject, index) => (
-            <div className="socketInfo">
-              <div className="socketInfo__left" key={index}>
-                {socketInfoObject.nickname}
-              </div>
-              &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-              <div className="socketInfo__right" key={index}>
-                {socketInfoObject.streak === 0 ? "" : `${socketInfoObject.streak}🔥`}
-              </div>
+            <div className="socket-info" key={index}>
+              {socketInfoObject.nickname}
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              {socketInfoObject.streak === 0 ? "" : `${socketInfoObject.streak}🔥`}
             </div>
           ))}
         </div>
@@ -159,6 +155,7 @@ function WaitingRoom({ isHost, setIsHost, setGameMode, setRoomId, nickname, stre
               paddingInline: "0.5rem",
               paddingBlock: "0.15rem",
               marginTop: "2rem",
+              marginBottom: "1rem",
             }}>
             Cancel
           </button>

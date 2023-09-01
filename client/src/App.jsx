@@ -114,7 +114,10 @@ function App() {
   }
 
   function leaveRoom(roomId) {
-    socket.emit("leaveRoom", roomId)
+    if (gameMode.includes("online")) {
+      socket.emit("leaveRoom", roomId)
+    }
+    setRoomId("")
     setGameMode("")
     setIsHost(false)
     setIsInGame(false)
@@ -129,7 +132,9 @@ function App() {
       {!isInGame && (
         <>
           <WelcomeMessage nickname={nickname} handleNicknameChange={handleNicknameChange} />
-          <ChallengeForm isChallengeOn={isChallengeOn} setIsChallengeOn={setIsChallengeOn} />
+          {roomId === "" && (
+            <ChallengeForm isChallengeOn={isChallengeOn} setIsChallengeOn={setIsChallengeOn} />
+          )}
         </>
       )}
 
