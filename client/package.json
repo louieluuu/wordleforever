@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "aws s3 sync --delete dist/ s3://www.wordleforever.com && aws cloudfront create-invalidation --distribution-id E1P09SP7EPKUM5 --paths \"/*\"",
+    "build-deploy": "pnpm run build && pnpm run deploy"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.15",
