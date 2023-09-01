@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { Link, useParams, useNavigate } from "react-router-dom"
 
 import { WAITING_ROOM_MESSAGES } from "../data/waitingRoomMessages"
 import { socket } from "../socket"
@@ -7,22 +7,13 @@ import { socket } from "../socket"
 import CountdownNumber from "./CountdownNumber"
 import Streak from "./Streak"
 
-function WaitingRoom({
-  isHost,
-  gameMode,
-  setGameMode,
-  setRoomId,
-  nickname,
-  streak,
-  leaveRoom,
-  handleNewGame,
-}) {
+function WaitingRoom({ isHost, setIsHost, gameMode, setGameMode, nickname, streak, leaveRoom }) {
+  const navigate = useNavigate()
   const { roomId } = useParams()
+
   const [socketsInfo, setSocketsInfo] = useState([])
   const [waitingMessage, setWaitingMessage] = useState("")
   const [isCopied, setIsCopied] = useState(false)
-
-  const navigate = useNavigate()
 
   useEffect(() => {
     console.log("useEffect1 activates.")
@@ -62,9 +53,14 @@ function WaitingRoom({
       setSocketsInfo(newSocketsInfo)
     })
 
-    // TODO: passing in the roomId here because the roomId state can't be trusted...
-    socket.on("roomCountdownOver", (roomId) => {
-      handleNewGame(gameMode, roomId)
+    // TODO: Naming could probably be better.
+    socket.on("roomCountdownOver", () => {
+      setIsHost(true)
+    })
+
+    socket.on("roomStarted", () => {
+      console.log("Navigating to /game/")
+      navigate(`/game/${roomId}`)
     })
 
     return () => {
@@ -76,24 +72,21 @@ function WaitingRoom({
   }, [])
 
   useEffect(() => {
-    console.log(`roomId: ${roomId}`)
-    setRoomId(roomId)
-
     const randomWaitingMessage =
       WAITING_ROOM_MESSAGES[Math.floor(Math.random() * WAITING_ROOM_MESSAGES.length)]
     setWaitingMessage(randomWaitingMessage)
   }, [])
 
   function copyLink() {
-    const baseUrl = "http://localhost:5173"
+    const baseUrl =
+      process.env.NODE_ENV === "production" ? "https://wordleforever.com" : "http://localhost:5173"
     const roomLink = `${baseUrl}/room/${roomId}`
     navigator.clipboard.writeText(roomLink)
     setIsCopied(true)
   }
 
-  function cancelRoom() {
-    leaveRoom()
-    navigate("/online")
+  function startRoom() {
+    socket.emit("startRoom", roomId)
   }
 
   // TODO: This is such a mess :) (to get a border around the flexbox that
@@ -145,22 +138,24 @@ function WaitingRoom({
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
             <b style={{ fontWeight: 900 }}>2.&nbsp;&nbsp;</b>
 
-            <button className="btn--new-game" onClick={() => handleNewGame(gameMode, roomId)}>
+            <button className="btn--new-game" onClick={startRoom}>
               START GAME
             </button>
           </div>
         )}
-        <button
-          onClick={cancelRoom}
-          style={{
-            border: "1px solid black",
-            borderRadius: "0.3rem",
-            paddingInline: "0.5rem",
-            paddingBlock: "0.15rem",
-            marginTop: "2rem",
-          }}>
-          Cancel
-        </button>
+        <Link to="/online">
+          <button
+            onClick={() => leaveRoom(roomId)}
+            style={{
+              border: "1px solid black",
+              borderRadius: "0.3rem",
+              paddingInline: "0.5rem",
+              paddingBlock: "0.15rem",
+              marginTop: "2rem",
+            }}>
+            Cancel
+          </button>
+        </Link>
       </div>
     </div>
   )

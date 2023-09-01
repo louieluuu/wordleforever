@@ -6,30 +6,47 @@ export default function Keyboard({
   hints,
   isOutOfGuesses,
   isGameOver,
-  isInGame,
   isCountdownRunning,
+  isChallengeOn,
   handleLetter,
   handleEnter,
   handleBackspace,
 }) {
+  /*
+   * USE EFFECTS
+   */
+
+  const handleKeyDown = (e) => {
+    handleKeyboardInput(e.key)
+  }
+
   // Event listener for typing
-  // TODO: Needed to remove the 2nd param "[]" for this to work?
+  // TODO: Works with no deps at all.
+  // TODO: Doesn't work with empty dep array [].
+  // TODO: Works with [handleKeyDown] (function must be declared outside, and before the useEffect itself).
   useEffect(() => {
     // I'd like to be able to say:
     //    window.addEventListener("keydown", (e) => handleKeyBoardInput(e.key))
     // but that isn't possible. We have to get this intermediary function
     // to pass the e.key to the "real" handler below.
-    function handleKeyDown(e) {
-      handleKeyboardInput(e.key)
-    }
 
-    window.addEventListener("keydown", handleKeyDown)
+    document.addEventListener("keydown", handleKeyDown)
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown)
+      document.removeEventListener("keydown", handleKeyDown)
     }
-  })
+  }, [handleKeyDown])
 
+  // Challenge Mode - automatically Enter the first guess when the Countdown is over.
+  useEffect(() => {
+    if (isChallengeOn && !isCountdownRunning) {
+      handleEnter()
+    }
+  }, [isChallengeOn, isCountdownRunning]) // TODO: check deps
+
+  /*
+   * HELPER FUNCTIONS
+   */
   // The real handler. Handles input from both typing and clicking of Keyboard component.
   function handleKeyboardInput(key) {
     const isLetterRegex = /^[a-zA-Z]$/
@@ -37,11 +54,13 @@ export default function Keyboard({
     // Below logic might be a little confusing, but it's all done so
     // a user can start a new game by pressing Enter instead of using the mouse,
     // while also disabling their Enter key if it's not for that specific purpose.
-    if (!isInGame || isCountdownRunning) {
+    if (isCountdownRunning) {
       return
     }
 
     // Allow someone who's run out of guesses to restart the game by pressing Enter.
+    // TODO: Check this logic; in public rooms, this should be true, but in private rooms,
+    // TODO: you shouldn't be able to start a new game yet.
     if (isOutOfGuesses && !isGameOver) {
       return
     }
@@ -63,12 +82,13 @@ export default function Keyboard({
     }
   }
 
+  // Colors the Keyboard tiles using the "hints" Set.
   function getKeyboardKeyClassName(letter) {
     let keyboardKeyClassName = "keyboard__key"
 
-    // The order of "hints" checks prioritizes green. A letter might start
-    // out as a yellow hint, but become a green hint later. In that case,
-    // the key should ultimately be displayed as green.
+    // The order of the following "hints" checks prioritizes green.
+    // A letter might start out as a yellow hint, but become a green hint later.
+    // The key should ultimately be displayed as green; the order reflects that.
     if (hints.green.has(letter)) {
       keyboardKeyClassName += "--correct"
     }

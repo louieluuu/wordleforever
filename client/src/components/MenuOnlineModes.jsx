@@ -9,7 +9,7 @@ function MenuOnlineModes({ seekMatch, createRoom }) {
   return (
     <AnimatedPage>
       <div className="menu">
-        <button className="menu__btn--online" onClick={seekMatch}>
+        <button className="menu__btn--online" onClick={() => seekMatch()}>
           FIND A MATCH
         </button>
         <button className="menu__btn--offline" onClick={() => createRoom("online-private")}>

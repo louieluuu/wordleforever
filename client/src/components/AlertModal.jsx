@@ -26,7 +26,7 @@ function AlertModal({
         clearTimeout(timer)
       }
     }
-  }, [showAlertModal, setShowAlertModal])
+  }, [showAlertModal, setShowAlertModal]) // TODO: I don't think the set needs to be here...
 
   return (
     <>

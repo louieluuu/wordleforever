@@ -230,13 +230,6 @@ a {
   align-items: center;
   gap: 1rem;
 
-  &__title {
-    @extend .menu;
-    font-size: 3.5rem;
-    font-family: "Lobster", sans-serif;
-    font-weight: lighter;
-  }
-
   &__btn {
     display: flex;
     flex-direction: column;
@@ -419,7 +412,7 @@ a {
 
     color: black;
     font-weight: bold;
-    font-size: 2rem;
+    font-size: 1.85rem;
 
     &--active {
       @extend .guess__tile;

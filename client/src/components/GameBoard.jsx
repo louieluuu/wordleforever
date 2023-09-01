@@ -12,6 +12,10 @@ function GameBoard({
   isOutOfGuesses,
   gameMode,
 }) {
+  // * HELPER FUNCTIONS
+
+  // Colors the tiles using the gameBoard Object, whose properties are being updated
+  // as the user makes guesses.
   function getGuessTileClassName(gameBoard, row, col) {
     let guessTileClassName = "guess__tile"
 

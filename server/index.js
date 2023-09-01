@@ -130,7 +130,9 @@ function startCountdown(roomId) {
       }
 
       const randomSocket = socketIds[Math.floor(Math.random() * socketIds.length)]
-      io.to(randomSocket).emit("roomCountdownOver", roomId)
+      io.to(randomSocket).emit("roomCountdownOver")
+
+      io.to(roomId).emit("roomStarted")
 
       clearInterval(timer)
       return
@@ -333,8 +335,13 @@ io.on("connection", (socket) => {
     socket.emit("matchFound", matchingRoomId)
   })
 
+  // Start room
+  socket.on("startRoom", (uuid) => {
+    io.to(uuid).emit("roomStarted")
+  })
+
   // Leave room
-  socket.on("leaveRoom", (uuid, isInGame) => {
+  socket.on("leaveRoom", (uuid) => {
     const relevantRooms = getPublicOrPrivateRooms(uuid)
 
     // Update nicknames
@@ -349,11 +356,6 @@ io.on("connection", (socket) => {
 
     console.log("From leaveRoom:")
     console.log(Rooms)
-
-    if (isInGame) {
-      console.log("isInGame is true")
-      socket.emit("roomLeft")
-    }
   })
 
   socket.on("startNewOnlineGame", (uuid) => {
@@ -400,7 +402,6 @@ io.on("connection", (socket) => {
 
     io.to(uuid).emit(
       "gameStarted",
-      uuid,
       allGameBoards,
       solution,
       relevantRooms.get(uuid).isChallengeOn,

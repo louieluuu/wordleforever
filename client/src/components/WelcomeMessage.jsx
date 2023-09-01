@@ -1,15 +1,16 @@
 import React, { useRef } from "react"
 import { useEffect } from "react"
 
+import { HiOutlinePencilSquare } from "react-icons/hi2"
+
 const bodyStyle = {
   display: "flex",
-  gap: "none",
   flexDirection: "column",
   alignItems: "center",
   fontFamily: "Calistoga",
   fontSize: "3.5rem",
-  paddingBottom: 0,
   lineHeight: "0.80",
+  marginBlock: "2.5rem",
 }
 
 function WelcomeMessage({ nickname, handleNicknameChange }) {
