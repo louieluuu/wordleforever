@@ -11,6 +11,7 @@ import Logo from "../assets/LogoGradient.svg"
 export default function Header() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
+  // TODO: Navigate instead? (Consider the implications though)
   function refreshPage() {
     window.location.href = "/"
   }
@@ -27,8 +28,8 @@ export default function Header() {
         </div>
         <div className="header__right">
           <RiQuestionLine onClick={() => setIsDialogOpen(true)} className="header__svg" />
-          <BiBarChartAlt2 className="header__svg--flipped" />
-          <FaCog className="header__svg" />
+          {/* <BiBarChartAlt2 className="header__svg--flipped" /> */}
+          {/* <FaCog className="header__svg" /> */}
         </div>
       </header>
 

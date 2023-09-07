@@ -151,7 +151,7 @@ a {
   justify-content: center;
   // align-items: center;
   font-size: 1.3rem;
-  border: solid 3px black;
+  // border: solid 3px black;
 }
 
 .inner-container {
@@ -160,7 +160,7 @@ a {
   flex-direction: column;
   // justify-content: center;
   align-items: center;
-  border: solid 2px black;
+  // border: solid 2px black;
   min-width: 30rem;
   box-shadow: 0.75rem 0.75rem 1rem hsl(0deg 0% 0% / 0.15);
   flex-basis: content;
@@ -196,7 +196,6 @@ a {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-width: 10rem;
   margin-block: 2rem;
   border: 2px dashed hsl(0, 0%, 70%);
   padding-inline: 5rem;
@@ -211,7 +210,22 @@ a {
 
 .socket-info {
   display: flex;
-  flex-direction: row;
+  // border: 1px solid black;
+  min-width: 12rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.socket-info--left {
+  display: flex;
+  justify-self: flex-start;
+  margin-right: auto;
+}
+
+.socket-info--right {
+  display: flex;
+  justify-self: flex-end;
+  margin-left: auto;
 }
 
 // Menu

@@ -130,9 +130,10 @@ function WaitingRoom({ isHost, setIsHost, setGameMode, setRoomId, nickname, stre
         <div className="socket-container">
           {socketsInfo.map((socketInfoObject, index) => (
             <div className="socket-info" key={index}>
-              {socketInfoObject.nickname}
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              {socketInfoObject.streak === 0 ? "" : `${socketInfoObject.streak}🔥`}
+              <div className="socket-info--left">{socketInfoObject.nickname}</div>
+              <div className="socket-info--right">
+                {socketInfoObject.streak === 0 ? "" : `${socketInfoObject.streak}🔥`}
+              </div>
             </div>
           ))}
         </div>

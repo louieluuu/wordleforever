@@ -14,8 +14,14 @@ import { Server } from "socket.io"
 const app = express()
 const httpServer = createServer(app)
 
+// TODO:
+// process.env.NODE_ENV doesn't work the same on the server as it does with client.
+// It will actually use "localhost:5173".
+// Explicitly pass in the CORS_ORIGIN instead.
+
+// Also... through testing, I don't think CORS_ORIGIN is actually needed here at all.
 const CORS_ORIGIN =
-  process.env.NODE_ENV === "production" ? "https://wordleforever.com" : "http://localhost:5173"
+  process.env.NODE_ENV === "production" ? "https://www.wordleforever.com" : "http://localhost:5173"
 
 const io = new Server(httpServer, {
   cors: {
@@ -545,9 +551,9 @@ io.on("connection", (socket) => {
   })
 })
 
-// This has to be different from the client port
-// TODO: Not sure how to configure this with EC2
-const PORT = 4000
+// In development, this PORT has to be different from the client port.
+// Through experiments, it also can't be 443 during production stage.
+const PORT = 3005
 
 httpServer.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)

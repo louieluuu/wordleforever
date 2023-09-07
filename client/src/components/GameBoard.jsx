@@ -48,7 +48,15 @@ function GameBoard({
           {gameMode.includes("online") && (
             <>
               &nbsp;-&nbsp;
-              {gameMode === "online-public" ? `${streak}🔥` : points}
+              {gameMode === "online-public" ? (
+                streak === 0 ? (
+                  <span style={{ opacity: "20%" }}>🔥</span>
+                ) : (
+                  `${streak}🔥`
+                )
+              ) : (
+                points
+              )}
             </>
           )}
         </div>

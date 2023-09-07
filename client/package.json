@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "deploy": "aws s3 sync --delete dist/ s3://www.wordleforever.com && aws cloudfront create-invalidation --distribution-id E1P09SP7EPKUM5 --paths \"/*\"",
+    "deploy": "aws s3 sync --delete dist/ %VITE_S3_URL% && aws cloudfront create-invalidation --distribution-id %VITE_CLOUDFRONT_ID% --paths \"/*\"",
     "build-deploy": "pnpm run build && pnpm run deploy"
   },
   "dependencies": {
@@ -26,6 +26,7 @@
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^4.0.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.38.0",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
