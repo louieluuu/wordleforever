@@ -527,7 +527,7 @@ export default function Game({
         {isConfettiRunning && <Confetti numberOfPieces={numberOfPieces} initialVelocityY={-10} />}
 
         <button
-          className={isGameOver ? "btn--new-game" : "btn--new-game--hidden"}
+          className={isGameOver ? "menu__btn--new-game" : "menu__btn--new-game--hidden"}
           onClick={handleNewGame}>
           NEW GAME
           <IoReturnDownBackSharp />

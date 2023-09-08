@@ -35,6 +35,7 @@ function WelcomeMessage({ nickname, handleNicknameChange }) {
   }
 
   function setCaretPosition() {
+    // TODO: Dark mode = white caret
     textBoxRef.current.style.caretColor = "black"
     const length = textBoxRef.current.value.length
     textBoxRef.current.setSelectionRange(length, length)

@@ -25,13 +25,14 @@ function ChallengeForm({ isChallengeOn, setIsChallengeOn }) {
       <label>
         <input
           type="checkbox"
-          style={{ accentColor: "hsl(197, 89%, 30%)" }}
+          className="challenge__checkbox"
+          // style={{ accentColor: "hsl(20, 90%, 35%)" }}
           checked={isChallengeOn}
           onChange={handleClick}
         />
         &nbsp;Challenge Mode&nbsp;
         <a data-tooltip-id="challenge-tooltip" style={{ verticalAlign: "middle" }}>
-          <FaQuestionCircle color="hsl(0,0%,22.5%)" />
+          <FaQuestionCircle color="hsl(0,0%,50%)" />
         </a>
         <Tooltip id="challenge-tooltip">
           <ul style={{ fontSize: "0.85rem", paddingLeft: "1rem", margin: 0 }}>

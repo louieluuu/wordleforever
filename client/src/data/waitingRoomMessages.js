@@ -1,20 +1,33 @@
 export const WAITING_ROOM_MESSAGES = [
-  "a brawl is surely brewing...",
-  "leave no tile unturned...",
+  // Meta
   "mind your head...",
-  "let us set sail...",
-  "once more unto the words...",
-  "the colors are calling...",
-  "the tiles are restless...",
-  "the tiles reveal all...",
-  "let the colors guide you...",
+  "forever ever...?",
+
+  // Opponents
+  "a brawl is surely brewing...",
+  "targets acquired...",
+
+  // Board
   "make your mark...",
   "light up the board...",
-  "with precision...",
-  "by celerity and grace...",
-  "one letter at a time...",
-  "targets acquired...",
+  "row by row...",
+
+  // Tiles
+  "leave no tile unturned...",
+  "the tiles are restless...",
+  "the tiles reveal all...",
+
+  // Colors
+  "the colors are calling...",
+  "let the colors guide you...",
+
+  // Words/letters
   "the words await...",
-  "pace yourself...",
+  "once more unto the words...",
   "till the last letter...",
+  "one letter at a time...",
+
+  // Speed
+  "pace yourself...",
+  "with speed & precision...",
 ]

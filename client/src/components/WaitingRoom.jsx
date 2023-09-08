@@ -113,7 +113,7 @@ function WaitingRoom({ isHost, setIsHost, setGameMode, setRoomId, nickname, stre
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
             <b style={{ fontWeight: 900 }}>1.&nbsp;&nbsp;</b>
             <button
-              className="btn--new-game"
+              className="menu__btn--new-game"
               style={{
                 backgroundColor: "hsl(0,0%,90%)",
                 borderColor: "hsl(0,0%,85%)",
@@ -142,7 +142,7 @@ function WaitingRoom({ isHost, setIsHost, setGameMode, setRoomId, nickname, stre
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
             <b style={{ fontWeight: 900 }}>2.&nbsp;&nbsp;</b>
 
-            <button className="btn--new-game" onClick={startRoom}>
+            <button className="menu__btn--new-game" onClick={startRoom}>
               START GAME
             </button>
           </div>

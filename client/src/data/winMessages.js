@@ -1,5 +1,7 @@
+// TODO: The win message should only show for the actual winner (even in a Private Room).
+// TODO: Order these by how good they are.
+
 export const WIN_MESSAGES = [
-  "God, you're good.",
   "*sniff* Beautiful... 🌹",
   "Bing chilling. 🍦",
   "Supreme. 💯",
@@ -38,5 +40,4 @@ export const WIN_MESSAGES = [
   "911? Murder. 🔪",
   "Shine on! 💎",
   "EZ 👏",
-  "Holy BRSH 🃏",
 ]
