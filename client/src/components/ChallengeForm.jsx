@@ -26,7 +26,6 @@ function ChallengeForm({ isChallengeOn, setIsChallengeOn }) {
         <input
           type="checkbox"
           className="challenge__checkbox"
-          // style={{ accentColor: "hsl(20, 90%, 35%)" }}
           checked={isChallengeOn}
           onChange={handleClick}
         />
@@ -34,8 +33,13 @@ function ChallengeForm({ isChallengeOn, setIsChallengeOn }) {
         <a data-tooltip-id="challenge-tooltip" style={{ verticalAlign: "middle" }}>
           <FaQuestionCircle color="hsl(0,0%,50%)" />
         </a>
-        <Tooltip id="challenge-tooltip">
-          <ul style={{ fontSize: "0.85rem", paddingLeft: "1rem", margin: 0 }}>
+        <Tooltip id="challenge-tooltip" className="challenge__tooltip">
+          <ul
+            style={{
+              fontSize: "0.85rem",
+              paddingLeft: "1rem",
+              margin: "0.7rem",
+            }}>
             <li>random starting word</li>
             <li>must use previous hints</li>
             <li>will only match vs others with same mode</li>

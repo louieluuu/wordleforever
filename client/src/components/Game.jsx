@@ -270,6 +270,7 @@ export default function Game({
       setIsCountdownRunning(true)
     }
 
+    setIsInGame(true)
     setCurrentRow(0)
     setCurrentTile(0)
     setUserGuess(["", "", "", "", ""])
@@ -277,7 +278,6 @@ export default function Game({
     setIsGameOver(false)
     setGameBoard(new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })))
     setGameBoards([])
-    setIsInGame(true) // TODO: Maybe need a useEffect to setIsInGame(true) right as component mounts?
     setIsConfettiRunning(false)
     setHints({ green: new Set(), yellow: new Set(), gray: new Set() })
     setShowAlertModal(false)
@@ -403,8 +403,6 @@ export default function Game({
 
   function handleEnter() {
     // Allows user to start a new game by pressing Enter instead of clicking.
-    console.log("Hi1")
-
     if (isGameOver) {
       console.log(`gameMode: ${gameMode}`)
       handleNewGame(gameMode)
@@ -415,23 +413,18 @@ export default function Game({
 
     // Guess is too short
     if (guessLength < 5) {
-      console.log("Hi2")
       setAlertMessage("Not enough letters!")
       setShowAlertModal(true)
       return
     }
     // Guess is invalid (i.e. doesn't appear in dictionary)
     else if (!isValidGuess(userGuess.join("").toLowerCase())) {
-      console.log("Hi3")
-
       setAlertMessage("Not in dictionary!")
       setShowAlertModal(true)
       return
     }
     // Challenge Mode: guess doesn't adhere to previous hints
     else if (isChallengeOn) {
-      console.log("Hi4")
-
       const result = usesPreviousHints()
       if (result !== "yes") {
         setAlertMessage(`Must use ${result} hints!`)
@@ -484,10 +477,21 @@ export default function Game({
 
         if (gameMode.includes("online")) {
           socket.emit("outOfGuesses", roomId)
+
+          // Game isn't over in a Private Room until everyone's done.
+          // Don't reveal solutions, don't setIsGameOver to true.
+          if (gameMode === "online-private") {
+            return
+          }
+
+          if (gameMode === "online-public") {
+            setAlertMessage(solution.join(""))
+            setShowAlertModal(true)
+            setIsGameOver(true)
+          }
         }
         //
-        // TODO: This logic might be a little funky. (the else clause)
-        else {
+        else if (gameMode.includes("offline")) {
           setAlertMessage(solution.join(""))
           setShowAlertModal(true)
           setIsGameOver(true)

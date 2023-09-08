@@ -35,10 +35,16 @@ function WelcomeMessage({ nickname, handleNicknameChange }) {
   }
 
   function setCaretPosition() {
-    // TODO: Dark mode = white caret
-    textBoxRef.current.style.caretColor = "black"
+    // This hsl works pretty well for both light and dark mode.
+    textBoxRef.current.style.caretColor = "hsl(50, 50%, 40%)"
     const length = textBoxRef.current.value.length
     textBoxRef.current.setSelectionRange(length, length)
+  }
+
+  function focusNicknameForm() {
+    if (textBoxRef.current) {
+      textBoxRef.current.focus()
+    }
   }
 
   return (
@@ -53,18 +59,11 @@ function WelcomeMessage({ nickname, handleNicknameChange }) {
           onClick={setCaretPosition}
           onChange={handleNicknameChange}
           value={nickname}
-          style={{
-            backgroundColor: "transparent",
-            textAlign: "center",
-            border: "none",
-            outline: "none",
-            font: "inherit",
-            fontFamily: "Lobster",
-            fontSize: "3.5rem",
-            cursor: "pointer",
-            textDecoration: "dotted underline",
-            textUnderlineOffset: "0.5rem",
-          }}
+        />
+        <HiOutlinePencilSquare
+          className="nickname-form__pencil"
+          onClick={focusNicknameForm}
+          style={{ cursor: "pointer" }}
         />
       </label>
     </div>

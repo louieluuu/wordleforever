@@ -8,11 +8,12 @@ import { RiSunLine } from "react-icons/ri"
 
 import InfoModal from "./InfoModal"
 
-import Logo from "../assets/LogoGradient.svg"
+import Logo from "../assets/logoGradient.svg"
 
 export default function Header() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
+  // Upon Mount, initialize theme preference based on localStorage or system preference.
   useEffect(() => {
     const storedTheme =
       localStorage.getItem("theme") ||
@@ -21,14 +22,7 @@ export default function Header() {
     if (storedTheme) {
       document.documentElement.setAttribute("data-theme", storedTheme)
     }
-
-    console.log(`Initialized to: ${storedTheme} theme`)
   })
-
-  // TODO: Navigate instead of window refreshing? (Consider the implications of not refreshing though)
-  function refreshPage() {
-    window.location.href = "/"
-  }
 
   function switchColorTheme() {
     const current = document.documentElement.getAttribute("data-theme")
@@ -36,8 +30,10 @@ export default function Header() {
 
     document.documentElement.setAttribute("data-theme", target)
     localStorage.setItem("theme", target)
+  }
 
-    console.log(`Switched to: ${target} theme`)
+  function refreshPage() {
+    window.location.href = "/"
   }
 
   return (
@@ -46,13 +42,13 @@ export default function Header() {
         <div className="header__left" onClick={refreshPage}>
           <img src={Logo} />
           <div className="logo__wordmark">
-            <b className="logo__wordmark--left">Wordle&nbsp;</b>
-            <b className="logo__wordmark--right">Forever</b>
+            <strong className="logo__wordmark--left">Wordle&nbsp;</strong>
+            <strong className="logo__wordmark--right">Forever</strong>
           </div>
         </div>
         <div className="header__right">
           <RiQuestionLine onClick={() => setIsDialogOpen(true)} className="header__svg" />
-          <BiBarChartAlt2 className="header__svg" />
+          {/* <BiBarChartAlt2 className="header__svg" /> */}
           <RiMoonClearFill className="header__svg--flipping" onClick={switchColorTheme} />
           {/* <RiSunLine className="header__svg-flipping" /> */}
         </div>

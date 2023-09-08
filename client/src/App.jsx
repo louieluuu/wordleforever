@@ -71,6 +71,13 @@ function App() {
     }
   }, [gameMode]) // TODO: If you don't add gameMode as a dep here, it'll be stale. Wowee
 
+  // Disable console.logging in production
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") {
+      console.log = function () {}
+    }
+  }, [])
+
   /*
    * HELPER FUNCTIONS
    */

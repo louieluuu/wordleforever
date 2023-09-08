@@ -54,8 +54,7 @@ function WaitingRoom({ isHost, setIsHost, setGameMode, setRoomId, nickname, stre
     // In a Public room, one socket gets randomly chosen to be the Host.
     // The Host will eventually send the sole request to the server
     // to start the game in the Game component.
-    // TODO: Naming of "roomCountdownOver" could probably be better.
-    socket.on("roomCountdownOver", () => {
+    socket.on("randomPublicHostSelected", () => {
       setIsHost(true)
     })
 
@@ -96,10 +95,6 @@ function WaitingRoom({ isHost, setIsHost, setGameMode, setRoomId, nickname, stre
     socket.emit("startRoom", roomId)
   }
 
-  // TODO: This is such a mess :) (to get a border around the flexbox that
-  // TODO: doesn't span the whole width...)
-  // TODO: Also, index isn't a reliable key - actually need the socket.id
-  // TODO: But that's not available in the nicknames array... Lol
   return (
     <div className="outer-container">
       <div className="inner-container">
@@ -126,10 +121,9 @@ function WaitingRoom({ isHost, setIsHost, setGameMode, setRoomId, nickname, stre
           </div>
         )}
 
-        {/* TODO: CSS fix + React map key complaining */}
         <div className="socket-container">
-          {socketsInfo.map((socketInfoObject, index) => (
-            <div className="socket-info" key={index}>
+          {socketsInfo.map((socketInfoObject) => (
+            <div className="socket-info" key={socketInfoObject.socketId}>
               <div className="socket-info--left">{socketInfoObject.nickname}</div>
               <div className="socket-info--right">
                 {socketInfoObject.streak === 0 ? "" : `${socketInfoObject.streak}🔥`}

@@ -14,20 +14,9 @@ import { Server } from "socket.io"
 const app = express()
 const httpServer = createServer(app)
 
-// TODO:
-// process.env.NODE_ENV doesn't work the same on the server as it does with client.
-// It will actually use "localhost:5173".
-// Explicitly pass in the CORS_ORIGIN instead.
-
-// Also... through testing, I don't think CORS_ORIGIN is actually needed here at all.
-const CORS_ORIGIN =
-  process.env.NODE_ENV === "production" ? "https://www.wordleforever.com" : "http://localhost:5173"
-
-const io = new Server(httpServer, {
-  cors: {
-    origin: CORS_ORIGIN,
-  },
-})
+// Do note that if you want to pass in a CORS_ORIGIN here, process.env.NODE_ENV
+// won't work the same way as it does in the client. You'll have to manually pass it in.
+const io = new Server(httpServer)
 
 // Global variables
 
@@ -136,7 +125,7 @@ function startCountdown(roomId) {
       }
 
       const randomSocket = socketIds[Math.floor(Math.random() * socketIds.length)]
-      io.to(randomSocket).emit("roomCountdownOver")
+      io.to(randomSocket).emit("randomPublicHostSelected")
 
       io.to(roomId).emit("roomStarted")
 
@@ -273,10 +262,21 @@ io.on("connection", (socket) => {
       gameBoard: new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })),
     })
 
-    // TODO: Small thing - don't need to emit all socketsInfoMap values, just the ones we need
-    // TODO i.e. nickname & streak (we don't need points or gameBoard on client-side)
     // Socket.IO does not emit Maps or Iterators, so we need to convert it to an Array first.
-    const socketsInfoArray = Array.from(socketsInfoMap.values())
+    // When we .map() this information on the client-side, we'll need a unique key (React).
+    // So we'll transmit an Object consisting of socketId, nickname, and streak.
+    // The other 2 properties (points and gameBoard) are not needed for rendering the lobby.
+
+    // The syntax below is a bit confusing, here's a step-by-step:
+    // socketsInfoMap.entries() returns an Iterator that looks like this: [key, value]
+    // We create a callback function that takes in that Iterator, and returns an Object
+    // with the desired properties. Each element of the Array is an Object.
+    // Finally, we convert the Iterator to an Array using Array.from() for transmission.
+    const socketsInfoArray = Array.from(socketsInfoMap.entries(), ([socketId, obj]) => ({
+      socketId: socketId,
+      nickname: obj.nickname,
+      streak: obj.streak,
+    }))
     io.to(uuid).emit("socketsInfoChanged", socketsInfoArray)
 
     // In Private Rooms, the host gets to choose when to start the game.
@@ -433,10 +433,9 @@ io.on("connection", (socket) => {
     const noLettersBoard = newGameBoard.map((row) => row.map((tile) => ({ ...tile, letter: "" })))
     const pointsEarned = 0
 
-    // TODO: Actually - io and socket both work, but maybe socket makes more sense.
-    // Note that we're emitting this noLettersBoard & points to ALL clients with io.emit, including
-    // the client who submitted it. That's fine, because on the client-side,
-    // all clients render their own letters-included gameBoard.
+    // All clients are specially rendering their own gameBoard, so it's not necessary to
+    // broadcast gameBoard to the socket that made the wrong guess. It would work with
+    // io.to(uuid).emit as well, but this is more explicit.
     socket.to(uuid).emit("gameBoardsUpdated", socketId, noLettersBoard, pointsEarned)
   })
 

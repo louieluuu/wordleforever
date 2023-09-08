@@ -18,14 +18,16 @@ export default function Keyboard({
    * USE EFFECTS
    */
 
+  // Some notes on the following function + useEffect combination:
+  // - This function must be declared 1) outside, and 2) physically placed before the useEffect.
+  // - This function must be used as a dep in the useEffect (didn't know that functions could go stale...?)
+  // - Alternatively, you can use no deps at all and it still works.
+  // - However, you can't use an empty dep array.
   const handleKeyDown = (e) => {
     handleKeyboardInput(e.key)
   }
 
   // Event listener for typing
-  // TODO: Works with no deps at all.
-  // TODO: Doesn't work with empty dep array [].
-  // TODO: Works with [handleKeyDown] (function must be declared outside, and before the useEffect itself).
   useEffect(() => {
     // I'd like to be able to say:
     //    window.addEventListener("keydown", (e) => handleKeyBoardInput(e.key))
@@ -62,7 +64,7 @@ export default function Keyboard({
         handleEnter()
       }
     }
-  }, [isCountdownRunning, solution]) // TODO: check deps
+  }, [isCountdownRunning, solution])
 
   /*
    * HELPER FUNCTIONS

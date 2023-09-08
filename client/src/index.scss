@@ -11,7 +11,9 @@
   font-family: "Roboto", sans-serif;
 }
 
-// Colors
+// Colors: the general rule I've found is that that dark mode colors
+// should be 10% darker than their light mode counterparts. There are
+// exceptions, especially with white/black/gray.
 html[data-theme="light"] {
   --bg-main: hsl(0, 0%, 100%);
   --color: hsl(240, 3%, 7%);
@@ -23,7 +25,7 @@ html[data-theme="light"] {
   --key: hsl(0, 0%, 85%);
   --border: hsl(0, 0%, 80%);
   --active: hsl(0, 0%, 55%);
-  --hover: hsl(0, 0%, 80%);
+  --key-hover: hsl(0, 0%, 80%);
 
   --correct-hover: hsl(115, 29%, 63%);
   --wrong-position-hover: hsl(49, 51%, 67%);
@@ -40,7 +42,12 @@ html[data-theme="light"] {
   --btn-offline-hover: hsl(197, 89%, 36%);
 
   --nickname: hsl(278, 37%, 69%);
-  --challenge: hsl(20, 90%, 35%);
+  --challenge: hsl(12, 90%, 35%);
+  --lobby-background: url(./assets/unsplashPastel.jpg);
+  --lobby-vertical: 10%;
+
+  --nickname-hover: brightness(110%);
+  --header-hover: 65%;
 }
 
 html[data-theme="dark"] {
@@ -54,7 +61,7 @@ html[data-theme="dark"] {
   --key: hsl(200, 1%, 51%);
   --border: hsl(0, 0%, 20%);
   --active: hsl(0, 0%, 35%);
-  --hover: hsl(0, 0%, 60%);
+  --key-hover: hsl(0, 0%, 60%);
 
   --correct-hover: hsl(115, 29%, 53%);
   --wrong-position-hover: hsl(49, 51%, 57%);
@@ -70,8 +77,14 @@ html[data-theme="dark"] {
   --btn-online-hover: hsl(93, 77%, 40%);
   --btn-offline-hover: hsl(197, 89%, 28%);
 
-  --nickname: hsl(278, 30%, 68%);
-  --challenge: hsl(20, 90%, 40%);
+  // --nickname: hsl(285, 30%, 68%);
+  --nickname: hsl(40, 83%, 53%);
+  --challenge: hsl(12, 90%, 40%);
+  --lobby-background: url(./assets/unsplashMountains.jpg);
+  --lobby-vertical: 45%;
+
+  --nickname-hover: brightness(115%);
+  --header-hover: 85%;
 }
 
 // SCSS variables ($var) cannot be dynamically created, so we have to manually declare them
@@ -94,7 +107,7 @@ $wrong: var(--wrong);
 $key: var(--key);
 $border: var(--border);
 $active: var(--active);
-$hover: var(--hover);
+$key-hover: var(--key-hover);
 
 $correct-hover: var(--correct-hover);
 $wrong-position-hover: var(--wrong-position-hover);
@@ -114,9 +127,11 @@ $btn-offline-hover: var(--btn-offline-hover);
 // Miscellaneous
 $nickname: var(--nickname);
 $challenge: var(--challenge);
+$lobby-background: var(--lobby-background);
+$lobby-vertical: var(--lobby-vertical);
 
-// Shared styles between light and dark
-$off-white: hsl(0, 0%, 95%);
+$nickname-hover: var(--nickname-hover);
+$header-hover: var(--header-hover);
 
 // Overwriting default body styles
 body {
@@ -133,41 +148,39 @@ a {
   text-decoration: none;
 }
 
-// TODO: I would write these styles in the WelcomeMessage component, but
-// TODO: I don't think React allows inline animation/keyframes?
 .nickname-form {
+  display: flex;
   color: $nickname;
+  background-color: transparent;
+  text-align: center;
+  border: none;
+  outline: none;
+  font: inherit;
+  cursor: default;
+  font-family: Lobster;
+  font-size: 3.5rem;
+  text-decoration: underline dotted;
+  text-underline-offset: 0.5rem;
 
   &:hover {
-    opacity: 80%;
+    filter: $nickname-hover;
   }
 
-  // animation: pulse 20s infinite;
-
-  // @keyframes pulse {
-  //   0%,
-  //   100% {
-  //     color: #b695c9;
-  //   }
-
-  //   50% {
-  //     color: #fad197;
-  //   }
-  // }
+  &__pencil {
+    font-size: 2rem;
+    stroke-width: 0.11rem;
+  }
 }
 
 // Header
 .header {
-  color: $color;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   padding-inline: 0.8rem; // shorthand for left and right padding
 
-  // border-bottom: 1px solid $color-primary;
-
   &__left {
     display: flex;
-    flex: 1;
     width: 3rem;
     height: 3rem;
     cursor: pointer;
@@ -175,7 +188,7 @@ a {
     gap: 0.5rem;
 
     &:hover {
-      opacity: 80%;
+      opacity: $header-hover;
       transition-duration: 0.1s;
     }
 
@@ -186,7 +199,6 @@ a {
 
   &__right {
     display: flex;
-    justify-content: flex-end;
   }
 
   &__svg {
@@ -197,7 +209,7 @@ a {
     cursor: pointer;
 
     &:hover {
-      color: $hover;
+      opacity: $header-hover;
       transition-duration: 0.1s;
     }
 
@@ -279,10 +291,12 @@ a {
   padding-bottom: 1rem;
   border-radius: 2rem;
 
-  background-image: url("./assets/unsplashTrees.jpg");
-  background-position: 0px 10%;
+  background-image: $lobby-background;
   background-repeat: repeat-x;
-  animation: slide 40s linear infinite;
+
+  // unsplashMountains
+  background-position: 0px $lobby-vertical;
+  animation: slide 10s linear infinite;
 
   position: relative;
 
@@ -298,7 +312,7 @@ a {
 
 @keyframes slide {
   to {
-    background-position: -1920px 10%;
+    background-position: -1920px $lobby-vertical;
   }
 }
 
@@ -582,7 +596,7 @@ a {
     font-size: 1.2em;
 
     &:hover {
-      background-color: $hover;
+      background-color: $key-hover;
       transition-duration: 0.1s;
       transition-timing-function: ease-in;
     }
@@ -634,8 +648,22 @@ a {
   }
 }
 
-.challenge__checkbox {
-  accent-color: $challenge;
+.challenge {
+  &__checkbox {
+    accent-color: $challenge;
+
+    &:hover {
+      accent-color: hsl(12, 90%, 50%);
+    }
+  }
+
+  &__tooltip {
+    opacity: 95%;
+    border-radius: 0.25rem;
+    padding: 0;
+    background-color: $color;
+    color: $bg-main;
+  }
 }
 
 // @media (max-width: 360px) {
