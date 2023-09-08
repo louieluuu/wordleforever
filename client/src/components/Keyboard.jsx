@@ -8,6 +8,8 @@ export default function Keyboard({
   isGameOver,
   isCountdownRunning,
   isChallengeOn,
+  gameMode,
+  solution,
   handleLetter,
   handleEnter,
   handleBackspace,
@@ -37,12 +39,30 @@ export default function Keyboard({
     }
   }, [handleKeyDown])
 
-  // Challenge Mode - automatically Enter the first guess when the Countdown is over.
+  // Challenge Mode - automatically Enter the first randomized guess.
+
+  // The solution dep is pretty interesting; without it, handleEnter()
+  // runs before the solution has been set in the Game component.
+  // By adding solution as a dep, we say to run this useEffect again
+  // once the solution gets set.
+
+  // PS. Using userGuess as a dep might be more intuitive, but userGuess
+  // changes every guess, and we don't want the useEffect to run that often -
+  // only once at the beginning to enter the Challenge guess automatically.
+  // Hence, the use of solution as the dep.
   useEffect(() => {
-    if (isChallengeOn && !isCountdownRunning) {
-      handleEnter()
+    if (isChallengeOn) {
+      if (gameMode.includes("online")) {
+        if (!isCountdownRunning) {
+          handleEnter()
+        }
+      }
+      //
+      else if (gameMode.includes("offline")) {
+        handleEnter()
+      }
     }
-  }, [isChallengeOn, isCountdownRunning]) // TODO: check deps
+  }, [isCountdownRunning, solution]) // TODO: check deps
 
   /*
    * HELPER FUNCTIONS

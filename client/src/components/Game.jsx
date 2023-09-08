@@ -121,6 +121,7 @@ export default function Game({
     }
     //
     else if (gameMode.includes("offline")) {
+      console.log("Starting from isHost useEffect")
       startNewGame(gameMode)
     }
   }, [isHost])
@@ -402,6 +403,8 @@ export default function Game({
 
   function handleEnter() {
     // Allows user to start a new game by pressing Enter instead of clicking.
+    console.log("Hi1")
+
     if (isGameOver) {
       console.log(`gameMode: ${gameMode}`)
       handleNewGame(gameMode)
@@ -412,18 +415,23 @@ export default function Game({
 
     // Guess is too short
     if (guessLength < 5) {
+      console.log("Hi2")
       setAlertMessage("Not enough letters!")
       setShowAlertModal(true)
       return
     }
     // Guess is invalid (i.e. doesn't appear in dictionary)
     else if (!isValidGuess(userGuess.join("").toLowerCase())) {
+      console.log("Hi3")
+
       setAlertMessage("Not in dictionary!")
       setShowAlertModal(true)
       return
     }
     // Challenge Mode: guess doesn't adhere to previous hints
     else if (isChallengeOn) {
+      console.log("Hi4")
+
       const result = usesPreviousHints()
       if (result !== "yes") {
         setAlertMessage(`Must use ${result} hints!`)
@@ -584,6 +592,8 @@ export default function Game({
         isGameOver={isGameOver}
         isCountdownRunning={isCountdownRunning}
         isChallengeOn={isChallengeOn}
+        gameMode={gameMode}
+        solution={solution}
         handleLetter={handleLetter}
         handleEnter={handleEnter}
         handleBackspace={handleBackspace}
