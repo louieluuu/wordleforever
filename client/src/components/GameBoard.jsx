@@ -41,44 +41,42 @@ function GameBoard({
   }
 
   return (
-    <>
-      <div className={`game-board${isOutOfGuesses ? "--game-over" : ""}`}>
-        <div style={{ fontFamily: "Roboto Slab", display: "flex" }}>
-          {nickname}
-          {gameMode.includes("online") && (
-            <>
-              &nbsp;-&nbsp;
-              {gameMode === "online-public" ? (
-                streak === 0 ? (
-                  <span style={{ opacity: "20%" }}>🔥</span>
-                ) : (
-                  `${streak}🔥`
-                )
+    <div className={`game-board${isOutOfGuesses ? "--game-over" : ""}`}>
+      <div style={{ fontFamily: "Roboto Slab", display: "flex" }}>
+        {nickname}
+        {gameMode.includes("online") && (
+          <>
+            &nbsp;-&nbsp;
+            {gameMode === "online-public" ? (
+              streak === 0 ? (
+                <span style={{ opacity: "20%" }}>🔥</span>
               ) : (
-                points
-              )}
-            </>
-          )}
-        </div>
-        {gameBoard.map((row, rowIndex) => (
-          <div key={rowIndex} className="guess">
-            {rowIndex === currentRow
-              ? userGuess.map((letter, index) => (
-                  <div key={index} className={getGuessTileClassName(gameBoard, rowIndex, index)}>
-                    {letter}
-                  </div>
-                ))
-              : row.map((tile, tileIndex) => (
-                  <div
-                    key={tileIndex}
-                    className={getGuessTileClassName(gameBoard, rowIndex, tileIndex)}>
-                    {tile.letter}
-                  </div>
-                ))}
-          </div>
-        ))}
+                `${streak}🔥`
+              )
+            ) : (
+              points
+            )}
+          </>
+        )}
       </div>
-    </>
+      {gameBoard.map((row, rowIndex) => (
+        <div key={rowIndex} className="guess">
+          {rowIndex === currentRow
+            ? userGuess.map((letter, index) => (
+                <div key={index} className={getGuessTileClassName(gameBoard, rowIndex, index)}>
+                  {letter}
+                </div>
+              ))
+            : row.map((tile, tileIndex) => (
+                <div
+                  key={tileIndex}
+                  className={getGuessTileClassName(gameBoard, rowIndex, tileIndex)}>
+                  {tile.letter}
+                </div>
+              ))}
+        </div>
+      ))}
+    </div>
   )
 }
 

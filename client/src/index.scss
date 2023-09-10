@@ -13,7 +13,8 @@
 
 // Colors: the general rule I've found is that that dark mode colors
 // should be 10% darker than their light mode counterparts. There are
-// exceptions, especially with white/black/gray.
+// hard exceptions, especially with white/black/gray.
+html,
 html[data-theme="light"] {
   --bg-main: hsl(0, 0%, 100%);
   --color: hsl(240, 3%, 7%);
@@ -35,11 +36,15 @@ html[data-theme="light"] {
   --btn-game: hsl(0, 52%, 48%);
   --btn-online: hsl(93, 77%, 38%);
   --btn-offline: hsl(197, 89%, 26%);
+  --btn-copy: hsl(0, 0%, 80%);
+
+  --btn-copy-border: hsl(0, 0%, 75%);
 
   --btn-neutral-hover: hsl(0, 0%, 90%);
   --btn-game-hover: hsl(0, 52%, 58%);
   --btn-online-hover: hsl(93, 77%, 48%);
   --btn-offline-hover: hsl(197, 89%, 36%);
+  --btn-copy-hover: hsl(0, 0%, 85%);
 
   --nickname: hsl(278, 37%, 69%);
   --challenge: hsl(12, 90%, 35%);
@@ -68,20 +73,24 @@ html[data-theme="dark"] {
   --wrong-hover: hsl(240, 5%, 35%);
 
   --btn-neutral: hsl(0, 0%, 85%);
-  --btn-game: hsl(0, 52%, 43%);
+  --btn-game: hsl(0, 52%, 40%);
   --btn-online: hsl(93, 77%, 30%);
   --btn-offline: hsl(197, 89%, 18%);
+  --btn-copy: hsl(0, 0%, 25%);
+
+  --btn-copy-border: hsl(0, 0%, 30%);
 
   --btn-neutral-hover: hsl(0, 0%, 90%);
   --btn-game-hover: hsl(0, 52%, 53%);
   --btn-online-hover: hsl(93, 77%, 40%);
   --btn-offline-hover: hsl(197, 89%, 28%);
+  --btn-copy-hover: hsl(0, 0%, 35%);
 
   // --nickname: hsl(285, 30%, 68%);
   --nickname: hsl(40, 83%, 53%);
   --challenge: hsl(12, 90%, 40%);
-  --lobby-background: url(./assets/unsplashMountains.jpg);
-  --lobby-vertical: 45%;
+  --lobby-background: url(./assets/unsplashPastelDark.jpg);
+  --lobby-vertical: 30%;
 
   --nickname-hover: brightness(115%);
   --header-hover: 85%;
@@ -89,8 +98,6 @@ html[data-theme="dark"] {
 
 // SCSS variables ($var) cannot be dynamically created, so we have to manually declare them
 // after the corresponding CSS var that's been created in the html[data-theme] selector.
-
-// The CSS
 
 // We'll ultimately use the SCSS variables ($var) throughout the file.
 
@@ -118,11 +125,14 @@ $btn-neutral: var(--btn-neutral);
 $btn-game: var(--btn-game);
 $btn-online: var(--btn-online);
 $btn-offline: var(--btn-offline);
+$btn-copy: var(--btn-copy);
 
+$btn-copy-border: var(--btn-copy-border);
 $btn-neutral-hover: var(--btn-neutral-hover);
 $btn-game-hover: var(--btn-game-hover);
 $btn-online-hover: var(--btn-online-hover);
 $btn-offline-hover: var(--btn-offline-hover);
+$btn-copy-hover: var(--btn-copy-hover);
 
 // Miscellaneous
 $nickname: var(--nickname);
@@ -133,14 +143,43 @@ $lobby-vertical: var(--lobby-vertical);
 $nickname-hover: var(--nickname-hover);
 $header-hover: var(--header-hover);
 
+// Breakpoints
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1280px;
+$breakpoint-xxl: 1480px;
+
+// These 100% heights aren't default values, must be placed in manually
+html {
+  height: 100%;
+}
+
 // Overwriting default body styles
 body {
+  height: 100%;
+
   margin: 0;
   cursor: default;
   overflow-x: hidden; // prevent Framer Motion scrollbar
 
   background-color: $bg-main;
   color: $color;
+}
+
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.route-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto; // just in case the content is too long
+  // also this is 1 of 2 overflow-ys (the other one is in game container)
 }
 
 a {
@@ -334,7 +373,6 @@ a {
 
 .socket-info {
   display: flex;
-  // border: 1px solid black;
   min-width: 12rem;
   justify-content: space-between;
   align-items: center;
@@ -444,6 +482,20 @@ a {
     }
   }
 
+  &__btn--copy {
+    @extend .menu__btn--new-game;
+
+    color: $color;
+    background-color: $btn-copy;
+    border: 3px solid $btn-copy-border;
+    font-weight: 400;
+
+    &:hover {
+      background-color: $btn-copy-hover;
+      border: 3px solid $btn-copy-hover;
+    }
+  }
+
   &__btn--back {
     display: flex;
     align-items: center;
@@ -469,6 +521,15 @@ a {
       transition-duration: 0.1s;
       transition-timing-function: ease-in;
     }
+  }
+
+  &__btn--cancel {
+    border: 1px solid black;
+    border-radius: 0.3rem;
+    padding-inline: 0.5rem;
+    padding-block: 0.15rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
   }
 }
 
@@ -497,6 +558,11 @@ a {
 }
 
 .game-container {
+  // Sudep
+  // min-height: 500px;
+  flex: 1;
+  overflow-y: auto;
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -536,12 +602,28 @@ a {
   gap: 0.35rem;
 
   &__tile {
-    @include box(3.5rem, 3.5rem);
-    border: 2px solid $border;
-
+    // Shared styles between sizes
     color: $color;
     font-weight: bold;
-    font-size: 1.85rem;
+
+    // Smallest of the small
+    @include box(2.5rem, 2.5rem);
+    border: 2px solid $border;
+
+    font-size: 1.25rem;
+
+    // Increasingly larger
+    @media (min-width: $breakpoint-sm) {
+      @include box(3.5rem, 3.5rem);
+
+      font-size: 1.55rem;
+    }
+
+    @media (min-width: $breakpoint-lg) {
+      // @include box(5rem, 5rem);
+
+      font-size: 1.85rem;
+    }
 
     &--active {
       @extend .guess__tile;
@@ -664,6 +746,11 @@ a {
     background-color: $color;
     color: $bg-main;
   }
+}
+
+.waiting-message {
+  font-family: "Suwannaphum";
+  mix-blend-mode: overlay;
 }
 
 // @media (max-width: 360px) {

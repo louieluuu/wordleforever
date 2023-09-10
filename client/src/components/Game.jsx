@@ -526,6 +526,14 @@ export default function Game({
     setStreak(newStreak)
   }
 
+  function myGameBoard() {
+    return gameBoards[0]
+  }
+
+  function otherGameBoards() {
+    return gameBoards.slice(1) || []
+  }
+
   return (
     <>
       <div className="game-container">
@@ -568,24 +576,49 @@ export default function Game({
               gameMode={gameMode}
             />
           ) : (
-            gameBoards.map((object) => (
-              // We conditionally pass in props here to give the client's own gameBoard a
-              // "special" view. Ex., its letters should always show (unlike other gameBoards,
-              // which have their letters hidden until the game is over).
-              <GameBoard
-                key={object.socketId}
-                gameBoard={object.socketId === socket.id ? gameBoard : object.gameBoard}
-                nickname={object.nickname}
-                streak={object.streak}
-                points={object.points}
-                userGuess={userGuess}
-                currentRow={object.socketId === socket.id ? currentRow : -1}
-                currentTile={currentTile}
-                isGameOver={isGameOver}
-                isOutOfGuesses={isOutOfGuesses}
-                gameMode={gameMode}
-              />
-            ))
+            <div style={{ display: "flex", overflowY: "auto" }}>
+              <div style={{ position: "sticky", top: "0" }}>
+                {myGameBoard() ? (
+                  <GameBoard
+                    key={myGameBoard().socketId}
+                    gameBoard={gameBoard}
+                    nickname={myGameBoard().nickname}
+                    streak={myGameBoard().streak}
+                    points={myGameBoard().points}
+                    userGuess={userGuess}
+                    currentRow={currentRow}
+                    currentTile={currentTile}
+                    isGameOver={isGameOver}
+                    isOutOfGuesses={isOutOfGuesses}
+                    gameMode={gameMode}
+                  />
+                ) : null}
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "100px",
+                  height: "100px",
+                }}>
+                {otherGameBoards().map((object) => (
+                  <GameBoard
+                    key={object.socketId}
+                    gameBoard={object.gameBoard}
+                    nickname={object.nickname}
+                    streak={object.streak}
+                    points={object.points}
+                    userGuess={userGuess}
+                    currentRow={-1}
+                    currentTile={currentTile}
+                    isGameOver={isGameOver}
+                    isOutOfGuesses={isOutOfGuesses}
+                    gameMode={gameMode}
+                  />
+                ))}
+              </div>
+            </div>
           )}
         </div>
       </div>

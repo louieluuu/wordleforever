@@ -145,68 +145,70 @@ function App() {
         </>
       )}
 
-      <AnimatePresence mode="wait">
-        <Routes key={location.pathname} location={location}>
-          <Route path="/" element={<MenuLandingPage setIsChallengeOn={setIsChallengeOn} />} />
-          <Route
-            path="/online"
-            element={
-              <MenuOnlineModes
-                seekMatch={seekMatch}
-                createRoom={createRoom}
-                setGameMode={setGameMode}
-              />
-            }
-          />
-          <Route path="/offline" element={<MenuOfflineModes setGameMode={setGameMode} />} />
-          <Route
-            path="/offline/classic"
-            element={
-              <Game
-                isHost={isHost}
-                gameMode={gameMode}
-                nickname={nickname}
-                isChallengeOn={isChallengeOn}
-                setIsChallengeOn={setIsChallengeOn}
-                setIsInGame={setIsInGame}
-                streak={streak}
-                setStreak={setStreak}
-                seekMatch={seekMatch}
-              />
-            }
-          />
-          <Route
-            path="/room/:roomId"
-            element={
-              <WaitingRoom
-                isHost={isHost}
-                setIsHost={setIsHost}
-                setGameMode={setGameMode}
-                setRoomId={setRoomId}
-                nickname={nickname}
-                streak={streak}
-                leaveRoom={leaveRoom}
-              />
-            }
-          />
-          <Route
-            path="/game/:roomId"
-            element={
-              <Game
-                isHost={isHost}
-                gameMode={gameMode}
-                nickname={nickname}
-                isChallengeOn={isChallengeOn}
-                setIsChallengeOn={setIsChallengeOn}
-                setIsInGame={setIsInGame}
-                streak={streak}
-                setStreak={setStreak}
-                seekMatch={seekMatch}
-              />
-            }
-          />
-        </Routes>
-      </AnimatePresence>
+      <div className="route-container">
+        <AnimatePresence mode="wait">
+          <Routes key={location.pathname} location={location}>
+            <Route path="/" element={<MenuLandingPage setIsChallengeOn={setIsChallengeOn} />} />
+            <Route
+              path="/online"
+              element={
+                <MenuOnlineModes
+                  seekMatch={seekMatch}
+                  createRoom={createRoom}
+                  setGameMode={setGameMode}
+                />
+              }
+            />
+            <Route path="/offline" element={<MenuOfflineModes setGameMode={setGameMode} />} />
+            <Route
+              path="/offline/classic"
+              element={
+                <Game
+                  isHost={isHost}
+                  gameMode={gameMode}
+                  nickname={nickname}
+                  isChallengeOn={isChallengeOn}
+                  setIsChallengeOn={setIsChallengeOn}
+                  setIsInGame={setIsInGame}
+                  streak={streak}
+                  setStreak={setStreak}
+                  seekMatch={seekMatch}
+                />
+              }
+            />
+            <Route
+              path="/room/:roomId"
+              element={
+                <WaitingRoom
+                  isHost={isHost}
+                  setIsHost={setIsHost}
+                  setGameMode={setGameMode}
+                  setRoomId={setRoomId}
+                  nickname={nickname}
+                  streak={streak}
+                  leaveRoom={leaveRoom}
+                />
+              }
+            />
+            <Route
+              path="/game/:roomId"
+              element={
+                <Game
+                  isHost={isHost}
+                  gameMode={gameMode}
+                  nickname={nickname}
+                  isChallengeOn={isChallengeOn}
+                  setIsChallengeOn={setIsChallengeOn}
+                  setIsInGame={setIsInGame}
+                  streak={streak}
+                  setStreak={setStreak}
+                  seekMatch={seekMatch}
+                />
+              }
+            />
+          </Routes>
+        </AnimatePresence>
+      </div>
     </>
   )
 }

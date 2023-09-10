@@ -102,20 +102,12 @@ function WaitingRoom({ isHost, setIsHost, setGameMode, setRoomId, nickname, stre
           <CountdownNumber />
         </div>
 
-        <h1 style={{ fontFamily: "Suwannaphum", color: "hsl(0, 0%, 25%)" }}>[{waitingMessage}]</h1>
+        <h1 className="waiting-message">[{waitingMessage}]</h1>
 
         {isHost && (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
             <b style={{ fontWeight: 900 }}>1.&nbsp;&nbsp;</b>
-            <button
-              className="menu__btn--new-game"
-              style={{
-                backgroundColor: "hsl(0,0%,90%)",
-                borderColor: "hsl(0,0%,85%)",
-                color: "black",
-                fontWeight: "400",
-              }}
-              onClick={copyLink}>
+            <button className="menu__btn--copy" onClick={copyLink}>
               {isCopied ? "LINK COPIED" : "COPY LINK"}
             </button>
           </div>
@@ -142,16 +134,7 @@ function WaitingRoom({ isHost, setIsHost, setGameMode, setRoomId, nickname, stre
           </div>
         )}
         <Link to="/online">
-          <button
-            onClick={() => leaveRoom(roomId)}
-            style={{
-              border: "1px solid black",
-              borderRadius: "0.3rem",
-              paddingInline: "0.5rem",
-              paddingBlock: "0.15rem",
-              marginTop: "2rem",
-              marginBottom: "1rem",
-            }}>
+          <button className="menu__btn--cancel" onClick={() => leaveRoom(roomId)}>
             Cancel
           </button>
         </Link>

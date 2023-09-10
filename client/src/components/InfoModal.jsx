@@ -54,11 +54,18 @@ function InfoModal({ setIsDialogOpen }) {
         <hr />
 
         <p style={{ ...textContent, paddingBottom: 0 }}>
-          Wordle Forever is a multiplayer recreation of{" "}
+          <strong>Wordle Forever</strong> is a multiplayer recreation of&nbsp;
           <a href="https://www.nytimes.com/games/wordle/index.html" target="_blank">
-            Wordle&nbsp;
+            Wordle.&nbsp;
           </a>
-          with additional QOL features. Built from scratch using React and Socket.IO.
+          Queue up for a Public game and see how far your 🔥 streak can go, or create a Private room
+          and invite up to 3 of your friends to see who the greatest Wordler is!
+          <br></br>
+          <br></br>
+          This project is open source and hosted on&nbsp;
+          <a href="github.com/louieluuu/wordle-forever">Github</a>.&nbsp;Your feedback is
+          appreciated. Feel free to reach out via <a href="mailto:louie_lu@sfu.ca">e-mail</a> with
+          comments, suggestions, or bug reports.
         </p>
       </dialog>
     </div>
