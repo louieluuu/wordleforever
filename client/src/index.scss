@@ -11,6 +11,10 @@
   font-family: "Roboto", sans-serif;
 }
 
+p {
+  font-size: 0.9rem;
+}
+
 // Colors: the general rule I've found is that that dark mode colors
 // should be 10% darker than their light mode counterparts. There are
 // hard exceptions, especially with white/black/gray.
@@ -36,15 +40,15 @@ html[data-theme="light"] {
   --btn-game: hsl(0, 52%, 48%);
   --btn-online: hsl(93, 77%, 38%);
   --btn-offline: hsl(197, 89%, 26%);
-  --btn-copy: hsl(0, 0%, 80%);
+  --btn-copy: hsl(0, 0%, 90%);
 
-  --btn-copy-border: hsl(0, 0%, 75%);
+  --btn-copy-border: hsl(0, 0%, 77%);
 
   --btn-neutral-hover: hsl(0, 0%, 90%);
   --btn-game-hover: hsl(0, 52%, 58%);
   --btn-online-hover: hsl(93, 77%, 48%);
   --btn-offline-hover: hsl(197, 89%, 36%);
-  --btn-copy-hover: hsl(0, 0%, 85%);
+  --btn-copy-hover: hsl(0, 0%, 95%);
 
   --nickname: hsl(278, 37%, 69%);
   --challenge: hsl(12, 90%, 35%);
@@ -76,23 +80,25 @@ html[data-theme="dark"] {
   --btn-game: hsl(0, 52%, 40%);
   --btn-online: hsl(93, 77%, 30%);
   --btn-offline: hsl(197, 89%, 18%);
-  --btn-copy: hsl(0, 0%, 25%);
+  --btn-copy: hsl(0, 0%, 20%);
 
-  --btn-copy-border: hsl(0, 0%, 30%);
+  --btn-copy-border: hsl(0, 0%, 23%);
 
   --btn-neutral-hover: hsl(0, 0%, 90%);
   --btn-game-hover: hsl(0, 52%, 53%);
   --btn-online-hover: hsl(93, 77%, 40%);
   --btn-offline-hover: hsl(197, 89%, 28%);
-  --btn-copy-hover: hsl(0, 0%, 35%);
+  --btn-copy-hover: hsl(0, 0%, 30%);
 
   // --nickname: hsl(285, 30%, 68%);
-  --nickname: hsl(40, 83%, 53%);
+  --nickname: hsl(40, 78%, 53%);
   --challenge: hsl(12, 90%, 40%);
+  --dialog: hsl(240, 3%, 7%);
+
   --lobby-background: url(./assets/unsplashPastelDark.jpg);
   --lobby-vertical: 30%;
 
-  --nickname-hover: brightness(115%);
+  --nickname-hover: brightness(112%);
   --header-hover: 85%;
 }
 
@@ -137,6 +143,8 @@ $btn-copy-hover: var(--btn-copy-hover);
 // Miscellaneous
 $nickname: var(--nickname);
 $challenge: var(--challenge);
+$dialog: var(--dialog);
+
 $lobby-background: var(--lobby-background);
 $lobby-vertical: var(--lobby-vertical);
 
@@ -211,6 +219,45 @@ a {
   }
 }
 
+// Dialog
+.dialog {
+  // Centering
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  border: none;
+  background-color: $bg-main;
+  color: $color;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.05), 0 0 10px 4px rgba(0, 0, 0, 0.05),
+    0 0 15px 6px rgba(0, 0, 0, 0.05), 0 0 20px 8px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  max-width: 30rem;
+  z-index: 9;
+
+  &__right {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__btn--close {
+    width: 1.4rem;
+    height: 1.4rem;
+
+    cursor: pointer;
+  }
+
+  &__first-time {
+    @extend .dialog;
+    max-width: 25rem;
+  }
+
+  &__info {
+    @extend .dialog;
+  }
+}
 // Header
 .header {
   display: flex;
@@ -283,30 +330,6 @@ a {
   }
 }
 
-// Dialog
-.dialog {
-  border: none;
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.05), 0 0 10px 4px rgba(0, 0, 0, 0.05),
-    0 0 15px 6px rgba(0, 0, 0, 0.05), 0 0 20px 8px rgba(0, 0, 0, 0.05);
-  padding: 1.5rem;
-  max-width: 27.5rem;
-  z-index: 9;
-
-  &__right {
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  &__btn--close {
-    width: 1.4rem;
-    height: 1.4rem;
-
-    cursor: pointer;
-  }
-}
-
 .outer-container {
   display: flex;
   justify-content: center;
@@ -335,7 +358,7 @@ a {
 
   // unsplashMountains
   background-position: 0px $lobby-vertical;
-  animation: slide 10s linear infinite;
+  animation: slide 40s linear infinite;
 
   position: relative;
 
@@ -360,7 +383,7 @@ a {
   flex-direction: column;
   justify-content: space-between;
   margin-block: 2rem;
-  border: 2px dashed hsl(0, 0%, 70%);
+  border: 2px dashed hsl(0, 0%, 60%);
   padding-inline: 5rem;
   padding-block: 2rem;
   font-size: 1.1rem;
@@ -376,6 +399,9 @@ a {
   min-width: 12rem;
   justify-content: space-between;
   align-items: center;
+
+  font-weight: 600;
+  font-family: "Roboto Slab";
 }
 
 .socket-info--left {

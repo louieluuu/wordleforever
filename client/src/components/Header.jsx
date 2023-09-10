@@ -6,7 +6,7 @@ import { FaCog } from "react-icons/fa"
 import { RiMoonClearFill } from "react-icons/ri"
 import { RiSunLine } from "react-icons/ri"
 
-import InfoModal from "./InfoModal"
+import DialogInfo from "./DialogInfo"
 
 import Logo from "../assets/logoGradient.svg"
 
@@ -54,7 +54,7 @@ export default function Header() {
         </div>
       </header>
 
-      {isDialogOpen && <InfoModal setIsDialogOpen={setIsDialogOpen} />}
+      {isDialogOpen && <DialogInfo setIsDialogOpen={setIsDialogOpen} />}
     </>
   )
 }

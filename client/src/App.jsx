@@ -6,6 +6,7 @@ import { socket } from "./socket"
 // Data
 
 // Components
+import DialogFirstTime from "./components/DialogFirstTime"
 import Header from "./components/Header"
 import WelcomeMessage from "./components/WelcomeMessage"
 import ChallengeForm from "./components/ChallengeForm"
@@ -24,6 +25,10 @@ function App() {
   const navigate = useNavigate()
   const location = useLocation()
 
+  const [isFirstTime, setIsFirstTime] = useState(
+    JSON.parse(localStorage.getItem("isFirstTime")) === null ? true : false
+  )
+
   // localStorage stores items as strings, so we use JSON.parse to convert it back to its original type.
   const [isChallengeOn, setIsChallengeOn] = useState(
     JSON.parse(localStorage.getItem("isChallengeOn")) || false
@@ -36,7 +41,7 @@ function App() {
   const [gameMode, setGameMode] = useState("") // set the game mode upon clicking buttons in the menu,
   // as opposed to when you get in the WaitingRoom.
 
-  // This roomId is exclusively used for the function handleNicknameChange(), which
+  // This roomId is *exclusively* used for the function handleNicknameChange(), which
   // unfortunately belongs at the App level since you can change your nickname anywhere.
   // In general though, we're using the param roomId from the URL in WaitingRoom.
   const [roomId, setRoomId] = useState("")
@@ -134,6 +139,8 @@ function App() {
   // TODO: 2. Look into Context (stores) so props aren't so ugly
   return (
     <>
+      <DialogFirstTime isFirstTime={isFirstTime} setIsFirstTime={setIsFirstTime} />
+
       <Header />
 
       {!isInGame && (

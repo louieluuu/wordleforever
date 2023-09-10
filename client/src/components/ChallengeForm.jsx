@@ -39,6 +39,7 @@ function ChallengeForm({ isChallengeOn, setIsChallengeOn }) {
               fontSize: "0.85rem",
               paddingLeft: "1rem",
               margin: "0.7rem",
+              fontFamily: "Roboto",
             }}>
             <li>random starting word</li>
             <li>must use previous hints</li>
