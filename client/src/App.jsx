@@ -76,6 +76,20 @@ function App() {
     }
   }, [gameMode]) // TODO: If you don't add gameMode as a dep here, it'll be stale. Wowee
 
+  useEffect(() => {
+    socket.on("connect", () => {
+      if (socket.recovered) {
+        console.log("socket recovered")
+      } else {
+        // new or unrecoverable session
+      }
+    })
+
+    return () => {
+      socket.off("connect")
+    }
+  }, [])
+
   // Disable console.logging in production
   useEffect(() => {
     if (process.env.NODE_ENV === "production") {

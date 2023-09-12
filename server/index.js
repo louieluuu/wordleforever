@@ -14,9 +14,13 @@ import { Server } from "socket.io"
 const app = express()
 const httpServer = createServer(app)
 
-// Do note that if you want to pass in a CORS_ORIGIN here, process.env.NODE_ENV
+// Do note that if you want to pass in a CORS_ORIGIN options here, process.env.NODE_ENV
 // won't work the same way as it does in the client. You'll have to manually pass it in.
-const io = new Server(httpServer)
+const io = new Server(httpServer, {
+  connectionStateRecovery: {
+    maxDisconnectionDuration: 20000, // 20s
+  },
+})
 
 // Global variables
 
@@ -26,6 +30,8 @@ const Public = new Map()
 const Private = new Map()
 
 const Rooms = { Public, Private }
+
+const MAX_ROOM_SIZE = 4
 
 /*
  * HELPER FUNCTIONS
@@ -183,10 +189,12 @@ io.on("connection", (socket) => {
 
     cleanupRooms(roomId)
 
-    socket.leave(roomId)
+    // TODO: Not a perfect implementation; deleting right as the socket
+    // TODO: disconnects will lead to the user disappearing mid-game. Only want
+    // TODO: the user's board to disappear at the start of a new game.
 
-    console.log("From disconnecting:")
-    console.log(Rooms)
+    // const socketsInfoMap = getPublicOrPrivateRooms(roomId).get(roomId).SocketsInfo
+    // socketsInfoMap.delete(socket.id)
   })
 
   // Create room
@@ -235,8 +243,6 @@ io.on("connection", (socket) => {
 
   // Join room
   socket.on("joinRoom", (uuid, socketId, nickname, streak) => {
-    console.log(`${socket.id} joining room: ${uuid}`)
-
     const relevantRooms = getPublicOrPrivateRooms(uuid)
 
     // Check validity of room
@@ -251,6 +257,17 @@ io.on("connection", (socket) => {
       socket.emit("roomError", reason)
       return
     }
+
+    if (
+      io.sockets.adapter.rooms.get(uuid) !== undefined &&
+      io.sockets.adapter.rooms.get(uuid).size === MAX_ROOM_SIZE
+    ) {
+      const reason = "This room is full."
+      socket.emit("roomError", reason)
+      return
+    }
+
+    console.log(`${socket.id} joining room: ${uuid}`)
 
     // Add user to room
     socket.join(uuid)
@@ -325,7 +342,7 @@ io.on("connection", (socket) => {
     const matchingRoom = publicRoomsArray.find(
       ([roomId, roomObj]) =>
         roomObj.isInGame === false &&
-        io.sockets.adapter.rooms.get(roomId).size < 4 &&
+        io.sockets.adapter.rooms.get(roomId).size < MAX_ROOM_SIZE &&
         roomObj.isChallengeOn === isChallengeOn
     )
 
@@ -433,10 +450,11 @@ io.on("connection", (socket) => {
     const noLettersBoard = newGameBoard.map((row) => row.map((tile) => ({ ...tile, letter: "" })))
     const pointsEarned = 0
 
+    // TODO: Now that we're rendering our own gameBoard separately, (...)
     // All clients are specially rendering their own gameBoard, so it's not necessary to
     // broadcast gameBoard to the socket that made the wrong guess. It would work with
     // io.to(uuid).emit as well, but this is more explicit.
-    socket.to(uuid).emit("gameBoardsUpdated", socketId, noLettersBoard, pointsEarned)
+    io.to(uuid).emit("gameBoardsUpdated", socketId, noLettersBoard, null, pointsEarned)
   })
 
   socket.on("correctGuess", (correctGuessSocketId, uuid, newGameBoard) => {
@@ -499,13 +517,25 @@ io.on("connection", (socket) => {
       // Process the board to hide the letters but still display the colors.
       // Then, show that noLettersBoard to the other users.
       const noLettersBoard = newGameBoard.map((row) => row.map((tile) => ({ ...tile, letter: "" })))
-      io.to(uuid).emit("gameBoardsUpdated", correctGuessSocketId, noLettersBoard, pointsEarned)
+      io.to(uuid).emit(
+        "gameBoardsUpdated",
+        correctGuessSocketId,
+        noLettersBoard,
+        null,
+        pointsEarned
+      )
 
       // Update countGameOvers after the points have been calculated.
       relevantRooms.get(uuid).countGameOvers += 1
 
+      // Only display a winning message to the first solver in a Private Room.
+      if (relevantRooms.get(uuid).countGameOvers === 1) {
+        socket.emit("firstSolve")
+      }
+
       // Only end the game if all players have finished in a Private Room.
       if (relevantRooms.get(uuid).countGameOvers === io.sockets.adapter.rooms.get(uuid).size) {
+        console.log("Private room done")
         io.to(uuid).emit("gameOver", uuid)
       }
     }
@@ -517,8 +547,26 @@ io.on("connection", (socket) => {
     relevantRooms.get(uuid).countGameOvers += 1
     relevantRooms.get(uuid).countOutOfGuesses += 1
 
-    // Edge case: if all players run out of guesses, the game should end.
-    if (relevantRooms.get(uuid).countOutOfGuesses === io.sockets.adapter.rooms.get(uuid).size) {
+    if (relevantRooms === Public) {
+      socket.emit("loseStreak")
+
+      const socketsInfoMap = relevantRooms.get(uuid).SocketsInfo
+      const previousValue = socketsInfoMap.get(socket.id)
+
+      socketsInfoMap.set(socket.id, {
+        ...previousValue,
+        streak: 0,
+      })
+
+      const noLettersBoard = previousValue.gameBoard.map((row) =>
+        row.map((tile) => ({ ...tile, letter: "" }))
+      )
+
+      io.to(uuid).emit("gameBoardsUpdated", socket.id, noLettersBoard, 0, null)
+    }
+
+    // Edge case: if the last player in the Room runs out of guesses, the game should end.
+    if (relevantRooms.get(uuid).countGameOvers === io.sockets.adapter.rooms.get(uuid).size) {
       io.to(uuid).emit("gameOver", uuid)
     }
   })

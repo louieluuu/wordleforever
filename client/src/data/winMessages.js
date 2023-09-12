@@ -40,4 +40,5 @@ export const WIN_MESSAGES = [
   "911? Murder. 🔪",
   "Shine on! 💎",
   "EZ 👏",
+  "Are you real? 👽",
 ]

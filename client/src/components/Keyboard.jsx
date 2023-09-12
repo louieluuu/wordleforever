@@ -6,6 +6,7 @@ export default function Keyboard({
   hints,
   isOutOfGuesses,
   isGameOver,
+  hasSolved,
   isCountdownRunning,
   isChallengeOn,
   gameMode,
@@ -73,16 +74,19 @@ export default function Keyboard({
   function handleKeyboardInput(key) {
     const isLetterRegex = /^[a-zA-Z]$/
 
-    // Below logic might be a little confusing, but it's all done so
-    // a user can start a new game by pressing Enter instead of using the mouse,
-    // while also disabling their Enter key if it's not for that specific purpose.
+    // Below logic might be a little confusing, but they're basically a series of checks
+    // to disable the keyboard when it's not appropriate to input keys, while simultaneously
+    // enabling the Enter key to start a new game when it's appropriate.
+    // All Modes are accounted for, and since the Modes have different logic,
+    // a number of different states are required in the checks.
     if (isCountdownRunning) {
       return
     }
 
-    // Allow someone who's run out of guesses to restart the game by pressing Enter.
-    // TODO: Check this logic; in public rooms, this should be true, but in private rooms,
-    // TODO: you shouldn't be able to start a new game yet.
+    if (hasSolved && !isGameOver) {
+      return
+    }
+
     if (isOutOfGuesses && !isGameOver) {
       return
     }

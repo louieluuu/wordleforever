@@ -52,6 +52,8 @@ export default function Game({
 
   const [isGameOver, setIsGameOver] = useState(false)
   const [isOutOfGuesses, setIsOutOfGuesses] = useState(false)
+  const [hasSolved, setHasSolved] = useState(false) // necessary in Private Room to distinguish
+  // between a total isGameOver vs. a single player finishing
 
   // Countdown states
   const [isCountdownRunning, setIsCountdownRunning] = useState(false)
@@ -69,8 +71,14 @@ export default function Game({
    * USE EFFECTS
    */
 
-  // TODO: Could probably order these socket useEffects in a way that makes more sense.
+  useEffect(() => {
+    if (isGameOver && !hasSolved) {
+      setAlertMessage(solution.join(""))
+      setShowAlertModal(true)
+    }
+  }, [isGameOver, hasSolved])
 
+  // TODO: Could probably order these socket useEffects in a way that makes more sense.
   // ! SOCKETS
 
   useEffect(() => {
@@ -106,8 +114,14 @@ export default function Game({
       }
     })
 
+    // TODO: Belongs here or somewhere else?
+    socket.on("firstSolve", () => {
+      showWinAnimations()
+    })
+
     return () => {
       socket.off("gameStarted")
+      socket.off("firstSolve")
     }
   }, [])
 
@@ -126,18 +140,34 @@ export default function Game({
     }
   }, [isHost])
 
+  // This socket event will account for both streak and point changes. Of course,
+  // only one of those can change at a time because a player can only be in
+  // either a Public or Private Room at one time. On the server side,
+  // we'll pass null for the value that doesn't change and check for null on the client-side
+  // so we know which value to actually change.
   useEffect(() => {
-    socket.on("gameBoardsUpdated", (updatedSocketId, updatedBoard, pointsEarned) => {
+    socket.on("gameBoardsUpdated", (updatedSocketId, updatedBoard, newStreak, pointsEarned) => {
       console.log("gameBoardsUpdated")
 
       const newGameBoards = [...gameBoards]
 
-      newGameBoards.forEach((object) => {
-        if (object.socketId === updatedSocketId) {
-          object.gameBoard = updatedBoard
-          object.points = object.points + pointsEarned
-        }
-      })
+      if (newStreak !== null) {
+        newGameBoards.forEach((object) => {
+          if (object.socketId === updatedSocketId) {
+            object.gameBoard = updatedBoard
+            object.streak = newStreak
+          }
+        })
+      }
+
+      if (pointsEarned !== null) {
+        newGameBoards.forEach((object) => {
+          if (object.socketId === updatedSocketId) {
+            object.gameBoard = updatedBoard
+            object.points = object.points + pointsEarned
+          }
+        })
+      }
 
       setGameBoards(newGameBoards)
     })
@@ -166,7 +196,7 @@ export default function Game({
       setGameBoards(sortedFinalGameBoards)
     })
 
-    // TODO: This logic might not belong in this useEffect umbrella.
+    // TODO: The below logic(s) might not belong in this useEffect umbrella.
     // TODO: Check dependencies, or just place it in a separate useEffect if buggy.
     socket.on("loseStreak", () => {
       updateStreak(0)
@@ -176,6 +206,7 @@ export default function Game({
       socket.off("gameOver")
       socket.off("finalGameBoardsRevealed")
       socket.off("loseStreak")
+      socket.off("revealSolution")
     }
   }, [gameBoard, isGameOver, gameBoards]) // TODO: deps could be buggy
 
@@ -275,6 +306,7 @@ export default function Game({
     setCurrentTile(0)
     setUserGuess(["", "", "", "", ""])
     setIsOutOfGuesses(false)
+    setHasSolved(false)
     setIsGameOver(false)
     setGameBoard(new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "none" })))
     setGameBoards([])
@@ -404,7 +436,6 @@ export default function Game({
   function handleEnter() {
     // Allows user to start a new game by pressing Enter instead of clicking.
     if (isGameOver) {
-      console.log(`gameMode: ${gameMode}`)
       handleNewGame(gameMode)
       return
     }
@@ -447,22 +478,28 @@ export default function Game({
     // Direct array comparison won't work with ===, so we must compare their string forms.
     if (userGuess.join("") === solution.join("")) {
       if (gameMode.includes("online")) {
+        // Always emit correctGuess in any online mode
+        socket.emit("correctGuess", socket.id, roomId, newGameBoard)
+
         // Only update streak if in public lobby
         if (gameMode === "online-public") {
           const newStreak = streak + 1
           updateStreak(newStreak)
+          setHasSolved(true)
+          showWinAnimations()
         }
-        // Always emit correctGuess in any online mode
-        socket.emit("correctGuess", socket.id, roomId, newGameBoard)
+
+        // Only change this state in private lobby.
+        if (gameMode === "online-private") {
+          setHasSolved(true)
+        }
       }
       // gameOver shouldn't always be true upon correctGuess in online modes
       // depending on public vs. private. However, in offline, it's always true.
       else if (gameMode.includes("offline")) {
         setIsGameOver(true)
+        showWinAnimations()
       }
-
-      showWinAnimations()
-      setIsConfettiRunning(true)
     }
     // Wrong guess
     else {
@@ -487,7 +524,6 @@ export default function Game({
           if (gameMode === "online-public") {
             setAlertMessage(solution.join(""))
             setShowAlertModal(true)
-            setIsGameOver(true)
           }
         }
         //
@@ -519,6 +555,7 @@ export default function Game({
     const winMessage = WIN_MESSAGES[Math.floor(Math.random() * WIN_MESSAGES.length)]
     setAlertMessage(winMessage)
     setShowAlertModal(true)
+    setIsConfettiRunning(true)
   }
 
   function updateStreak(newStreak) {
@@ -627,6 +664,7 @@ export default function Game({
         hints={hints}
         isOutOfGuesses={isOutOfGuesses}
         isGameOver={isGameOver}
+        hasSolved={hasSolved}
         isCountdownRunning={isCountdownRunning}
         isChallengeOn={isChallengeOn}
         gameMode={gameMode}
