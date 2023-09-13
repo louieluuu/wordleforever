@@ -4,13 +4,15 @@ export const WAITING_ROOM_MESSAGES = [
   "forever ever...?",
 
   // Opponents
-  "a brawl is surely brewing...",
+  "a brawl is brewing...",
   "targets acquired...",
+  "no pressure...",
 
   // Board
   "make your mark...",
   "light up the board...",
   "row by row...",
+  "once more unto the board...",
 
   // Tiles
   "leave no tile unturned...",
@@ -23,7 +25,6 @@ export const WAITING_ROOM_MESSAGES = [
 
   // Words/letters
   "the words await...",
-  "once more unto the words...",
   "till the last letter...",
   "one letter at a time...",
 

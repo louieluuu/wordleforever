@@ -169,25 +169,9 @@ body {
 
   margin: 0;
   cursor: default;
-  overflow-x: hidden; // prevent Framer Motion scrollbar
 
   background-color: $bg-main;
   color: $color;
-}
-
-#root {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.route-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow-x: hidden;
-  overflow-y: auto; // just in case the content is too long
-  // also this is 1 of 2 overflow-ys (the other one is in game container)
 }
 
 a {
@@ -195,7 +179,46 @@ a {
   text-decoration: none;
 }
 
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; // prevent scrolling on mobile
+}
+
+.route-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  overflow-x: hidden;
+  overflow-y: auto; // just in case the content is too long
+  // also this is 1 of 2 overflow-ys (the other one is in game container)
+}
+
+.welcome-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Calistoga";
+  font-size: 2.75rem;
+  line-height: 0.7;
+  margin-block: 1.5rem;
+
+  &--hidden {
+    @extend .welcome-message;
+    display: none;
+
+    @media (min-width: $breakpoint-md) {
+      display: flex;
+    }
+  }
+}
+
 .nickname-form {
+  // TODO: Known bug where if user inputs "wwwwwwwwwww" as username,
+  // TODO: you can't scroll back. overflow-x: (...) isn't working.
+
   display: flex;
   color: $nickname;
   background-color: transparent;
@@ -205,7 +228,7 @@ a {
   font: inherit;
   cursor: default;
   font-family: Lobster;
-  font-size: 3.5rem;
+  font-size: 3rem;
   text-decoration: underline dotted;
   text-underline-offset: 0.5rem;
 
@@ -213,9 +236,21 @@ a {
     filter: $nickname-hover;
   }
 
+  &--hidden {
+    visibility: hidden;
+  }
+
   &__pencil {
     font-size: 2rem;
     stroke-width: 0.11rem;
+
+    &--hidden {
+      visibility: hidden;
+
+      @media (min-width: $breakpoint-md) {
+        visibility: visible;
+      }
+    }
   }
 }
 
@@ -263,12 +298,16 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-inline: 0.8rem; // shorthand for left and right padding
+  padding-inline: 0.3rem;
+
+  border-bottom: 1px solid $border;
 
   &__left {
     display: flex;
-    width: 3rem;
-    height: 3rem;
+
+    width: 2.75rem;
+    height: 2.75rem;
+
     cursor: pointer;
 
     gap: 0.5rem;
@@ -285,12 +324,12 @@ a {
 
   &__right {
     display: flex;
+    gap: 0.2rem;
   }
 
   &__svg {
-    width: 2rem;
-    height: 2rem;
-    padding: 0.25rem;
+    width: 1.75rem;
+    height: 1.75rem;
 
     cursor: pointer;
 
@@ -317,7 +356,7 @@ a {
 .logo {
   &__wordmark {
     align-self: center;
-    font-size: 2rem;
+    font-size: 1.85rem;
     font-family: "Lobster", serif;
   }
 
@@ -330,27 +369,34 @@ a {
   }
 }
 
-.outer-container {
+.room-outer-container {
+  font-size: 1.5rem;
+
+  border: 1px solid $color;
+
   display: flex;
   justify-content: center;
-  // align-items: center;
-  font-size: 1.3rem;
-  // border: solid 3px black;
+  margin-top: 1.5rem;
+
+  min-height: 92.5%;
+  max-height: 92.5%;
 }
 
-.inner-container {
+.room-inner-container {
+  border: 1px solid greenyellow;
+
   display: flex;
-  // display: inline-flex;
   flex-direction: column;
-  // justify-content: center;
+  // TODO: space-evenly & between are both viable too, can experiment more later
+  justify-content: space-around;
   align-items: center;
-  // border: solid 2px black;
-  min-width: 30rem;
+
+  min-width: 95%;
+  max-width: 95%;
+
+  flex-basis: content; // ? Dunno what this is for
+
   box-shadow: 0.75rem 0.75rem 1rem hsl(0deg 0% 0% / 0.15);
-  flex-basis: content;
-  padding-inline: 5rem;
-  // padding-top: 1rem;
-  padding-bottom: 1rem;
   border-radius: 2rem;
 
   background-image: $lobby-background;
@@ -360,10 +406,17 @@ a {
   background-position: 0px $lobby-vertical;
   animation: slide 40s linear infinite;
 
+  @keyframes slide {
+    to {
+      background-position: -1920px $lobby-vertical;
+    }
+  }
+
   position: relative;
 
   &__countdown {
     position: absolute;
+
     top: -2rem;
     right: -1rem;
     font-size: 4rem;
@@ -372,31 +425,33 @@ a {
   }
 }
 
-@keyframes slide {
-  to {
-    background-position: -1920px $lobby-vertical;
-  }
+.waiting-message {
+  font-family: "Suwannaphum";
+  mix-blend-mode: overlay;
+  font-size: 1.55rem;
 }
 
 .socket-container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-block: 2rem;
+  margin-block: 1rem;
   border: 2px dashed hsl(0, 0%, 60%);
-  padding-inline: 5rem;
-  padding-block: 2rem;
-  font-size: 1.1rem;
+  padding-block: 1.5rem;
+  font-size: 1rem;
   font-weight: 600;
-  font-family: "Roboto";
-  gap: 0.5rem;
+  gap: 0.4rem;
 
-  position: relative;
+  position: relative; // ?
 }
 
 .socket-info {
   display: flex;
+
   min-width: 12rem;
+  max-width: 12rem;
+
+  padding-inline: 3rem;
   justify-content: space-between;
   align-items: center;
 
@@ -420,6 +475,7 @@ a {
 .menu {
   display: flex;
   flex-direction: column;
+
   align-items: center;
   gap: 1rem;
 
@@ -475,15 +531,13 @@ a {
     }
   }
 
-  &__btn--new-game {
+  &__btn--start-game {
     @extend .menu__btn;
-
     flex-direction: row;
 
     width: 10rem;
     height: 2.5rem;
     font-size: 1.3rem;
-    line-height: 1.2rem;
 
     background-color: $btn-game;
 
@@ -501,15 +555,10 @@ a {
       background-color: $btn-game-hover;
       border: 3px solid $btn-game-hover;
     }
-
-    &--hidden {
-      @extend .menu__btn--new-game;
-      visibility: hidden;
-    }
   }
 
   &__btn--copy {
-    @extend .menu__btn--new-game;
+    @extend .menu__btn--start-game;
 
     color: $color;
     background-color: $btn-copy;
@@ -519,6 +568,21 @@ a {
     &:hover {
       background-color: $btn-copy-hover;
       border: 3px solid $btn-copy-hover;
+    }
+
+    &:active {
+      font-size: 1.2rem;
+    }
+  }
+
+  &__btn--new-game {
+    @extend .menu__btn--start-game;
+    position: fixed;
+    bottom: 14vh;
+
+    &--hidden {
+      @extend .menu__btn--new-game;
+      visibility: hidden;
     }
   }
 
@@ -584,17 +648,14 @@ a {
 }
 
 .game-container {
-  // Sudep
-  // min-height: 500px;
-  flex: 1;
-  overflow-y: auto;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  margin-top: 1rem;
+  // ! Sudep
+  flex: 1;
+  overflow-y: auto;
 }
 
 .countdown-timer {
@@ -611,10 +672,8 @@ a {
 .game-board {
   display: flex;
   flex-direction: column;
-  // align-items: center;
   gap: 0.35rem;
 
-  padding: 1rem;
   font-weight: 600;
 
   &--game-over {
@@ -628,28 +687,12 @@ a {
   gap: 0.35rem;
 
   &__tile {
-    // Shared styles between sizes
     color: $color;
-    font-weight: bold;
 
-    // Smallest of the small
-    @include box(2.5rem, 2.5rem);
+    @include box(3rem, 3rem);
     border: 2px solid $border;
 
-    font-size: 1.25rem;
-
-    // Increasingly larger
-    @media (min-width: $breakpoint-sm) {
-      @include box(3.5rem, 3.5rem);
-
-      font-size: 1.55rem;
-    }
-
-    @media (min-width: $breakpoint-lg) {
-      // @include box(5rem, 5rem);
-
-      font-size: 1.85rem;
-    }
+    font-size: 1.75rem;
 
     &--active {
       @extend .guess__tile;
@@ -686,22 +729,24 @@ a {
   align-items: center;
   gap: 0.45rem;
 
+  padding-block: 0.5rem;
+
   &__row {
     display: flex;
     gap: 0.45rem;
   }
 
   &__key {
-    @include box(2.5rem, 3.5rem);
+    @include box(1.75rem, 4rem);
 
     color: $color;
     cursor: pointer;
 
     background-color: $key;
     border: none;
-    border-radius: 0.25em;
-    font-weight: bold;
-    font-size: 1.2em;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    font-size: 1.2rem;
 
     &:hover {
       background-color: $key-hover;
@@ -744,8 +789,8 @@ a {
 
     &--large {
       @extend .keyboard__key;
-      width: 4rem;
-      font-size: 0.75rem;
+      width: 2.75rem;
+      font-size: 0.8rem;
       font-weight: 500;
 
       &--svg {
@@ -774,16 +819,14 @@ a {
   }
 }
 
-.waiting-message {
-  font-family: "Suwannaphum";
-  mix-blend-mode: overlay;
+@media (min-width: $breakpoint-sm) {
+  body {
+    background-color: blue;
+  }
 }
 
-// @media (max-width: 360px) {
-//   body {
-//     background-color: lightblue;
-//   }
-//   .keyboard {
-//     width: clamp(200px, 50%, 600px);
-//   }
-// }
+@media (min-width: $breakpoint-md) {
+  body {
+    background-color: green;
+  }
+}

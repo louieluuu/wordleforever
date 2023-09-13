@@ -12,7 +12,9 @@ function GameBoard({
   isOutOfGuesses,
   gameMode,
 }) {
-  // * HELPER FUNCTIONS
+  /*
+   * HELPER FUNCTIONS
+   */
 
   // Colors the tiles using the gameBoard Object, whose properties are being updated
   // as the user makes guesses.

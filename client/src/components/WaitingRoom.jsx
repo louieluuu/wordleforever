@@ -96,9 +96,9 @@ function WaitingRoom({ isHost, setIsHost, setGameMode, setRoomId, nickname, stre
   }
 
   return (
-    <div className="outer-container">
-      <div className="inner-container">
-        <div className="inner-container__countdown">
+    <div className="room-outer-container">
+      <div className="room-inner-container">
+        <div className="room-inner-container__countdown">
           <CountdownNumber />
         </div>
 
@@ -128,7 +128,7 @@ function WaitingRoom({ isHost, setIsHost, setGameMode, setRoomId, nickname, stre
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
             <b style={{ fontWeight: 900 }}>2.&nbsp;&nbsp;</b>
 
-            <button className="menu__btn--new-game" onClick={startRoom}>
+            <button className="menu__btn--start-game" onClick={startRoom}>
               START GAME
             </button>
           </div>

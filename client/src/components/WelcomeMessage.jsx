@@ -3,17 +3,7 @@ import { useEffect } from "react"
 
 import { HiOutlinePencilSquare } from "react-icons/hi2"
 
-const bodyStyle = {
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  fontFamily: "Calistoga",
-  fontSize: "3.5rem",
-  lineHeight: "0.80",
-  marginBlock: "2.5rem",
-}
-
-function WelcomeMessage({ nickname, handleNicknameChange }) {
+function WelcomeMessage({ nickname, handleNicknameChange, roomId }) {
   const textBoxRef = useRef(null)
 
   useEffect(() => {
@@ -48,24 +38,22 @@ function WelcomeMessage({ nickname, handleNicknameChange }) {
   }
 
   return (
-    <div>
-      <label style={bodyStyle}>
-        Hey there,
-        <input
-          className="nickname-form"
-          ref={textBoxRef}
-          spellCheck="false"
-          onMouseDown={setCaretInvisible}
-          onClick={setCaretPosition}
-          onChange={handleNicknameChange}
-          value={nickname}
-        />
-        <HiOutlinePencilSquare
-          className="nickname-form__pencil"
-          onClick={focusNicknameForm}
-          style={{ cursor: "pointer" }}
-        />
-      </label>
+    <div className={`welcome-message${roomId === "" ? "" : "--hidden"}`}>
+      Hey there,
+      <input
+        className={`nickname-form${roomId === "" ? "" : "--hidden"}`}
+        ref={textBoxRef}
+        spellCheck="false"
+        onMouseDown={setCaretInvisible}
+        onClick={setCaretPosition}
+        onChange={handleNicknameChange}
+        value={nickname}
+      />
+      <HiOutlinePencilSquare
+        className={`nickname-form__pencil${roomId === "" ? "" : "--hidden"}`}
+        onClick={focusNicknameForm}
+        style={{ cursor: "pointer" }}
+      />
     </div>
   )
 }

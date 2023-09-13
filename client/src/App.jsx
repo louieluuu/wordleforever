@@ -159,7 +159,11 @@ function App() {
 
       {!isInGame && (
         <>
-          <WelcomeMessage nickname={nickname} handleNicknameChange={handleNicknameChange} />
+          <WelcomeMessage
+            nickname={nickname}
+            handleNicknameChange={handleNicknameChange}
+            roomId={roomId}
+          />
           {roomId === "" && (
             <ChallengeForm isChallengeOn={isChallengeOn} setIsChallengeOn={setIsChallengeOn} />
           )}

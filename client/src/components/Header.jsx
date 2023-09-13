@@ -48,7 +48,7 @@ export default function Header() {
         </div>
         <div className="header__right">
           <RiQuestionLine onClick={() => setIsDialogOpen(true)} className="header__svg" />
-          {/* <BiBarChartAlt2 className="header__svg" /> */}
+          <BiBarChartAlt2 className="header__svg" />
           <RiMoonClearFill className="header__svg--flipping" onClick={switchColorTheme} />
           {/* <RiSunLine className="header__svg-flipping" /> */}
         </div>
