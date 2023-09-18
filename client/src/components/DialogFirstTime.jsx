@@ -3,19 +3,19 @@ import { Dialog, Transition } from "@headlessui/react"
 
 import { IoCloseSharp } from "react-icons/io5"
 
-export default function DialogFirstTime({ isFirstTime, setIsFirstTime }) {
+export default function DialogFirstTime({ isFirstVisit, setisFirstVisit }) {
   // TODO: useRef not working for some reason
   const exitButton = useRef(null)
 
   function handleClick() {
-    setIsFirstTime(false)
-    localStorage.setItem("isFirstTime", false)
+    setisFirstVisit(false)
+    localStorage.setItem("isFirstVisit", false)
   }
 
   return (
     <Dialog
       className="dialog__first-time"
-      open={isFirstTime}
+      open={isFirstVisit}
       onClose={handleClick}
       initialFocus={exitButton}>
       <Dialog.Panel>

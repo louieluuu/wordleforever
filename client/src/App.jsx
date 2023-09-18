@@ -16,6 +16,8 @@ import MenuOfflineModes from "./components/MenuOfflineModes"
 import WaitingRoom from "./components/WaitingRoom"
 import Game from "./components/Game"
 
+import Streak from "./components/Streak"
+
 // Framer-Motion
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
@@ -25,8 +27,8 @@ function App() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const [isFirstTime, setIsFirstTime] = useState(
-    JSON.parse(localStorage.getItem("isFirstTime")) === null ? true : false
+  const [isFirstVisit, setisFirstVisit] = useState(
+    JSON.parse(localStorage.getItem("isFirstVisit")) === null ? true : false
   )
 
   // localStorage stores items as strings, so we use JSON.parse to convert it back to its original type.
@@ -153,7 +155,9 @@ function App() {
   // TODO: 2. Look into Context (stores) so props aren't so ugly
   return (
     <>
-      <DialogFirstTime isFirstTime={isFirstTime} setIsFirstTime={setIsFirstTime} />
+      <DialogFirstTime isFirstVisit={isFirstVisit} setisFirstVisit={setisFirstVisit} />
+
+      {/* <Streak streak={1} isChallengeOn={isChallengeOn} gameMode={gameMode} isInGame={isInGame} /> */}
 
       <Header />
 

@@ -41,7 +41,7 @@ function WelcomeMessage({ nickname, handleNicknameChange, roomId }) {
     <div className={`welcome-message${roomId === "" ? "" : "--hidden"}`}>
       Hey there,
       <input
-        className={`nickname-form${roomId === "" ? "" : "--hidden"}`}
+        className={`nickname-form`}
         ref={textBoxRef}
         spellCheck="false"
         onMouseDown={setCaretInvisible}
@@ -50,7 +50,7 @@ function WelcomeMessage({ nickname, handleNicknameChange, roomId }) {
         value={nickname}
       />
       <HiOutlinePencilSquare
-        className={`nickname-form__pencil${roomId === "" ? "" : "--hidden"}`}
+        className={`nickname-form__pencil`}
         onClick={focusNicknameForm}
         style={{ cursor: "pointer" }}
       />

@@ -53,7 +53,7 @@ export default function Game({
   const [isGameOver, setIsGameOver] = useState(false)
   const [isOutOfGuesses, setIsOutOfGuesses] = useState(false)
   const [hasSolved, setHasSolved] = useState(false) // necessary in Private Room to distinguish
-  // between a total isGameOver vs. a single player finishing
+  // between a total isGameOver vs. a single player finishing; used to disable keyboard, for example
 
   // Countdown states
   const [isCountdownRunning, setIsCountdownRunning] = useState(false)
@@ -71,12 +71,18 @@ export default function Game({
    * USE EFFECTS
    */
 
+  // The only reason this useEffect exists is that in a Private Room, the solution shouldn't be shown to any player
+  // until all players are finished. We essentially use the hasSolved state to distinguish between
+  // players who solved it and players who didn't, which is important because we only want to show
+  // the solution to players who didn't solve it.
   useEffect(() => {
-    if (isGameOver && !hasSolved) {
-      setAlertMessage(solution.join(""))
-      setShowAlertModal(true)
+    if (gameMode === "online-private") {
+      if (isGameOver && !hasSolved) {
+        setAlertMessage(solution.join(""))
+        setShowAlertModal(true)
+      }
     }
-  }, [isGameOver, hasSolved])
+  }, [isGameOver, hasSolved, gameMode])
 
   // TODO: Could probably order these socket useEffects in a way that makes more sense.
   // ! SOCKETS
@@ -199,6 +205,7 @@ export default function Game({
     // TODO: The below logic(s) might not belong in this useEffect umbrella.
     // TODO: Check dependencies, or just place it in a separate useEffect if buggy.
     socket.on("loseStreak", () => {
+      setIsGameOver(true)
       updateStreak(0)
     })
 
@@ -485,7 +492,6 @@ export default function Game({
         if (gameMode === "online-public") {
           const newStreak = streak + 1
           updateStreak(newStreak)
-          setHasSolved(true)
           showWinAnimations()
         }
 
@@ -584,7 +590,7 @@ export default function Game({
         {isConfettiRunning && <Confetti numberOfPieces={numberOfPieces} initialVelocityY={-10} />}
 
         <button
-          className={isGameOver ? "menu__btn--new-game" : "menu__btn--new-game--hidden"}
+          className={`menu__btn--new-game${isGameOver ? "" : "--hidden"}`}
           onClick={handleNewGame}>
           NEW GAME
           <IoReturnDownBackSharp />
@@ -613,8 +619,9 @@ export default function Game({
               gameMode={gameMode}
             />
           ) : (
-            <div style={{ display: "flex", overflowY: "auto" }}>
-              <div style={{ position: "sticky", top: "0" }}>
+            <>
+              <div className="my-board">
+                {/* <div style={{ position: "sticky", top: "0" }}> */}
                 {myGameBoard() ? (
                   <GameBoard
                     key={myGameBoard().socketId}
@@ -630,15 +637,10 @@ export default function Game({
                     gameMode={gameMode}
                   />
                 ) : null}
+                {/* </div> */}
               </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  width: "100px",
-                  height: "100px",
-                }}>
+              <div className="other-boards">
                 {otherGameBoards().map((object) => (
                   <GameBoard
                     key={object.socketId}
@@ -655,7 +657,7 @@ export default function Game({
                   />
                 ))}
               </div>
-            </div>
+            </>
           )}
         </div>
       </div>

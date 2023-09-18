@@ -258,10 +258,9 @@ io.on("connection", (socket) => {
       return
     }
 
-    // TODO: Change this "8" back later, just testing for responsive design.
     if (
       io.sockets.adapter.rooms.get(uuid) !== undefined &&
-      io.sockets.adapter.rooms.get(uuid).size === 8
+      io.sockets.adapter.rooms.get(uuid).size === 4
     ) {
       const reason = "This room is full."
       socket.emit("roomError", reason)
