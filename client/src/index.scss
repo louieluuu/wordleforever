@@ -700,8 +700,8 @@ a {
 .other-boards {
   border: 1px solid pink;
 
-  display: grid;
-  grid-template-rows: repeat(minmax(16.6%, 1fr));
+  // display: grid;
+  // grid-template-rows: repeat(minmax(16.6%, 1fr));
 
   overflow: hidden;
 }
@@ -727,7 +727,7 @@ a {
   &__tile {
     color: $color;
 
-    @include box(1.6rem, 3rem);
+    @include box(100%, 100%);
     border: 2px solid $border;
 
     font-size: 1.75rem;
