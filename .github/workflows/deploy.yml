@@ -14,7 +14,7 @@ env:
 # we run build and deploy commands).
 defaults:
   run:
-    working-directory: ./client
+    working-directory: /home/runner/work/wordle-forever/wordle-forever/client
 
 # Github OIDC (OpenID Connect) requires these permissions.
 # Obviates the need for manual AWS credential authentication by
