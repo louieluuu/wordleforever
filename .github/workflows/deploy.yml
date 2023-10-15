@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   build:
-    name: Build
+    name: Deploy
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -45,9 +45,10 @@ jobs:
             - recursive: true
               args: [--frozen-lockfile,]
 
-      - name: Build Project
+      - name: Build project
         run: pnpm run build
 
+        # Debugging
       - name: List contents of the current directory
         run: ls
 
@@ -64,8 +65,8 @@ jobs:
 
       - name: Update Cloudfront cache
         run: |
-          aws cloudfront create-invalidation
-          --distribution-id ${{env.AWS_CLOUDFRONT_ID}}
+          aws cloudfront create-invalidation 
+          --distribution-id ${{env.AWS_CLOUDFRONT_ID}} 
           --paths "/*",
 
 #   deploy:
