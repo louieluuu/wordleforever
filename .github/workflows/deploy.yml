@@ -5,10 +5,12 @@ on:
 
 # Set env variables by accessing secrets set in the Github repo.
 env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+
   AWS_S3_URL: ${{ secrets.AWS_S3_URL }}
   AWS_CLOUDFRONT_ID: ${{ secrets.AWS_CLOUDFRONT_ID }}
-  AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
-  AWS_REGION: ${{ secrets.AWS_REGION }}
 
 # Github OIDC (OpenID Connect) requires these permissions.
 # Obviates the need for manual AWS credential authentication by
@@ -54,25 +56,13 @@ jobs:
     steps:
       # Do I need to checkout again here?
 
-      # Debugging
-      - name: Print Environment Variables
-        run: |
-          echo "AWS_REGION: ${{ secrets.AWS_REGION }}"
-
-      - name: Configure AWS credentials via Github OIDC
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          audience: sts.amazonaws.com
-          role-to-assume: ${{ env.AWS_ROLE_ARN }}
-          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-access-key-id: ${{env.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{env.AWS_SECRET_ACCESS_KEY}}
           aws-region: ${{env.AWS_REGION}}
 
-      # Hello from AWS: WhoAmI
-      - name: Sts GetCallerIdentity
-        run: |
-          aws sts get-caller-identity
-
-      # Actual work
       - name: Update S3 bucket
         run: |
           aws s3 sync . --delete dist/ ${{env.AWS_S3_URL}}
