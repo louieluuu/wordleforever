@@ -48,12 +48,6 @@ jobs:
       - name: Build Project
         run: pnpm run build
 
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
       - name: List contents of the current directory
         run: ls
 
@@ -70,6 +64,32 @@ jobs:
 
       - name: Update Cloudfront cache
         run: |
-          aws cloudfront create-invalidation 
-          --distribution-id ${{env.AWS_CLOUDFRONT_ID}} 
+          aws cloudfront create-invalidation
+          --distribution-id ${{env.AWS_CLOUDFRONT_ID}}
           --paths "/*",
+
+#   deploy:
+#     name: Deploy
+#     runs-on: ubuntu-latest
+#     needs: build
+
+#     steps:
+#       - name: List contents of the current directory
+#         run: ls
+
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v4
+#         with:
+#           aws-access-key-id: ${{env.AWS_ACCESS_KEY_ID}}
+#           aws-secret-access-key: ${{env.AWS_SECRET_ACCESS_KEY}}
+#           aws-region: ${{env.AWS_REGION}}
+
+#       - name: Update S3 bucket
+#         run: |
+#           aws s3 sync --delete dist/ ${{env.AWS_S3_URL}}
+
+#       - name: Update Cloudfront cache
+#         run: |
+#           aws cloudfront create-invalidation
+#           --distribution-id ${{env.AWS_CLOUDFRONT_ID}}
+#           --paths "/*",
