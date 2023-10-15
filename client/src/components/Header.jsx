@@ -36,6 +36,9 @@ export default function Header() {
     window.location.href = "/"
   }
 
+  // TODO: The logo isn't showing up on Firefox for some reason...
+  // TODO: Shows up on Edge and Chrome btw.
+
   return (
     <>
       <header className="header">

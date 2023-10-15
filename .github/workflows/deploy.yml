@@ -39,10 +39,9 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 8
-
-      # pnpm's equivalent of npm ci; clean install, but uses pnpm-lock.yaml instead of package-lock.json
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile,]
 
       - name: Build Project
         run: pnpm run build
