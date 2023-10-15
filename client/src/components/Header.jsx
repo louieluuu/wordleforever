@@ -8,7 +8,7 @@ import { RiSunLine } from "react-icons/ri"
 
 import DialogInfo from "./DialogInfo"
 
-import Logo from "../assets/logoGradient.svg"
+import { ReactComponent as Logo } from "../assets/logoGradient.svg"
 
 export default function Header() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -40,10 +40,12 @@ export default function Header() {
     <>
       <header className="header">
         <div className="header__left" onClick={refreshPage}>
-          <img src={Logo} />
-          <div className="logo__wordmark">
-            <strong className="logo__wordmark--left">Wordle&nbsp;</strong>
-            <strong className="logo__wordmark--right">Forever</strong>
+          <div className="logo">
+            <Logo />
+            <div className="logo__wordmark">
+              <strong className="logo__wordmark--left">Wordle&nbsp;</strong>
+              <strong className="logo__wordmark--right">Forever</strong>
+            </div>
           </div>
         </div>
         <div className="header__right">

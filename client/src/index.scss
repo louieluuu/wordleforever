@@ -355,6 +355,11 @@ a {
     &:active {
       transform: scale(0.97);
     }
+
+    &--logo {
+      width: 2.75rem;
+      height: 2.75rem;
+    }
   }
 
   &__right {
@@ -389,6 +394,9 @@ a {
 
 // Logo
 .logo {
+  display: flex;
+  gap: 0.5rem;
+
   &__wordmark {
     align-self: center;
     font-size: 1.85rem;
