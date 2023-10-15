@@ -54,13 +54,28 @@ jobs:
     steps:
       # Do I need to checkout again here?
 
+      # Debugging
+      - name: Print Environment Variables
+        run: |
+          echo "AWS_S3_URL: $AWS_S3_URL"
+          echo "AWS_CLOUDFRONT_ID: $AWS_CLOUDFRONT_ID"
+          echo "AWS_ROLE_ARN: $AWS_ROLE_ARN"
+          echo "AWS_REGION: $AWS_REGION"
+
       - name: Configure AWS credentials via Github OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
           audience: sts.amazonaws.com.cn
           role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{env.AWS_REGION}}
 
+      # Hello from AWS: WhoAmI
+      - name: Sts GetCallerIdentity
+        run: |
+          aws sts get-caller-identity
+
+      # Actual work
       - name: Update S3 bucket
         run: |
           aws s3 sync . --delete dist/ ${{env.AWS_S3_URL}}
