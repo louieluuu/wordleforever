@@ -3,37 +3,55 @@ on:
   push:
     branches: [main]
 
+# Set env variables by accessing secrets set in the Github repo.
 env:
   AWS_S3_URL: ${{ secrets.AWS_S3_URL }}
   AWS_CLOUDFRONT_ID: ${{ secrets.AWS_CLOUDFRONT_ID }}
   AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
 
-  # Github OIDC (OpenID Connect) requires these permissions.
-  # Obviates the need for manual AWS credential authentication by
-  # creating a JWT (JSON Web Token) instead.
+# Set the working directory to the client folder (which is where
+# we run build and deploy commands).
+defaults:
+  run:
+    working-directory: ./client
+
+# Github OIDC (OpenID Connect) requires these permissions.
+# Obviates the need for manual AWS credential authentication by
+# creating a JWT (JSON Web Token) instead.
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  build:
-    name: Build
+  install:
+    name: Install
     runs-on: ubuntu-latest
 
     steps:
-      # brings source code from Github repo into the Ubuntu container
+      # Brings source code from Github repo into the Ubuntu container.
       - name: Checkout
         uses: actions/checkout@v3
 
       - name: Setup Node
         uses: actions/setup-node@v3
 
-      - name: Install Dependencies
-        run: npm ci
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
+      # pnpm's equivalent of npm ci; clean install, but uses pnpm-lock.yaml instead of package-lock.json
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Build Project
-        run: npm run build
+        run: pnpm run build
 
   deploy:
     name: Deploy
