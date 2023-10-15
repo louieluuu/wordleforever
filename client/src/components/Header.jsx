@@ -8,7 +8,7 @@ import { RiSunLine } from "react-icons/ri"
 
 import DialogInfo from "./DialogInfo"
 
-import { ReactComponent as Logo } from "../assets/logoGradient.svg"
+import { ReactComponent as Logo } from "../assets/logo.svg"
 
 export default function Header() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
