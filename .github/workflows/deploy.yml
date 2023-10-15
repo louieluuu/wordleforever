@@ -65,4 +65,6 @@ jobs:
 
       - name: Update Cloudfront cache
         run: |
-          aws cloudfront create-invalidation --distribution-id ${{env.AWS_CLOUDFRONT_ID}} --paths "/*",
+          aws cloudfront create-invalidation \
+          --distribution-id ${{env.AWS_CLOUDFRONT_ID}} \
+          --paths "/*",
