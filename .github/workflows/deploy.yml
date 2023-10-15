@@ -63,7 +63,7 @@ jobs:
 
       - name: Update S3 bucket
         run: |
-          aws s3 sync --delete dist/ ${{env.AWS_S3_URL}}
+          aws s3 sync --delete ./dist/ ${{env.AWS_S3_URL}}
 
       - name: Update Cloudfront cache
         run: |
