@@ -52,6 +52,14 @@ jobs:
     needs: build
 
     steps:
+      - name: Check AWS CLI Installation
+        run: |
+          if which aws > /dev/null; then
+            echo "AWS CLI is already installed."
+          else
+            echo "AWS CLI is not installed."
+          fi
+
       - name: Configure AWS credentials via Github OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
