@@ -10,12 +10,6 @@ env:
   AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
 
-# Set the working directory to the client folder (which is where
-# we run build and deploy commands).
-defaults:
-  run:
-    working-directory: ./client
-
 # Github OIDC (OpenID Connect) requires these permissions.
 # Obviates the need for manual AWS credential authentication by
 # creating a JWT (JSON Web Token) instead.
@@ -51,11 +45,11 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     needs: install
+    defaults:
+      run:
+        working-directory: ./client
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
       - name: Build Project
         run: pnpm run build
 
