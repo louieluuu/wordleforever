@@ -39,6 +39,8 @@ export default function Header() {
   // TODO: The logo isn't showing up on Firefox for some reason...
   // TODO: Shows up on Edge and Chrome btw.
 
+  // TODO: Why isn't the RiMoonClearFill showing up?
+
   return (
     <>
       <header className="header">

@@ -12,13 +12,6 @@ env:
   AWS_S3_URL: ${{ secrets.AWS_S3_URL }}
   AWS_CLOUDFRONT_ID: ${{ secrets.AWS_CLOUDFRONT_ID }}
 
-# Github OIDC (OpenID Connect) requires these permissions.
-# Obviates the need for manual AWS credential authentication by
-# creating a JWT (JSON Web Token) instead.
-permissions:
-  id-token: write
-  contents: read
-
 jobs:
   build:
     name: Deploy
