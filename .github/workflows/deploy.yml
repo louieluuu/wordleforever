@@ -24,17 +24,14 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: Build
+  install:
+    name: Install
     runs-on: ubuntu-latest
 
     steps:
       # Brings source code from Github repo into the Ubuntu container.
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Print Working Directory
-        run: echo $GITHUB_WORKSPACE/client
 
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -49,6 +46,15 @@ jobs:
       # pnpm's equivalent of npm ci; clean install, but uses pnpm-lock.yaml instead of package-lock.json
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: install
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
       - name: Build Project
         run: pnpm run build
