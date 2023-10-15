@@ -57,10 +57,7 @@ jobs:
       # Debugging
       - name: Print Environment Variables
         run: |
-          echo "AWS_S3_URL: $AWS_S3_URL"
-          echo "AWS_CLOUDFRONT_ID: $AWS_CLOUDFRONT_ID"
-          echo "AWS_ROLE_ARN: $AWS_ROLE_ARN"
-          echo "AWS_REGION: $AWS_REGION"
+          echo "AWS_REGION: ${{ secrets.AWS_REGION }}"
 
       - name: Configure AWS credentials via Github OIDC
         uses: aws-actions/configure-aws-credentials@v4
