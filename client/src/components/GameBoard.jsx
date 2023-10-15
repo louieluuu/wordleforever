@@ -43,10 +43,7 @@ function GameBoard({
   }
 
   return (
-    <div
-      className={`game-board${gameMode === "offline-classic" ? "--large" : ""}${
-        isOutOfGuesses ? "--game-over" : ""
-      }`}>
+    <div className={`game-board${isOutOfGuesses ? "--game-over" : ""}`}>
       <div style={{ fontFamily: "Roboto Slab", display: "flex" }}>
         {nickname}
         {gameMode.includes("online") && (

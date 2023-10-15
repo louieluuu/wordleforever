@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import { socket } from "../socket"
 
+// TODO: Didn't work the first time
+import useMeasure from "react-use-measure"
+
 // Data
 import { WORD_LIST } from "../data/wordList"
 import { VALID_GUESSES } from "../data/validGuesses"
@@ -13,9 +16,6 @@ import Keyboard from "./Keyboard"
 import AlertModal from "./AlertModal"
 import CountdownModal from "./CountdownModal"
 import Confetti from "react-confetti"
-
-// React-icons
-import { IoReturnDownBackSharp } from "react-icons/io5"
 
 export default function Game({
   isHost,
@@ -33,6 +33,7 @@ export default function Game({
    */
 
   const { roomId } = useParams()
+  const [ref, { height: otherBoardsHeight }] = useMeasure()
 
   const [currentRow, setCurrentRow] = useState(0)
   const [currentTile, setCurrentTile] = useState(0)
@@ -589,13 +590,6 @@ export default function Game({
 
         {isConfettiRunning && <Confetti numberOfPieces={numberOfPieces} initialVelocityY={-10} />}
 
-        <button
-          className={`menu__btn--new-game${isGameOver ? "" : "--hidden"}`}
-          onClick={handleNewGame}>
-          NEW GAME
-          <IoReturnDownBackSharp />
-        </button>
-
         <AlertModal
           message={alertMessage}
           showAlertModal={showAlertModal}
@@ -604,8 +598,8 @@ export default function Game({
           isConfettiRunning={isConfettiRunning}
         />
 
-        <div className="boards-container">
-          {gameMode.includes("offline") ? (
+        {gameMode.includes("offline") ? (
+          <div className="game-board--large">
             <GameBoard
               gameBoard={gameBoard}
               nickname={nickname}
@@ -618,48 +612,46 @@ export default function Game({
               isOutOfGuesses={isOutOfGuesses}
               gameMode={gameMode}
             />
-          ) : (
-            <>
-              <div className="my-board">
-                {/* <div style={{ position: "sticky", top: "0" }}> */}
-                {myGameBoard() ? (
-                  <GameBoard
-                    key={myGameBoard().socketId}
-                    gameBoard={gameBoard}
-                    nickname={myGameBoard().nickname}
-                    streak={myGameBoard().streak}
-                    points={myGameBoard().points}
-                    userGuess={userGuess}
-                    currentRow={currentRow}
-                    currentTile={currentTile}
-                    isGameOver={isGameOver}
-                    isOutOfGuesses={isOutOfGuesses}
-                    gameMode={gameMode}
-                  />
-                ) : null}
-                {/* </div> */}
-              </div>
+          </div>
+        ) : (
+          <div className="boards-container">
+            <div className="my-board">
+              {myGameBoard() ? (
+                <GameBoard
+                  key={myGameBoard().socketId}
+                  gameBoard={gameBoard}
+                  nickname={myGameBoard().nickname}
+                  streak={myGameBoard().streak}
+                  points={myGameBoard().points}
+                  userGuess={userGuess}
+                  currentRow={currentRow}
+                  currentTile={currentTile}
+                  isGameOver={isGameOver}
+                  isOutOfGuesses={isOutOfGuesses}
+                  gameMode={gameMode}
+                />
+              ) : null}
+            </div>
 
-              <div className="other-boards">
-                {otherGameBoards().map((object) => (
-                  <GameBoard
-                    key={object.socketId}
-                    gameBoard={object.gameBoard}
-                    nickname={object.nickname}
-                    streak={object.streak}
-                    points={object.points}
-                    userGuess={userGuess}
-                    currentRow={-1}
-                    currentTile={currentTile}
-                    isGameOver={isGameOver}
-                    isOutOfGuesses={isOutOfGuesses}
-                    gameMode={gameMode}
-                  />
-                ))}
-              </div>
-            </>
-          )}
-        </div>
+            <div className="other-boards">
+              {otherGameBoards().map((object) => (
+                <GameBoard
+                  key={object.socketId}
+                  gameBoard={object.gameBoard}
+                  nickname={object.nickname}
+                  streak={object.streak}
+                  points={object.points}
+                  userGuess={userGuess}
+                  currentRow={-1}
+                  currentTile={currentTile}
+                  isGameOver={isGameOver}
+                  isOutOfGuesses={isOutOfGuesses}
+                  gameMode={gameMode}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <Keyboard

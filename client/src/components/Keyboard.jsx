@@ -1,6 +1,8 @@
 import React, { useEffect } from "react"
 
+// React-icons
 import { IoBackspaceOutline } from "react-icons/io5"
+import { IoReturnDownBackSharp } from "react-icons/io5"
 
 export default function Keyboard({
   hints,
@@ -147,7 +149,7 @@ export default function Keyboard({
         ))}
       </div>
 
-      <div className="keyboard__row">
+      <div className="keyboard__row" style={{ position: "relative" }}>
         {secondRow.map((letter) => (
           <button
             className={getKeyboardKeyClassName(letter)}
@@ -156,6 +158,13 @@ export default function Keyboard({
             {letter}
           </button>
         ))}
+
+        <button
+          className={`menu__btn--new-game${isGameOver ? "" : "--hidden"}`}
+          onClick={handleEnter}>
+          NEW GAME
+          <IoReturnDownBackSharp />
+        </button>
       </div>
 
       <div className="keyboard__row">

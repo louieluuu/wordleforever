@@ -7,6 +7,10 @@
   height: $height;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 :root {
   font-family: "Roboto", sans-serif;
 }
@@ -232,9 +236,9 @@ a {
   flex-direction: column;
   align-items: center;
   font-family: "Calistoga";
-  font-size: 2.75rem;
-  line-height: 0.7;
-  margin-block: 1.5rem;
+  font-size: 3.5rem;
+  line-height: 0.8;
+  margin-block: 2rem;
 
   &--hidden {
     @extend .welcome-message;
@@ -250,8 +254,6 @@ a {
   // TODO: Known bug where if user inputs "wwwwwwwwwww" as username,
   // TODO: you can't scroll back. overflow-x: (...) isn't working.
 
-  // TODO: try text-overlow: ellipsis;
-
   display: flex;
   color: $nickname;
   background-color: transparent;
@@ -259,9 +261,9 @@ a {
   border: none;
   outline: none;
   font: inherit;
-  cursor: default;
+  cursor: pointer;
   font-family: Lobster;
-  font-size: 3rem;
+  font-size: 3.5rem;
   text-decoration: underline dotted;
   text-underline-offset: 0.5rem;
 
@@ -269,9 +271,21 @@ a {
     filter: $nickname-hover;
   }
 
+  &--hidden {
+    visibility: hidden;
+  }
+
   &__pencil {
     font-size: 2rem;
     stroke-width: 0.11rem;
+
+    &--hidden {
+      visibility: hidden;
+
+      @media (min-width: $breakpoint-md) {
+        visibility: visible;
+      }
+    }
   }
 }
 
@@ -391,33 +405,22 @@ a {
 }
 
 .room-outer-container {
-  font-size: 1.5rem;
-
-  border: 1px solid $color;
-
   display: flex;
   justify-content: center;
-  margin-top: 1.5rem;
-
-  min-height: 92.5%;
-  max-height: 92.5%;
+  // align-items: center;
+  font-size: 1.3rem;
+  // border: solid 3px black;
 }
 
 .room-inner-container {
-  border: 1px solid greenyellow;
-
   display: flex;
   flex-direction: column;
-  // TODO: space-evenly & between are both viable too, can experiment more later
-  justify-content: space-around;
   align-items: center;
-
-  min-width: 95%;
-  max-width: 95%;
-
-  flex-basis: content; // ? Dunno what this is for
-
+  min-width: 45rem;
   box-shadow: 0.75rem 0.75rem 1rem hsl(0deg 0% 0% / 0.15);
+  flex-basis: content;
+  padding-inline: 5rem;
+  padding-bottom: 1rem;
   border-radius: 2rem;
 
   background-image: $lobby-background;
@@ -437,6 +440,7 @@ a {
 
   &__countdown {
     position: absolute;
+    z-index: 9;
 
     top: -2rem;
     right: -1rem;
@@ -449,30 +453,28 @@ a {
 .waiting-message {
   font-family: "Suwannaphum";
   mix-blend-mode: overlay;
-  font-size: 1.55rem;
+  font-size: 2.5rem;
 }
 
 .socket-container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-block: 1rem;
+  margin-block: 2rem;
   border: 2px dashed hsl(0, 0%, 60%);
-  padding-block: 1.5rem;
-  font-size: 1rem;
+  padding-inline: 5rem;
+  padding-block: 2rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  gap: 0.4rem;
+  font-family: "Roboto";
+  gap: 0.5rem;
 
-  position: relative; // ?
+  position: relative;
 }
 
 .socket-info {
   display: flex;
-
   min-width: 12rem;
-  max-width: 12rem;
-
-  padding-inline: 3rem;
   justify-content: space-between;
   align-items: center;
 
@@ -598,8 +600,11 @@ a {
 
   &__btn--new-game {
     @extend .menu__btn--start-game;
-    position: fixed;
-    bottom: 14vh;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9;
 
     &--hidden {
       @extend .menu__btn--new-game;
@@ -668,42 +673,26 @@ a {
   transition: opacity 1s ease-out;
 }
 
-.countdown-timer {
-  position: fixed;
-  top: 26vh;
-}
-
 .game-container {
-  border: 1px solid lightblue;
-
   display: flex;
   flex-direction: column;
-  flex: 1; // game stretches to fit the screen
-
   align-items: center;
   justify-content: center;
 
-  // width: 100%; // ?
+  // ! Sudep
+  flex: 1;
+  overflow-y: auto;
+}
+
+.countdown-timer {
+  position: fixed;
+  top: 26.1vh;
 }
 
 .boards-container {
-  border: 1px solid greenyellow;
-
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-
-.my-board {
-  border: 1px solid red;
-}
-
-.other-boards {
-  border: 1px solid pink;
-
-  // display: grid;
-  // grid-template-rows: repeat(minmax(16.6%, 1fr));
-
-  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
 }
 
 // Game
@@ -727,7 +716,7 @@ a {
   &__tile {
     color: $color;
 
-    @include box(100%, 100%);
+    @include box(4rem, 4rem);
     border: 2px solid $border;
 
     font-size: 1.75rem;
@@ -775,7 +764,7 @@ a {
   }
 
   &__key {
-    @include box(1.75rem, 4rem);
+    @include box(2.5rem, 4rem);
 
     color: $color;
     cursor: pointer;
@@ -827,7 +816,7 @@ a {
 
     &--large {
       @extend .keyboard__key;
-      width: 2.75rem;
+      width: 4rem;
       font-size: 0.8rem;
       font-weight: 500;
 
@@ -901,16 +890,4 @@ a {
       color: $streak-challenge-10;
     }
   }
-}
-
-@media (min-width: $breakpoint-sm) {
-  // body {
-  //   background-color: blue;
-  // }
-}
-
-@media (min-width: $breakpoint-md) {
-  // body {
-  //   background-color: green;
-  // }
 }

@@ -260,7 +260,7 @@ io.on("connection", (socket) => {
 
     if (
       io.sockets.adapter.rooms.get(uuid) !== undefined &&
-      io.sockets.adapter.rooms.get(uuid).size === 4
+      io.sockets.adapter.rooms.get(uuid).size === MAX_ROOM_SIZE
     ) {
       const reason = "This room is full."
       socket.emit("roomError", reason)

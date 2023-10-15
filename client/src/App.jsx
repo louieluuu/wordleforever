@@ -107,7 +107,7 @@ function App() {
     const newNickname = e.target.value
 
     // Enforce nickname length limit
-    if (newNickname.length > 20) {
+    if (newNickname.length > 10) {
       return
     }
 
@@ -155,7 +155,7 @@ function App() {
   // TODO: 2. Look into Context (stores) so props aren't so ugly
   return (
     <>
-      <DialogFirstTime isFirstVisit={isFirstVisit} setisFirstVisit={setisFirstVisit} />
+      {/* <DialogFirstTime isFirstVisit={isFirstVisit} setisFirstVisit={setisFirstVisit} /> */}
 
       {/* <Streak streak={1} isChallengeOn={isChallengeOn} gameMode={gameMode} isInGame={isInGame} /> */}
 

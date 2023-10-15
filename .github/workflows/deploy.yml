@@ -1,0 +1,59 @@
+name: Build and Deploy to S3 and Cloudfront
+on:
+  push:
+    branches: [main]
+
+env:
+  AWS_S3_URL: ${{ secrets.AWS_S3_URL }}
+  AWS_CLOUDFRONT_ID: ${{ secrets.AWS_CLOUDFRONT_ID }}
+  AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+
+  # Github OIDC (OpenID Connect) requires these permissions.
+  # Obviates the need for manual AWS credential authentication by
+  # creating a JWT (JSON Web Token) instead.
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      # brings source code from Github repo into the Ubuntu container
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+
+      - name: Install Dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Build Project
+        run: npm run build
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Configure AWS credentials via Github OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          audience: sts.amazonaws.com.cn
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{env.AWS_REGION}}
+
+      - name: Update S3 bucket
+        run: |
+          aws s3 sync . --delete dist/ ${{env.AWS_S3_URL}}
+
+      - name: Update Cloudfront cache
+        run: |
+          aws cloudfront create-invalidation 
+          --distribution-id ${{env.AWS_CLOUDFRONT_ID}} 
+          --paths "/*",
