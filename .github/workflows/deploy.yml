@@ -50,14 +50,17 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    needs: install
-
-    steps:
       - name: Build Project
         run: pnpm run build
+
+  #   build:
+  #     name: Build
+  #     runs-on: ubuntu-latest
+  #     needs: install
+
+  #     steps:
+  #       - name: Build Project
+  #         run: pnpm run build
 
   deploy:
     name: Deploy
