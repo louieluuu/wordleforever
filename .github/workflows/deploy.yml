@@ -42,7 +42,7 @@ jobs:
       - name: Create env file containing EC2 URL
         run: |
           touch .env
-          echo VITE_EC2_URL=${{ secrets.AWS_EC2_URL }}" >> .env
+          echo VITE_EC2_URL=${{ secrets.AWS_EC2_URL }} >> .env
 
       - name: Build project
         run: pnpm run build
