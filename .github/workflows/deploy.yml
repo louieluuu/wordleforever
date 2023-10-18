@@ -2,7 +2,6 @@ name: Build and Deploy to S3 and Cloudfront
 on:
   push:
     branches: [main]
-    paths-ignore: [README.md, .gitignore, deploy.yml]
 
 # Set env variables by accessing secrets set in the Github repo.
 env:
@@ -35,16 +34,12 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 8
-          run_install: |
-            - recursive: true
-              args: [--frozen-lockfile]
+
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Build project
         run: pnpm run build
-
-        # Debugging
-      - name: List contents of the current directory
-        run: ls
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
