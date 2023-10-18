@@ -37,7 +37,7 @@ jobs:
           version: 8
           run_install: |
             - recursive: true
-              args: [--frozen-lockfile,]
+              args: [--frozen-lockfile]
 
       - name: Build project
         run: pnpm run build
