@@ -1,14 +1,26 @@
 import React, { useState } from 'react'
+
 import { IoMenu } from 'react-icons/io5'
 import { FaRegCircleQuestion } from 'react-icons/fa6'
 import { MdOutlineLeaderboard } from 'react-icons/md'
 import { FaGear } from 'react-icons/fa6'
 
+import InfoModal from './InfoModal'
+
 function NavBar() {
+  const [showInfoModal, setShowInfoModal] = useState(false)
+
+  const openInfoModal = () => {
+    console.log("test");
+    setShowInfoModal(true);
+  };
+
+  const closeInfoModal = () => {
+    setShowInfoModal(false);
+  };
+
   return (
     <>
-    {/* NavBar */}
-
     <div className="navbar">
         <div className="navbar__top">
             <div className="title">
@@ -16,10 +28,11 @@ function NavBar() {
             </div>
         </div>
         <div className="navbar__bottom">
-          < FaRegCircleQuestion />
+          < FaRegCircleQuestion className="navbar__info" onClick={openInfoModal} />
           < MdOutlineLeaderboard />
           < FaGear />
         </div>
+        <InfoModal show={showInfoModal} handleClose={closeInfoModal} />
       </div>
     </>
   )
