@@ -1,0 +1,68 @@
+$main_color: hsl(0, 0%, 85%);
+$nav-width: 3rem;
+
+.navbar {
+    background-color: lightgrey;
+    border-right: 1px solid black;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: $nav-width;
+
+    &__top {
+        flex: 1;
+        align-items: center;
+    }
+
+    &__bottom {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: flex-end;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+}
+
+.game-board {
+    margin-left: $nav-width;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    &__row {
+        @extend .game-board;
+        flex-direction: row;
+    }
+
+    &__tile {
+        border: 2px solid $main_color;
+        padding: 1rem;
+        font-weight: bold;
+    }
+}
+
+.keyboard {
+    margin-left: $nav-width;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    &__row {
+        @extend .keyboard;
+        flex-direction: row;
+    }
+
+    &__tile {
+        padding: 1rem;
+        font-weight: bold;
+        background-color: $main_color;
+        border-radius: 0.2rem;
+    }
+
+}
