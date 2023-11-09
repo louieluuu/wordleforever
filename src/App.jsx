@@ -17,7 +17,9 @@ function App() {
     if (e.match(/^[a-zA-Z]$/)) {
       handleLetter(e)
     } else if (e === 'Backspace') {
-      handleBackspace(e)
+      handleBackspace()
+    } else if (e === 'Enter') {
+      handleEnter();
     }
   }
 
@@ -52,7 +54,7 @@ function App() {
     }
   }
 
-  function handleBackspace(e) {
+  function handleBackspace() {
     const updatedBoard = [...board];
       if (activeCellIndex > 0) {
         updatedBoard[activeRowIndex][activeCellIndex - 1] = '';
