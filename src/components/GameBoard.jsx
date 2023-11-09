@@ -8,7 +8,7 @@ function GameBoard({ board }) {
         {board.map((row, rowIndex) => (
             <div key={rowIndex} className="game-board__row">
                 {row.map((cell, cellIndex) => (
-                    <div key={cellIndex} className="game-board__tile">
+                    <div key={cellIndex} className="game-board__cell">
                         {cell}
                     </div>
                 ))}

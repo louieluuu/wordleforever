@@ -25,20 +25,20 @@ function Keyboard({ handleKeyPress }) {
     <div className="keyboard">
         <div className="keyboard__row">
             {topRow.map((letter, index) => (
-                <div key={index} className="keyboard__tile"> {letter} </div>
+                <div key={index} className="keyboard__cell"> {letter} </div>
             ))}
         </div>
         <div className="keyboard__row">
             {midRow.map((letter, index) => (
-                <div key={index} className="keyboard__tile"> {letter} </div>
+                <div key={index} className="keyboard__cell"> {letter} </div>
             ))}
         </div>
         <div className="keyboard__row">
-            < AiOutlineEnter className="keyboard__tile" />
+            < AiOutlineEnter className="keyboard__cell" />
             {botRow.map((letter, index) => (
-                <div key={index} className="keyboard__tile"> {letter} </div>
+                <div key={index} className="keyboard__cell"> {letter} </div>
             ))}
-            < MdOutlineBackspace className="keyboard__tile" />
+            < MdOutlineBackspace className="keyboard__cell" />
         </div>
     </div>
   )
