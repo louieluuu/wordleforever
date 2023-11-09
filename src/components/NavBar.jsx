@@ -11,13 +11,12 @@ function NavBar() {
   const [showInfoModal, setShowInfoModal] = useState(false)
 
   const openInfoModal = () => {
-    console.log("test");
-    setShowInfoModal(true);
-  };
+    setShowInfoModal(true)
+  }
 
   const closeInfoModal = () => {
-    setShowInfoModal(false);
-  };
+    setShowInfoModal(false)
+  }
 
   return (
     <>

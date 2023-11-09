@@ -4,8 +4,8 @@ import { IoCloseSharp } from "react-icons/io5"
 
 function InfoModal({ show, handleClose }) {
     const handleInfoModalClose = () => {
-      handleClose();
-    };
+      handleClose()
+    }
   
     return (
       <div className={show ? "modal display" : "modal hide"}>
@@ -34,7 +34,7 @@ function InfoModal({ show, handleClose }) {
           
         </div>
       </div>
-    );
+    )
   }
   
-  export default InfoModal;
+  export default InfoModal

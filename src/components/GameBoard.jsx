@@ -1,43 +1,19 @@
-import React from 'react'
+import React, { useState } from 'react'
+import Keyboard from './Keyboard'
 
-function GameBoard() {
+function GameBoard({ board }) {
+
   return (
     <div className="game-board">
-        <div className="game-board__row">
-            <div className="game-board__tile"> G </div>
-            <div className="game-board__tile"> U </div>
-            <div className="game-board__tile"> E </div>
-            <div className="game-board__tile"> S </div>
-            <div className="game-board__tile"> S </div>
-        </div>
-        <div className="game-board__row">
-            <div className="game-board__tile"> G </div>
-            <div className="game-board__tile"> U </div>
-            <div className="game-board__tile"> E </div>
-            <div className="game-board__tile"> S </div>
-            <div className="game-board__tile"> S </div>
-        </div>
-        <div className="game-board__row">
-            <div className="game-board__tile"> G </div>
-            <div className="game-board__tile"> U </div>
-            <div className="game-board__tile"> E </div>
-            <div className="game-board__tile"> S </div>
-            <div className="game-board__tile"> S </div>
-        </div>
-        <div className="game-board__row">
-            <div className="game-board__tile"> G </div>
-            <div className="game-board__tile"> U </div>
-            <div className="game-board__tile"> E </div>
-            <div className="game-board__tile"> S </div>
-            <div className="game-board__tile"> S </div>
-        </div>
-        <div className="game-board__row">
-            <div className="game-board__tile"> G </div>
-            <div className="game-board__tile"> U </div>
-            <div className="game-board__tile"> E </div>
-            <div className="game-board__tile"> S </div>
-            <div className="game-board__tile"> S </div>
-        </div>
+        {board.map((row, rowIndex) => (
+            <div key={rowIndex} className="game-board__row">
+                {row.map((cell, cellIndex) => (
+                    <div key={cellIndex} className="game-board__tile">
+                        {cell}
+                    </div>
+                ))}
+            </div>
+        ))}
     </div>
   )
 }
