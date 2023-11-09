@@ -3,6 +3,8 @@ import { IoMenu } from 'react-icons/io5'
 import { FaRegCircleQuestion } from 'react-icons/fa6'
 import { MdOutlineLeaderboard } from 'react-icons/md'
 import { FaGear } from 'react-icons/fa6'
+import { MdOutlineBackspace } from 'react-icons/md'
+import { AiOutlineEnter } from 'react-icons/ai'
 
 // Components
 import NavBar from "./components/NavBar"
@@ -82,7 +84,7 @@ function App() {
             <div className="keyboard__tile"> L </div>
           </div>
           <div className="keyboard__row">
-          <div className="keyboard__tile"> Enter </div>
+          < AiOutlineEnter className="keyboard__tile" />
             <div className="keyboard__tile"> Z </div>
             <div className="keyboard__tile"> X </div>
             <div className="keyboard__tile"> C </div>
@@ -90,7 +92,7 @@ function App() {
             <div className="keyboard__tile"> B </div>
             <div className="keyboard__tile"> N </div>
             <div className="keyboard__tile"> M </div>
-            <div className="keyboard__tile"> Backspace </div>
+            < MdOutlineBackspace className="keyboard__tile" />
           </div>
         </div>
       </div>
