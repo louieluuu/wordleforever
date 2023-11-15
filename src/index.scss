@@ -48,6 +48,7 @@ $game-board-height: calc(#{$cell-size + $cell-padding} * #{$num-rows});
 }
 
 .game-container {
+    margin-left: $nav-width;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -57,10 +58,8 @@ $game-board-height: calc(#{$cell-size + $cell-padding} * #{$num-rows});
 }
 
 .game-board {
-    margin-left: $nav-width;
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 0.25rem;
 
     &__row {
@@ -83,7 +82,6 @@ $game-board-height: calc(#{$cell-size + $cell-padding} * #{$num-rows});
 }
 
 .keyboard {
-    margin-left: $nav-width;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -151,6 +149,7 @@ $game-board-height: calc(#{$cell-size + $cell-padding} * #{$num-rows});
 
 .alert-modal {
     display: flex;
+    align-items: center;
     top: 10px; /* Adjust the top position as needed */
     padding-inline: 1rem;
     padding-block: 0.6rem;
