@@ -1,6 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 $main_color: hsl(0, 0%, 85%);
 $nav-width: 3rem;
+$cell-size: 2rem;
+$cell-padding: 0.5rem;
+$num-rows: 6;
+$game-board-height: calc(#{$cell-size + $cell-padding} * #{$num-rows});
 
 .navbar {
     background-color: lightgrey;
@@ -69,12 +73,12 @@ $nav-width: 3rem;
         justify-content: center;
         align-items: center;
 
-        width: calc(2vw);
-        height: calc(2vw);
-        font-size: calc(2vw);
+        width: $cell-size;
+        height: $cell-size;
+        font-size: $cell-size;
         font-weight: bold;
         border: 2px solid $main_color;
-        padding: 1rem;
+        padding: $cell-padding;
     }
 }
 
@@ -142,5 +146,22 @@ $nav-width: 3rem;
         right: 0;
         padding: 1rem;
         cursor: pointer;
+    }
+}
+
+.alert-modal {
+    display: flex;
+    top: 10px; /* Adjust the top position as needed */
+    padding-inline: 1rem;
+    padding-block: 0.6rem;
+    background-color: hsl(0, 0%, 10%, 90%);
+
+    color: white;
+
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+
+    &.hide {
+        opacity: 0;
     }
 }

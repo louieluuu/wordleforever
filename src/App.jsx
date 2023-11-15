@@ -1,14 +1,26 @@
 import { useState } from "react"
 
+// Data
+import VALID_WORDS from "./data/validWords"
+import WORDLE_ANSWERS from "./data/wordleAnswers"
+
 // Components
 import NavBar from "./components/NavBar"
 import GameBoard from "./components/GameBoard"
 import Keyboard from "./components/Keyboard"
+import AlertModal from "./components/AlertModal"
 
 function App() {
+
+  // Gameplay related states
   const [board, setBoard] = useState(Array(6).fill(Array(5).fill('')))
   const [activeRowIndex, setActiveRowIndex] = useState(0)
   const [activeCellIndex, setActiveCellIndex] = useState(0)
+  const [submittedGuesses, setSubmittedGuesses] = useState([])
+
+  // Alert states
+  const [alertMessage, setAlertMessage] = useState(".")
+  const [showAlertModal, setShowAlertModal] = useState(false)
 
 
   // Helper functions
@@ -57,15 +69,11 @@ function App() {
 
   function handleBackspace() {
     const updatedBoard = [...board];
-      if (activeCellIndex === updatedBoard[activeRowIndex].length - 1 && updatedBoard[activeRowIndex][activeCellIndex] != '') {
-        console.log("numba 1")
-        console.log(activeCellIndex)
+      if (activeCellIndex === updatedBoard[activeRowIndex].length - 1 && updatedBoard[activeRowIndex][activeCellIndex] !== '') {
         updatedBoard[activeRowIndex][activeCellIndex] = '';
         setBoard(updatedBoard);
       }
       else if (activeCellIndex > 0) {
-        console.log("numba 2")
-        console.log(activeCellIndex)
         updatedBoard[activeRowIndex][activeCellIndex - 1] = '';
         setActiveCellIndex(activeCellIndex - 1);
         setBoard(updatedBoard);
@@ -73,21 +81,49 @@ function App() {
   }
 
   function handleEnter() {
-    if (activeRowIndex < board.length && activeCellIndex === board[activeRowIndex].length - 1) {
-      setActiveRowIndex(activeRowIndex + 1)
-      setActiveCellIndex(0)
+    const enteredWord = board[activeRowIndex]
+      .filter(letter => letter !== '')  // Exclude blank spaces
+      .join('')
+      .toLowerCase()
+
+    console.log(enteredWord)
+
+    if (enteredWord.length === 5) {
+      if (VALID_WORDS.includes(enteredWord)) {
+        setSubmittedGuesses([...submittedGuesses, activeRowIndex]);
+        setActiveRowIndex(activeRowIndex + 1);
+        setActiveCellIndex(0);
+      } else {
+        // Invalid word, handle accordingly (display message, prevent submission, etc.)
+        console.log('Invalid word. Please enter a valid 5-letter word.');
+        setAlertMessage("Not in word list")
+        setShowAlertModal(true)
+      }
+    } else {
+      // Incomplete guess, handle accordingly
+      console.log('Incomplete guess. Please enter a 5-letter word.');
+      setAlertMessage("Not enough letters")
+      setShowAlertModal(true)
     }
-  }
+  }  
+  
+  
+  
+  
+  
 
   return (
     <>
     <NavBar />
       <div className="game-container">
+        <AlertModal
+          showAlertModal={showAlertModal}
+          setShowAlertModal={setShowAlertModal}
+          message={alertMessage}
+        />
         < GameBoard board={board} />
         < Keyboard handleKeyPress={handleKeyPress} />
       </div>
-      
-      
     </>
   )
 }
