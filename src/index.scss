@@ -122,7 +122,6 @@ $game-board-height: calc(#{$cell-size + $cell-padding} * #{$num-rows});
   
 
 .info {
-    //Styling for the modal box
     position: absolute;
     top: 50%;
     left: 50%;
@@ -130,7 +129,6 @@ $game-board-height: calc(#{$cell-size + $cell-padding} * #{$num-rows});
     background-color: #fff;
     padding: 20px;
 
-    //Default styling for text within
     font-family: 'Montserrat';
     font-size: 0.9rem;
     padding-bottom: 1rem;
@@ -150,7 +148,7 @@ $game-board-height: calc(#{$cell-size + $cell-padding} * #{$num-rows});
 .alert-modal {
     display: flex;
     align-items: center;
-    top: 10px; /* Adjust the top position as needed */
+    top: 10px;
     padding-inline: 1rem;
     padding-block: 0.6rem;
     background-color: hsl(0, 0%, 10%, 90%);

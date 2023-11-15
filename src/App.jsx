@@ -94,14 +94,10 @@ function App() {
         setActiveRowIndex(activeRowIndex + 1);
         setActiveCellIndex(0);
       } else {
-        // Invalid word, handle accordingly (display message, prevent submission, etc.)
-        console.log('Invalid word. Please enter a valid 5-letter word.');
         setAlertMessage("Not in word list")
         setShowAlertModal(true)
       }
     } else {
-      // Incomplete guess, handle accordingly
-      console.log('Incomplete guess. Please enter a 5-letter word.');
       setAlertMessage("Not enough letters")
       setShowAlertModal(true)
     }
