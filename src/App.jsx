@@ -16,6 +16,7 @@ function App() {
   // Gameflow states
   const [isGameActive, setIsGameActive] = useState(false)
   const [isGameWon, setIsGameWon] = useState(false)
+  const [isOutOfGuesses, setIsOutOfGuesses] = useState(false)
 
   // Gameplay states
   const [board, setBoard] = useState(Array(6).fill(Array(5).fill('')))
@@ -36,6 +37,7 @@ function App() {
   function resetStates() {
     setIsGameActive(true)
     setIsGameWon(false)
+    setIsOutOfGuesses(false)
     setBoard(Array(6).fill(Array(5).fill('')))
     setActiveRowIndex(0)
     setActiveCellIndex(0)
@@ -100,13 +102,16 @@ function App() {
 
     if (enteredWord.length === 5) {
       if (enteredWord === solution) {
-        console.log("game is won")
         setIsGameWon(true)
       }
       else if (VALID_WORDS.includes(enteredWord)) {
         setSubmittedGuesses([...submittedGuesses, activeRowIndex]);
-        setActiveRowIndex(activeRowIndex + 1);
+        const nextRow = activeRowIndex + 1
+        setActiveRowIndex(nextRow);
         setActiveCellIndex(0);
+        if (nextRow >= board.length) {
+          setIsOutOfGuesses(true)
+        }
       } else {
         setAlertMessage("Not in word list")
         setShowAlertModal(true)
@@ -142,6 +147,12 @@ function App() {
       {isGameWon ? (
         <div className="win-message">
           <h2>Congratulations! You guessed the word!</h2>
+          <button onClick={resetStates}>Play Again</button>
+        </div>
+      ) : null}
+      {isOutOfGuesses ? (
+        <div className="loss-message">
+          <h2>Truly unfortunate. Maybe next time bud.</h2>
           <button onClick={resetStates}>Play Again</button>
         </div>
       ) : null}
