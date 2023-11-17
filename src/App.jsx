@@ -19,7 +19,7 @@ function App() {
   const [isOutOfGuesses, setIsOutOfGuesses] = useState(false)
 
   // Gameplay states
-  const [board, setBoard] = useState(Array(6).fill(Array(5).fill('')))
+  const [board, setBoard] = useState(new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "" })))
   const [activeRowIndex, setActiveRowIndex] = useState(0)
   const [activeCellIndex, setActiveCellIndex] = useState(0)
   const [submittedGuesses, setSubmittedGuesses] = useState([])
@@ -38,7 +38,7 @@ function App() {
     setIsGameActive(true)
     setIsGameWon(false)
     setIsOutOfGuesses(false)
-    setBoard(Array(6).fill(Array(5).fill('')))
+    setBoard(new Array(6).fill().map((_) => new Array(5).fill({ letter: "", color: "" })))
     setActiveRowIndex(0)
     setActiveCellIndex(0)
     setSubmittedGuesses([])
@@ -52,7 +52,7 @@ function App() {
     } else if (e === 'Backspace') {
       handleBackspace()
     } else if (e === 'Enter') {
-      handleEnter();
+      handleEnter()
     }
   }
 
@@ -61,76 +61,123 @@ function App() {
       const updatedBoard = board.map((row, rowIndex) => {
         if (rowIndex === activeRowIndex) {
           return row.map((cell, cellIndex) => {
-            if (cellIndex === activeCellIndex && board[activeRowIndex][activeCellIndex] === '') {
-              return e.toUpperCase();
+            if (cellIndex === activeCellIndex && board[activeRowIndex][activeCellIndex].letter === '') {
+              return { ...cell, letter: e.toUpperCase() }
             } else {
-              return cell;
+              return cell
             }
           });
         } else {
-          return row;
+          return row
         }
       });
 
       if (activeCellIndex === updatedBoard[activeRowIndex].length) {
-        return;
+        return
       }
       
-      setBoard(updatedBoard);
-      setActiveCellIndex(activeCellIndex + 1);
+      setBoard(updatedBoard)
+      setActiveCellIndex(activeCellIndex + 1)
     }
   }
 
   function handleBackspace() {
-    const updatedBoard = [...board];
-      if (activeCellIndex === updatedBoard[activeRowIndex].length - 1 && updatedBoard[activeRowIndex][activeCellIndex] !== '') {
-        updatedBoard[activeRowIndex][activeCellIndex] = '';
-        setBoard(updatedBoard);
-      }
-      else if (activeCellIndex > 0) {
-        updatedBoard[activeRowIndex][activeCellIndex - 1] = '';
-        setActiveCellIndex(activeCellIndex - 1);
-        setBoard(updatedBoard);
-      }
+    const updatedBoard = [...board]
+    if (activeCellIndex === updatedBoard[activeRowIndex].length - 1 && updatedBoard[activeRowIndex][activeCellIndex].letter !== '') {
+      updatedBoard[activeRowIndex][activeCellIndex] = { ...updatedBoard[activeRowIndex][activeCellIndex], letter: '' }
+      setBoard(updatedBoard)
+    }
+    else if (activeCellIndex > 0) {
+      updatedBoard[activeRowIndex][activeCellIndex - 1] = { ...updatedBoard[activeRowIndex][activeCellIndex - 1], letter: '' }
+      setActiveCellIndex(activeCellIndex - 1)
+      setBoard(updatedBoard)
+    }
   }
 
   function handleEnter() {
     const enteredWord = board[activeRowIndex]
-      .filter(letter => letter !== '')
+      .filter(cell => cell.letter !== '')
+      .map(cell => cell.letter)
       .join('')
-      .toLowerCase()
+      .toUpperCase()
 
     if (enteredWord.length === 5) {
+
       if (enteredWord === solution) {
         setIsGameWon(true)
       }
-      else if (VALID_WORDS.includes(enteredWord)) {
-        setSubmittedGuesses([...submittedGuesses, activeRowIndex]);
+      else if (VALID_WORDS.includes(enteredWord.toLowerCase())) {
+        setSubmittedGuesses([...submittedGuesses, activeRowIndex])
         const nextRow = activeRowIndex + 1
-        setActiveRowIndex(nextRow);
-        setActiveCellIndex(0);
+        setActiveRowIndex(nextRow)
+        setActiveCellIndex(0)
         if (nextRow >= board.length) {
           setIsOutOfGuesses(true)
         }
       } else {
         setAlertMessage("Not in word list")
         setShowAlertModal(true)
+        return
       }
     } else {
       setAlertMessage("Not enough letters")
       setShowAlertModal(true)
+      return
     }
+
+    const colorizedGuess = assignColors(enteredWord, solution)
+    const updatedBoard = board.map(row => [...row])
+    updatedBoard[activeRowIndex] = colorizedGuess
+    setBoard(updatedBoard)
   }
 
   function generateSolution() {
-    const newSolution = WORDLE_ANSWERS[Math.floor(Math.random() * WORDLE_ANSWERS.length)]
+    const newSolution = WORDLE_ANSWERS[Math.floor(Math.random() * WORDLE_ANSWERS.length)].toUpperCase()
     setSolution(newSolution)
-    console.log(newSolution)
+    console.log("solution is", newSolution)
   }
 
   function startNewGame() {
     setIsGameActive(true)
     resetStates()
+  }
+
+  
+
+  function assignColors(guess, solution) {
+    let colorizedGuess = new Array(5).fill({ letter: "", color: "" })
+    let solutionArray = [...solution]
+
+    // Assign greens (correct letter in correct spot)
+    for (let i = 0; i < guess.length; i++) {
+      const letter = guess[i]
+      if (letter === solution[i]) {
+        colorizedGuess[i] = { letter: letter, color: "green" }
+        solutionArray[i] = null
+      }
+    }
+
+    // Assign yellows (correct letter in wrong spot)
+    for (let i = 0; i < guess.length; i++) {
+      const letter = guess[i]
+      // Don't overwrite already assigned greens
+      if (colorizedGuess[i].color !== "green") {
+        let includedIndex = solutionArray.indexOf(letter)
+        if (includedIndex !== -1) {
+          colorizedGuess[i] = { letter: letter, color: "yellow" }
+          solutionArray[includedIndex] = null
+        }
+      }
+    }
+
+    // Assign greys (letter not in solution)
+    colorizedGuess.forEach((cell, cellIndex) => {
+      if (!cell.color) {
+        colorizedGuess[cellIndex] = { letter: guess[cellIndex], color: "grey" }
+      }
+    })
+
+    return colorizedGuess
   }
 
   return (

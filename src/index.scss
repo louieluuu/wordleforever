@@ -85,6 +85,27 @@ $game-board-height: calc(#{$cell-size + $cell-padding} * #{$num-rows});
         font-weight: bold;
         border: 2px solid $main_color;
         padding: $cell-padding;
+
+        &--green {
+            @extend .game-board__cell;
+            color: white;
+            border-color: hsl(115, 29, 52);
+            background-color: hsl(115, 29, 52);
+        }
+
+        &--yellow {
+            @extend .game-board__cell;
+            color: white;
+            border-color: hsl(49, 51, 57);
+            background-color: hsl(49, 51, 57);
+        }
+
+        &--grey {
+            @extend .game-board__cell;
+            color: white;
+            border-color: hsl(240, 2, 48);
+            background-color: hsl(240, 2, 48);
+        }
     }
 }
 
