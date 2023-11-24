@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 
 import { MdOutlineBackspace } from 'react-icons/md'
 import { AiOutlineEnter } from 'react-icons/ai'
@@ -7,7 +7,12 @@ function Keyboard({ handleKeyPress, hints }) {
 
     useEffect(() => {
         function onKeyPress(e) {
-            handleKeyPress(e.key)
+            if (e.key === 'Enter' && document.activeElement.tagName === 'BUTTON') {
+                handleKeyPress(e.key)
+                e.preventDefault()
+            } else {
+                handleKeyPress(e.key)
+            }
         }
 
         window.addEventListener('keydown', onKeyPress)
@@ -39,20 +44,39 @@ function Keyboard({ handleKeyPress, hints }) {
     <div className="keyboard">
         <div className="keyboard__row">
             {topRow.map((letter, index) => (
-                <div key={index} className={getCellClassName(letter)}> {letter} </div>
+                <button
+                    key={index}
+                    className={getCellClassName(letter)}
+                    onClick={() => handleKeyPress(letter)}>
+                    {letter}
+                </button>
             ))}
         </div>
         <div className="keyboard__row">
             {midRow.map((letter, index) => (
-                <div key={index} className={getCellClassName(letter)}> {letter} </div>
+                <button
+                    key={index}
+                    className={getCellClassName(letter)}
+                    onClick={() => handleKeyPress(letter)}>
+                    {letter}
+                </button>
             ))}
         </div>
         <div className="keyboard__row">
-            < AiOutlineEnter className="keyboard__cell" />
+            < AiOutlineEnter
+                className="keyboard__cell"
+                onClick={() => handleKeyPress("Enter")}/>
             {botRow.map((letter, index) => (
-                <div key={index} className={getCellClassName(letter)}> {letter} </div>
+                <button
+                    key={index}
+                    className={getCellClassName(letter)}
+                    onClick={() => handleKeyPress(letter)}>
+                    {letter}
+                </button>
             ))}
-            < MdOutlineBackspace className="keyboard__cell" />
+            < MdOutlineBackspace
+                className="keyboard__cell"
+                onClick={() => handleKeyPress("Backspace")}/>
         </div>
     </div>
   )

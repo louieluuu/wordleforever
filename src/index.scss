@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 $main_color: hsl(0, 0%, 85%);
+$color_hover: hsl(0, 0%, 70%);
 $nav-width: 3rem;
 $cell-size: 2rem;
 $cell-padding: 0.5rem;
@@ -124,7 +125,15 @@ $game-board-height: calc(#{$cell-size + $cell-padding} * #{$num-rows});
         padding: 1rem;
         font-weight: bold;
         background-color: $main_color;
+        border: none;
         border-radius: 0.2rem;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $color-hover;
+            transition-duration: 0.1s;
+            transition-timing-function: ease-in;
+        }
 
         &--green {
             @extend .keyboard__cell;
