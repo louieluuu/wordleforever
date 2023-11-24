@@ -7,6 +7,7 @@ function Keyboard({ handleKeyPress, hints }) {
 
     useEffect(() => {
         function onKeyPress(e) {
+            /* Weird bug / unintended functionality when clicking the letters on the keyboard, which then selects the element, so when pressing 'Enter' it also clicks that previously selected element leading to duplicate letters*/
             if (e.key === 'Enter' && document.activeElement.tagName === 'BUTTON') {
                 handleKeyPress(e.key)
                 e.preventDefault()
