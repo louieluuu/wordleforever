@@ -23,6 +23,7 @@ function App() {
   const [activeRowIndex, setActiveRowIndex] = useState(0)
   const [activeCellIndex, setActiveCellIndex] = useState(0)
   const [submittedGuesses, setSubmittedGuesses] = useState([])
+  const [hints, setHints] = useState({ green: new Set(), yellow: new Set(), grey: new Set() })
 
   // Alert states
   const [alertMessage, setAlertMessage] = useState(".")
@@ -42,6 +43,7 @@ function App() {
     setActiveRowIndex(0)
     setActiveCellIndex(0)
     setSubmittedGuesses([])
+    setHints({ green: new Set(), yellow: new Set(), grey: new Set() })
     setShowAlertModal(false)
     generateSolution()
   }
@@ -129,6 +131,8 @@ function App() {
     const updatedBoard = board.map(row => [...row])
     updatedBoard[activeRowIndex] = colorizedGuess
     setBoard(updatedBoard)
+
+    updateHints(colorizedGuess)
   }
 
   function generateSolution() {
@@ -180,6 +184,30 @@ function App() {
     return colorizedGuess
   }
 
+  // Used to color the keyboard tiles
+  function updateHints(colorizedGuess) {
+    const updatedGreenHints = new Set(hints.green)
+    const updatedYellowHints = new Set(hints.yellow)
+    const updatedGreyHints = new Set(hints.grey)
+
+    colorizedGuess.forEach((cell) => {
+      if (cell.color === "green") {
+        updatedGreenHints.add(cell.letter)
+      }
+      //
+      else if (cell.color === "yellow") {
+        updatedYellowHints.add(cell.letter)
+      }
+      //
+      else if (cell.color === "grey") {
+        updatedGreyHints.add(cell.letter)
+      }
+    })
+
+    const newHints = { green: updatedGreenHints, yellow: updatedYellowHints, grey: updatedGreyHints }
+    setHints(newHints)
+  }
+
   return (
     <>
     <NavBar />
@@ -204,7 +232,10 @@ function App() {
         </div>
       ) : null}
       <GameBoard board={board}/>
-      <Keyboard handleKeyPress={handleKeyPress}/>
+      <Keyboard
+        handleKeyPress={handleKeyPress}
+        hints={hints}
+        />
     </div>
     ) : (
       <Menu startNewGame={startNewGame}/>
