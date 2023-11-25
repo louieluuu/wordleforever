@@ -5,8 +5,8 @@ $color_hover: hsl(0, 0%, 70%);
 $cell-size: 2rem;
 $cell-padding: 0.5rem;
 
-$card-width: 7rem;
-$card-height: 12rem;
+$card-width: 6rem;
+$card-height: 10rem;
 $card-margin: 1rem;
 
 // Overwrite default values, allows navbar to be flush with page
@@ -14,24 +14,30 @@ body {
     margin: 0;
 }
 
+:root {
+    font-family: "Roboto", sans-serif;
+}
+
 .navbar {
-    background-color: lightgrey;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid $main_color;
     font-weight: bold;
     display: flex;
     align-items: center;
     padding: 0.5rem;
+    font-size: 1.5rem;
 
     &__left {
         display: flex;
         flex-direction: row;
         flex: 1;
+        padding-inline-start: 1rem;
     }
 
     &__right {
         display: flex;
         justify-content: flex-end;
         gap: 2rem;
+        padding-inline-end: 1rem;
     }
 
     &__info {
@@ -219,11 +225,14 @@ body {
     }
 }
 
+.menu h3 {
+    margin-bottom: 0;
+}
+
 .mode-selector {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    margin-bottom: 20px;
 }
 
 .card-container {
@@ -231,30 +240,37 @@ body {
     flex-direction: row;
 }
 
-.game-mode {
+.card {
     width: $card-width;
     height: $card-height;
     border: 2px solid $main_color;
+    border-radius: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: $card-margin;
+    cursor: pointer;
+
+    &:hover {
+        transform: scale(1.05);
+        transition: transform 0.3s ease;
+    }
 
     &.selected {
         background-color: lightblue;
     }
 }
 
-.connection-mode {
-    width: $card-width;
-    height: $card-height;
-    border: 2px solid $main_color;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: $card-margin;
+.play-button {
+    margin-top: 2rem;
+    color: hsl(0, 0%, 10%, 70%);
+    width: 3rem;
+    height: 3rem;
+    cursor: pointer;
 
-    &.selected {
-        background-color: lightblue;
+    &:hover {
+        color: hsl(0, 0%, 10%, 90%);
+        transform: scale(1.2);
+        transition: transform 0.3s ease;
     }
 }

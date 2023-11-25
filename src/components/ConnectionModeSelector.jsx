@@ -1,7 +1,7 @@
 import React from 'react'
 
 function ConnectionModeSelector({ connectionMode, setConnectionMode }) {
-    const connectionModes = ['Offline Mode', 'Online Mode']
+    const connectionModes = ['Offline', 'Online']
 
     function handleSelect(mode) {
         setConnectionMode(mode)
@@ -12,7 +12,7 @@ function ConnectionModeSelector({ connectionMode, setConnectionMode }) {
         {connectionModes.map((mode, index) => (
             <div
             key={index}
-            className={`connection-mode${mode === connectionMode ? " selected" : ""}`}
+            className={`card${mode === connectionMode ? " selected" : ""}`}
             onClick={() => handleSelect(mode)}
             >
             {mode}

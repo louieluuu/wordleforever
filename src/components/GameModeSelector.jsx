@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 function GameModeSelector({ gameMode, setGameMode }) {
-    const gameModes = ['Easy Mode', 'Hard Mode', 'Challenge Mode']
+    const gameModes = ['Easy', 'Hard', 'Challenge']
 
     function handleSelect(mode) {
         setGameMode(mode)
@@ -12,7 +12,7 @@ function GameModeSelector({ gameMode, setGameMode }) {
         {gameModes.map((mode, index) => (
             <div
             key={index}
-            className={`game-mode${mode === gameMode ? " selected" : ""}`}
+            className={`card${mode === gameMode ? " selected" : ""}`}
             onClick={() => handleSelect(mode)}
             >
             {mode}
