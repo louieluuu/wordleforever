@@ -13,6 +13,10 @@ import AlertModal from "./components/AlertModal"
 
 function App() {
 
+  // Game mode states
+  const [gameMode, setGameMode] = useState(null)
+  const [connectionMode, setConnectionMode] = useState(null)
+
   // Gameflow states
   const [isGameActive, setIsGameActive] = useState(false)
   const [isGameWon, setIsGameWon] = useState(false)
@@ -142,8 +146,9 @@ function App() {
   }
 
   function startNewGame() {
-    setIsGameActive(true)
     resetStates()
+    setIsGameActive(true)
+    console.log("Starting game with", gameMode, connectionMode)
   }
 
   
@@ -208,6 +213,11 @@ function App() {
     setHints(newHints)
   }
 
+  // Used for challenge mode, generates a random starting word that always has exactly one letter in the correct spot
+  function generateRandomFirstGuess(solution) {
+
+  }
+
   return (
     <>
     <NavBar />
@@ -238,7 +248,13 @@ function App() {
         />
     </div>
     ) : (
-      <Menu startNewGame={startNewGame}/>
+      <Menu
+      startNewGame={startNewGame}
+      gameMode={gameMode}
+      setGameMode={setGameMode}
+      connectionMode={connectionMode}
+      setConnectionMode={setConnectionMode}
+      />
     )}
       
     </>

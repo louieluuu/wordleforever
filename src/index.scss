@@ -1,37 +1,37 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 $main_color: hsl(0, 0%, 85%);
 $color_hover: hsl(0, 0%, 70%);
-$nav-width: 3rem;
+
 $cell-size: 2rem;
 $cell-padding: 0.5rem;
-$num-rows: 6;
-$game-board-height: calc(#{$cell-size + $cell-padding} * #{$num-rows});
+
+$card-width: 7rem;
+$card-height: 12rem;
+$card-margin: 1rem;
+
+// Overwrite default values, allows navbar to be flush with page
+body {
+    margin: 0;
+}
 
 .navbar {
     background-color: lightgrey;
-    border-right: 1px solid black;
+    border-bottom: 1px solid black;
     font-weight: bold;
     display: flex;
-    flex-direction: column;
+    align-items: center;
     padding: 0.5rem;
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: $nav-width;
 
-    &__top {
+    &__left {
+        display: flex;
+        flex-direction: row;
         flex: 1;
-        align-items: center;
     }
 
-    &__bottom {
+    &__right {
         display: flex;
-        align-items: center;
-        flex-direction: column;
         justify-content: flex-end;
         gap: 2rem;
-        margin-bottom: 2rem;
     }
 
     &__info {
@@ -49,14 +49,12 @@ $game-board-height: calc(#{$cell-size + $cell-padding} * #{$num-rows});
 }
 
 .menu {
-    margin-left: $nav-width;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
 .game-container {
-    margin-left: $nav-width;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -218,5 +216,45 @@ $game-board-height: calc(#{$cell-size + $cell-padding} * #{$num-rows});
 
     &.hide {
         opacity: 0;
+    }
+}
+
+.mode-selector {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.card-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.game-mode {
+    width: $card-width;
+    height: $card-height;
+    border: 2px solid $main_color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: $card-margin;
+
+    &.selected {
+        background-color: lightblue;
+    }
+}
+
+.connection-mode {
+    width: $card-width;
+    height: $card-height;
+    border: 2px solid $main_color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: $card-margin;
+
+    &.selected {
+        background-color: lightblue;
     }
 }

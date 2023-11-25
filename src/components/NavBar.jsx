@@ -21,12 +21,12 @@ function NavBar() {
   return (
     <>
     <div className="navbar">
-        <div className="navbar__top">
+        <div className="navbar__left">
             <div className="title">
                 Wordle Battle
             </div>
         </div>
-        <div className="navbar__bottom">
+        <div className="navbar__right">
           < FaRegCircleQuestion className="navbar__info" onClick={openInfoModal} />
           < MdOutlineLeaderboard />
           < FaGear />
