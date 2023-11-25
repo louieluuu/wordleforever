@@ -12,7 +12,7 @@ function ConnectionModeSelector({ connectionMode, setConnectionMode }) {
         {connectionModes.map((mode, index) => (
             <div
             key={index}
-            className={`card${mode === connectionMode ? " selected" : ""}`}
+            className={`card__${mode.toLowerCase()}${mode === connectionMode ? " selected" : ""}`}
             onClick={() => handleSelect(mode)}
             >
             {mode}

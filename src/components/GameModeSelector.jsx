@@ -12,7 +12,7 @@ function GameModeSelector({ gameMode, setGameMode }) {
         {gameModes.map((mode, index) => (
             <div
             key={index}
-            className={`card${mode === gameMode ? " selected" : ""}`}
+            className={`card__${mode.toLowerCase()}${mode === gameMode ? " selected" : ""}`}
             onClick={() => handleSelect(mode)}
             >
             {mode}

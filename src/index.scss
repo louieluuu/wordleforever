@@ -1,11 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bubblegum+Sans:wght@400;700&display=swap');
+
 $main_color: hsl(0, 0%, 85%);
 $color_hover: hsl(0, 0%, 70%);
 
 $cell-size: 2rem;
 $cell-padding: 0.5rem;
 
-$card-width: 6rem;
+$card-width: 7rem;
 $card-height: 10rem;
 $card-margin: 1rem;
 
@@ -243,12 +245,14 @@ body {
 .card {
     width: $card-width;
     height: $card-height;
-    border: 2px solid $main_color;
+    border: 3px solid $main_color;
     border-radius: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: $card-margin;
+    font-family: 'Bubblegum Sans', cursive;
+    font-size: x-large;
     cursor: pointer;
 
     &:hover {
@@ -257,7 +261,103 @@ body {
     }
 
     &.selected {
-        background-color: lightblue;
+        transform: scale(1.1);
+        border: 3px solid hsl(0, 0%, 50%);
+    }
+
+    &__easy {
+        @extend .card;
+        position: relative;
+        overflow: hidden;
+        
+        &:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-image: url('./assets/easy.png');
+            background-size: 100% 100%;
+            opacity: 0.5;
+            filter: blur(1.75px);
+            z-index: -1;
+        }
+    }
+    &__hard {
+        @extend .card;
+        position: relative;
+        overflow: hidden;
+        
+        &:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-image: url('./assets/hard.png');
+            background-size: 100% 100%;
+            opacity: 0.5;
+            filter: blur(1.75px);
+            z-index: -1;
+        }
+    }
+    &__challenge {
+        @extend .card;
+        position: relative;
+        overflow: hidden;
+        
+        &:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-image: url('./assets/challenge.png');
+            background-size: 100% 100%;
+            opacity: 0.5;
+            filter: blur(1.75px);
+            z-index: -1;
+        }
+    }
+    &__offline {
+        @extend .card;
+        position: relative;
+        overflow: hidden;
+        
+        &:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-image: url('./assets/offline.png');
+            background-size: 100% 100%;
+            opacity: 0.3;
+            filter: blur(1.75px);
+            z-index: -1;
+        }
+    }
+    &__online {
+        @extend .card;
+        position: relative;
+        overflow: hidden;
+        
+        &:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-image: url('./assets/online.jpg');
+            background-size: 100% 100%;
+            filter: blur(1.75px);
+            z-index: -1;
+        }
     }
 }
 
