@@ -1,22 +1,21 @@
-import React, { useState } from 'react'
+import React from 'react'
+import Card from './Card'
 
 function GameModeSelector({ gameMode, setGameMode }) {
     const gameModes = ['Easy', 'Hard', 'Challenge']
 
-    function handleSelect(mode) {
-        setGameMode(mode)
-    }
-
   return (
     <div className="card-container">
         {gameModes.map((mode, index) => (
-            <div
+            <Card
             key={index}
-            className={`card__${mode.toLowerCase()}${mode === gameMode ? " selected" : ""}`}
-            onClick={() => handleSelect(mode)}
+            mode={mode}
+            setMode={setGameMode}
+            selected={mode === gameMode}
+            description="Test"
             >
             {mode}
-            </div>
+            </Card>
         ))}
     </div>
   )

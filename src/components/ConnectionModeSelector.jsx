@@ -1,22 +1,21 @@
 import React from 'react'
+import Card from './Card'
 
 function ConnectionModeSelector({ connectionMode, setConnectionMode }) {
     const connectionModes = ['Offline', 'Online']
 
-    function handleSelect(mode) {
-        setConnectionMode(mode)
-    }
-
   return (
     <div className="card-container">
         {connectionModes.map((mode, index) => (
-            <div
+            <Card
             key={index}
-            className={`card__${mode.toLowerCase()}${mode === connectionMode ? " selected" : ""}`}
-            onClick={() => handleSelect(mode)}
+            mode={mode}
+            setMode={setConnectionMode}
+            selected={mode === connectionMode}
+            description="Test"
             >
             {mode}
-            </div>
+            </Card>
         ))}
     </div>
   )

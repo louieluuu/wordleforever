@@ -245,7 +245,7 @@ body {
 .card {
     width: $card-width;
     height: $card-height;
-    border: 3px solid $main_color;
+    border: 3px solid hsl(0, 0%, 50%);
     border-radius: 1rem;
     display: flex;
     align-items: center;
@@ -253,113 +253,130 @@ body {
     margin: $card-margin;
     font-family: 'Bubblegum Sans', cursive;
     font-size: x-large;
+    position: relative;
     cursor: pointer;
 
-    &:hover {
-        transform: scale(1.05);
-        transition: transform 0.3s ease;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease;
+
+    .info-button {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        cursor: pointer;
+        color: hsl(0, 0%, 20%);
+
+        &:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s ease;
+        }
     }
 
-    &.selected {
-        transform: scale(1.1);
-        border: 3px solid hsl(0, 0%, 50%);
+    &__front {
+        &__easy,
+        &__hard,
+        &__challenge,
+        &__offline,
+        &__online {
+            @extend .card;
+            position: relative;
+            overflow: hidden;
+
+            &:hover {
+                transform: scale(1.05);
+                transition: transform 0.3s ease;
+            }
+        
+            &.selected {
+                transform: scale(1.1);
+                border: 3px solid hsl(0, 0%, 20%);
+            }
+            
+            &:before {
+                content: "";
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: -1;
+            }
+        }
+
+        &__easy {
+            &:before {
+                background-image: url('./assets/easy.png');
+                background-size: 100% 100%;
+                opacity: 0.5;
+                filter: blur(1.75px);
+            }
+        }
+        &__hard {
+            &:before {
+                background-image: url('./assets/hard.png');
+                background-size: 100% 100%;
+                opacity: 0.5;
+                filter: blur(1.75px);
+            }
+        }
+        &__challenge {
+            &:before {
+                background-image: url('./assets/challenge.png');
+                background-size: 100% 100%;
+                opacity: 0.5;
+                filter: blur(1.75px);
+            }
+        }
+        &__offline {
+            &:before {
+                background-image: url('./assets/offline.png');
+                background-size: 100% 100%;
+                opacity: 0.3;
+                filter: blur(1.75px);
+            }
+        }
+        &__online {
+            &:before {
+                background-image: url('./assets/online.jpg');
+                background-size: 100% 100%;
+                filter: blur(1.75px);
+            }
+        }
     }
 
-    &__easy {
+    &__back {
         @extend .card;
-        position: relative;
-        overflow: hidden;
-        
-        &:before {
-            content: "";
+        transform: rotateY(180deg);
+
+        &:hover {
+            transform: rotateY(180deg) scale(1.05);
+            transition: transform 0.3s ease;
+        }
+    
+        &.selected {
+            transform: rotateY(180deg) scale(1.1);
+            border: 3px solid hsl(0, 0%, 20%);
+        }
+
+        .info-button {
             position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-image: url('./assets/easy.png');
-            background-size: 100% 100%;
-            opacity: 0.5;
-            filter: blur(1.75px);
-            z-index: -1;
+            top: 5px;
+            left: 5px;
+            cursor: pointer;
+            color: hsl(0, 0%, 20%);
+            transform: rotateY(180deg);
+    
+            &:hover {
+                transform: rotateY(180deg) scale(1.05);
+                transition: transform 0.3s ease;
+            }
         }
     }
-    &__hard {
-        @extend .card;
-        position: relative;
-        overflow: hidden;
-        
-        &:before {
-            content: "";
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-image: url('./assets/hard.png');
-            background-size: 100% 100%;
-            opacity: 0.5;
-            filter: blur(1.75px);
-            z-index: -1;
-        }
-    }
-    &__challenge {
-        @extend .card;
-        position: relative;
-        overflow: hidden;
-        
-        &:before {
-            content: "";
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-image: url('./assets/challenge.png');
-            background-size: 100% 100%;
-            opacity: 0.5;
-            filter: blur(1.75px);
-            z-index: -1;
-        }
-    }
-    &__offline {
-        @extend .card;
-        position: relative;
-        overflow: hidden;
-        
-        &:before {
-            content: "";
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-image: url('./assets/offline.png');
-            background-size: 100% 100%;
-            opacity: 0.3;
-            filter: blur(1.75px);
-            z-index: -1;
-        }
-    }
-    &__online {
-        @extend .card;
-        position: relative;
-        overflow: hidden;
-        
-        &:before {
-            content: "";
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-image: url('./assets/online.jpg');
-            background-size: 100% 100%;
-            filter: blur(1.75px);
-            z-index: -1;
-        }
-    }
+    
 }
+
+
 
 .play-button {
     margin-top: 2rem;
