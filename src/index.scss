@@ -18,6 +18,7 @@ body {
 
 :root {
     font-family: "Roboto", sans-serif;
+    user-select: none;
 }
 
 .navbar {
@@ -371,6 +372,13 @@ body {
                 transform: rotateY(180deg) scale(1.05);
                 transition: transform 0.3s ease;
             }
+        }
+
+        p {
+            transform: rotateY(180deg);
+            font-size: small;
+            padding: 1rem;
+            z-index: -1;
         }
     }
     

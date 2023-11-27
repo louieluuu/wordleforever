@@ -11,6 +11,12 @@ function Menu({
     connectionMode,
     setConnectionMode,
 }) {
+
+    // Used for styling text within cards
+    function paragraphWrapper(description) {
+    return <p>{description}</p>
+    }
+
   return (
     <div className="menu">
         <h1>Welcome to Wordle Battle!</h1>
@@ -18,11 +24,13 @@ function Menu({
         <GameModeSelector
             gameMode={gameMode}
             setGameMode={setGameMode}
+            paragraphWrapper={paragraphWrapper}
         />
         <h3>Mode</h3>
         <ConnectionModeSelector
             connectionMode={connectionMode}
             setConnectionMode={setConnectionMode}
+            paragraphWrapper={paragraphWrapper}
         />
         < FaCirclePlay
         className="play-button"

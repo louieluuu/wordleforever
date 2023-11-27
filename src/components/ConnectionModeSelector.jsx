@@ -1,8 +1,17 @@
 import React from 'react'
 import Card from './Card'
 
-function ConnectionModeSelector({ connectionMode, setConnectionMode }) {
+function ConnectionModeSelector({
+    connectionMode,
+    setConnectionMode,
+    paragraphWrapper,
+}) {
     const connectionModes = ['Offline', 'Online']
+
+    const gameModeDescriptions = {
+        'Offline': "Single player mode",
+        'Online': "Queue into a Wordle Battle with other users",
+    }
 
   return (
     <div className="card-container">
@@ -12,7 +21,7 @@ function ConnectionModeSelector({ connectionMode, setConnectionMode }) {
             mode={mode}
             setMode={setConnectionMode}
             selected={mode === connectionMode}
-            description="Test"
+            description={paragraphWrapper(gameModeDescriptions[mode])}
             >
             {mode}
             </Card>
