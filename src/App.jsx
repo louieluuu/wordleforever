@@ -116,10 +116,19 @@ function App() {
       setAlertMessage("Not in word list")
       setShowAlertModal(true)
       return
-    } else if ((gameMode === 'Hard' || gameMode === 'Challenge') && !usesPreviousHints(enteredWord)) {
-      setAlertMessage("Doesn't include all previous hints")
-      setShowAlertModal(true)
-      return
+    } else if ((gameMode === 'Hard' || gameMode === 'Challenge') && !usesPreviousHints(enteredWord).isValid) {
+        if (usesPreviousHints(enteredWord).failCondition.color === "green") {
+          const index = usesPreviousHints(enteredWord).failCondition.index
+          const letter = usesPreviousHints(enteredWord).failCondition.letter
+          setAlertMessage(`The ${index}${getSuffix(index)} letter must be ${letter}`)
+          setShowAlertModal(true)
+          return
+        } else {
+          const letter = usesPreviousHints(enteredWord).failCondition.letter
+          setAlertMessage(`${letter} must be included in the solution`)
+          setShowAlertModal(true)
+          return
+        }
     }
 
     // Valid input
@@ -219,9 +228,14 @@ function App() {
 
   // Used for hard / challenge mode
   function usesPreviousHints(currentGuess) {
+    let result = {
+      isValid: true,
+      failCondition: null,
+    }
+
     // Base case
     if (activeRowIndex === 0) {
-      return true
+      return result
     }
 
     let currentGuessArray = [...currentGuess]
@@ -230,7 +244,13 @@ function App() {
     for (let i = 0; i < previousGuessCopy.length; i++) {
       if (previousGuessCopy[i].color === "green") {
         if (currentGuessArray[i] !== previousGuessCopy[i].letter) {
-          return false
+          result.isValid = false
+          result.failCondition = {
+            color: "green",
+            letter: previousGuessCopy[i].letter,
+            index: i+1,
+          }
+          return result
         }
         currentGuessArray[i] = ""
       }
@@ -240,13 +260,18 @@ function App() {
       if (previousGuessCopy[i].color === "yellow") {
         let includedIndex = currentGuessArray.indexOf(previousGuessCopy[i].letter)
         if (includedIndex === -1) {
-          return false
+          result.isValid = false
+          result.failCondition = {
+            color: "yellow",
+            letter: previousGuessCopy[i].letter,
+          }
+          return result
         }
         currentGuessArray[includedIndex] = null
       }
     }
 
-    return true
+    return result
   }
 
   // Used for challenge mode, generates a random starting word that always has exactly one letter in the correct spot
@@ -263,6 +288,20 @@ function App() {
       if (countGreenLetters === 1) {
         return randomFirstGuess
       }
+    }
+  }
+
+  // Could be generalized but no need for this game since the solution will always be 5 letters
+  function getSuffix(number) {
+    switch (number) {
+      case 1:
+        return "st"
+      case 2:
+        return "nd"
+      case 3:
+        return "rd"
+      default:
+        return "th"
     }
   }
 
