@@ -107,31 +107,35 @@ function App() {
       .join('')
       .toUpperCase()
 
-    if (enteredWord.length === 5) {
-
-      if (enteredWord === solution) {
-        setIsGameWon(true)
-      }
-      else if (VALID_WORDS.includes(enteredWord.toLowerCase())) {
-        setSubmittedGuesses([...submittedGuesses, activeRowIndex])
-        const nextRow = activeRowIndex + 1
-        setActiveRowIndex(nextRow)
-        setActiveCellIndex(0)
-        if (nextRow >= board.length) {
-          setIsOutOfGuesses(true)
-        }
-      } else {
-        setAlertMessage("Not in word list")
-        setShowAlertModal(true)
-        return
-      }
-    } else {
+    // Invalid input checks
+    if (enteredWord.length < 5) {
       setAlertMessage("Not enough letters")
+      setShowAlertModal(true)
+      return
+    } else if (!VALID_WORDS.includes(enteredWord.toLowerCase())) {
+      setAlertMessage("Not in word list")
+      setShowAlertModal(true)
+      return
+    } else if ((gameMode === 'Hard' || gameMode === 'Challenge') && !usesPreviousHints(enteredWord)) {
+      setAlertMessage("Doesn't include all previous hints")
       setShowAlertModal(true)
       return
     }
 
-    const colorizedGuess = assignColors(enteredWord, solution)
+    // Valid input
+    if (enteredWord === solution) {
+      setIsGameWon(true)
+    } else {
+      setSubmittedGuesses([...submittedGuesses, activeRowIndex])
+      const nextRow = activeRowIndex + 1
+      setActiveRowIndex(nextRow)
+      setActiveCellIndex(0)
+      if (nextRow >= board.length) {
+        setIsOutOfGuesses(true)
+      }
+    }
+
+    const colorizedGuess = assignColors(enteredWord)
     const updatedBoard = board.map(row => [...row])
     updatedBoard[activeRowIndex] = colorizedGuess
     setBoard(updatedBoard)
@@ -153,7 +157,7 @@ function App() {
 
   
 
-  function assignColors(guess, solution) {
+  function assignColors(guess) {
     let colorizedGuess = new Array(5).fill({ letter: "", color: "" })
     let solutionArray = [...solution]
 
@@ -189,7 +193,7 @@ function App() {
     return colorizedGuess
   }
 
-  // Used to color the keyboard tiles
+  // Used to color the keyboard tiles + for hard / challenge mode
   function updateHints(colorizedGuess) {
     const updatedGreenHints = new Set(hints.green)
     const updatedYellowHints = new Set(hints.yellow)
@@ -213,9 +217,53 @@ function App() {
     setHints(newHints)
   }
 
+  // Used for hard / challenge mode
+  function usesPreviousHints(currentGuess) {
+    // Base case
+    if (activeRowIndex === 0) {
+      return true
+    }
+
+    let currentGuessArray = [...currentGuess]
+    let previousGuessCopy = [...board[activeRowIndex - 1]]
+    
+    for (let i = 0; i < previousGuessCopy.length; i++) {
+      if (previousGuessCopy[i].color === "green") {
+        if (currentGuessArray[i] !== previousGuessCopy[i].letter) {
+          return false
+        }
+        currentGuessArray[i] = ""
+      }
+    }
+
+    for (let i = 0; i < previousGuessCopy.length; i++) {
+      if (previousGuessCopy[i].color === "yellow") {
+        let includedIndex = currentGuessArray.indexOf(previousGuessCopy[i].letter)
+        if (includedIndex === -1) {
+          return false
+        }
+        currentGuessArray[includedIndex] = null
+      }
+    }
+
+    return true
+  }
+
   // Used for challenge mode, generates a random starting word that always has exactly one letter in the correct spot
   function generateRandomFirstGuess(solution) {
-
+    let randomFirstGuess
+    while (true) {
+      randomFirstGuess = VALID_WORDS[Math.floor(Math.random() * VALID_WORDS.length)].toUpperCase()
+      let numGreenLetters = 0
+      for (let i = 0; i < randomFirstGuess.length; i++) {
+        if (randomFirstGuess[i] === solution[i]) {
+          countGreenLetters += 1
+        }
+      }
+      if (countGreenLetters === 1) {
+        return randomFirstGuess
+      }
+    }
   }
 
   return (
