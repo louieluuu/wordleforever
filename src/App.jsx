@@ -10,6 +10,7 @@ import Menu from "./components/Menu"
 import GameBoard from "./components/GameBoard"
 import Keyboard from "./components/Keyboard"
 import AlertModal from "./components/AlertModal"
+import LobbyInfo from "./components/LobbyInfo"
 
 function App() {
 
@@ -36,6 +37,14 @@ function App() {
   // Solution
   const [solution, setSolution] = useState("")
 
+  // useEffect hooks
+
+  // Ensures that all states are properly updated before generating the random solution
+  useEffect(() => {
+    if (gameMode === 'Challenge') {
+      generateRandomFirstGuess(solution)
+    }
+  }, [solution])
 
   // Helper functions
 
@@ -165,13 +174,6 @@ function App() {
     updateHints(colorizedGuess)
   }
 
-  // Ensures that all states are properly updated before generating the random solution
-  useEffect(() => {
-    if (gameMode === 'Challenge') {
-      generateRandomFirstGuess(solution)
-    }
-  }, [solution])
-
   function startNewGame() {
     resetStates()
 
@@ -180,8 +182,6 @@ function App() {
 
     console.log("Starting game with", gameMode, connectionMode)
   }
-
-  
 
   function assignColors(guess) {
     let colorizedGuess = new Array(5).fill({ letter: "", color: "" })
@@ -329,29 +329,33 @@ function App() {
 
     {isGameActive ? (
       <div className="game-container">
-      <AlertModal
-        showAlertModal={showAlertModal}
-        setShowAlertModal={setShowAlertModal}
-        message={alertMessage}
-      />
-      {isGameWon ? (
-        <div className="win-message">
-          <h2>Congratulations! You guessed the word!</h2>
-          <button onClick={startNewGame}>Play Again</button>
-        </div>
-      ) : null}
-      {isOutOfGuesses ? (
-        <div className="loss-message">
-          <h2>Truly unfortunate. Maybe next time bud.</h2>
-          <button onClick={startNewGame}>Play Again</button>
-        </div>
-      ) : null}
-      <GameBoard board={board}/>
-      <Keyboard
-        handleKeyPress={handleKeyPress}
-        hints={hints}
+        <LobbyInfo
+          gameMode={gameMode}
+          connectionMode={connectionMode}
         />
-    </div>
+        <AlertModal
+          showAlertModal={showAlertModal}
+          setShowAlertModal={setShowAlertModal}
+          message={alertMessage}
+        />
+        {isGameWon ? (
+          <div className="win-message">
+            <h2>Congratulations! You guessed the word!</h2>
+            <button onClick={startNewGame}>Play Again</button>
+          </div>
+        ) : null}
+        {isOutOfGuesses ? (
+          <div className="loss-message">
+            <h2>Truly unfortunate. Maybe next time bud.</h2>
+            <button onClick={startNewGame}>Play Again</button>
+          </div>
+        ) : null}
+        <GameBoard board={board}/>
+        <Keyboard
+          handleKeyPress={handleKeyPress}
+          hints={hints}
+          />
+      </div>
     ) : (
       <Menu
       startNewGame={startNewGame}
