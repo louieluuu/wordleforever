@@ -106,11 +106,9 @@ function App() {
       .join('')
       .toUpperCase()
 
-    // Invalid input checks
     if (validateUserGuess(enteredWord)) {
       setUserGuess(enteredWord, solution)
     }
-
   }
 
   function generateSolution() {

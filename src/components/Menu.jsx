@@ -12,10 +12,28 @@ function Menu({
     setConnectionMode,
 }) {
 
+    function handleClick() {
+        if (gameMode && connectionMode) {
+            startNewGame()
+        }
+    }
+
     // Used for styling text within cards
     function paragraphWrapper(description) {
     return <p>{description}</p>
     }
+
+    let playButtonTitle = ''
+
+    if (!gameMode && !connectionMode) {
+        playButtonTitle = 'Please select a difficulty and game mode'
+    } else if (!gameMode) {
+        playButtonTitle = 'Please select a difficulty'
+    } else if (!connectionMode) {
+        playButtonTitle = 'Please select a game mode'
+    }
+
+    const playButtonClassName = `play-button ${playButtonTitle ? 'disabled' : 'clickable'}`
 
   return (
     <div className="menu">
@@ -33,8 +51,9 @@ function Menu({
             paragraphWrapper={paragraphWrapper}
         />
         < FaCirclePlay
-        className="play-button"
-        onClick={startNewGame}/>
+        className={playButtonClassName}
+        onClick={handleClick}
+        title={playButtonTitle}/>
     </div>
   )
 }

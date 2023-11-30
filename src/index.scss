@@ -393,9 +393,11 @@ body {
     height: 3rem;
     cursor: pointer;
 
-    &:hover {
-        color: hsl(0, 0%, 10%, 90%);
-        transform: scale(1.2);
-        transition: transform 0.3s ease;
+    &.clickable {
+        &:hover {
+            color: hsl(0, 0%, 10%, 90%);
+            transform: scale(1.2);
+            transition: transform 0.3s ease;
+        }
     }
 }
