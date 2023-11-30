@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 // Data
 import VALID_WORDS from "./data/validWords"
@@ -49,7 +49,6 @@ function App() {
     setSubmittedGuesses([])
     setHints({ green: new Set(), yellow: new Set(), grey: new Set() })
     setShowAlertModal(false)
-    generateSolution()
   }
 
   function handleKeyPress(e) {
@@ -108,31 +107,47 @@ function App() {
       .toUpperCase()
 
     // Invalid input checks
-    if (enteredWord.length < 5) {
+    if (validateUserGuess(enteredWord)) {
+      setUserGuess(enteredWord, solution)
+    }
+
+  }
+
+  function generateSolution() {
+    const newSolution = WORDLE_ANSWERS[Math.floor(Math.random() * WORDLE_ANSWERS.length)].toUpperCase()
+    console.log("solution is", newSolution)
+    return newSolution
+  }
+
+  function validateUserGuess(guess) {
+    if (guess.length < 5) {
       setAlertMessage("Not enough letters")
       setShowAlertModal(true)
-      return
-    } else if (!VALID_WORDS.includes(enteredWord.toLowerCase())) {
+      return false
+    } else if (!VALID_WORDS.includes(guess.toLowerCase())) {
       setAlertMessage("Not in word list")
       setShowAlertModal(true)
-      return
-    } else if ((gameMode === 'Hard' || gameMode === 'Challenge') && !usesPreviousHints(enteredWord).isValid) {
-        if (usesPreviousHints(enteredWord).failCondition.color === "green") {
-          const index = usesPreviousHints(enteredWord).failCondition.index
-          const letter = usesPreviousHints(enteredWord).failCondition.letter
+      return false
+    } else if ((gameMode === 'Hard' || gameMode === 'Challenge') && !usesPreviousHints(guess).isValid) {
+        if (usesPreviousHints(guess).failCondition.color === "green") {
+          const index = usesPreviousHints(guess).failCondition.index
+          const letter = usesPreviousHints(guess).failCondition.letter
           setAlertMessage(`The ${index}${getSuffix(index)} letter must be ${letter}`)
           setShowAlertModal(true)
-          return
+          return false
         } else {
-          const letter = usesPreviousHints(enteredWord).failCondition.letter
-          setAlertMessage(`${letter} must be included in the solution`)
+          const letter = usesPreviousHints(guess).failCondition.letter
+          setAlertMessage(`'${letter}' must be included in the solution`)
           setShowAlertModal(true)
-          return
+          return false
         }
     }
 
-    // Valid input
-    if (enteredWord === solution) {
+    return true
+  }
+
+  function setUserGuess(guess) {
+    if (guess === solution) {
       setIsGameWon(true)
     } else {
       setSubmittedGuesses([...submittedGuesses, activeRowIndex])
@@ -144,7 +159,7 @@ function App() {
       }
     }
 
-    const colorizedGuess = assignColors(enteredWord)
+    const colorizedGuess = assignColors(guess)
     const updatedBoard = board.map(row => [...row])
     updatedBoard[activeRowIndex] = colorizedGuess
     setBoard(updatedBoard)
@@ -152,15 +167,19 @@ function App() {
     updateHints(colorizedGuess)
   }
 
-  function generateSolution() {
-    const newSolution = WORDLE_ANSWERS[Math.floor(Math.random() * WORDLE_ANSWERS.length)].toUpperCase()
-    setSolution(newSolution)
-    console.log("solution is", newSolution)
-  }
+  // Ensures that all states are properly updated before generating the random solution
+  useEffect(() => {
+    if (gameMode === 'Challenge') {
+      generateRandomFirstGuess(solution)
+    }
+  }, [solution])
 
   function startNewGame() {
     resetStates()
-    setIsGameActive(true)
+
+    const newSolution = generateSolution()
+    setSolution(newSolution)
+
     console.log("Starting game with", gameMode, connectionMode)
   }
 
@@ -282,10 +301,11 @@ function App() {
       let numGreenLetters = 0
       for (let i = 0; i < randomFirstGuess.length; i++) {
         if (randomFirstGuess[i] === solution[i]) {
-          countGreenLetters += 1
+          numGreenLetters += 1
         }
       }
-      if (countGreenLetters === 1) {
+      if (numGreenLetters === 1) {
+        setUserGuess(randomFirstGuess)
         return randomFirstGuess
       }
     }
@@ -319,13 +339,13 @@ function App() {
       {isGameWon ? (
         <div className="win-message">
           <h2>Congratulations! You guessed the word!</h2>
-          <button onClick={resetStates}>Play Again</button>
+          <button onClick={startNewGame}>Play Again</button>
         </div>
       ) : null}
       {isOutOfGuesses ? (
         <div className="loss-message">
           <h2>Truly unfortunate. Maybe next time bud.</h2>
-          <button onClick={resetStates}>Play Again</button>
+          <button onClick={startNewGame}>Play Again</button>
         </div>
       ) : null}
       <GameBoard board={board}/>
