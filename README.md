@@ -6,11 +6,9 @@ Original Wordle: https://www.nytimes.com/games/wordle/index.html
 
 # Current features
 
-Basically no actual functionality done yet
+Single player functionality (all difficulties) is implemented.
 
-There's a nav bar but only the info modal is currently finished.
-
-Gameboard and keyboard show up on screen, can type in inputs with keyboard but no game logic has been done yet.
+No multiplayer functionality.
 
 ## Images used
 
