@@ -5,7 +5,7 @@ import ConnectionModeSelector from './ConnectionModeSelector'
 import { FaCirclePlay } from 'react-icons/fa6'
 
 function Menu({
-    startNewGame,
+    startGame,
     gameMode,
     setGameMode,
     connectionMode,
@@ -14,7 +14,7 @@ function Menu({
 
     function handleClick() {
         if (gameMode && connectionMode) {
-            startNewGame()
+            startGame()
         }
     }
 
