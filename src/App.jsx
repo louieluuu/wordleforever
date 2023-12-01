@@ -12,10 +12,6 @@ function App() {
   const [gameMode, setGameMode] = useState(null)
   const [connectionMode, setConnectionMode] = useState(null)
 
-  function startGame() {
-    setRenderGame(true)
-  }
-
   return (
     <>
       <NavBar />
@@ -27,7 +23,7 @@ function App() {
         />
       ) : (
         <Menu
-          startGame={startGame}
+          startGame={setRenderGame}
           gameMode={gameMode}
           setGameMode={setGameMode}
           connectionMode={connectionMode}

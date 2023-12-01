@@ -5,7 +5,7 @@ import ConnectionModeSelector from './ConnectionModeSelector'
 import { FaCirclePlay } from 'react-icons/fa6'
 
 function Menu({
-    startGame,
+    setRenderGame,
     gameMode,
     setGameMode,
     connectionMode,
@@ -14,13 +14,13 @@ function Menu({
 
     function handleClick() {
         if (gameMode && connectionMode) {
-            startGame()
+            setRenderGame(true)
         }
     }
 
     // Used for styling text within cards
     function paragraphWrapper(description) {
-    return <p>{description}</p>
+        return <p>{description}</p>
     }
 
     let playButtonTitle = ''
@@ -51,9 +51,10 @@ function Menu({
             paragraphWrapper={paragraphWrapper}
         />
         < FaCirclePlay
-        className={playButtonClassName}
-        onClick={handleClick}
-        title={playButtonTitle}/>
+            className={playButtonClassName}
+            onClick={handleClick}
+            title={playButtonTitle}
+        />
     </div>
   )
 }

@@ -49,6 +49,15 @@ function GameContainer({
 
     // Helper functions
 
+    function startNewGame() {
+        resetStates()
+
+        const newSolution = generateSolution()
+        setSolution(newSolution)
+
+        console.log("Starting game with", gameMode, connectionMode)
+    }
+
     function resetStates() {
         setIsGameWon(false)
         setIsOutOfGuesses(false)
@@ -174,15 +183,6 @@ function GameContainer({
         updateHints(colorizedGuess)
     }
 
-    function startNewGame() {
-        resetStates()
-
-        const newSolution = generateSolution()
-        setSolution(newSolution)
-
-        console.log("Starting game with", gameMode, connectionMode)
-    }
-
     function assignColors(guess) {
         let colorizedGuess = new Array(5).fill({ letter: "", color: "" })
         let solutionArray = [...solution]
@@ -289,7 +289,6 @@ function GameContainer({
 
     // Used for challenge mode, generates a random starting word that always has exactly one letter in the correct spot
     function generateRandomFirstGuess(solution) {
-        console.log(solution)
         let randomFirstGuess
         while (true) {
             randomFirstGuess = VALID_WORDS[Math.floor(Math.random() * VALID_WORDS.length)].toUpperCase()
