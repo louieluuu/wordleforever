@@ -23,7 +23,7 @@ function App() {
         />
       ) : (
         <Menu
-          startGame={setRenderGame}
+          setRenderGame={setRenderGame}
           gameMode={gameMode}
           setGameMode={setGameMode}
           connectionMode={connectionMode}
