@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, useRef, useEffect } from "react"
 import GameModeSelector from './GameModeSelector'
 import ConnectionModeSelector from './ConnectionModeSelector'
 
@@ -11,6 +11,34 @@ function Menu({
     connectionMode,
     setConnectionMode,
 }) {
+
+    const [username, setUsername] = useState(localStorage.getItem("username") || "Wordler")
+    const [inputWidth, setInputWidth] = useState(0)
+    const usernameRef = useRef(null)
+    const textWidthRef = useRef(null)
+
+    useEffect(() => {
+        if (textWidthRef.current) {
+            const textWidth = textWidthRef.current.clientWidth;
+            setInputWidth(textWidth + 15)
+        }
+    }, [username, textWidthRef]);
+
+    function handleUserNameChange(e) {
+        const updatedUsername = e.target.value
+    
+        // Check if the input is empty or contains only spaces
+        if (e.type === 'blur' && updatedUsername === '') {
+            setUsername('Wordler')
+        } else {
+            // Enforce a length limit
+            if (updatedUsername.length > 20) {
+                return
+            }
+            setUsername(updatedUsername)
+            localStorage.setItem("username", updatedUsername)
+        }
+    }
 
     function handleClick() {
         if (gameMode && connectionMode) {
@@ -35,9 +63,31 @@ function Menu({
 
     const playButtonClassName = `play-button ${playButtonTitle ? 'disabled' : 'clickable'}`
 
+    function handleUserNameClick() {
+        if (usernameRef.current) {
+          setTimeout(() => {
+            usernameRef.current.select();
+          }, 0);
+        }
+      }
+
   return (
     <div className="menu">
-        <h1>Welcome to Wordle Battle!</h1>
+        <div className="welcome-message">
+            <h1>Welcome, </h1>
+            <input
+                ref={usernameRef}
+                className="username"
+                type="text"
+                value={username}
+                onChange={handleUserNameChange}
+                onBlur={handleUserNameChange}
+                onClick={handleUserNameClick}
+                // A bit hacky, couldn't get this to be an actual variable width with useRef
+                style={{ width: `${inputWidth}px` }}
+            />
+            <span ref={textWidthRef} className="hidden-span">{username}</span>
+        </div>
         <h3>Difficulty</h3>
         <GameModeSelector
             gameMode={gameMode}
