@@ -20,7 +20,7 @@ function Menu({
     useEffect(() => {
         if (textWidthRef.current) {
             const textWidth = textWidthRef.current.clientWidth;
-            setInputWidth(textWidth + 15)
+            setInputWidth(textWidth + 10)
         }
     }, [username, textWidthRef]);
 
@@ -87,6 +87,7 @@ function Menu({
                 style={{ width: `${inputWidth}px` }}
             />
             <span ref={textWidthRef} className="hidden-span">{username}</span>
+            <h1>!</h1>
         </div>
         <h3>Difficulty</h3>
         <GameModeSelector
