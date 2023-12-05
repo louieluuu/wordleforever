@@ -6,11 +6,13 @@ function ConnectionModeSelector({
     setConnectionMode,
     paragraphWrapper,
 }) {
-    const connectionModes = ['Offline', 'Online']
+    const connectionModes = ['Offline', 'Online (Private)', 'Online (Public)']
 
     const gameModeDescriptions = {
         'Offline': "Single player mode",
-        'Online': "Queue into a Wordle Battle with other users",
+        'Online (Private)': "Create a private lobby that your friends can join",
+        'Online (Public)': "Queue into a Wordle Battle with other users from around the world",
+
     }
 
   return (
@@ -23,7 +25,6 @@ function ConnectionModeSelector({
             selected={mode === connectionMode}
             description={paragraphWrapper(gameModeDescriptions[mode])}
             >
-            {mode}
             </Card>
         ))}
     </div>

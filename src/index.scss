@@ -298,10 +298,11 @@ body {
     border-radius: 1rem;
     display: flex;
     align-items: center;
+    text-align: center;
     justify-content: center;
     margin: $card-margin;
     font-family: 'Bubblegum Sans', cursive;
-    font-size: x-large;
+    font-size: large;
     position: relative;
     cursor: pointer;
 
@@ -327,7 +328,8 @@ body {
         &__hard,
         &__challenge,
         &__offline,
-        &__online {
+        &__online-private,
+        &__online-public {
             @extend .card;
             position: relative;
             overflow: hidden;
@@ -381,15 +383,24 @@ body {
             &:before {
                 background-image: url('./assets/offline.png');
                 background-size: 100% 100%;
-                opacity: 0.3;
-                filter: blur(1.75px);
+                opacity: 0.2;
+                filter: blur(2px);
             }
         }
-        &__online {
+        &__online-private {
             &:before {
-                background-image: url('./assets/online.jpg');
+                background-image: url('./assets/friends.png');
                 background-size: 100% 100%;
-                filter: blur(1.75px);
+                opacity: 0.2;
+                filter: blur(2px);
+            }
+        }
+        &__online-public {
+            &:before {
+                background-image: url('./assets/online.png');
+                background-size: 100% 100%;
+                opacity: 0.2;
+                filter: blur(2px);
             }
         }
     }

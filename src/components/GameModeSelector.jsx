@@ -24,7 +24,6 @@ function GameModeSelector({
             selected={mode === gameMode}
             description={paragraphWrapper(gameModeDescriptions[mode])}
             >
-            {mode}
             </Card>
         ))}
     </div>
