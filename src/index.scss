@@ -447,14 +447,13 @@ body {
 
 .play-button {
     margin-top: 1rem;
-    color: hsl(0, 0%, 10%, 70%);
+    color: hsla(0, 96%, 44%, 0.7);
     width: 2.5rem;
     height: 2.5rem;
     cursor: pointer;
 
     &.clickable {
         &:hover {
-            color: hsl(0, 0%, 10%, 90%);
             transform: scale(1.2);
             transition: transform 0.3s ease;
         }
