@@ -15,6 +15,7 @@ function Menu({
     const [username, setUsername] = useState(localStorage.getItem("username") || "Wordler")
     const [inputWidth, setInputWidth] = useState(0)
     const usernameRef = useRef(null)
+    /** Seems a bit hacky but works, uses a hidden span element to measure the width and sets the input box size to that width. Dynamically sizing the input box was tricky */
     const textWidthRef = useRef(null)
 
     useEffect(() => {
@@ -83,7 +84,6 @@ function Menu({
                 onChange={handleUserNameChange}
                 onBlur={handleUserNameChange}
                 onClick={handleUserNameClick}
-                // A bit hacky, couldn't get this to be an actual variable width with useRef
                 style={{ width: `${inputWidth}px` }}
             />
             <span ref={textWidthRef} className="hidden-span">{username}</span>
