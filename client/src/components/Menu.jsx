@@ -10,6 +10,7 @@ function Menu({
     setGameMode,
     connectionMode,
     setConnectionMode,
+    socket,
 }) {
 
     const [username, setUsername] = useState(localStorage.getItem("username") || "Wordler")
@@ -41,9 +42,12 @@ function Menu({
         }
     }
 
-    function handleClick() {
+    function handleStartButtonClick() {
         if (gameMode && connectionMode) {
             setRenderGame(true)
+            if (connectionMode === 'Online (Private)') {
+                socket.emit('createRoom')
+            }
         }
     }
 
@@ -103,7 +107,7 @@ function Menu({
         />
         < FaCirclePlay
             className={playButtonClassName}
-            onClick={handleClick}
+            onClick={handleStartButtonClick}
             title={playButtonTitle}
         />
     </div>

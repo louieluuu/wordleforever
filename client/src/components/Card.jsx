@@ -9,10 +9,6 @@ function Card({
 }) {
     const [flipped, setFlipped] = useState(false)
 
-    function handleCardClick(mode) {
-        setMode(mode)
-    }
-
     function handleInfoClick(e) {
         e.stopPropagation()
         setFlipped(!flipped)

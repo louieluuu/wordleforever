@@ -30,6 +30,7 @@ function App() {
           setGameMode={setGameMode}
           connectionMode={connectionMode}
           setConnectionMode={setConnectionMode}
+          socket={socket}
         />
       )}
     </>
