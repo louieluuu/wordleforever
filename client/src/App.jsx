@@ -1,5 +1,7 @@
 import { useState } from "react"
 
+import socket from "./socket"
+
 // Components
 import NavBar from "./components/NavBar"
 import Menu from "./components/Menu"
