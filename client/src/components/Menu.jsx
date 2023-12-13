@@ -1,11 +1,17 @@
 import { useState, useRef, useEffect } from "react"
+import { useNavigate } from 'react-router-dom'
+
+import WelcomeMessage from "./WelcomeMessage"
 import GameModeSelector from './GameModeSelector'
 import ConnectionModeSelector from './ConnectionModeSelector'
 
 import { FaCirclePlay } from 'react-icons/fa6'
 
 function Menu({
-    setRenderGame,
+    username,
+    setUsername,
+    inputWidth,
+    setInputWidth,
     gameMode,
     setGameMode,
     connectionMode,
@@ -13,40 +19,19 @@ function Menu({
     socket,
 }) {
 
-    const [username, setUsername] = useState(localStorage.getItem("username") || "Wordler")
-    const [inputWidth, setInputWidth] = useState(0)
-    const usernameRef = useRef(null)
-    /** Seems a bit hacky but works, uses a hidden span element to measure the width and sets the input box size to that width. Dynamically sizing the input box was tricky */
-    const textWidthRef = useRef(null)
-
-    useEffect(() => {
-        if (textWidthRef.current) {
-            const textWidth = textWidthRef.current.clientWidth;
-            setInputWidth(textWidth + 10)
-        }
-    }, [username, textWidthRef]);
-
-    function handleUserNameChange(e) {
-        const updatedUsername = e.target.value
-    
-        // Check if the input is empty or contains only spaces
-        if (e.type === 'blur' && updatedUsername === '') {
-            setUsername('Wordler')
-        } else {
-            // Enforce a length limit
-            if (updatedUsername.length > 20) {
-                return
-            }
-            setUsername(updatedUsername)
-            localStorage.setItem("username", updatedUsername)
-        }
-    }
+    const navigate = useNavigate()
 
     function handleStartButtonClick() {
         if (gameMode && connectionMode) {
-            setRenderGame(true)
-            if (connectionMode === 'Online (Private)') {
-                socket.emit('createRoom')
+            if (connectionMode === 'online-private') {
+                socket.emit('createRoom', connectionMode)
+
+                socket.on('roomCreated', (roomId) => {
+                    navigate(`/room/${roomId}`)
+                })
+            } else {
+                // For now this will also include public games, implementing private games first
+                navigate('/offline')
             }
         }
     }
@@ -68,31 +53,14 @@ function Menu({
 
     const playButtonClassName = `play-button ${playButtonTitle ? 'disabled' : 'clickable'}`
 
-    function handleUserNameClick() {
-        if (usernameRef.current) {
-          setTimeout(() => {
-            usernameRef.current.select();
-          }, 0);
-        }
-      }
-
   return (
     <div className="menu">
-        <div className="welcome-message">
-            <h1>Welcome, </h1>
-            <input
-                ref={usernameRef}
-                className="username"
-                type="text"
-                value={username}
-                onChange={handleUserNameChange}
-                onBlur={handleUserNameChange}
-                onClick={handleUserNameClick}
-                style={{ width: `${inputWidth}px` }}
-            />
-            <span ref={textWidthRef} className="hidden-span">{username}</span>
-            <h1>!</h1>
-        </div>
+        <WelcomeMessage
+            username={username}
+            setUsername={setUsername}
+            inputWidth={inputWidth}
+            setInputWidth={setInputWidth}
+        />
         <h3>Difficulty</h3>
         <GameModeSelector
             gameMode={gameMode}

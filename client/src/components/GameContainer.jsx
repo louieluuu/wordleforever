@@ -131,7 +131,7 @@ function GameContainer({
 
     function generateSolution() {
         const newSolution = WORDLE_ANSWERS[Math.floor(Math.random() * WORDLE_ANSWERS.length)].toUpperCase()
-        console.log("solution is", newSolution)
+        console.log("Solution is", newSolution)
         return newSolution
     }
 

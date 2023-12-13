@@ -1,35 +1,44 @@
 import React, { useState } from 'react'
-
-import { IoMenu } from 'react-icons/io5'
+import { Link, useNavigate } from 'react-router-dom'
 import { FaRegCircleQuestion } from 'react-icons/fa6'
 import { MdOutlineLeaderboard } from 'react-icons/md'
 import { FaGear } from 'react-icons/fa6'
 
 import InfoModal from './InfoModal'
 
-function NavBar() {
+function NavBar({
+  setGameMode,
+  setConnectionMode,
+}) {
   const [showInfoModal, setShowInfoModal] = useState(false)
+  const navigate = useNavigate()
 
-  const openInfoModal = () => {
+  function openInfoModal() {
     setShowInfoModal(true)
   }
 
-  const closeInfoModal = () => {
+  function closeInfoModal() {
     setShowInfoModal(false)
+  }
+
+  function handleTitleClick() {
+    setGameMode(null)
+    setConnectionMode(null)
+    navigate('/')
   }
 
   return (
     <>
-    <div className="navbar">
+      <div className="navbar">
         <div className="navbar__left">
-            <div className="title">
-                Wordle Battle
-            </div>
+          <Link to="/" onClick={handleTitleClick} className="title">
+            Wordle Battle
+          </Link>
         </div>
         <div className="navbar__right">
-          < FaRegCircleQuestion className="navbar__info" onClick={openInfoModal} />
-          < MdOutlineLeaderboard />
-          < FaGear />
+          <FaRegCircleQuestion className="navbar__info" onClick={openInfoModal} />
+          <MdOutlineLeaderboard />
+          <FaGear />
         </div>
         <InfoModal show={showInfoModal} handleClose={closeInfoModal} />
       </div>

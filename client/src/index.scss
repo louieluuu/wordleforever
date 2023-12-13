@@ -37,6 +37,16 @@ body {
         flex-direction: row;
         flex: 1;
         padding-inline-start: 1rem;
+
+        .title {
+            text-decoration: none;
+            color: black;
+            transition-duration: 0.1s;
+        }
+
+        .title:hover {
+            color: hsl(0, 0%, 50%);
+        }
     }
 
     &__right {

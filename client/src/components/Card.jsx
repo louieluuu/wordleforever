@@ -14,28 +14,22 @@ function Card({
         setFlipped(!flipped)
     }
 
-    function formatClassName(mode) {
-        return mode.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, '')
-    }
-
     function displayNameMode(mode) {
-        if (mode === 'Online (Private)') {
+        if (mode === 'online-private') {
             return 'Play with Friends'
         }
-        if (mode === 'Online (Public)') {
+        if (mode === 'online-public') {
             return 'Matchmaking'
         }
         return mode
     }
-
-    const formattedMode = formatClassName(mode)
 
     return (
         <>
 
         {!flipped ? (
             <div
-                className={`card__front__${formattedMode}${selected ? " selected" : ""}`}
+                className={`card__front__${mode.toLowerCase()}${selected ? " selected" : ""}`}
                 onClick={() => setMode(mode)}
             >
                 <FaRegCircleQuestion className="info-button" onClick={handleInfoClick} />
