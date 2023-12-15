@@ -1,10 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
 
 // Services
-import { getRoomsFromConnection, getRoomsFromId, roomExists } from '../services/roomService.js';
-import { setUsername, broadcastUserInfo } from '../services/userService.js';
+import { initializeGameBoard } from '../services/gameService.js';
+import { getRoomsFromConnection, roomExists } from '../services/roomService.js';
+import { setUsername } from '../services/userService.js';
 
-function createRoom(connectionMode, io, socket) {
+function createRoom(connectionMode, socket) {
   const roomId = uuidv4();
   const rooms = getRoomsFromConnection(connectionMode);
 
@@ -22,7 +23,14 @@ function joinRoom(roomId, username, io, socket) {
     socket.join(roomId)
 
     setUsername(roomId, username, io, socket)
+    initializeGameBoard(roomId, socket, io)
   }
 }
 
-export { createRoom, joinRoom }
+function startRoom(roomId, socket, io) {
+  if (roomExists(roomId, socket)) {
+    io.to(roomId).emit('roomStarted')
+  }
+}
+
+export { createRoom, joinRoom, startRoom }

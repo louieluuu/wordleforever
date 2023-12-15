@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import WelcomeMessage from './WelcomeMessage'
 
 function WaitingRoom({
@@ -9,39 +9,49 @@ function WaitingRoom({
     setInputWidth,
     socket
 }) {
-  const { roomId } = useParams()
-  const [userInfo, setUserInfo] = useState([])
+    const navigate = useNavigate()
+    const { roomId } = useParams()
+    const [userInfo, setUserInfo] = useState([])
 
-  // Main useEffect loop
-  useEffect(() => {
+    // Main useEffect loop
+    useEffect(() => {
 
-    if (socket.id === undefined) {
-        socket.on('connect', () => {
+        if (socket.id === undefined) {
+            socket.on('connect', () => {
+                socket.emit('joinRoom', roomId, username)
+            })
+        } else {
             socket.emit('joinRoom', roomId, username)
+        }
+
+        socket.on('roomError', (errorMessage) => {
+            console.log(`Error: ${errorMessage}`)
         })
-    } else {
-        socket.emit('joinRoom', roomId, username)
+
+        socket.on('userInfoUpdated', (updatedUserInfo) => {
+            setUserInfo(updatedUserInfo)
+        })
+
+        socket.on('roomStarted', () => {
+            navigate(`/game/${roomId}`)
+        })
+
+        return () => {
+            socket.off('connect')
+            socket.off('roomError')
+            socket.off('userInfoUpdated')
+            socket.off('roomStarted')
+        }
+    }, [socket])
+
+    // Keep username up to date
+    useEffect(() => {
+        socket.emit('updateUsername', roomId, username)
+    }, [socket, username])
+
+    function startRoom() {
+        socket.emit('startRoom', roomId)
     }
-
-    socket.on('roomError', (errorMessage) => {
-        console.log(`Error: ${errorMessage}`)
-    })
-
-    socket.on('userInfoUpdated', (updatedUserInfo) => {
-        setUserInfo(updatedUserInfo)
-    })
-
-    return () => {
-        socket.off('connect')
-        socket.off('roomError')
-        socket.off('userInfoUpdated')
-    }
-  }, [socket])
-
-  // Keep username up to date
-  useEffect(() => {
-    socket.emit('updateUsername', roomId, username)
-  }, [socket, username])
 
   return (
     <div>
@@ -58,24 +68,20 @@ function WaitingRoom({
             navigator.clipboard.writeText(window.location.href)
             }}
         >
-        Copy Link
+            Copy Link
         </button>
 
         <div>
             <h3>Users in the Room:</h3>
             <ul>
                 {userInfo.map((info) => (
-                <li key={info.socketId}>{info.username}</li>
+                    <li key={info.socketId}>{info.username}</li>
                 ))}
             </ul>
         </div>
 
-        <button
-            onClick={() => {
-            socket.emit('startGame', roomId)
-            }}
-        >
-        Start Game
+        <button onClick={startRoom}>
+            Start Game
         </button>
     </div>
   )

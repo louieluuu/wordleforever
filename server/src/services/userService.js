@@ -1,14 +1,16 @@
-import { getRoomsFromId } from "./roomService.js"
+import { getRoomsFromId, roomExists } from "./roomService.js"
 
 function setUsername(roomId, username, io, socket) {
-    const rooms = getRoomsFromId(roomId)
+    if (roomExists(roomId, socket)) {
+        const rooms = getRoomsFromId(roomId)
 
-    const currUserInfo = rooms.get(roomId).UserInfo
-    currUserInfo.set(socket.id, {
-        username: username,
-    })
+        const currUserInfo = rooms.get(roomId).UserInfo
+        currUserInfo.set(socket.id, {
+            username: username,
+        })
 
-    broadcastUserInfo(currUserInfo, roomId, io)
+        broadcastUserInfo(currUserInfo, roomId, io)
+    }    
 }
 
 function broadcastUserInfo(userInfo, roomId, io) {
