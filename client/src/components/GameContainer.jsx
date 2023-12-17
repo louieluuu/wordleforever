@@ -53,9 +53,7 @@ function GameContainer({
         }
     }, [solution])
 
-    // useEffect hooks specifically for online games (socket events)
-
-    // Start the game
+    // Online game flow
     useEffect(() => {
         socket.on('gameStarted', (initialUserInfo, solution) => {
             resetStates()
@@ -66,21 +64,11 @@ function GameContainer({
             setSolution(solution)
         })
 
-        return () => {
-            socket.off('gameStarted')
-        }
-    }, [])
-
-    // Update the board for everyone else with the noLettersBoard after sending in a guess to the server
-    // Don't update your own board as you do want to see your guesses
-    useEffect(() => {
         socket.on('gameBoardsUpdated', (updatedSocketId, updatedBoard) => {
-            console.log('gameBoardsUpdated received')
             const updatedUserInfo = [...userInfo]
             updatedUserInfo.forEach((obj) => {
                 if (obj.socketId !== socket.id && obj.socketId === updatedSocketId) {
                     obj.gameBoard = updatedBoard
-                    console.log('updated game board for', updatedSocketId)
                 }
             })
             setUserInfo(updatedUserInfo)
@@ -92,7 +80,13 @@ function GameContainer({
             })
             setUserInfo(sortedUserInfo)
         })
-    })
+
+        return () => {
+            socket.off('gameStarted')
+            socket.off('gameBoardsUpdated')
+            socket.off('userInfoUpdated')
+        }
+    }, [userInfo])
 
     // Helper functions
 
