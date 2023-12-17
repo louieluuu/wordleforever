@@ -5,6 +5,7 @@ import { getUserInfo, mapToArray, broadcastUserInfo } from "./userService.js"
 
 function startGame(roomId, io) {
     if (roomExists(roomId)) {
+        initializeGameBoards(roomId)
         io.to(roomId).emit(
             'gameStarted',
             mapToArray(getUserInfo(roomId)),
@@ -19,13 +20,14 @@ function generateSolution() {
     return newSolution
 }
 
-function initializeGameBoard(roomId, socket) {
+function initializeGameBoards(roomId) {
     if (roomExists(roomId)) {
         const allUserInfo = getUserInfo(roomId)
-        const currUserInfo = allUserInfo.get(socket.id)
-        allUserInfo.set(socket.id, {
-            ...currUserInfo,
-            gameBoard: new Array(6).fill().map((_) => new Array(5).fill({ letter: '', color: '' })),
+        allUserInfo.forEach((userInfo, socketId) => {
+            allUserInfo.set(socketId, {
+                ...userInfo,
+                gameBoard: new Array(6).fill().map((_) => new Array(5).fill({ letter: '', color: '' })),
+            })
         })
     }
 }
@@ -62,4 +64,4 @@ function handleCorrectGuess(roomId, updatedGameBoard, io, socket) {
     broadcastUserInfo(roomId, io)
 }
 
-export { generateSolution, initializeGameBoard, startGame, handleWrongGuess, handleCorrectGuess }
+export { generateSolution, initializeGameBoards, startGame, handleWrongGuess, handleCorrectGuess }

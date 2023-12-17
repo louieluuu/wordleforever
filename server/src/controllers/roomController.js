@@ -1,5 +1,4 @@
 // Services
-import { initializeGameBoard } from '../services/gameService.js'
 import { initializeRoom, getRoomConnectionMode, getRoomGameMode, roomExists } from '../services/roomService.js'
 import { setUsername } from '../services/userService.js'
 
@@ -16,7 +15,6 @@ function joinRoom(roomId, username, io, socket) {
         socket.join(roomId)
 
         setUsername(roomId, username, io, socket)
-        initializeGameBoard(roomId, socket)
         socket.emit('roomJoined', getRoomConnectionMode(roomId), getRoomGameMode(roomId))
     }
 }
