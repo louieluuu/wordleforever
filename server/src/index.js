@@ -4,11 +4,11 @@ import { Server } from "socket.io"
 import cors from 'cors'
 
 // Controllers
-import { createRoom, joinRoom, startRoom, startGame } from "./controllers/roomController.js"
+import { createRoom, joinRoom, startRoom } from "./controllers/roomController.js"
 
 // Services
 import { setUsername, removeUser } from "./services/userService.js"
-import { updateGameBoard } from "./services/gameService.js"
+import { startGame, updateGameBoard } from "./services/gameService.js"
 
 const app = express()
 const server = createServer(app)

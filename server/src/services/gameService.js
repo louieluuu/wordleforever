@@ -1,7 +1,7 @@
 import WORDLE_ANSWERS from "../data/wordleAnswers.js"
 
 import { roomExists } from "./roomService.js"
-import { getUserInfo } from "./userService.js"
+import { getUserInfo, mapToArray } from "./userService.js"
 
 function generateSolution() {
     const newSolution = WORDLE_ANSWERS[Math.floor(Math.random() * WORDLE_ANSWERS.length)].toUpperCase()
@@ -17,6 +17,16 @@ function initializeGameBoard(roomId, socket) {
             ...currUserInfo,
             gameBoard: new Array(6).fill().map((_) => new Array(5).fill({ letter: '', color: '' })),
         })
+    }
+}
+
+function startGame(roomId, io) {
+    if (roomExists(roomId)) {
+        io.to(roomId).emit(
+            'gameStarted',
+            mapToArray(getUserInfo(roomId)),
+            generateSolution(),
+        )
     }
 }
 
@@ -37,4 +47,4 @@ function updateGameBoard(roomId, updatedGameBoard, io, socket) {
     }
 }
 
-export { generateSolution, initializeGameBoard, updateGameBoard }
+export { generateSolution, initializeGameBoard, startGame, updateGameBoard }

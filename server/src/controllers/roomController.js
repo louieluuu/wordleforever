@@ -1,7 +1,7 @@
 // Services
-import { generateSolution, initializeGameBoard } from '../services/gameService.js'
+import { initializeGameBoard } from '../services/gameService.js'
 import { initializeRoom, getRoomConnectionMode, getRoomGameMode, roomExists } from '../services/roomService.js'
-import { getUserInfo, setUsername, mapToArray } from '../services/userService.js'
+import { setUsername } from '../services/userService.js'
 
 function createRoom(connectionMode, gameMode, socket) {
     const roomId = initializeRoom(connectionMode, gameMode)
@@ -27,14 +27,4 @@ function startRoom(roomId, io) {
     }
 }
 
-function startGame(roomId, io) {
-    if (roomExists(roomId)) {
-        io.to(roomId).emit(
-            'gameStarted',
-            mapToArray(getUserInfo(roomId)),
-            generateSolution(),
-        )
-    }
-}
-
-export { createRoom, joinRoom, startRoom, startGame }
+export { createRoom, joinRoom, startRoom }
