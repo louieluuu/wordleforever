@@ -8,7 +8,7 @@ function setUsername(roomId, username, io, socket) {
             ...currUserInfo,
             username: username,
         })
-        broadcastUserInfo(allUserInfo, roomId, io)
+        broadcastUserInfo(roomId, io)
     }    
 }
 
@@ -28,9 +28,10 @@ function mapToArray(userInfo) {
     })
 }
 
-function broadcastUserInfo(userInfo, roomId, io) {
-    const userInfoArray = mapToArray(userInfo)
-    io.to(roomId).emit('userInfoUpdated', userInfoArray)
+function broadcastUserInfo(roomId, io) {
+    if (roomExists(roomId)) {
+        io.to(roomId).emit('userInfoUpdated', mapToArray(getUserInfo(roomId)))
+    }
 }
 
 function removeUser(socket, io) {
@@ -48,4 +49,4 @@ function removeUser(socket, io) {
     console.log(`User ${socket.id} disconnected`)
 }
 
-export { setUsername, getUserInfo, removeUser, mapToArray }
+export { setUsername, getUserInfo, removeUser, mapToArray, broadcastUserInfo }

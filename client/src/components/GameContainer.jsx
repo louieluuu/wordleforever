@@ -85,6 +85,13 @@ function GameContainer({
             })
             setUserInfo(updatedUserInfo)
         })
+
+        socket.on('userInfoUpdated', (finalUserInfo) => {
+            const sortedUserInfo = finalUserInfo.sort((obj) => {
+                return obj.socketId === socket.id ? -1 : 1
+            })
+            setUserInfo(sortedUserInfo)
+        })
     })
 
     // Helper functions
@@ -213,10 +220,12 @@ function GameContainer({
         updateHints(colorizedGuess)
 
         if (guess === solution) {
+            if (connectionMode.includes('online')) {
+                socket.emit('correctGuess', roomId, updatedBoard)
+            }
             setIsGameWon(true)
         } else {
             if (connectionMode.includes('online')) {
-                console.log('submitting wrong guess')
                 socket.emit('wrongGuess', roomId, updatedBoard)
             }
             setSubmittedGuesses([...submittedGuesses, activeRowIndex])

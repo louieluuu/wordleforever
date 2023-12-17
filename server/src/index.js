@@ -8,7 +8,7 @@ import { createRoom, joinRoom, startRoom } from "./controllers/roomController.js
 
 // Services
 import { setUsername, removeUser } from "./services/userService.js"
-import { startGame, updateGameBoard } from "./services/gameService.js"
+import { startGame, handleWrongGuess, handleCorrectGuess } from "./services/gameService.js"
 
 const app = express()
 const server = createServer(app)
@@ -35,8 +35,9 @@ io.on('connection', (socket) => {
     socket.on('startRoom', (roomId) => startRoom(roomId, io))
     // Start game - passes the user all relevant game information that may be necessary to render the game container
     socket.on('startOnlineGame', (roomId) => startGame(roomId, io))
-    // Update game board
-    socket.on('wrongGuess', (roomId, updatedGameBoard) => updateGameBoard(roomId, updatedGameBoard, io, socket))
+    // General game flow
+    socket.on('wrongGuess', (roomId, updatedGameBoard) => handleWrongGuess(roomId, updatedGameBoard, io, socket))
+    socket.on('correctGuess', (roomId, updatedGameBoard) => handleCorrectGuess(roomId, updatedGameBoard, io, socket))
 
     // User disconnect and cleanup
     socket.on('disconnecting', () => removeUser(socket, io))
