@@ -1,34 +1,39 @@
-import React, { useState } from 'react'
-import Keyboard from './Keyboard'
+import React, { useState } from "react"
+import Keyboard from "./Keyboard"
 
 function GameBoard({
     board,
     activeRow,
     activeCell,
+    isUserBoard,
 }) {
 
     function getCellClassName(board, row, cellIndex) {
-        let cellClassName = "game-board__cell"
+        let cellClassName = 'game-board__cell'
     
-        if (board[row][cellIndex].color === "none") {
+        if (board[row][cellIndex].color === 'none') {
           if (row === activeRow && cellIndex < activeCell) {
-            cellClassName += "--active"
+            cellClassName += '--active'
           }
-        } else if (board[row][cellIndex].color === "green") {
-            cellClassName += "--green"
-        } else if (board[row][cellIndex].color === "yellow") {
-            cellClassName += "--yellow"
-        } else if (board[row][cellIndex].color === "grey") {
-            cellClassName += "--grey"
+        } else if (board[row][cellIndex].color === 'green') {
+            cellClassName += '--green'
+        } else if (board[row][cellIndex].color === 'yellow') {
+            cellClassName += '--yellow'
+        } else if (board[row][cellIndex].color === 'grey') {
+            cellClassName += '--grey'
+        }
+
+        if (isUserBoard) {
+            cellClassName += ' user'
         }
         
         return cellClassName
       }
     
     return (
-        <div className="game-board">
+        <div className='game-board'>
             {board.map((row, rowIndex) => (
-                <div key={rowIndex} className="game-board__row">
+                <div key={rowIndex} className='game-board__row'>
                     {row.map((cell, cellIndex) => (
                         <div key={cellIndex} className={getCellClassName(board, rowIndex, cellIndex)}>
                             {cell.letter}

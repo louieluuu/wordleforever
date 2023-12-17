@@ -1,36 +1,40 @@
-import { v4 as uuidv4 } from 'uuid';
-
 // Services
-import { initializeGameBoard } from '../services/gameService.js';
-import { getRoomsFromConnection, roomExists } from '../services/roomService.js';
-import { setUsername } from '../services/userService.js';
+import { generateSolution, initializeGameBoard } from '../services/gameService.js'
+import { initializeRoom, getRoomConnectionMode, getRoomGameMode, roomExists } from '../services/roomService.js'
+import { getUserInfo, setUsername, mapToArray } from '../services/userService.js'
 
-function createRoom(connectionMode, socket) {
-  const roomId = uuidv4();
-  const rooms = getRoomsFromConnection(connectionMode);
+function createRoom(connectionMode, gameMode, socket) {
+    const roomId = initializeRoom(connectionMode, gameMode)
 
-  rooms.set(roomId, {
-    UserInfo: new Map(),
-  });
-
-  console.log(`Creating room: ${roomId}`);
-  socket.emit('roomCreated', roomId);
+    console.log(`Creating room: ${roomId}`)
+    socket.emit('roomCreated', roomId)
 }
 
 function joinRoom(roomId, username, io, socket) {
-  if (roomExists(roomId, socket)) {
-    console.log(`${socket.id} joining room: ${roomId}`)
-    socket.join(roomId)
+    if (roomExists(roomId)) {
+        console.log(`${socket.id} joining room: ${roomId}`)
+        socket.join(roomId)
 
-    setUsername(roomId, username, io, socket)
-    initializeGameBoard(roomId, socket, io)
-  }
+        setUsername(roomId, username, io, socket)
+        initializeGameBoard(roomId, socket)
+        socket.emit('roomJoined', getRoomConnectionMode(roomId), getRoomGameMode(roomId))
+    }
 }
 
-function startRoom(roomId, socket, io) {
-  if (roomExists(roomId, socket)) {
-    io.to(roomId).emit('roomStarted')
-  }
+function startRoom(roomId, io) {
+    if (roomExists(roomId)) {
+        io.to(roomId).emit('roomStarted')
+    }
 }
 
-export { createRoom, joinRoom, startRoom }
+function startGame(roomId, io) {
+    if (roomExists(roomId)) {
+        io.to(roomId).emit(
+            'gameStarted',
+            mapToArray(getUserInfo(roomId)),
+            generateSolution(),
+        )
+    }
+}
+
+export { createRoom, joinRoom, startRoom, startGame }

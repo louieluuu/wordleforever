@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect } from "react"
 import { useNavigate } from 'react-router-dom'
+import socket from "../socket"
 
+// Components
 import WelcomeMessage from "./WelcomeMessage"
 import GameModeSelector from './GameModeSelector'
 import ConnectionModeSelector from './ConnectionModeSelector'
@@ -16,7 +17,6 @@ function Menu({
     setGameMode,
     connectionMode,
     setConnectionMode,
-    socket,
 }) {
 
     const navigate = useNavigate()
@@ -24,7 +24,7 @@ function Menu({
     function handleStartButtonClick() {
         if (gameMode && connectionMode) {
             if (connectionMode === 'online-private') {
-                socket.emit('createRoom', connectionMode)
+                socket.emit('createRoom', connectionMode, gameMode)
 
                 socket.on('roomCreated', (roomId) => {
                     navigate(`/room/${roomId}`)
@@ -54,7 +54,7 @@ function Menu({
     const playButtonClassName = `play-button ${playButtonTitle ? 'disabled' : 'clickable'}`
 
   return (
-    <div className="menu">
+    <div className='menu'>
         <WelcomeMessage
             username={username}
             setUsername={setUsername}

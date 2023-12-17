@@ -1,38 +1,92 @@
+import { v4 as uuidv4 } from 'uuid'
+
 const Private = new Map()
 const Public = new Map()
 const Rooms = { Private, Public }
 
-function getRoomsFromConnection(mode) {
-  if (mode === 'online-private') {
-    return Rooms.Private
-  } else if (mode === 'online-public') {
-    return Rooms.Public
-  } else {
-    return undefined
-  }
+// Needed for the initial creation of rooms before the roomId is placed in it's own map
+function getRoomTypeFromConnection(mode) {
+	if (mode === 'online-private') {
+		return Rooms.Private
+	} else if (mode === 'online-public') {
+		return Rooms.Public
+	} else {
+		return undefined
+	}
 }
 
-function getRoomsFromId(roomId) {
-  if (Rooms.Private.has(roomId)) {
-    return Rooms.Private
-  } else if (Rooms.Public.has(roomId)) {
-    return Rooms.Public
-  } else {
-    return undefined
-  }
+function getRoomTypeFromId(roomId) {
+	if (Rooms.Private.has(roomId)) {
+		return Rooms.Private
+	} else if (Rooms.Public.has(roomId)) {
+		return Rooms.Public
+	} else {
+		return undefined
+	}
 }
 
-function roomExists(roomId, socket) {
-    const rooms = getRoomsFromId(roomId)
-
-    // Check if room exists
-    if (rooms === undefined) {
-      const errorMessage = "This room does not exist."
-      socket.emit("roomError", errorMessage)
-      return false
-    }
-
-    return true
+function getRoomFromId(roomId) {
+	if (roomExists(roomId)) {
+		return getRoomTypeFromId(roomId).get(roomId)
+	}
+	return undefined
 }
 
-export { getRoomsFromConnection, getRoomsFromId, roomExists }
+function roomExists(roomId) {
+	const rooms = getRoomTypeFromId(roomId)
+	if (rooms === undefined) {
+		return false
+	}
+	return true
+}
+
+function initializeRoom(connectionMode, gameMode) {
+	const roomId = uuidv4()
+	initializeRoomInfo(roomId, connectionMode)
+	setRoomConnectionMode(roomId, connectionMode)
+	setRoomGameMode(roomId, gameMode)
+	return roomId
+}
+
+function initializeRoomInfo(roomId, connectionMode) {
+	const rooms = getRoomTypeFromConnection(connectionMode)
+	const room = getRoomFromId(roomId)
+    rooms.set(roomId, {
+		...room,
+        userInfo: new Map(),
+		connectionMode: null,
+		gameMode: null,
+    })
+}
+
+function setRoomConnectionMode(roomId, connectionMode) {
+	if (roomExists(roomId)) {
+		const rooms = getRoomTypeFromId(roomId)
+		const room = getRoomFromId(roomId)
+		rooms.set(roomId, {
+			...room,
+			connectionMode: connectionMode,
+		})
+	}
+}
+
+function getRoomConnectionMode(roomId) {
+	return getRoomFromId(roomId).connectionMode
+}
+
+function setRoomGameMode(roomId, gameMode) {
+	if (roomExists(roomId)) {
+		const rooms = getRoomTypeFromId(roomId)
+		const room = getRoomFromId(roomId)
+		rooms.set(roomId, {
+			...room,
+			gameMode: gameMode,
+		})
+	}
+}
+
+function getRoomGameMode(roomId) {
+	return getRoomFromId(roomId).gameMode
+}
+
+export { getRoomTypeFromId, getRoomFromId, getRoomConnectionMode, getRoomGameMode, roomExists, initializeRoom }

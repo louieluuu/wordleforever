@@ -130,6 +130,13 @@ body {
     height: 100vh;
 }
 
+.boards-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+}
+
 .game-board {
     display: flex;
     flex-direction: column;
@@ -172,6 +179,10 @@ body {
             border-color: hsl(240, 2, 48);
             background-color: hsl(240, 2, 48);
         }
+    }
+
+    &__cell.user {
+        border: 4px solid $main_color;
     }
 }
 

@@ -1,8 +1,6 @@
 import { useState } from "react"
 
-import socket from "./socket"
-
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Components
 import NavBar from "./components/NavBar"
@@ -12,7 +10,7 @@ import GameContainer from "./components/GameContainer"
 
 function App() {
 
-  const [username, setUsername] = useState(localStorage.getItem("username") || "Wordler")
+  const [username, setUsername] = useState(localStorage.getItem('username') || 'Wordler')
   const [inputWidth, setInputWidth] = useState(0)
 
   const [gameMode, setGameMode] = useState(null)
@@ -27,7 +25,7 @@ function App() {
         />
         <Routes>
           <Route
-            path="/"
+            path='/'
             element={
             <Menu
               username={username}
@@ -38,24 +36,24 @@ function App() {
               setGameMode={setGameMode}
               connectionMode={connectionMode}
               setConnectionMode={setConnectionMode}
-              socket={socket}
             />
             }
           />
           <Route
-            path="/room/:roomId"
+            path='/room/:roomId'
             element={
             <WaitingRoom
               username={username}
               setUsername={setUsername}
               inputWidth={inputWidth}
               setInputWidth={setInputWidth}
-              socket={socket}
+              setConnectionMode={setConnectionMode}
+              setGameMode={setGameMode}
             />
             }
           />
           <Route
-            path="/game/:roomId"
+            path='/game/:roomId'
             element={
             <GameContainer
               gameMode={gameMode}
@@ -64,7 +62,7 @@ function App() {
             }
           />
           <Route
-            path="/offline"
+            path='/offline'
             element={
             <GameContainer
               gameMode={gameMode}

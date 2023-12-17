@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import socket from '../socket'
+
+// Components
 import WelcomeMessage from './WelcomeMessage'
 
 function WaitingRoom({
@@ -7,7 +10,8 @@ function WaitingRoom({
     setUsername,
     inputWidth,
     setInputWidth,
-    socket
+    setConnectionMode,
+    setGameMode,
 }) {
     const navigate = useNavigate()
     const { roomId } = useParams()
@@ -23,6 +27,12 @@ function WaitingRoom({
         } else {
             socket.emit('joinRoom', roomId, username)
         }
+
+        // Make sure modes are set, important for users joining from a link
+        socket.on('roomJoined', (connectionMode, gameMode) => {
+            setConnectionMode(connectionMode)
+            setGameMode(gameMode)
+        })
 
         socket.on('roomError', (errorMessage) => {
             console.log(`Error: ${errorMessage}`)
@@ -42,12 +52,12 @@ function WaitingRoom({
             socket.off('userInfoUpdated')
             socket.off('roomStarted')
         }
-    }, [socket])
+    }, [])
 
     // Keep username up to date
     useEffect(() => {
         socket.emit('updateUsername', roomId, username)
-    }, [socket, username])
+    }, [username])
 
     function startRoom() {
         socket.emit('startRoom', roomId)

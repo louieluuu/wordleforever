@@ -15,6 +15,9 @@ function Card({
     }
 
     function displayNameMode(mode) {
+        if (mode === 'offline') {
+            return 'Offline'
+        }
         if (mode === 'online-private') {
             return 'Play with Friends'
         }
