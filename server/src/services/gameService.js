@@ -1,10 +1,11 @@
 import WORDLE_ANSWERS from '../data/wordleAnswers.js'
 
-import { roomExists } from './roomService.js'
+import { roomExists, resetRoomInfo, getRoomConnectionMode, getRoomSize, incrementCountGameOvers, getCountGameOvers, incrementCountOutOfGuesses, getCountOutOfGuesses } from './roomService.js'
 import { getUserInfo, mapToArray, broadcastUserInfo } from './userService.js'
 
 function startGame(roomId, io) {
     if (roomExists(roomId)) {
+        resetRoomInfo(roomId)
         initializeGameBoards(roomId)
         io.to(roomId).emit(
             'gameStarted',
@@ -60,8 +61,32 @@ function handleWrongGuess(roomId, updatedGameBoard, io, socket) {
 }
 
 function handleCorrectGuess(roomId, updatedGameBoard, io, socket) {
+    incrementCountGameOvers(roomId)
     setGameBoard(roomId, updatedGameBoard, socket)
-    broadcastUserInfo(roomId, io)
+    if (isGameOver(roomId, io)) {
+        broadcastUserInfo(roomId, io)
+    } else {
+        broadcastGameBoard(roomId, io, socket)
+    }
+}
+
+function handleOutOfGuesses(roomId, io) {
+    incrementCountGameOvers(roomId)
+    incrementCountOutOfGuesses(roomId)
+    if (isGameOver(roomId, io)) {
+        broadcastUserInfo(roomId, io)
+    }
+}
+
+function isGameOver(roomId, io) {
+    if (getRoomConnectionMode(roomId) === 'online-private') {
+        if (getCountGameOvers(roomId) >= getRoomSize(roomId, io)) {
+            return true
+        }
+    } else if (getRoomConnectionMode(roomId) === 'online-public') {
+        // TODO
+    }
+    return false
 }
 
 export {
@@ -69,5 +94,6 @@ export {
     initializeGameBoards,
     startGame,
     handleWrongGuess,
-    handleCorrectGuess
+    handleCorrectGuess,
+    handleOutOfGuesses
 }

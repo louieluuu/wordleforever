@@ -227,8 +227,9 @@ function GameContainer({
                 socket.emit('correctGuess', roomId, updatedBoard)
             }
             setIsGameWon(true)
-            // Might change this later, for now we'll end the game if one person guesses the solution
-            setIsGameOver(true)
+            if (connectionMode === 'offline' || connectionMode === 'online-public') {
+                setIsGameOver(true)
+            }
         } else {
             if (connectionMode.includes('online')) {
                 socket.emit('wrongGuess', roomId, updatedBoard)
@@ -241,6 +242,8 @@ function GameContainer({
                 setIsOutOfGuesses(true)
                 if (connectionMode.includes('offline')) {
                     setIsGameOver(true)
+                } else {
+                    socket.emit('outOfGuesses', roomId)
                 }
             }
         }

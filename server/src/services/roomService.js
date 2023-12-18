@@ -57,7 +57,19 @@ function initializeRoomInfo(roomId, connectionMode, socket) {
 		connectionMode: null,
 		gameMode: null,
 		hostSocketId: socket.id,
+		countGameOvers: 0,
+		countOutOfGuesses: 0,
     })
+}
+
+function resetRoomInfo(roomId) {
+	const rooms = getRoomTypeFromId(roomId)
+		const room = getRoomFromId(roomId)
+		rooms.set(roomId, {
+			...room,
+			countGameOvers: 0,
+			countOutOfGuesses: 0,
+		})
 }
 
 function setRoomConnectionMode(roomId, connectionMode) {
@@ -90,11 +102,53 @@ function getRoomGameMode(roomId) {
 	return getRoomFromId(roomId).gameMode
 }
 
+function incrementCountGameOvers(roomId) {
+	if (roomExists(roomId)) {
+		const rooms = getRoomTypeFromId(roomId)
+		const room = getRoomFromId(roomId)
+		rooms.set(roomId, {
+			...room,
+			countGameOvers: room.countGameOvers + 1,
+		})
+	}
+}
+
+function getCountGameOvers(roomId) {
+	return getRoomFromId(roomId).countGameOvers
+}
+
+function incrementCountOutOfGuesses(roomId) {
+	console.log('incrementing out of guesses')
+	if (roomExists(roomId)) {
+		const rooms = getRoomTypeFromId(roomId)
+		const room = getRoomFromId(roomId)
+		rooms.set(roomId, {
+			...room,
+			countOutOfGuesses: room.countOutOfGuesses + 1,
+		})
+		console.log('after incrementing its', room.countOutOfGuesses)
+	}
+}
+
+function getCountOutOfGuesses(roomId) {
+	return getRoomFromId(roomId).countOutOfGuesses
+}
+
+function getRoomSize(roomId, io) {
+	return io.sockets.adapter.rooms.get(roomId).size
+}
+
 export {
+	roomExists,
+	initializeRoom,
 	getRoomTypeFromId,
 	getRoomFromId,
 	getRoomConnectionMode,
 	getRoomGameMode,
-	roomExists,
-	initializeRoom
+	incrementCountGameOvers,
+	getCountGameOvers,
+	incrementCountOutOfGuesses,
+	getCountOutOfGuesses,
+	getRoomSize,
+	resetRoomInfo,
 }
