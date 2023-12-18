@@ -3,15 +3,16 @@ import { useParams } from 'react-router-dom'
 import socket from '../socket'
 
 // Components
-import GameBoard from './GameBoard'
-import Keyboard from './Keyboard'
-import AlertModal from './AlertModal'
 import LobbyInfo from './LobbyInfo'
+import AlertModal from './AlertModal'
 import GameOverMessage from './GameOverMessage'
+import GameBoardContainer from './GameBoardContainer'
+import Keyboard from './Keyboard'
 
 // Data
 import VALID_WORDS from '../data/validWords'
 import WORDLE_ANSWERS from '../data/wordleAnswers'
+
 
 
 function GameContainer({
@@ -381,14 +382,6 @@ function GameContainer({
         }
     }
 
-    function myInfo() {
-        return userInfo[0]
-    }
-
-    function otherUserInfo() {
-        return userInfo.slice(1) || []
-    }
-
     return (
         <div className='game-container'>
             <LobbyInfo gameMode={gameMode} connectionMode={connectionMode} />
@@ -403,18 +396,11 @@ function GameContainer({
                 isHost={isHost}
                 startNewGame={startNewGame}
             />
-            {connectionMode.includes('offline') ? (
-                <GameBoard board={board} />
-            ) : (
-                <div className='boards-container'>
-                    {myInfo() ? (
-                        <GameBoard key={myInfo().socketId} board={board} isUserBoard={true}/>
-                    ) : null}
-                    {otherUserInfo().map((obj) => (
-                        <GameBoard key={obj.socketId} board={obj.gameBoard} isUserBoard={false}/>
-                    ))}
-                </div>
-            )}
+            <GameBoardContainer
+                connectionMode={connectionMode}
+                board={board}
+                userInfo={userInfo}
+            />
             <Keyboard handleKeyPress={handleKeyPress} hints={hints} />
         </div>
     )
