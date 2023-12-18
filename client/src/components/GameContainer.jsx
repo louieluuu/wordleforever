@@ -7,10 +7,12 @@ import GameBoard from './GameBoard'
 import Keyboard from './Keyboard'
 import AlertModal from './AlertModal'
 import LobbyInfo from './LobbyInfo'
+import GameOverMessage from "./GameOverMessage"
 
 // Data
 import VALID_WORDS from "../data/validWords"
 import WORDLE_ANSWERS from "../data/wordleAnswers"
+
 
 function GameContainer({
     gameMode,
@@ -395,21 +397,12 @@ function GameContainer({
                 setShowAlertModal={setShowAlertModal}
                 message={alertMessage}
             />
-            {isGameOver && (
-                <>
-                    {isGameWon ? (
-                        <div className='win-message'>
-                            <h2>Congratulations! You guessed the word!</h2>
-                            {isHost && <button onClick={startNewGame}>Play Again</button>}
-                        </div>
-                    ) : (
-                        <div className='loss-message'>
-                            <h2>Truly unfortunate. Maybe next time bud.</h2>
-                            {isHost && <button onClick={startNewGame}>Play Again</button>}
-                        </div>
-                    )}
-                </>
-            )}
+            <GameOverMessage
+                isGameOver={isGameOver}
+                isGameWon={isGameWon}
+                isHost={isHost}
+                startNewGame={startNewGame}
+            />
             {connectionMode.includes('offline') ? (
                 <GameBoard board={board} />
             ) : (
