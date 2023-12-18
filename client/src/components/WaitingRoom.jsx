@@ -35,8 +35,8 @@ function WaitingRoom({
             setGameMode(gameMode)
         })
 
-        socket.on('roomError', (errorMessage) => {
-            console.log(`Error: ${errorMessage}`)
+        socket.on('failedToJoinRoom', () => {
+            navigate('/')
         })
 
         socket.on('userInfoUpdated', (updatedUserInfo) => {
@@ -49,7 +49,8 @@ function WaitingRoom({
 
         return () => {
             socket.off('connect')
-            socket.off('roomError')
+            socket.off('roomJoined')
+            socket.off('failedToJoinRoom')
             socket.off('userInfoUpdated')
             socket.off('roomStarted')
         }

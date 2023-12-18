@@ -1,6 +1,6 @@
 // Services
-import { initializeRoom, getRoomConnectionMode, getRoomGameMode, roomExists } from '../services/roomService.js'
-import { setUsername } from '../services/userService.js'
+import { initializeRoom, getRoomConnectionMode, getRoomGameMode, roomExists, roomInLobby } from '../services/roomService.js'
+import { removeUser, setUsername } from '../services/userService.js'
 
 function createRoom(connectionMode, gameMode, socket) {
     const roomId = initializeRoom(connectionMode, gameMode, socket)
@@ -10,12 +10,15 @@ function createRoom(connectionMode, gameMode, socket) {
 }
 
 function joinRoom(roomId, username, io, socket) {
-    if (roomExists(roomId)) {
+    if (roomExists(roomId) && roomInLobby(roomId)) {
         console.log(`${socket.id} joining room: ${roomId}`)
         socket.join(roomId)
 
         setUsername(roomId, username, io, socket)
         socket.emit('roomJoined', getRoomConnectionMode(roomId), getRoomGameMode(roomId))
+    } else {
+        removeUser(socket, io)
+        socket.emit('failedToJoinRoom')
     }
 }
 

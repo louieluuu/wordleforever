@@ -15,13 +15,13 @@ import {
     setRoomOutOfGame,
     roomInLobby
 } from './roomService.js'
-import { getUserInfo, mapToArray, broadcastUserInfo } from './userService.js'
+import { getUserInfo, mapToArray, broadcastFinalUserInfo } from './userService.js'
 
 function startGame(roomId, io) {
-    if (roomExists(roomId)) {
-        console.log('resetting stuff')
+    if (roomExists(roomId) && roomInLobby(roomId)) {
         resetRoomInfo(roomId)
         initializeGameBoards(roomId)
+        setRoomInGame(roomId)
         const newSolution = generateSolution()
         io.to(roomId).emit(
             'gameStarted',
@@ -98,7 +98,7 @@ function handleCorrectGuess(roomId, updatedGameBoard, io, socket) {
     incrementCountGameOvers(roomId)
     setGameBoard(roomId, updatedGameBoard, socket)
     if (isGameOver(roomId, io)) {
-        broadcastUserInfo(roomId, io)
+        broadcastFinalUserInfo(roomId, io)
     } else {
         broadcastGameBoard(roomId, io, socket)
     }
@@ -108,7 +108,7 @@ function handleOutOfGuesses(roomId, io) {
     incrementCountGameOvers(roomId)
     incrementCountOutOfGuesses(roomId)
     if (isGameOver(roomId, io)) {
-        broadcastUserInfo(roomId, io)
+        broadcastFinalUserInfo(roomId, io)
     }
 }
 

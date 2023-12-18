@@ -1,10 +1,10 @@
 import React from 'react'
 
 function GameBoard({
-    board,
+    board=[],
     activeRow,
     activeCell,
-    isUserBoard,
+    isUserBoard=false,
 }) {
 
     function getCellClassName(board, row, cellIndex) {

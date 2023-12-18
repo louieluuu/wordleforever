@@ -84,7 +84,7 @@ function GameContainer({
             setUserInfo(updatedUserInfo)
         })
 
-        socket.on('userInfoUpdated', (finalUserInfo) => {
+        socket.on('finalUserInfo', (finalUserInfo) => {
             const sortedUserInfo = finalUserInfo.sort((obj) => {
                 return obj.socketId === socket.id ? -1 : 1
             })
@@ -103,7 +103,6 @@ function GameContainer({
 
     function startNewGame() {
         if (connectionMode.includes('online') && isHost) {
-            console.log('starting game as the host')
             socket.emit('startOnlineGame', roomId)
         } else if (connectionMode.includes('offline')) {
             // Host is necessary for some rendering, so always set to host in offline
@@ -116,7 +115,6 @@ function GameContainer({
     }
 
     function resetStates() {
-        console.log('resetting states')
         setIsGameOver(false)
         setIsGameWon(false)
         setIsOutOfGuesses(false)
@@ -222,13 +220,11 @@ function GameContainer({
     }
 
     function setUserGuess(guess) {
-        console.log('initial guess is', guess)
         const colorizedGuess = assignColors(guess)
         const updatedBoard = board.map(row => [...row])
         updatedBoard[activeRowIndex] = colorizedGuess
         setBoard(updatedBoard)
         updateHints(colorizedGuess)
-        console.log('colorized guess is', colorizedGuess)
 
         if (guess === solution) {
             if (connectionMode.includes('online')) {

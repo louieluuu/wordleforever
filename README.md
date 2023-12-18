@@ -8,7 +8,11 @@ Original Wordle: https://www.nytimes.com/games/wordle/index.html
 
 Single player functionality (all difficulties) is implemented.
 
-No multiplayer functionality.
+Online private multiplayer functionality is mostly done.
+
+## Known bugs
+
+Sometimes online challenge mode either renders no board or two initial guesses
 
 ## Images used
 

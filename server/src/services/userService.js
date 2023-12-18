@@ -1,7 +1,7 @@
-import { getRoomFromId, roomExists } from './roomService.js'
+import { getRoomFromId, roomExists, roomInLobby } from './roomService.js'
 
 function setUsername(roomId, username, io, socket) {
-    if (roomExists(roomId)) {
+    if (roomExists(roomId) && roomInLobby(roomId)) {
         const allUserInfo = getUserInfo(roomId)
         const currUserInfo = allUserInfo.get(socket.id) || {}
         allUserInfo.set(socket.id, {
@@ -34,6 +34,12 @@ function broadcastUserInfo(roomId, io) {
     }
 }
 
+function broadcastFinalUserInfo(roomId, io) {
+    if (roomExists(roomId)) {
+        io.to(roomId).emit('finalUserInfo', mapToArray(getUserInfo(roomId)))
+    }
+}
+
 function removeUser(socket, io) {
     const roomId = Array.from(socket.rooms)[1]
 
@@ -54,5 +60,6 @@ export {
     getUserInfo,
     removeUser,
     mapToArray,
-    broadcastUserInfo
+    broadcastUserInfo,
+    broadcastFinalUserInfo
 }

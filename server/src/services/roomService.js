@@ -152,7 +152,6 @@ function getCountGameOvers(roomId) {
 }
 
 function incrementCountOutOfGuesses(roomId) {
-	console.log('incrementing out of guesses')
 	if (roomExists(roomId)) {
 		const rooms = getRoomTypeFromId(roomId)
 		const room = getRoomFromId(roomId)
@@ -160,7 +159,6 @@ function incrementCountOutOfGuesses(roomId) {
 			...room,
 			countOutOfGuesses: room.countOutOfGuesses + 1,
 		})
-		console.log('after incrementing its', room.countOutOfGuesses)
 	}
 }
 
