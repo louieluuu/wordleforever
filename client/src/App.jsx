@@ -1,12 +1,12 @@
-import { useState } from "react"
+import { useState } from 'react'
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 // Components
-import NavBar from "./components/NavBar"
-import Menu from "./components/Menu"
-import WaitingRoom from "./components/WaitingRoom"
-import GameContainer from "./components/GameContainer"
+import NavBar from './components/NavBar'
+import Menu from './components/Menu'
+import WaitingRoom from './components/WaitingRoom'
+import GameContainer from './components/GameContainer'
 
 function App() {
 

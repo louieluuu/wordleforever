@@ -1,5 +1,4 @@
-import React, { useState } from "react"
-import Keyboard from "./Keyboard"
+import React from 'react'
 
 function GameBoard({
     board,

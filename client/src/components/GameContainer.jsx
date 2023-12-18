@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
-import socket from "../socket"
+import { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+import socket from '../socket'
 
 // Components
 import GameBoard from './GameBoard'
 import Keyboard from './Keyboard'
 import AlertModal from './AlertModal'
 import LobbyInfo from './LobbyInfo'
-import GameOverMessage from "./GameOverMessage"
+import GameOverMessage from './GameOverMessage'
 
 // Data
-import VALID_WORDS from "../data/validWords"
-import WORDLE_ANSWERS from "../data/wordleAnswers"
+import VALID_WORDS from '../data/validWords'
+import WORDLE_ANSWERS from '../data/wordleAnswers'
 
 
 function GameContainer({

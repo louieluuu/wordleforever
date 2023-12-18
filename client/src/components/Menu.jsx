@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom'
-import socket from "../socket"
+import socket from '../socket'
 
 // Components
-import WelcomeMessage from "./WelcomeMessage"
+import WelcomeMessage from './WelcomeMessage'
 import GameModeSelector from './GameModeSelector'
 import ConnectionModeSelector from './ConnectionModeSelector'
 

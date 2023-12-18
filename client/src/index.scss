@@ -20,7 +20,7 @@ body {
 }
 
 :root {
-    font-family: "Roboto", sans-serif;
+    font-family: 'Roboto', sans-serif;
     user-select: none;
 }
 
@@ -366,7 +366,7 @@ body {
             }
             
             &:before {
-                content: "";
+                content: '';
                 position: absolute;
                 top: 0;
                 bottom: 0;

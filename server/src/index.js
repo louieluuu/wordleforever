@@ -1,14 +1,14 @@
-import express from "express"
-import { createServer } from "http"
-import { Server } from "socket.io"
+import express from 'express'
+import { createServer } from 'http'
+import { Server } from 'socket.io'
 import cors from 'cors'
 
 // Controllers
-import { createRoom, joinRoom, startRoom } from "./controllers/roomController.js"
+import { createRoom, joinRoom, startRoom } from './controllers/roomController.js'
 
 // Services
-import { setUsername, removeUser } from "./services/userService.js"
-import { startGame, handleWrongGuess, handleCorrectGuess } from "./services/gameService.js"
+import { setUsername, removeUser } from './services/userService.js'
+import { startGame, handleWrongGuess, handleCorrectGuess } from './services/gameService.js'
 
 const app = express()
 const server = createServer(app)

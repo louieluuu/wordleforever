@@ -1,7 +1,7 @@
-import WORDLE_ANSWERS from "../data/wordleAnswers.js"
+import WORDLE_ANSWERS from '../data/wordleAnswers.js'
 
-import { roomExists } from "./roomService.js"
-import { getUserInfo, mapToArray, broadcastUserInfo } from "./userService.js"
+import { roomExists } from './roomService.js'
+import { getUserInfo, mapToArray, broadcastUserInfo } from './userService.js'
 
 function startGame(roomId, io) {
     if (roomExists(roomId)) {
