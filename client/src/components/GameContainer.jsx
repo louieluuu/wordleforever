@@ -127,12 +127,14 @@ function GameContainer({
     }
 
     function handleKeyPress(e) {
-        if (e.match(/^[a-zA-Z]$/)) {
-            handleLetter(e)
-        } else if (e === 'Backspace') {
-            handleBackspace()
-        } else if (e === 'Enter') {
-            handleEnter()
+        if (!isGameOver && !isGameWon && !isOutOfGuesses) {
+            if (e.match(/^[a-zA-Z]$/)) {
+                handleLetter(e)
+            } else if (e === 'Backspace') {
+                handleBackspace()
+            } else if (e === 'Enter') {
+                handleEnter()
+            }
         }
     }
 
@@ -175,11 +177,6 @@ function GameContainer({
     }
 
     function handleEnter() {
-        if (isGameOver) {
-            startNewGame()
-            return
-        }
-
         const enteredWord = board[activeRowIndex]
         .filter(cell => cell.letter !== '')
         .map(cell => cell.letter)
