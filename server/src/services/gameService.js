@@ -32,7 +32,7 @@ function initializeGameBoards(roomId) {
     }
 }
 
-function updateGameBoard(roomId, updatedGameBoard, io, socket) {
+function setGameBoard(roomId, updatedGameBoard, socket) {
     if (roomExists(roomId)) {
         const allUserInfo = getUserInfo(roomId)
         const currUserInfo = allUserInfo.get(socket.id)
@@ -55,12 +55,12 @@ function broadcastGameBoard(roomId, io, socket) {
 }
 
 function handleWrongGuess(roomId, updatedGameBoard, io, socket) {
-    updateGameBoard(roomId, updatedGameBoard, io, socket)
+    setGameBoard(roomId, updatedGameBoard, io, socket)
     broadcastGameBoard(roomId, io, socket)
 }
 
 function handleCorrectGuess(roomId, updatedGameBoard, io, socket) {
-    updateGameBoard(roomId, updatedGameBoard, io, socket)
+    setGameBoard(roomId, updatedGameBoard, io, socket)
     broadcastUserInfo(roomId, io)
 }
 

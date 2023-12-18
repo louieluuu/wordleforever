@@ -24,15 +24,17 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
     console.log(`A user connected: ${socket.id}`)
 
+    // Interact with WaitingRoom component
     // Create room
     socket.on('createRoom', (connectionMode, gameMode) => createRoom(connectionMode, gameMode, socket))
     // Join room
     socket.on('joinRoom', (roomId, username) => joinRoom(roomId, username, io, socket))
     // Username update
     socket.on('updateUsername', (roomId, username) => setUsername(roomId, username, io, socket))
-
     // Start room - interacts with waiting room, navigates to game room
     socket.on('startRoom', (roomId) => startRoom(roomId, io))
+
+    // Interact with GameContainer component
     // Start game - passes the user all relevant game information that may be necessary to render the game container
     socket.on('startOnlineGame', (roomId) => startGame(roomId, io))
     // General game flow
