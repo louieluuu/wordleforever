@@ -55,12 +55,12 @@ function broadcastGameBoard(roomId, io, socket) {
 }
 
 function handleWrongGuess(roomId, updatedGameBoard, io, socket) {
-    setGameBoard(roomId, updatedGameBoard, io, socket)
+    setGameBoard(roomId, updatedGameBoard, socket)
     broadcastGameBoard(roomId, io, socket)
 }
 
 function handleCorrectGuess(roomId, updatedGameBoard, io, socket) {
-    setGameBoard(roomId, updatedGameBoard, io, socket)
+    setGameBoard(roomId, updatedGameBoard, socket)
     broadcastUserInfo(roomId, io)
 }
 
