@@ -1,16 +1,33 @@
+import VALID_WORDS from '../data/validWords.js'
 import WORDLE_ANSWERS from '../data/wordleAnswers.js'
 
-import { roomExists, resetRoomInfo, getRoomConnectionMode, getRoomSize, incrementCountGameOvers, getCountGameOvers, incrementCountOutOfGuesses, getCountOutOfGuesses } from './roomService.js'
+import {
+    roomExists,
+    resetRoomInfo,
+    getRoomConnectionMode,
+    getRoomSize,
+    incrementCountGameOvers,
+    getCountGameOvers,
+    incrementCountOutOfGuesses,
+    getCountOutOfGuesses,
+    getRoomGameMode,
+    setRoomInGame,
+    setRoomOutOfGame,
+    roomInLobby
+} from './roomService.js'
 import { getUserInfo, mapToArray, broadcastUserInfo } from './userService.js'
 
 function startGame(roomId, io) {
     if (roomExists(roomId)) {
+        console.log('resetting stuff')
         resetRoomInfo(roomId)
         initializeGameBoards(roomId)
+        const newSolution = generateSolution()
         io.to(roomId).emit(
             'gameStarted',
             mapToArray(getUserInfo(roomId)),
-            generateSolution(),
+            newSolution,
+            (getRoomGameMode(roomId) === 'Challenge') ? generateRandomFirstGuess(newSolution) : null,
         )
     }
 }
@@ -19,6 +36,23 @@ function generateSolution() {
     const newSolution = WORDLE_ANSWERS[Math.floor(Math.random() * WORDLE_ANSWERS.length)].toUpperCase()
     console.log('Solution is', newSolution)
     return newSolution
+}
+
+// Used for challenge mode, generates a random starting word that always has exactly one letter in the correct spot
+function generateRandomFirstGuess(solution) {
+    let randomFirstGuess
+    while (true) {
+        randomFirstGuess = VALID_WORDS[Math.floor(Math.random() * VALID_WORDS.length)].toUpperCase()
+        let numGreenLetters = 0
+        for (let i = 0; i < randomFirstGuess.length; i++) {
+            if (randomFirstGuess[i] === solution[i]) {
+            numGreenLetters += 1
+            }
+        }
+        if (numGreenLetters === 1) {
+            return randomFirstGuess
+        }
+    }
 }
 
 function initializeGameBoards(roomId) {
@@ -81,6 +115,7 @@ function handleOutOfGuesses(roomId, io) {
 function isGameOver(roomId, io) {
     if (getRoomConnectionMode(roomId) === 'online-private') {
         if (getCountGameOvers(roomId) >= getRoomSize(roomId, io)) {
+            setRoomOutOfGame(roomId)
             return true
         }
     } else if (getRoomConnectionMode(roomId) === 'online-public') {

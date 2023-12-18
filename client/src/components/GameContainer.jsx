@@ -44,6 +44,7 @@ function GameContainer({
     // Multiplayer states
     const { roomId } = useParams()
     const [userInfo, setUserInfo] = useState([])
+    const [challengeModeGuess, setChallengeModeGuess] = useState(null)
 
     // useEffect hooks
 
@@ -54,20 +55,23 @@ function GameContainer({
 
     // Some race condition happening here where the first run is happening before solution gets updated
     useEffect(() => {
-        if (gameMode === 'Challenge' && solution !== '') {
+        if (connectionMode === 'offline' && gameMode === 'Challenge' && solution !== '') {
             generateRandomFirstGuess(solution)
+        } else if (connectionMode.includes('online') && gameMode === 'Challenge' && solution !== '' && challengeModeGuess !== null) {
+            setUserGuess(challengeModeGuess)
         }
     }, [solution])
 
     // Online game flow
     useEffect(() => {
-        socket.on('gameStarted', (initialUserInfo, solution) => {
+        socket.on('gameStarted', (initialUserInfo, newSolution, newChallengeModeGuess) => {
             resetStates()
             const sortedUserInfo = initialUserInfo.sort((obj) => {
                 return obj.socketId === socket.id ? -1 : 1
             })
             setUserInfo(sortedUserInfo)
-            setSolution(solution)
+            setSolution(newSolution)
+            setChallengeModeGuess(newChallengeModeGuess)
         })
 
         socket.on('gameBoardsUpdated', (updatedSocketId, updatedBoard) => {
@@ -99,6 +103,7 @@ function GameContainer({
 
     function startNewGame() {
         if (connectionMode.includes('online') && isHost) {
+            console.log('starting game as the host')
             socket.emit('startOnlineGame', roomId)
         } else if (connectionMode.includes('offline')) {
             // Host is necessary for some rendering, so always set to host in offline
@@ -111,6 +116,7 @@ function GameContainer({
     }
 
     function resetStates() {
+        console.log('resetting states')
         setIsGameOver(false)
         setIsGameWon(false)
         setIsOutOfGuesses(false)
@@ -178,7 +184,7 @@ function GameContainer({
         .toUpperCase()
 
         if (validateUserGuess(enteredWord)) {
-            setUserGuess(enteredWord, solution)
+            setUserGuess(enteredWord)
         }
     }
 
@@ -216,11 +222,13 @@ function GameContainer({
     }
 
     function setUserGuess(guess) {
+        console.log('initial guess is', guess)
         const colorizedGuess = assignColors(guess)
         const updatedBoard = board.map(row => [...row])
         updatedBoard[activeRowIndex] = colorizedGuess
         setBoard(updatedBoard)
         updateHints(colorizedGuess)
+        console.log('colorized guess is', colorizedGuess)
 
         if (guess === solution) {
             if (connectionMode.includes('online')) {

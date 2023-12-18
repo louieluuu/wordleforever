@@ -59,17 +59,51 @@ function initializeRoomInfo(roomId, connectionMode, socket) {
 		hostSocketId: socket.id,
 		countGameOvers: 0,
 		countOutOfGuesses: 0,
+		inGame: false,
     })
 }
 
+function setRoomInGame(roomId) {
+	if (roomExists(roomId)) {
+		const rooms = getRoomTypeFromId(roomId)
+		const room = getRoomFromId(roomId)
+		rooms.set(roomId, {
+			...room,
+			inGame: true,
+		})
+	}
+}
+
+function setRoomOutOfGame(roomId) {
+	if (roomExists(roomId)) {
+		const rooms = getRoomTypeFromId(roomId)
+		const room = getRoomFromId(roomId)
+		rooms.set(roomId, {
+			...room,
+			inGame: false,
+		})
+	}
+}
+
+function roomInLobby(roomId) {
+	if (roomExists(roomId)) {
+		if (getRoomFromId(roomId).inGame === false) {
+			return true
+		}
+	}
+	return false
+}
+
 function resetRoomInfo(roomId) {
-	const rooms = getRoomTypeFromId(roomId)
+	if (roomExists(roomId)) {
+		const rooms = getRoomTypeFromId(roomId)
 		const room = getRoomFromId(roomId)
 		rooms.set(roomId, {
 			...room,
 			countGameOvers: 0,
 			countOutOfGuesses: 0,
 		})
+	}
 }
 
 function setRoomConnectionMode(roomId, connectionMode) {
@@ -151,4 +185,7 @@ export {
 	getCountOutOfGuesses,
 	getRoomSize,
 	resetRoomInfo,
+	setRoomInGame,
+	setRoomOutOfGame,
+	roomInLobby,
 }
