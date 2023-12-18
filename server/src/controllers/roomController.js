@@ -1,6 +1,6 @@
 // Services
 import { initializeRoom, getRoomConnectionMode, getRoomGameMode, roomExists, roomInLobby } from '../services/roomService.js'
-import { removeUser, setUsername } from '../services/userService.js'
+import { setUsername } from '../services/userService.js'
 
 function createRoom(connectionMode, gameMode, socket) {
     const roomId = initializeRoom(connectionMode, gameMode, socket)
@@ -25,6 +25,10 @@ function startRoom(roomId, io) {
     if (roomExists(roomId)) {
         io.to(roomId).emit('roomStarted')
     }
+}
+
+function handleMatchmaking(gameMode) {
+    
 }
 
 export { createRoom, joinRoom, startRoom }

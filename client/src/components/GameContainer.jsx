@@ -75,13 +75,15 @@ function GameContainer({
         })
 
         socket.on('gameBoardsUpdated', (updatedSocketId, updatedBoard) => {
-            const updatedUserInfo = [...userInfo]
-            updatedUserInfo.forEach((obj) => {
-                if (obj.socketId !== socket.id && obj.socketId === updatedSocketId) {
-                    obj.gameBoard = updatedBoard
-                }
+            setUserInfo(prevUserInfo => {
+                const updatedUserInfo = [...prevUserInfo]
+                updatedUserInfo.forEach((obj) => {
+                    if (obj.socketId !== socket.id && obj.socketId === updatedSocketId) {
+                        obj.gameBoard = updatedBoard
+                    }
+                })
+                return updatedUserInfo
             })
-            setUserInfo(updatedUserInfo)
         })
 
         socket.on('finalUserInfo', (finalUserInfo) => {
@@ -97,7 +99,7 @@ function GameContainer({
             socket.off('gameBoardsUpdated')
             socket.off('userInfoUpdated')
         }
-    }, [userInfo])
+    }, [])
 
     // Helper functions
 

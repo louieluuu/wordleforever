@@ -31,8 +31,9 @@ function Menu({
                     setIsHost(true)
                     navigate(`/room/${roomId}`)
                 })
-            } else {
-                // For now this will also include public games, implementing private games first
+            } else if (connectionMode === 'online-public') {
+                socket.emit('findMatch', gameMode)
+            } else if (connectionMode.includes('offline')) {
                 navigate('/offline')
             }
         }
