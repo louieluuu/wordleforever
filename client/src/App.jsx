@@ -10,8 +10,8 @@ import GameContainer from './components/GameContainer'
 
 function App() {
 
-  const [gameMode, setGameMode] = useState(null)
-  const [connectionMode, setConnectionMode] = useState(null)
+  const [gameMode, setGameMode] = useState('Easy')
+  const [connectionMode, setConnectionMode] = useState('offline')
 
   const [username, setUsername] = useState(localStorage.getItem('username') || 'Wordler')
   const [isHost, setIsHost] = useState(false)

@@ -22,8 +22,8 @@ function NavBar({
   }
 
   function handleTitleClick() {
-    setGameMode(null)
-    setConnectionMode(null)
+    setGameMode('Easy')
+    setConnectionMode('offline')
     navigate('/')
   }
 
