@@ -3,7 +3,7 @@ import { initializeRoom, getRoomConnectionMode, getRoomGameMode, roomExists } fr
 import { setUsername } from '../services/userService.js'
 
 function createRoom(connectionMode, gameMode, socket) {
-    const roomId = initializeRoom(connectionMode, gameMode)
+    const roomId = initializeRoom(connectionMode, gameMode, socket)
 
     console.log(`Creating room: ${roomId}`)
     socket.emit('roomCreated', roomId)

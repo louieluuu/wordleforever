@@ -12,6 +12,7 @@ function WaitingRoom({
     setInputWidth,
     setConnectionMode,
     setGameMode,
+    isHost,
 }) {
     const navigate = useNavigate()
     const { roomId } = useParams()
@@ -80,7 +81,6 @@ function WaitingRoom({
         >
             Copy Link
         </button>
-
         <div>
             <h3>Users in the Room:</h3>
             <ul>
@@ -89,10 +89,11 @@ function WaitingRoom({
                 ))}
             </ul>
         </div>
-
-        <button onClick={startRoom}>
-            Start Game
-        </button>
+        {isHost ? (
+            <button onClick={startRoom}>
+                Start Game
+            </button>
+        ) : null}
     </div>
   )
 }

@@ -10,11 +10,12 @@ import GameContainer from "./components/GameContainer"
 
 function App() {
 
-  const [username, setUsername] = useState(localStorage.getItem('username') || 'Wordler')
-  const [inputWidth, setInputWidth] = useState(0)
-
   const [gameMode, setGameMode] = useState(null)
   const [connectionMode, setConnectionMode] = useState(null)
+
+  const [username, setUsername] = useState(localStorage.getItem('username') || 'Wordler')
+  const [isHost, setIsHost] = useState(false)
+  const [inputWidth, setInputWidth] = useState(0)
 
   return (
     <>
@@ -36,6 +37,7 @@ function App() {
               setGameMode={setGameMode}
               connectionMode={connectionMode}
               setConnectionMode={setConnectionMode}
+              setIsHost={setIsHost}
             />
             }
           />
@@ -49,6 +51,7 @@ function App() {
               setInputWidth={setInputWidth}
               setConnectionMode={setConnectionMode}
               setGameMode={setGameMode}
+              isHost={isHost}
             />
             }
           />
@@ -58,6 +61,8 @@ function App() {
             <GameContainer
               gameMode={gameMode}
               connectionMode={connectionMode}
+              isHost={isHost}
+              setIsHost={setIsHost}
             />
             }
           />
@@ -67,6 +72,8 @@ function App() {
             <GameContainer
               gameMode={gameMode}
               connectionMode={connectionMode}
+              isHost={isHost}
+              setIsHost={setIsHost}
             />
             }
           />

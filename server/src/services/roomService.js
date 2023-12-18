@@ -40,15 +40,15 @@ function roomExists(roomId) {
 	return true
 }
 
-function initializeRoom(connectionMode, gameMode) {
+function initializeRoom(connectionMode, gameMode, socket) {
 	const roomId = uuidv4()
-	initializeRoomInfo(roomId, connectionMode)
+	initializeRoomInfo(roomId, connectionMode, socket)
 	setRoomConnectionMode(roomId, connectionMode)
 	setRoomGameMode(roomId, gameMode)
 	return roomId
 }
 
-function initializeRoomInfo(roomId, connectionMode) {
+function initializeRoomInfo(roomId, connectionMode, socket) {
 	const rooms = getRoomTypeFromConnection(connectionMode)
 	const room = getRoomFromId(roomId)
     rooms.set(roomId, {
@@ -56,6 +56,7 @@ function initializeRoomInfo(roomId, connectionMode) {
         userInfo: new Map(),
 		connectionMode: null,
 		gameMode: null,
+		hostSocketId: socket.id,
     })
 }
 
@@ -89,4 +90,11 @@ function getRoomGameMode(roomId) {
 	return getRoomFromId(roomId).gameMode
 }
 
-export { getRoomTypeFromId, getRoomFromId, getRoomConnectionMode, getRoomGameMode, roomExists, initializeRoom }
+export {
+	getRoomTypeFromId,
+	getRoomFromId,
+	getRoomConnectionMode,
+	getRoomGameMode,
+	roomExists,
+	initializeRoom
+}

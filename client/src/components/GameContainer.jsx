@@ -15,11 +15,14 @@ import WORDLE_ANSWERS from "../data/wordleAnswers"
 function GameContainer({
     gameMode,
     connectionMode,
+    isHost,
+    setIsHost,
 }) {
 
     // Gameflow states
     const [isGameWon, setIsGameWon] = useState(false)
     const [isOutOfGuesses, setIsOutOfGuesses] = useState(false)
+    const [isGameOver, setIsGameOver] = useState(false)
 
     // Gameplay states
     const [board, setBoard] = useState(new Array(6).fill().map((_) => new Array(5).fill({ letter: '', color: '' })))
@@ -79,6 +82,7 @@ function GameContainer({
                 return obj.socketId === socket.id ? -1 : 1
             })
             setUserInfo(sortedUserInfo)
+            setIsGameOver(true)
         })
 
         return () => {
@@ -91,10 +95,11 @@ function GameContainer({
     // Helper functions
 
     function startNewGame() {
-        if (connectionMode.includes('online')) {
+        if (connectionMode.includes('online') && isHost) {
             socket.emit('startOnlineGame', roomId)
         } else if (connectionMode.includes('offline')) {
-            console.log('offline game yuh')
+            // Host is necessary for some rendering, so always set to host in offline
+            setIsHost(true)
             resetStates()
             const newSolution = generateSolution()
             setSolution(newSolution)
@@ -103,6 +108,7 @@ function GameContainer({
     }
 
     function resetStates() {
+        setIsGameOver(false)
         setIsGameWon(false)
         setIsOutOfGuesses(false)
         setBoard(new Array(6).fill().map((_) => new Array(5).fill({ letter: '', color: '' })))
@@ -218,6 +224,8 @@ function GameContainer({
                 socket.emit('correctGuess', roomId, updatedBoard)
             }
             setIsGameWon(true)
+            // Might change this later, for now we'll end the game if one person guesses the solution
+            setIsGameOver(true)
         } else {
             if (connectionMode.includes('online')) {
                 socket.emit('wrongGuess', roomId, updatedBoard)
@@ -228,6 +236,9 @@ function GameContainer({
             setActiveCellIndex(0)
             if (nextRow >= board.length) {
                 setIsOutOfGuesses(true)
+                if (connectionMode.includes('offline')) {
+                    setIsGameOver(true)
+                }
             }
         }
     }
@@ -384,18 +395,21 @@ function GameContainer({
                 setShowAlertModal={setShowAlertModal}
                 message={alertMessage}
             />
-            {isGameWon ? (
-                <div className='win-message'>
-                    <h2>Congratulations! You guessed the word!</h2>
-                    <button onClick={startNewGame}>Play Again</button>
-                </div>
-            ) : null}
-            {isOutOfGuesses ? (
-                <div className='loss-message'>
-                    <h2>Truly unfortunate. Maybe next time bud.</h2>
-                    <button onClick={startNewGame}>Play Again</button>
-                </div>
-            ) : null}
+            {isGameOver && (
+                <>
+                    {isGameWon ? (
+                        <div className='win-message'>
+                            <h2>Congratulations! You guessed the word!</h2>
+                            {isHost && <button onClick={startNewGame}>Play Again</button>}
+                        </div>
+                    ) : (
+                        <div className='loss-message'>
+                            <h2>Truly unfortunate. Maybe next time bud.</h2>
+                            {isHost && <button onClick={startNewGame}>Play Again</button>}
+                        </div>
+                    )}
+                </>
+            )}
             {connectionMode.includes('offline') ? (
                 <GameBoard board={board} />
             ) : (

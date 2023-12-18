@@ -17,6 +17,7 @@ function Menu({
     setGameMode,
     connectionMode,
     setConnectionMode,
+    setIsHost,
 }) {
 
     const navigate = useNavigate()
@@ -27,6 +28,7 @@ function Menu({
                 socket.emit('createRoom', connectionMode, gameMode)
 
                 socket.on('roomCreated', (roomId) => {
+                    setIsHost(true)
                     navigate(`/room/${roomId}`)
                 })
             } else {

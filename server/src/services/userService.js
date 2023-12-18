@@ -49,4 +49,10 @@ function removeUser(socket, io) {
     console.log(`User ${socket.id} disconnected`)
 }
 
-export { setUsername, getUserInfo, removeUser, mapToArray, broadcastUserInfo }
+export {
+    setUsername,
+    getUserInfo,
+    removeUser,
+    mapToArray,
+    broadcastUserInfo
+}

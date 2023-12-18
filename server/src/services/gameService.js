@@ -64,4 +64,10 @@ function handleCorrectGuess(roomId, updatedGameBoard, io, socket) {
     broadcastUserInfo(roomId, io)
 }
 
-export { generateSolution, initializeGameBoards, startGame, handleWrongGuess, handleCorrectGuess }
+export {
+    generateSolution,
+    initializeGameBoards,
+    startGame,
+    handleWrongGuess,
+    handleCorrectGuess
+}
