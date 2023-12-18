@@ -175,6 +175,11 @@ function GameContainer({
     }
 
     function handleEnter() {
+        if (isGameOver) {
+            startNewGame()
+            return
+        }
+
         const enteredWord = board[activeRowIndex]
         .filter(cell => cell.letter !== '')
         .map(cell => cell.letter)

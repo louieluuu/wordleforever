@@ -17,7 +17,6 @@ function joinRoom(roomId, username, io, socket) {
         setUsername(roomId, username, io, socket)
         socket.emit('roomJoined', getRoomConnectionMode(roomId), getRoomGameMode(roomId))
     } else {
-        removeUser(socket, io)
         socket.emit('failedToJoinRoom')
     }
 }
