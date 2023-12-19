@@ -1,5 +1,6 @@
 import { getRoomFromId, roomExists, roomInLobby } from './roomService.js'
 
+// Set the username initially when joining the room
 function setUsername(roomId, username, io, socket) {
     if (roomExists(roomId) && roomInLobby(roomId)) {
         const allUserInfo = getUserInfo(roomId)
@@ -12,8 +13,29 @@ function setUsername(roomId, username, io, socket) {
     }    
 }
 
+// Already need to be in the room to keep username up to date with changes
+// Was needed to split this from setUsername due to a userInfo object being created for a socket even if they failed to join the room through (socket.emit('updateUsername'))
+function updateUsername(roomId, username, io, socket) {
+    if (roomExists(roomId) && roomInLobby(roomId) && isUserInRoom(roomId, socket)) {
+        const allUserInfo = getUserInfo(roomId)
+        const currUserInfo = allUserInfo.get(socket.id) || {}
+        allUserInfo.set(socket.id, {
+            ...currUserInfo,
+            username: username,
+        })
+        broadcastUserInfo(roomId, io)
+    }    
+}
+
 function getUserInfo(roomId) {
     return getRoomFromId(roomId).userInfo
+}
+
+function isUserInRoom(roomId, socket) {
+    if (roomExists(roomId) && (getUserInfo(roomId).has(socket.id))) {
+        return true
+    }
+    return false
 }
 
 function mapToArray(userInfo) {
@@ -41,6 +63,7 @@ function broadcastFinalUserInfo(roomId, io) {
 }
 
 function removeUser(socket, io) {
+    console.log(`User ${socket.id} disconnected`)
     const roomId = Array.from(socket.rooms)[1]
 
     if (roomId === undefined) {
@@ -49,14 +72,13 @@ function removeUser(socket, io) {
         console.log(`Removing user ${socket.id} from ${roomId}`)
         const currUserInfo = getUserInfo(roomId)
         currUserInfo.delete(socket.id)
-        broadcastUserInfo(currUserInfo, roomId, io)
+        broadcastUserInfo(roomId, io)
     }
-
-    console.log(`User ${socket.id} disconnected`)
 }
 
 export {
     setUsername,
+    updateUsername,
     getUserInfo,
     removeUser,
     mapToArray,

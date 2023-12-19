@@ -7,7 +7,7 @@ import cors from 'cors'
 import { createRoom, joinRoom, startRoom } from './controllers/roomController.js'
 
 // Services
-import { setUsername, removeUser } from './services/userService.js'
+import { updateUsername, removeUser } from './services/userService.js'
 import { startGame, handleWrongGuess, handleCorrectGuess, handleOutOfGuesses } from './services/gameService.js'
 
 const app = express()
@@ -30,7 +30,7 @@ io.on('connection', (socket) => {
     // Join room
     socket.on('joinRoom', (roomId, username) => joinRoom(roomId, username, io, socket))
     // Username update
-    socket.on('updateUsername', (roomId, username) => setUsername(roomId, username, io, socket))
+    socket.on('updateUsername', (roomId, username) => updateUsername(roomId, username, io, socket))
     // Start room - interacts with waiting room, navigates to game room
     socket.on('startRoom', (roomId) => startRoom(roomId, io))
 

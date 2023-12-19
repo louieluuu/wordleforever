@@ -36,6 +36,7 @@ function WaitingRoom({
         })
 
         socket.on('failedToJoinRoom', () => {
+            // TODO: display some sort of error message for the user
             navigate('/')
         })
 

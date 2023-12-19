@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 const Private = new Map()
 const Public = new Map()
 const Rooms = { Private, Public }
+const MAX_ROOM_SIZE = 4
 
 // Needed for the initial creation of rooms before the roomId is placed in it's own map
 function getRoomTypeFromConnection(mode) {
@@ -86,10 +87,15 @@ function setRoomOutOfGame(roomId) {
 }
 
 function roomInLobby(roomId) {
-	if (roomExists(roomId)) {
-		if (getRoomFromId(roomId).inGame === false) {
-			return true
-		}
+	if (roomExists(roomId) && (getRoomFromId(roomId).inGame === false)) {
+		return true
+	}
+	return false
+}
+
+function isRoomFull(roomId, io) { 
+	if (roomExists(roomId) && (getRoomSize(roomId, io) >= MAX_ROOM_SIZE)) {
+		return true
 	}
 	return false
 }
@@ -167,7 +173,8 @@ function getCountOutOfGuesses(roomId) {
 }
 
 function getRoomSize(roomId, io) {
-	return io.sockets.adapter.rooms.get(roomId).size
+	const room = io.sockets.adapter.rooms.get(roomId)
+	return room ? room.size : 0
 }
 
 export {
@@ -186,4 +193,5 @@ export {
 	setRoomInGame,
 	setRoomOutOfGame,
 	roomInLobby,
+	isRoomFull,
 }

@@ -1,5 +1,5 @@
 // Services
-import { initializeRoom, getRoomConnectionMode, getRoomGameMode, roomExists, roomInLobby } from '../services/roomService.js'
+import { initializeRoom, getRoomConnectionMode, getRoomGameMode, roomExists, roomInLobby, isRoomFull } from '../services/roomService.js'
 import { setUsername } from '../services/userService.js'
 
 function createRoom(connectionMode, gameMode, socket) {
@@ -10,13 +10,14 @@ function createRoom(connectionMode, gameMode, socket) {
 }
 
 function joinRoom(roomId, username, io, socket) {
-    if (roomExists(roomId) && roomInLobby(roomId)) {
+    if (roomExists(roomId) && roomInLobby(roomId) && !isRoomFull(roomId, io)) {
         console.log(`${socket.id} joining room: ${roomId}`)
         socket.join(roomId)
 
         setUsername(roomId, username, io, socket)
         socket.emit('roomJoined', getRoomConnectionMode(roomId), getRoomGameMode(roomId))
     } else {
+        console.log(`${socket.id} failed to join room: ${roomId}`)
         socket.emit('failedToJoinRoom')
     }
 }
