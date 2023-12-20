@@ -17,7 +17,7 @@ import {
 } from './roomService.js'
 import { getUserInfo, mapToArray, broadcastFinalUserInfo } from './userService.js'
 
-function startGame(roomId, io) {
+function handleGameStart(roomId, io) {
     console.log('calling start game')
     if (roomExists(roomId) && roomInLobby(roomId)) {
         console.log('starting game')
@@ -129,7 +129,7 @@ function isGameOver(roomId, io) {
 export {
     generateSolution,
     initializeGameBoards,
-    startGame,
+    handleGameStart,
     handleWrongGuess,
     handleCorrectGuess,
     handleOutOfGuesses

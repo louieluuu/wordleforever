@@ -92,10 +92,8 @@ function WaitingRoom({
     useEffect(() => {
         if (connectionMode.includes('public')) {
             if (userInfo.length > 1) {
-                console.log('start countdown')
                 startCountdown()
             } else if (userInfo.length < 2) {
-                console.log('stop countdown')
                 stopCountdown()
             }
         }

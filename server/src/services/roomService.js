@@ -49,6 +49,13 @@ function initializeRoom(connectionMode, gameMode, socket) {
 	return roomId
 }
 
+function deleteRoom(roomId) {
+	if (roomExists(roomId)) {
+		console.log(`Deleting room: ${roomId}`)
+		getRoomTypeFromId(roomId).delete(roomId)
+	}
+}
+
 function initializeRoomInfo(roomId, connectionMode, socket) {
 	const rooms = getRoomTypeFromConnection(connectionMode)
 	const room = getRoomFromId(roomId)
@@ -210,6 +217,7 @@ function resetCountdown(roomId) {
 export {
 	roomExists,
 	initializeRoom,
+	deleteRoom,
 	getRoomTypeFromConnection,
 	getRoomTypeFromId,
 	getRoomFromId,

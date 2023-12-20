@@ -7,8 +7,8 @@ import cors from 'cors'
 import { createRoom, joinRoom, handleCountdownStart, handleCountdownStop, handleMatchmaking } from './controllers/roomController.js'
 
 // Services
-import { updateUsername, removeUser } from './services/userService.js'
-import { startGame, handleWrongGuess, handleCorrectGuess, handleOutOfGuesses } from './services/gameService.js'
+import { handleUsernameUpdate, handleUserDisconnect } from './services/userService.js'
+import { handleGameStart, handleWrongGuess, handleCorrectGuess, handleOutOfGuesses } from './services/gameService.js'
 
 const app = express()
 const server = createServer(app)
@@ -32,21 +32,21 @@ io.on('connection', (socket) => {
     // Join room
     socket.on('joinRoom', (roomId, username) => joinRoom(roomId, username, io, socket))
     // Username update
-    socket.on('updateUsername', (roomId, username) => updateUsername(roomId, username, io, socket))
+    socket.on('updateUsername', (roomId, username) => handleUsernameUpdate(roomId, username, io, socket))
     // Start countdown before starting the game -> navigate to game room
     socket.on('startCountdown', (roomId) => handleCountdownStart(roomId, io))
     // Stop countdown - no longer enough users in the room
     socket.on('stopCountdown', (roomId) => handleCountdownStop(roomId, io))
 
     // Interact with GameContainer component
-    socket.on('startOnlineGame', (roomId) => startGame(roomId, io))
+    socket.on('startOnlineGame', (roomId) => handleGameStart(roomId, io))
     // General game flow
     socket.on('wrongGuess', (roomId, updatedGameBoard) => handleWrongGuess(roomId, updatedGameBoard, io, socket))
     socket.on('correctGuess', (roomId, updatedGameBoard) => handleCorrectGuess(roomId, updatedGameBoard, io, socket))
     socket.on('outOfGuesses', (roomId) => handleOutOfGuesses(roomId, io))
 
     // User disconnect and cleanup
-    socket.on('disconnecting', () => removeUser(socket, io))
+    socket.on('disconnecting', () => handleUserDisconnect(socket, io))
 
 })
 

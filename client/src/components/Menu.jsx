@@ -35,17 +35,14 @@ function Menu({
                 socket.emit('findMatch', gameMode)
 
                 socket.on('matchFound', (roomId) => {
-                    console.log('match found, navigating to', roomId)
                     navigate(`/room/${roomId}`)
                 })
 
                 socket.on('noMatchesFound', () => {
-                    console.log('no match found, client creating room')
                     socket.emit('createRoom', connectionMode, gameMode)
                 })
 
                 socket.on('roomCreated', (roomId) => {
-                    console.log('creating room', roomId)
                     setIsHost(true)
                     navigate(`/room/${roomId}`)
                 })
