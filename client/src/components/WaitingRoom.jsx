@@ -81,6 +81,27 @@ function WaitingRoom({
         socket.emit('startCountdown', roomId)
     }
 
+    function stopCountdown() {
+        // TODO: display something to the user?
+        socket.emit('stopCountdown', roomId)
+        setShowCountdownModal(false)
+    }
+
+    // Keep track of number of users in room
+    // Start countdown in public game when at least 2 users, stop when less than 2 users
+    useEffect(() => {
+        if (connectionMode.includes('public')) {
+            if (userInfo.length > 1) {
+                console.log('start countdown')
+                startCountdown()
+            } else if (userInfo.length < 2) {
+                console.log('stop countdown')
+                stopCountdown()
+            }
+        }
+
+    }, [userInfo])
+
   return (
     <div>
         <WelcomeMessage

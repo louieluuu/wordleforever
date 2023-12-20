@@ -4,7 +4,7 @@ import { Server } from 'socket.io'
 import cors from 'cors'
 
 // Controllers
-import { createRoom, joinRoom, startCountdown, handleMatchmaking } from './controllers/roomController.js'
+import { createRoom, joinRoom, handleCountdownStart, handleCountdownStop, handleMatchmaking } from './controllers/roomController.js'
 
 // Services
 import { updateUsername, removeUser } from './services/userService.js'
@@ -34,7 +34,9 @@ io.on('connection', (socket) => {
     // Username update
     socket.on('updateUsername', (roomId, username) => updateUsername(roomId, username, io, socket))
     // Start countdown before starting the game -> navigate to game room
-    socket.on('startCountdown', (roomId) => startCountdown(roomId, io))
+    socket.on('startCountdown', (roomId) => handleCountdownStart(roomId, io))
+    // Stop countdown - no longer enough users in the room
+    socket.on('stopCountdown', (roomId) => handleCountdownStop(roomId, io))
 
     // Interact with GameContainer component
     socket.on('startOnlineGame', (roomId) => startGame(roomId, io))

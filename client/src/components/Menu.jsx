@@ -35,7 +35,7 @@ function Menu({
                 socket.emit('findMatch', gameMode)
 
                 socket.on('matchFound', (roomId) => {
-                    console.log('match found')
+                    console.log('match found, navigating to', roomId)
                     navigate(`/room/${roomId}`)
                 })
 
@@ -45,6 +45,7 @@ function Menu({
                 })
 
                 socket.on('roomCreated', (roomId) => {
+                    console.log('creating room', roomId)
                     setIsHost(true)
                     navigate(`/room/${roomId}`)
                 })

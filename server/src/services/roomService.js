@@ -227,4 +227,5 @@ export {
 	isRoomFull,
 	hasCountdownStarted,
 	setCountdownStarted,
+	resetCountdown,
 }

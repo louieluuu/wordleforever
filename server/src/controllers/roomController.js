@@ -8,7 +8,8 @@ import {
     roomInLobby,
     isRoomFull,
     hasCountdownStarted,
-    setCountdownStarted
+    setCountdownStarted,
+    resetCountdown
 } from '../services/roomService.js'
 import { setUsername, isUserInRoom } from '../services/userService.js'
 
@@ -38,7 +39,7 @@ function joinRoom(roomId, username, io, socket) {
     }
 }
 
-function startCountdown(roomId, io) {
+function handleCountdownStart(roomId, io) {
     if (roomExists(roomId) && !hasCountdownStarted(roomId)) {
         setCountdownStarted(roomId)
         io.to(roomId).emit('countdownStarted')
@@ -52,6 +53,10 @@ function startCountdown(roomId, io) {
         }
 
         const countdownInterval = setInterval(() => {
+            if (!hasCountdownStarted(roomId)) {
+                clearInterval(countdownInterval)
+                return
+            }
             seconds--
             io.to(roomId).emit('countdownTick', seconds)
 
@@ -60,6 +65,12 @@ function startCountdown(roomId, io) {
                 startRoom(roomId, io)
             }
         }, 1000)
+    }
+}
+
+function handleCountdownStop(roomId, io) {
+    if (roomExists(roomId) && hasCountdownStarted(roomId)) {
+        resetCountdown(roomId)
     }
 }
 
@@ -83,10 +94,9 @@ function handleMatchmaking(gameMode, socket, io) {
 
     if (matchingRoomId) {
         socket.emit('matchFound', matchingRoomId)
-        io.to(matchingRoomId).emit('matchFound')
     } else {
         socket.emit('noMatchesFound')
     }
 }
 
-export { createRoom, joinRoom, startCountdown, startRoom, handleMatchmaking }
+export { createRoom, joinRoom, handleCountdownStart, handleCountdownStop, startRoom, handleMatchmaking }
