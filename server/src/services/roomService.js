@@ -180,6 +180,7 @@ function getRoomSize(roomId, io) {
 export {
 	roomExists,
 	initializeRoom,
+	getRoomTypeFromConnection,
 	getRoomTypeFromId,
 	getRoomFromId,
 	getRoomConnectionMode,

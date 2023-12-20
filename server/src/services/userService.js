@@ -80,6 +80,7 @@ export {
     setUsername,
     updateUsername,
     getUserInfo,
+    isUserInRoom,
     removeUser,
     mapToArray,
     broadcastUserInfo,

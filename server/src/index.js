@@ -4,7 +4,7 @@ import { Server } from 'socket.io'
 import cors from 'cors'
 
 // Controllers
-import { createRoom, joinRoom, startRoom } from './controllers/roomController.js'
+import { createRoom, joinRoom, startRoom, handleMatchmaking } from './controllers/roomController.js'
 
 // Services
 import { updateUsername, removeUser } from './services/userService.js'
@@ -25,6 +25,8 @@ io.on('connection', (socket) => {
     console.log(`A user connected: ${socket.id}`)
 
     // Interact with WaitingRoom component
+    // Find match
+    socket.on('findMatch', (gameMode) => handleMatchmaking(gameMode, socket, io))
     // Create room
     socket.on('createRoom', (connectionMode, gameMode) => createRoom(connectionMode, gameMode, socket))
     // Join room

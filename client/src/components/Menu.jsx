@@ -33,6 +33,18 @@ function Menu({
                 })
             } else if (connectionMode === 'online-public') {
                 socket.emit('findMatch', gameMode)
+
+                socket.on('matchFound', (roomId) => {
+                    navigate(`/room/${roomId}`)
+                })
+
+                socket.on('noMatchesFound', () => {
+                    socket.emit('createRoom', connectionMode, gameMode)
+                })
+
+                socket.on('roomCreated', (roomId) => {
+                    navigate(`/room/${roomId}`)
+                })
             } else if (connectionMode.includes('offline')) {
                 navigate('/offline')
             }
