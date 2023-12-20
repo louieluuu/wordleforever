@@ -186,7 +186,7 @@ function isRoomFull(roomId, io) {
 }
 
 function hasCountdownStarted(roomId) {
-	if (roomExists(roomId) && (getRoomFromId(roomId).countdownStarted === true)) {
+	if (roomExists(roomId) && (getRoomFromId(roomId).countdownStarted)) {
 		return true
 	}
 	return false

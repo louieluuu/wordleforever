@@ -67,7 +67,10 @@ function WaitingRoom({
             socket.off('connect')
             socket.off('roomJoined')
             socket.off('failedToJoinRoom')
+            socket.off('matchFound')
             socket.off('userInfoUpdated')
+            socket.off('countdownStarted')
+            socket.off('countdownTick')
             socket.off('roomStarted')
         }
     }, [])
@@ -93,7 +96,9 @@ function WaitingRoom({
         if (connectionMode.includes('public')) {
             if (userInfo.length > 1) {
                 startCountdown()
-            } else if (userInfo.length < 2) {
+            }
+            // Might be a bit hacky since it "should" be < 2, but this was running on the empty first initialized userInfo array when a new user joins in the middle of a countdown
+            else if (userInfo.length === 1) {
                 stopCountdown()
             }
         }
