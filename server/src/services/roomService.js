@@ -61,43 +61,8 @@ function initializeRoomInfo(roomId, connectionMode, socket) {
 		countGameOvers: 0,
 		countOutOfGuesses: 0,
 		inGame: false,
+		countdownStarted: false,
     })
-}
-
-function setRoomInGame(roomId) {
-	if (roomExists(roomId)) {
-		const rooms = getRoomTypeFromId(roomId)
-		const room = getRoomFromId(roomId)
-		rooms.set(roomId, {
-			...room,
-			inGame: true,
-		})
-	}
-}
-
-function setRoomOutOfGame(roomId) {
-	if (roomExists(roomId)) {
-		const rooms = getRoomTypeFromId(roomId)
-		const room = getRoomFromId(roomId)
-		rooms.set(roomId, {
-			...room,
-			inGame: false,
-		})
-	}
-}
-
-function roomInLobby(roomId) {
-	if (roomExists(roomId) && (getRoomFromId(roomId).inGame === false)) {
-		return true
-	}
-	return false
-}
-
-function isRoomFull(roomId, io) { 
-	if (roomExists(roomId) && (getRoomSize(roomId, io) >= MAX_ROOM_SIZE)) {
-		return true
-	}
-	return false
 }
 
 function resetRoomInfo(roomId) {
@@ -177,6 +142,71 @@ function getRoomSize(roomId, io) {
 	return room ? room.size : 0
 }
 
+function setRoomInGame(roomId) {
+	if (roomExists(roomId)) {
+		const rooms = getRoomTypeFromId(roomId)
+		const room = getRoomFromId(roomId)
+		rooms.set(roomId, {
+			...room,
+			inGame: true,
+		})
+	}
+}
+
+function setRoomOutOfGame(roomId) {
+	if (roomExists(roomId)) {
+		const rooms = getRoomTypeFromId(roomId)
+		const room = getRoomFromId(roomId)
+		rooms.set(roomId, {
+			...room,
+			inGame: false,
+		})
+	}
+}
+
+function roomInLobby(roomId) {
+	if (roomExists(roomId) && (getRoomFromId(roomId).inGame === false)) {
+		return true
+	}
+	return false
+}
+
+function isRoomFull(roomId, io) { 
+	if (roomExists(roomId) && (getRoomSize(roomId, io) >= MAX_ROOM_SIZE)) {
+		return true
+	}
+	return false
+}
+
+function hasCountdownStarted(roomId) {
+	if (roomExists(roomId) && (getRoomFromId(roomId).countdownStarted === true)) {
+		return true
+	}
+	return false
+}
+
+function setCountdownStarted(roomId) {
+	if (roomExists(roomId)) {
+		const rooms = getRoomTypeFromId(roomId)
+		const room = getRoomFromId(roomId)
+		rooms.set(roomId, {
+			...room,
+			countdownStarted: true,
+		})
+	}
+}
+
+function resetCountdown(roomId) {
+	if (roomExists(roomId)) {
+		const rooms = getRoomTypeFromId(roomId)
+		const room = getRoomFromId(roomId)
+		rooms.set(roomId, {
+			...room,
+			countdownStarted: false,
+		})
+	}
+}
+
 export {
 	roomExists,
 	initializeRoom,
@@ -195,4 +225,6 @@ export {
 	setRoomOutOfGame,
 	roomInLobby,
 	isRoomFull,
+	hasCountdownStarted,
+	setCountdownStarted,
 }

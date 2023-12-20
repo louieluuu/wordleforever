@@ -4,12 +4,14 @@ import socket from '../socket'
 
 // Components
 import WelcomeMessage from './WelcomeMessage'
+import CountdownModal from './CountdownModal'
 
 function WaitingRoom({
     username,
     setUsername,
     inputWidth,
     setInputWidth,
+    connectionMode,
     setConnectionMode,
     setGameMode,
     isHost,
@@ -17,6 +19,7 @@ function WaitingRoom({
     const navigate = useNavigate()
     const { roomId } = useParams()
     const [userInfo, setUserInfo] = useState([])
+    const [showCountdownModal, setShowCountdownModal] = useState(false)
 
     // Main useEffect loop
     useEffect(() => {
@@ -30,9 +33,9 @@ function WaitingRoom({
         }
 
         // Make sure modes are set, important for users joining from a link
-        socket.on('roomJoined', (connectionMode, gameMode) => {
-            setConnectionMode(connectionMode)
-            setGameMode(gameMode)
+        socket.on('roomJoined', (roomConnectionMode, roomGameMode) => {
+            setConnectionMode(roomConnectionMode)
+            setGameMode(roomGameMode)
         })
 
         socket.on('failedToJoinRoom', () => {
@@ -40,8 +43,20 @@ function WaitingRoom({
             navigate('/')
         })
 
+        socket.on('matchFound', () => {
+            startCountdown()
+        })
+
         socket.on('userInfoUpdated', (updatedUserInfo) => {
             setUserInfo(updatedUserInfo)
+        })
+
+        socket.on('countdownStarted', () => {
+            setShowCountdownModal(true)
+        })
+
+        socket.on('countdownTick', () => {
+            setShowCountdownModal(true)
         })
 
         socket.on('roomStarted', () => {
@@ -62,8 +77,8 @@ function WaitingRoom({
         socket.emit('updateUsername', roomId, username)
     }, [username])
 
-    function startRoom() {
-        socket.emit('startRoom', roomId)
+    function startCountdown() {
+        socket.emit('startCountdown', roomId)
     }
 
   return (
@@ -74,15 +89,22 @@ function WaitingRoom({
             inputWidth={inputWidth}
             setInputWidth={setInputWidth}
         />
+        {showCountdownModal ? (
+            <CountdownModal
+                setShowCountdownModal={setShowCountdownModal}
+            />
+        ) : null}
         <h2>Waiting Room</h2>
-        <p>Room ID: {roomId}</p>
-        <button
-            onClick={() => {
-            navigator.clipboard.writeText(window.location.href)
-            }}
-        >
+        {connectionMode === 'online-private' ? (
+            <button
+                onClick={() => {
+                    navigator.clipboard.writeText(window.location.href)
+                }}
+            >
             Copy Link
-        </button>
+            </button>
+        ) : null}
+
         <div>
             <h3>Users in the Room:</h3>
             <ul>
@@ -91,8 +113,8 @@ function WaitingRoom({
                 ))}
             </ul>
         </div>
-        {isHost ? (
-            <button onClick={startRoom}>
+        {(connectionMode === 'online-private' && isHost) ? (
+            <button onClick={startCountdown}>
                 Start Game
             </button>
         ) : null}

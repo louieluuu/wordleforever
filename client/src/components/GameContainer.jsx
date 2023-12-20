@@ -50,6 +50,7 @@ function GameContainer({
 
     // Run once when the component mounts
     useEffect(() => {
+        console.log('starting game kekkers')
         startNewGame()
     }, [])
 
@@ -64,7 +65,9 @@ function GameContainer({
 
     // Online game flow
     useEffect(() => {
+        console.log('main use effect')
         socket.on('gameStarted', (initialUserInfo, newSolution, newChallengeModeGuess) => {
+            console.log('signal received')
             resetStates()
             const sortedUserInfo = initialUserInfo.sort((obj) => {
                 return obj.socketId === socket.id ? -1 : 1

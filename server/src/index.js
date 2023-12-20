@@ -4,7 +4,7 @@ import { Server } from 'socket.io'
 import cors from 'cors'
 
 // Controllers
-import { createRoom, joinRoom, startRoom, handleMatchmaking } from './controllers/roomController.js'
+import { createRoom, joinRoom, startCountdown, handleMatchmaking } from './controllers/roomController.js'
 
 // Services
 import { updateUsername, removeUser } from './services/userService.js'
@@ -33,11 +33,10 @@ io.on('connection', (socket) => {
     socket.on('joinRoom', (roomId, username) => joinRoom(roomId, username, io, socket))
     // Username update
     socket.on('updateUsername', (roomId, username) => updateUsername(roomId, username, io, socket))
-    // Start room - interacts with waiting room, navigates to game room
-    socket.on('startRoom', (roomId) => startRoom(roomId, io))
+    // Start countdown before starting the game -> navigate to game room
+    socket.on('startCountdown', (roomId) => startCountdown(roomId, io))
 
     // Interact with GameContainer component
-    // Start game - passes the user all relevant game information that may be necessary to render the game container
     socket.on('startOnlineGame', (roomId) => startGame(roomId, io))
     // General game flow
     socket.on('wrongGuess', (roomId, updatedGameBoard) => handleWrongGuess(roomId, updatedGameBoard, io, socket))

@@ -49,6 +49,7 @@ function App() {
               setUsername={setUsername}
               inputWidth={inputWidth}
               setInputWidth={setInputWidth}
+              connectionMode={connectionMode}
               setConnectionMode={setConnectionMode}
               setGameMode={setGameMode}
               isHost={isHost}

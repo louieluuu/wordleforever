@@ -1,6 +1,19 @@
 // Services
-import { initializeRoom, getRoomTypeFromConnection, getRoomConnectionMode, getRoomGameMode, roomExists, roomInLobby, isRoomFull } from '../services/roomService.js'
+import {
+    initializeRoom,
+    getRoomTypeFromConnection,
+    getRoomConnectionMode,
+    getRoomGameMode,
+    roomExists,
+    roomInLobby,
+    isRoomFull,
+    hasCountdownStarted,
+    setCountdownStarted
+} from '../services/roomService.js'
 import { setUsername, isUserInRoom } from '../services/userService.js'
+
+const PRIVATE_ROOM_COUNTDOWN_TIMER = 4
+const PUBLIC_ROOM_COUNTDOWN_TIMER = 8
 
 function createRoom(connectionMode, gameMode, socket) {
     const roomId = initializeRoom(connectionMode, gameMode, socket)
@@ -10,6 +23,7 @@ function createRoom(connectionMode, gameMode, socket) {
 }
 
 function joinRoom(roomId, username, io, socket) {
+    // Handles duplicate emits from the same socket
     if (!isUserInRoom(roomId, socket)) {
         if (roomExists(roomId) && roomInLobby(roomId) && !isRoomFull(roomId, io)) {
             console.log(`${socket.id} joining room: ${roomId}`)
@@ -21,6 +35,31 @@ function joinRoom(roomId, username, io, socket) {
             console.log(`${socket.id} failed to join room: ${roomId}`)
             socket.emit('failedToJoinRoom')
         }
+    }
+}
+
+function startCountdown(roomId, io) {
+    if (roomExists(roomId) && !hasCountdownStarted(roomId)) {
+        setCountdownStarted(roomId)
+        io.to(roomId).emit('countdownStarted')
+        let seconds
+        if (getRoomConnectionMode(roomId).includes('private')) {
+            seconds = PRIVATE_ROOM_COUNTDOWN_TIMER
+        } else if (getRoomConnectionMode(roomId).includes('public')) {
+            seconds = PUBLIC_ROOM_COUNTDOWN_TIMER
+        } else {
+            seconds = PUBLIC_ROOM_COUNTDOWN_TIMER
+        }
+
+        const countdownInterval = setInterval(() => {
+            seconds--
+            io.to(roomId).emit('countdownTick', seconds)
+
+            if (seconds === 0) {
+                clearInterval(countdownInterval)
+                startRoom(roomId, io)
+            }
+        }, 1000)
     }
 }
 
@@ -44,9 +83,10 @@ function handleMatchmaking(gameMode, socket, io) {
 
     if (matchingRoomId) {
         socket.emit('matchFound', matchingRoomId)
+        io.to(matchingRoomId).emit('matchFound')
     } else {
         socket.emit('noMatchesFound')
     }
 }
 
-export { createRoom, joinRoom, startRoom, handleMatchmaking }
+export { createRoom, joinRoom, startCountdown, startRoom, handleMatchmaking }
