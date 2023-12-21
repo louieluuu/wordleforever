@@ -90,6 +90,11 @@ function WaitingRoom({
         setShowCountdownModal(false)
     }
 
+    function leaveRoom() {
+        socket.emit('leaveRoom', roomId)
+        navigate('/')
+    }
+
     // Keep track of number of users in room
     // Start countdown in public game when at least 2 users, stop when less than 2 users
     useEffect(() => {
@@ -105,6 +110,14 @@ function WaitingRoom({
 
     }, [userInfo])
 
+    function getUsernamesClassName() {
+        let usernamesClassName = 'waiting-room-usernames'
+        if (userInfo && userInfo.length > 0) {
+            usernamesClassName += `--${userInfo.length}`
+        }
+        return usernamesClassName
+    }
+
   return (
     <div>
         <WelcomeMessage
@@ -113,35 +126,37 @@ function WaitingRoom({
             inputWidth={inputWidth}
             setInputWidth={setInputWidth}
         />
-        {showCountdownModal ? (
-            <CountdownModal
-                setShowCountdownModal={setShowCountdownModal}
-            />
-        ) : null}
-        <h2>Waiting Room</h2>
-        {connectionMode === 'online-private' ? (
-            <button
-                onClick={() => {
-                    navigator.clipboard.writeText(window.location.href)
-                }}
-            >
-            Copy Link
-            </button>
-        ) : null}
-
-        <div>
-            <h3>Users in the Room:</h3>
-            <ul>
+        <div className='waiting-room-background'>
+            {showCountdownModal && (
+                <CountdownModal
+                    setShowCountdownModal={setShowCountdownModal}
+                />
+            )}
+            <div className={getUsernamesClassName()}>
                 {userInfo.map((info) => (
-                    <li key={info.socketId}>{info.username}</li>
+                    <div key={info.socketId}>{info.username}</div>
                 ))}
-            </ul>
+            </div>
+            <div className='waiting-room-buttons'>
+                {(connectionMode === 'online-private') && (
+                <>
+                    <button className='copy-btn' onClick={() => {navigator.clipboard.writeText(window.location.href)}}>
+                        Copy Link
+                    </button>
+                    {isHost && (
+                        <button className='start-btn' onClick={startCountdown}>
+                            Start Game
+                        </button>
+                    )}
+                </>
+                )}
+                <button className='leave-btn' onClick={leaveRoom}>
+                    Cancel
+                </button>
+            </div>
+
         </div>
-        {(connectionMode === 'online-private' && isHost) ? (
-            <button onClick={startCountdown}>
-                Start Game
-            </button>
-        ) : null}
+
     </div>
   )
 }

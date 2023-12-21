@@ -7,7 +7,7 @@ import cors from 'cors'
 import { createRoom, joinRoom, handleCountdownStart, handleCountdownStop, handleMatchmaking } from './controllers/roomController.js'
 
 // Services
-import { handleUsernameUpdate, handleUserDisconnect } from './services/userService.js'
+import { handleUsernameUpdate, handleUserDisconnect, removeUser } from './services/userService.js'
 import { handleGameStart, handleWrongGuess, handleCorrectGuess, handleOutOfGuesses } from './services/gameService.js'
 
 const app = express()
@@ -47,6 +47,7 @@ io.on('connection', (socket) => {
 
     // User disconnect and cleanup
     socket.on('disconnecting', () => handleUserDisconnect(socket, io))
+    socket.on('leaveRoom', () => removeUser(socket, io))
 
 })
 

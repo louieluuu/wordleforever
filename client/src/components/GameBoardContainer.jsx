@@ -10,7 +10,6 @@ function GameBoardContainer({
 }) {
 
     function myInfo() {
-        console.log('my info is', userInfo[0])
         return userInfo[0]
     }
 

@@ -125,7 +125,6 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     gap: 1rem;
     height: 100vh;
 }
@@ -468,6 +467,130 @@ body {
         }
     }
     
+}
+
+.waiting-room-background {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 01rem;
+    position: relative;
+    height: 500px;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        border-radius: 2rem;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+        background-image: url('./assets/waiting_room.jpg');
+        background-size: cover;
+        background-repeat: repeat-x;
+        background-position: 0 0;
+        animation: slide 45s linear infinite;
+    }
+
+    @keyframes slide {
+        to {
+            background-position: -1920px 0;
+        }
+    }
+
+    .countdown-timer {
+        color: hsl(0, 0%, 30%);
+        position: absolute;
+        top: 2rem;
+        right: 2rem;
+        font-weight: bold;
+        font-size: x-large;
+    }
+
+    .waiting-room-usernames {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+        margin: 7rem;
+        gap: 2rem 10rem;
+        padding-inline: 5rem;
+        padding-block: 2rem;
+
+        &--1 {
+            @extend .waiting-room-usernames;
+        }
+
+        &--2 {
+            @extend .waiting-room-usernames;
+        }
+
+        &--3 {
+            @extend .waiting-room-usernames;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        &--4 {
+            @extend .waiting-room-usernames;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    .waiting-room-buttons {
+        display: flex;
+        flex-direction: row;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        gap: 10rem;
+        padding: 2rem;
+        border-radius: 2rem;
+        cursor: pointer;
+
+        button {
+            font-size: 1.5rem;
+            font-weight: bold;
+            width: 11rem;
+            padding: 1rem;
+            border: 1px solid black;
+            border-radius: 1rem;
+            cursor: pointer;
+        }
+
+        & .copy-btn {
+            background-color: hsl(0, 2%, 90%);
+
+            &:hover {
+                background-color: hsl(0, 2%, 80%);
+            }
+        }
+    
+        & .start-btn {
+            color: white;
+            background-color: hsl(0, 96%, 44%);
+
+            &:hover {
+                background-color: hsl(0, 96%, 70%);
+            }
+        }
+    
+        & .leave-btn {
+            background-color: hsl(0, 0%, 90%);
+
+            &:hover {
+                background-color: hsl(0, 2%, 80%);
+            }
+        }
+    }
+
+
 }
 
 

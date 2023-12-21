@@ -5,7 +5,6 @@ function handleStartPrivateGame(connectionMode, gameMode, setIsHost) {
         socket.emit('createRoom', connectionMode, gameMode)
 
         socket.on('roomCreated', (roomId) => {
-            console.log('roomid is ', roomId)
             setIsHost(true)
             resolve(roomId)
         })

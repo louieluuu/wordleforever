@@ -17,7 +17,7 @@ function CountdownModal({ setShowCountdownModal }) {
 
   return (
     <div className='countdown-timer'>
-        <p>Game will start in... {seconds}</p>
+        <p>Starting in... {seconds}</p>
     </div>
   )
 }

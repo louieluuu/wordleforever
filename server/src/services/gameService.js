@@ -18,9 +18,7 @@ import {
 import { getUserInfo, mapToArray, broadcastFinalUserInfo } from './userService.js'
 
 function handleGameStart(roomId, io) {
-    console.log('calling start game')
     if (roomExists(roomId) && roomInLobby(roomId)) {
-        console.log('starting game')
         resetRoomInfo(roomId)
         initializeGameBoards(roomId)
         setRoomInGame(roomId)

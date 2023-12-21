@@ -28,7 +28,9 @@ function handleUsernameUpdate(roomId, username, io, socket) {
 }
 
 function getUserInfo(roomId) {
-    return getRoomFromId(roomId).userInfo
+    if (roomExists(roomId)) {
+        return getRoomFromId(roomId).userInfo
+    }
 }
 
 function isUserInRoom(roomId, socket) {
@@ -71,10 +73,12 @@ function removeUser(socket, io) {
         console.log(`Removing user ${socket.id} from ${roomId}`)
         const roomIsEmpty = getRoomSize(roomId, io) <= 1
         const currUserInfo = getUserInfo(roomId)
-        currUserInfo.delete(socket.id)
-        broadcastUserInfo(roomId, io)
-        if (roomIsEmpty) {
-            deleteRoom(roomId)
+        if (currUserInfo) {
+            currUserInfo.delete(socket.id)
+            broadcastUserInfo(roomId, io)
+            if (roomIsEmpty) {
+                deleteRoom(roomId)
+            }
         }
     }
 }
