@@ -100,6 +100,7 @@ function handleCorrectGuess(roomId, updatedGameBoard, io, socket) {
     incrementCountGameOvers(roomId)
     setGameBoard(roomId, updatedGameBoard, socket)
     if (isGameOver(roomId, io)) {
+        console.log('game over from correct guess')
         broadcastFinalUserInfo(roomId, io)
     } else {
         broadcastGameBoard(roomId, io, socket)
@@ -121,7 +122,9 @@ function isGameOver(roomId, io) {
             return true
         }
     } else if (getRoomConnectionMode(roomId) === 'online-public') {
-        // TODO
+        if (getCountGameOvers(roomId) > 0) {
+            return true
+        }
     }
     return false
 }

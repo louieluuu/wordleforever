@@ -9,8 +9,7 @@ import {
     isRoomFull,
     hasCountdownStarted,
     setCountdownStarted,
-    resetCountdown,
-    getRoomFromId
+    resetCountdown
 } from '../services/roomService.js'
 import { setUsername, isUserInRoom } from '../services/userService.js'
 

@@ -90,6 +90,7 @@ function GameContainer({
         })
 
         socket.on('finalUserInfo', (finalUserInfo) => {
+            console.log('final user info received')
             const sortedUserInfo = finalUserInfo.sort((obj) => {
                 return obj.socketId === socket.id ? -1 : 1
             })
@@ -107,7 +108,7 @@ function GameContainer({
     // Helper functions
 
     function startNewGame() {
-        if (connectionMode.includes('online') && isHost) {
+        if (connectionMode.includes('online')) {
             socket.emit('startOnlineGame', roomId)
         } else if (connectionMode.includes('offline')) {
             // Host is necessary for some rendering, so always set to host in offline
@@ -116,7 +117,7 @@ function GameContainer({
             const newSolution = generateSolution()
             setSolution(newSolution)
         }
-        console.log('Starting game with', gameMode, connectionMode)
+        console.log('Starting game with', gameMode, connectionMode, isHost)
     }
 
     function resetStates() {
@@ -239,6 +240,7 @@ function GameContainer({
             }
             setIsGameWon(true)
             if (connectionMode === 'offline' || connectionMode === 'online-public') {
+                console.log('game over')
                 setIsGameOver(true)
             }
         } else {
@@ -408,7 +410,10 @@ function GameContainer({
                 isGameOver={isGameOver}
                 isGameWon={isGameWon}
                 isHost={isHost}
+                setIsHost={setIsHost}
                 startNewGame={startNewGame}
+                gameMode={gameMode}
+                connectionMode={connectionMode}
             />
             <GameBoardContainer
                 connectionMode={connectionMode}

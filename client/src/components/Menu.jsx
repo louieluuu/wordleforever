@@ -6,6 +6,9 @@ import WelcomeMessage from './WelcomeMessage'
 import GameModeSelector from './GameModeSelector'
 import ConnectionModeSelector from './ConnectionModeSelector'
 
+// Helpers
+import { handleStartPrivateGame, handleStartPublicGame } from '../helpers/socketHelpers'
+
 import { FaCirclePlay } from 'react-icons/fa6'
 
 function Menu({
@@ -22,33 +25,27 @@ function Menu({
 
     const navigate = useNavigate()
 
-    function handleStartButtonClick() {
-        if (gameMode && connectionMode) {
-            if (connectionMode === 'online-private') {
-                socket.emit('createRoom', connectionMode, gameMode)
-
-                socket.on('roomCreated', (roomId) => {
-                    setIsHost(true)
-                    navigate(`/room/${roomId}`)
-                })
-            } else if (connectionMode === 'online-public') {
-                socket.emit('findMatch', gameMode)
-
-                socket.on('matchFound', (roomId) => {
-                    navigate(`/room/${roomId}`)
-                })
-
-                socket.on('noMatchesFound', () => {
-                    socket.emit('createRoom', connectionMode, gameMode)
-                })
-
-                socket.on('roomCreated', (roomId) => {
-                    setIsHost(true)
-                    navigate(`/room/${roomId}`)
-                })
-            } else if (connectionMode.includes('offline')) {
-                navigate('/offline')
+    async function handleStartButtonClick() {
+        try {
+            if (!gameMode || !connectionMode) {
+                return
             }
+
+            switch (connectionMode) {
+                case 'online-private':
+                    const privateRoomId = await handleStartPrivateGame(connectionMode, gameMode, setIsHost)
+                    navigate(`/room/${privateRoomId}`)
+                    break
+                case 'online-public':
+                    const publicRoomId = await handleStartPublicGame(connectionMode, gameMode, setIsHost)
+                    navigate(`/room/${publicRoomId}`)
+                    break
+                case 'offline':
+                    navigate('/offline')
+                    break
+            }
+        } catch (error) {
+            console.error('Error:', error)
         }
     }
 
