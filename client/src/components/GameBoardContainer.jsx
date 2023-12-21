@@ -5,10 +5,12 @@ import GameBoard from './GameBoard'
 function GameBoardContainer({
     connectionMode,
     board,
+    username,
     userInfo,
 }) {
 
     function myInfo() {
+        console.log('my info is', userInfo[0])
         return userInfo[0]
     }
 
@@ -19,14 +21,12 @@ function GameBoardContainer({
   return (
     <>
         {connectionMode.includes('offline') ? (
-            <GameBoard board={board} />
+            <GameBoard board={board} username={username} />
         ) : (
             <div className='boards-container'>
-                {myInfo() ? (
-                    <GameBoard key={myInfo().socketId} board={board} isUserBoard={true}/>
-                ) : null}
+                <GameBoard board={board} username={username} isUserBoard={true}/>
                 {otherUserInfo().map((obj) => (
-                    <GameBoard key={obj.socketId} board={obj.gameBoard} isUserBoard={false}/>
+                    <GameBoard key={obj.socketId} board={obj.gameBoard} username={obj.username} isUserBoard={false}/>
                 ))}
             </div>
         )}

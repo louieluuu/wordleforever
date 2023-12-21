@@ -186,6 +186,12 @@ body {
     }
 }
 
+.game-board-info {
+    font-size: larger;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
 .keyboard {
     display: flex;
     flex-direction: column;

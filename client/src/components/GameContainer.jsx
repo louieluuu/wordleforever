@@ -16,6 +16,7 @@ import WORDLE_ANSWERS from '../data/wordleAnswers'
 
 
 function GameContainer({
+    username,
     gameMode,
     connectionMode,
     isHost,
@@ -418,6 +419,7 @@ function GameContainer({
             <GameBoardContainer
                 connectionMode={connectionMode}
                 board={board}
+                username={username}
                 userInfo={userInfo}
             />
             <Keyboard handleKeyPress={handleKeyPress} hints={hints} />

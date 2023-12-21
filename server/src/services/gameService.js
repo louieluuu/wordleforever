@@ -100,7 +100,6 @@ function handleCorrectGuess(roomId, updatedGameBoard, io, socket) {
     incrementCountGameOvers(roomId)
     setGameBoard(roomId, updatedGameBoard, socket)
     if (isGameOver(roomId, io)) {
-        console.log('game over from correct guess')
         broadcastFinalUserInfo(roomId, io)
     } else {
         broadcastGameBoard(roomId, io, socket)

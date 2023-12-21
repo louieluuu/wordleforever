@@ -2,6 +2,7 @@ import React from 'react'
 
 function GameBoard({
     board=[],
+    username,
     activeRow,
     activeCell,
     isUserBoard=false,
@@ -31,6 +32,9 @@ function GameBoard({
     
     return (
         <div className='game-board'>
+            <div className='game-board-info'>
+                {username}
+            </div>
             {board.map((row, rowIndex) => (
                 <div key={rowIndex} className='game-board__row'>
                     {row.map((cell, cellIndex) => (
