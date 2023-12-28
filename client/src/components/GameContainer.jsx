@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import socket from '../socket'
+import Confetti from 'react-confetti'
 
 // Components
 import LobbyInfo from './LobbyInfo'
@@ -51,7 +52,6 @@ function GameContainer({
 
     // Run once when the component mounts
     useEffect(() => {
-        console.log('starting game kekkers')
         startNewGame()
     }, [])
 
@@ -66,9 +66,7 @@ function GameContainer({
 
     // Online game flow
     useEffect(() => {
-        console.log('main use effect')
         socket.on('gameStarted', (initialUserInfo, newSolution, newChallengeModeGuess) => {
-            console.log('signal received')
             resetStates()
             const sortedUserInfo = initialUserInfo.sort((obj) => {
                 return obj.socketId === socket.id ? -1 : 1
@@ -91,7 +89,6 @@ function GameContainer({
         })
 
         socket.on('finalUserInfo', (finalUserInfo) => {
-            console.log('final user info received')
             const sortedUserInfo = finalUserInfo.sort((obj) => {
                 return obj.socketId === socket.id ? -1 : 1
             })
@@ -241,7 +238,6 @@ function GameContainer({
             }
             setIsGameWon(true)
             if (connectionMode === 'offline' || connectionMode === 'online-public') {
-                console.log('game over')
                 setIsGameOver(true)
             }
         } else {
@@ -410,7 +406,6 @@ function GameContainer({
             <GameOverMessage
                 isGameOver={isGameOver}
                 isGameWon={isGameWon}
-                isHost={isHost}
                 setIsHost={setIsHost}
                 startNewGame={startNewGame}
                 gameMode={gameMode}

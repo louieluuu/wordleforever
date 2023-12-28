@@ -1,13 +1,13 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 // Helpers
 import { handleStartPublicGame } from '../helpers/socketHelpers'
+import Confetti from 'react-confetti'
 
 function GameOverMessage( {
     isGameOver,
     isGameWon,
-    isHost,
     setIsHost,
     startNewGame,
     gameMode,
@@ -15,6 +15,23 @@ function GameOverMessage( {
 }) {
 
     const navigate = useNavigate()
+    const [isConfettiRunning, setIsConfettiRunning] = useState(false)
+
+    useEffect(() => {
+        const confettiTimer = setTimeout(() => {
+            setIsConfettiRunning(false)
+        }, 5000)
+
+        return () => {
+            clearTimeout(confettiTimer)
+        }
+    }, [isConfettiRunning])
+
+    // Keep isConfettiRunning state up to date
+    useEffect(() => {
+        setIsConfettiRunning(isGameWon)
+
+    }, [isGameOver])
 
     async function handlePlayAgain() {
         try {
@@ -44,9 +61,12 @@ function GameOverMessage( {
         {isGameOver && (
         <>
             {isGameWon ? (
-                <div className='win-message'>
-                    <h2>Congratulations! You guessed the word!</h2>
-                </div>
+                <>
+                    {isConfettiRunning && <Confetti numberOfPieces={200} initialVelocityY={-10}/>}
+                    <div className='win-message'>
+                        <h2>Congratulations! You guessed the word!</h2>
+                    </div>
+                </>
             ) : (
                 <div className='loss-message'>
                     <h2>Truly unfortunate. Maybe next time bud.</h2>
