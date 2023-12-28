@@ -115,7 +115,7 @@ function GameContainer({
             const newSolution = generateSolution()
             setSolution(newSolution)
         }
-        console.log('Starting game with', gameMode, connectionMode, isHost)
+        console.log('Starting game with', gameMode, connectionMode)
     }
 
     function resetStates() {

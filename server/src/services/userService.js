@@ -1,4 +1,12 @@
-import { getRoomFromId, deleteRoom, roomExists, roomInLobby, getRoomSize } from './roomService.js'
+import {
+    getRoomFromId,
+    deleteRoom,
+    roomExists,
+    roomInLobby,
+    getRoomSize,
+    removeUserFromRoom,
+    getUserRoom,
+} from './roomService.js'
 
 // Set the username initially when joining the room
 function setUsername(roomId, username, io, socket) {
@@ -65,12 +73,13 @@ function broadcastFinalUserInfo(roomId, io) {
 }
 
 function removeUser(socket, io) {
-    const roomId = Array.from(socket.rooms)[1]
+    const roomId = getUserRoom(socket.id)
 
     if (roomId === undefined) {
         console.log(`User ${socket.id} disconnected without connecting to a room`)
     } else {
         console.log(`Removing user ${socket.id} from ${roomId}`)
+        removeUserFromRoom(socket.id)
         const roomIsEmpty = getRoomSize(roomId, io) <= 1
         const currUserInfo = getUserInfo(roomId)
         if (currUserInfo) {

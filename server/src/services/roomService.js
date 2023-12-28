@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 const Private = new Map()
 const Public = new Map()
 const Rooms = { Private, Public }
+const UserRooms = {}
 const MAX_ROOM_SIZE = 4
 
 // Needed for the initial creation of rooms before the roomId is placed in it's own map
@@ -214,6 +215,20 @@ function resetCountdown(roomId) {
 	}
 }
 
+function addUserToRoom(userId, roomId) {
+	UserRooms[userId] = roomId
+}
+
+function removeUserFromRoom(userId) {
+	if (UserRooms[userId]) {
+		delete UserRooms[userId]
+	}
+}
+
+function getUserRoom(userId) {
+	return UserRooms[userId]
+}
+
 export {
 	roomExists,
 	initializeRoom,
@@ -236,4 +251,7 @@ export {
 	hasCountdownStarted,
 	setCountdownStarted,
 	resetCountdown,
+	addUserToRoom,
+	removeUserFromRoom,
+	getUserRoom,
 }

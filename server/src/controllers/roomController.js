@@ -9,7 +9,8 @@ import {
     isRoomFull,
     hasCountdownStarted,
     setCountdownStarted,
-    resetCountdown
+    resetCountdown,
+    addUserToRoom,
 } from '../services/roomService.js'
 import { setUsername, isUserInRoom } from '../services/userService.js'
 
@@ -29,7 +30,7 @@ function joinRoom(roomId, username, io, socket) {
         if (roomExists(roomId) && roomInLobby(roomId) && !isRoomFull(roomId, io)) {
             console.log(`${socket.id} joining room: ${roomId}`)
             socket.join(roomId)
-    
+            addUserToRoom(socket.id, roomId)
             setUsername(roomId, username, io, socket)
             socket.emit('roomJoined', getRoomConnectionMode(roomId), getRoomGameMode(roomId))
         } else {
