@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import socket from '../socket'
+import WAITING_ROOM_MESSAGES from '../data/waitingRoomMessages'
 
 // Components
 import WelcomeMessage from './WelcomeMessage'
@@ -19,6 +20,7 @@ function WaitingRoom({
     const navigate = useNavigate()
     const { roomId } = useParams()
     const [userInfo, setUserInfo] = useState([])
+    const [message, setMessage] = useState('')
     const [showCountdownModal, setShowCountdownModal] = useState(false)
 
     // Main useEffect loop
@@ -80,21 +82,6 @@ function WaitingRoom({
         socket.emit('updateUsername', roomId, username)
     }, [username])
 
-    function startCountdown() {
-        socket.emit('startCountdown', roomId)
-    }
-
-    function stopCountdown() {
-        // TODO: display something to the user?
-        socket.emit('stopCountdown', roomId)
-        setShowCountdownModal(false)
-    }
-
-    function leaveRoom() {
-        socket.emit('leaveRoom', roomId)
-        navigate('/')
-    }
-
     // Keep track of number of users in room
     // Start countdown in public game when at least 2 users, stop when less than 2 users
     useEffect(() => {
@@ -109,6 +96,27 @@ function WaitingRoom({
         }
 
     }, [userInfo])
+
+    // Set random waiting room message when component mounts
+    useEffect(() => {
+        const randomMessage = WAITING_ROOM_MESSAGES[Math.floor(Math.random() * WAITING_ROOM_MESSAGES.length)]
+        setMessage(randomMessage)
+    }, [])
+
+    function startCountdown() {
+        socket.emit('startCountdown', roomId)
+    }
+
+    function stopCountdown() {
+        // TODO: display something to the user?
+        socket.emit('stopCountdown', roomId)
+        setShowCountdownModal(false)
+    }
+
+    function leaveRoom() {
+        socket.emit('leaveRoom', roomId)
+        navigate('/')
+    }
 
     function getUsernamesClassName() {
         let usernamesClassName = 'waiting-room-usernames'
@@ -127,6 +135,7 @@ function WaitingRoom({
             setInputWidth={setInputWidth}
         />
         <div className='waiting-room-background'>
+            <h1 className="waiting-message">[{message}]</h1>
             {showCountdownModal && (
                 <CountdownModal
                     setShowCountdownModal={setShowCountdownModal}
