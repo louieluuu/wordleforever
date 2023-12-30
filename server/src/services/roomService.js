@@ -1,257 +1,238 @@
 import { v4 as uuidv4 } from 'uuid'
 
-const Private = new Map()
-const Public = new Map()
-const Rooms = { Private, Public }
-const UserRooms = {}
+// Database models
+import { Room } from '../database/models.js'
+
+// Services
+import { getUser } from './userService.js'
+
 const MAX_ROOM_SIZE = 4
 
-// Needed for the initial creation of rooms before the roomId is placed in it's own map
-function getRoomTypeFromConnection(mode) {
-	if (mode === 'online-private') {
-		return Rooms.Private
-	} else if (mode === 'online-public') {
-		return Rooms.Public
-	} else {
-		return undefined
+async function initializeRoom(connectionMode, gameMode, userId) {
+    const roomId = await initializeRoomInfo(connectionMode, gameMode, userId)
+    return roomId
+}
+
+async function initializeRoomInfo(connectionMode, gameMode, userId) {
+    try {
+        const room = new Room({
+            roomId: uuidv4(),
+            connectionMode,
+			gameMode,
+            hostUserId: userId,
+            users: [],
+            inGame: false,
+            countdownStarted: false,
+        })
+
+        await room.save()
+        console.log(`Room initialized and saved to the database: ${room.roomId}`)
+		return room.roomId
+    } catch (error) {
+        console.error(`Error initializing room and saving to the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function getRoom(roomId) {
+    try {
+        const room = await Room.findOne({ roomId }).lean()
+        return room
+    } catch (error) {
+        console.error(`Error getting room from the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function deleteRoom(roomId) {
+    try {
+		await Room.deleteOne({ roomId })
+    } catch (error) {
+        console.error(`Error deleting room from the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function getRoomConnectionMode(roomId) {
+    try {
+        const room = await getRoom(roomId)
+        return room ? room.connectionMode : null
+    } catch (error) {
+        console.error(`Error getting room connection mode from the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function getRoomGameMode(roomId) {
+    try {
+        const room = await getRoom(roomId)
+        return room ? room.gameMode : null
+    } catch (error) {
+        console.error(`Error getting room connection mode from the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function isRoomChallengeMode(roomId) {
+    try {
+        const room = await getRoom(roomId)
+        return room && room.gameMode === 'Challenge'
+    } catch (error) {
+        console.error(`Error getting room size from the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function getRoomSize(roomId) {
+    try {
+        const room = await getRoom(roomId)
+        return room ? room.users.length : 0
+    } catch (error) {
+        console.error(`Error getting room size from the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function isRoomEmpty(roomId) {
+	try {
+		const room = await getRoom(roomId)
+		return !room || await getRoomSize(roomId) === 0
+	} catch (error) {
+		console.error(`Error checking if the room is empty in the database: ${error.message}`)
+		throw error
 	}
 }
 
-function getRoomTypeFromId(roomId) {
-	if (Rooms.Private.has(roomId)) {
-		return Rooms.Private
-	} else if (Rooms.Public.has(roomId)) {
-		return Rooms.Public
-	} else {
-		return undefined
-	}
+async function setRoomInGame(roomId) {
+    try {
+		await Room.updateOne({ roomId }, { $set: { inGame: true } })
+    } catch (error) {
+        console.error(`Error setting room inGame status in the database: ${error.message}`)
+        throw error
+    }
 }
 
-function getRoomFromId(roomId) {
-	if (roomExists(roomId)) {
-		return getRoomTypeFromId(roomId).get(roomId)
-	}
-	return undefined
+async function setRoomOutOfGame(roomId) {
+    try {
+		await Room.updateOne({ roomId }, { $set: { inGame: false } })
+    } catch (error) {
+        console.error(`Error setting room outOfGame status in the database: ${error.message}`)
+        throw error
+    }
 }
 
-function roomExists(roomId) {
-	const rooms = getRoomTypeFromId(roomId)
-	if (rooms === undefined) {
-		return false
-	}
-	return true
+async function roomInLobby(roomId) {
+    try {
+        const room = await getRoom(roomId)
+        return room && !room.inGame
+    } catch (error) {
+        console.error(`Error checking if room is in the lobby in the database: ${error.message}`)
+        throw error
+    }
 }
 
-function initializeRoom(connectionMode, gameMode, socket) {
-	const roomId = uuidv4()
-	initializeRoomInfo(roomId, connectionMode, socket)
-	setRoomConnectionMode(roomId, connectionMode)
-	setRoomGameMode(roomId, gameMode)
-	return roomId
+async function isRoomFull(roomId) {
+    try {
+        console.log('checking if room is full')
+        const room = await getRoom(roomId)
+        console.log('room is', room)
+        console.log('room size is', room.users.length)
+        return room && room.users.length >= MAX_ROOM_SIZE
+    } catch (error) {
+        console.error(`Error checking if room is full in the database: ${error.message}`)
+        throw error
+    }
 }
 
-function deleteRoom(roomId) {
-	if (roomExists(roomId)) {
-		console.log(`Deleting room: ${roomId}`)
-		getRoomTypeFromId(roomId).delete(roomId)
-	}
+async function hasCountdownStarted(roomId) {
+    try {
+        const room = await getRoom(roomId)
+        return room && room.countdownStarted
+    } catch (error) {
+        console.error(`Error checking if countdown has started in the database: ${error.message}`)
+        throw error
+    }
 }
 
-function initializeRoomInfo(roomId, connectionMode, socket) {
-	const rooms = getRoomTypeFromConnection(connectionMode)
-	const room = getRoomFromId(roomId)
-    rooms.set(roomId, {
-		...room,
-        userInfo: new Map(),
-		connectionMode: null,
-		gameMode: null,
-		hostSocketId: socket.id,
-		countGameOvers: 0,
-		countOutOfGuesses: 0,
-		inGame: false,
-		countdownStarted: false,
-    })
+async function setCountdownStarted(roomId) {
+    try {
+		await Room.updateOne({ roomId }, { $set: { countdownStarted: true } })
+    } catch (error) {
+        console.error(`Error setting countdown started status in the database: ${error.message}`)
+        throw error
+    }
 }
 
-function resetRoomInfo(roomId) {
-	if (roomExists(roomId)) {
-		const rooms = getRoomTypeFromId(roomId)
-		const room = getRoomFromId(roomId)
-		rooms.set(roomId, {
-			...room,
-			countGameOvers: 0,
-			countOutOfGuesses: 0,
-		})
-	}
+async function resetCountdown(roomId) {
+    try {
+		await Room.updateOne({ roomId }, { $set: { countdownStarted: false } })
+    } catch (error) {
+        console.error(`Error resetting countdown status in the database: ${error.message}`)
+        throw error
+    }
 }
 
-function setRoomConnectionMode(roomId, connectionMode) {
-	if (roomExists(roomId)) {
-		const rooms = getRoomTypeFromId(roomId)
-		const room = getRoomFromId(roomId)
-		rooms.set(roomId, {
-			...room,
-			connectionMode: connectionMode,
-		})
-	}
+async function addUserToRoom(userId, roomId) {
+    try {
+        const user = await getUser(userId)
+        if (!user) {
+            throw new Error(`User with ID ${userId} not found`)
+        } else {
+            await Room.updateOne({ roomId }, { $push: { users: userId }})
+        }
+    } catch (error) {
+        console.error(`Error adding user to room in the database: ${error.message}`)
+        throw error
+    }
 }
 
-function getRoomConnectionMode(roomId) {
-	return getRoomFromId(roomId).connectionMode
+async function removeUserFromRoom(userId, roomId) {
+    try {
+        await Room.updateOne({ roomId }, { $pull: { users: userId } })
+    } catch (error) {
+        console.error(`Error removing user from room in the database: ${error.message}`)
+        throw error
+    }
 }
 
-function setRoomGameMode(roomId, gameMode) {
-	if (roomExists(roomId)) {
-		const rooms = getRoomTypeFromId(roomId)
-		const room = getRoomFromId(roomId)
-		rooms.set(roomId, {
-			...room,
-			gameMode: gameMode,
-		})
-	}
+async function getUserRoom(userId) {
+    try {
+        const room = await Room.findOne({ users: userId }).lean()
+        return room ? room.roomId : null
+    } catch (error) {
+        console.error(`Error getting user room from the database: ${error.message}`)
+        throw error
+    }
 }
 
-function getRoomGameMode(roomId) {
-	return getRoomFromId(roomId).gameMode
-}
-
-function incrementCountGameOvers(roomId) {
-	if (roomExists(roomId)) {
-		const rooms = getRoomTypeFromId(roomId)
-		const room = getRoomFromId(roomId)
-		rooms.set(roomId, {
-			...room,
-			countGameOvers: room.countGameOvers + 1,
-		})
-	}
-}
-
-function getCountGameOvers(roomId) {
-	return getRoomFromId(roomId).countGameOvers
-}
-
-function incrementCountOutOfGuesses(roomId) {
-	if (roomExists(roomId)) {
-		const rooms = getRoomTypeFromId(roomId)
-		const room = getRoomFromId(roomId)
-		rooms.set(roomId, {
-			...room,
-			countOutOfGuesses: room.countOutOfGuesses + 1,
-		})
-	}
-}
-
-function getCountOutOfGuesses(roomId) {
-	return getRoomFromId(roomId).countOutOfGuesses
-}
-
-function getRoomSize(roomId, io) {
-	const room = io.sockets.adapter.rooms.get(roomId)
-	return room ? room.size : 0
-}
-
-function setRoomInGame(roomId) {
-	if (roomExists(roomId)) {
-		const rooms = getRoomTypeFromId(roomId)
-		const room = getRoomFromId(roomId)
-		rooms.set(roomId, {
-			...room,
-			inGame: true,
-		})
-	}
-}
-
-function setRoomOutOfGame(roomId) {
-	if (roomExists(roomId)) {
-		const rooms = getRoomTypeFromId(roomId)
-		const room = getRoomFromId(roomId)
-		rooms.set(roomId, {
-			...room,
-			inGame: false,
-		})
-	}
-}
-
-function roomInLobby(roomId) {
-	if (roomExists(roomId) && (getRoomFromId(roomId).inGame === false)) {
-		return true
-	}
-	return false
-}
-
-function isRoomFull(roomId, io) { 
-	if (roomExists(roomId) && (getRoomSize(roomId, io) >= MAX_ROOM_SIZE)) {
-		return true
-	}
-	return false
-}
-
-function hasCountdownStarted(roomId) {
-	if (roomExists(roomId) && (getRoomFromId(roomId).countdownStarted)) {
-		return true
-	}
-	return false
-}
-
-function setCountdownStarted(roomId) {
-	if (roomExists(roomId)) {
-		const rooms = getRoomTypeFromId(roomId)
-		const room = getRoomFromId(roomId)
-		rooms.set(roomId, {
-			...room,
-			countdownStarted: true,
-		})
-	}
-}
-
-function resetCountdown(roomId) {
-	if (roomExists(roomId)) {
-		const rooms = getRoomTypeFromId(roomId)
-		const room = getRoomFromId(roomId)
-		rooms.set(roomId, {
-			...room,
-			countdownStarted: false,
-		})
-	}
-}
-
-function addUserToRoom(userId, roomId) {
-	UserRooms[userId] = roomId
-}
-
-function removeUserFromRoom(userId) {
-	if (UserRooms[userId]) {
-		delete UserRooms[userId]
-	}
-}
-
-function getUserRoom(userId) {
-	return UserRooms[userId]
+async function getUsersInRoom(roomId) {
+    try {
+        const room = await getRoom(roomId)
+        return room ? room.users : null
+    } catch (error) {
+        console.error(`Error getting users in room from the database: ${error.message}`)
+        throw error
+    }
 }
 
 export {
-	roomExists,
-	initializeRoom,
-	deleteRoom,
-	getRoomTypeFromConnection,
-	getRoomTypeFromId,
-	getRoomFromId,
-	getRoomConnectionMode,
-	getRoomGameMode,
-	incrementCountGameOvers,
-	getCountGameOvers,
-	incrementCountOutOfGuesses,
-	getCountOutOfGuesses,
+    initializeRoom,
+    getRoom,
+    deleteRoom,
+    getRoomConnectionMode,
+    getRoomGameMode,
+    isRoomChallengeMode,
 	getRoomSize,
-	resetRoomInfo,
-	setRoomInGame,
-	setRoomOutOfGame,
-	roomInLobby,
-	isRoomFull,
-	hasCountdownStarted,
-	setCountdownStarted,
-	resetCountdown,
-	addUserToRoom,
-	removeUserFromRoom,
+    isRoomEmpty,
+    setRoomInGame,
+    setRoomOutOfGame,
+    roomInLobby,
+    isRoomFull,
+    hasCountdownStarted,
+    setCountdownStarted,
+    resetCountdown,
+    addUserToRoom,
+    removeUserFromRoom,
 	getUserRoom,
+    getUsersInRoom,
 }

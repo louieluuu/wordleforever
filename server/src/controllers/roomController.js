@@ -1,103 +1,120 @@
+// Database models
+import { Room } from '../database/models.js'
+
 // Services
 import {
     initializeRoom,
-    getRoomTypeFromConnection,
-    getRoomConnectionMode,
-    getRoomGameMode,
-    roomExists,
     roomInLobby,
     isRoomFull,
-    hasCountdownStarted,
-    setCountdownStarted,
     resetCountdown,
     addUserToRoom,
+    getRoomConnectionMode,
+    getRoomGameMode,
+    hasCountdownStarted,
+    setCountdownStarted,
 } from '../services/roomService.js'
-import { setUsername, isUserInRoom } from '../services/userService.js'
+import { isUserInRoom, initializeUserInfo, setUsername, broadcastUserInfo } from '../services/userService.js'
 
 const PRIVATE_ROOM_COUNTDOWN_TIMER = 4
 const PUBLIC_ROOM_COUNTDOWN_TIMER = 8
 
-function createRoom(connectionMode, gameMode, socket) {
-    const roomId = initializeRoom(connectionMode, gameMode, socket)
-
-    console.log(`Creating room: ${roomId}`)
-    socket.emit('roomCreated', roomId)
+async function createRoom(connectionMode, gameMode, socket) {
+    try {
+        const roomId = await initializeRoom(connectionMode, gameMode, socket.id)
+        console.log(`Creating room: ${roomId}`)
+        socket.emit('roomCreated', roomId)
+    } catch (error) {
+        console.error(`Error creating room: ${error.message}`)
+        throw error
+    }
 }
 
-function joinRoom(roomId, username, io, socket) {
-    // Handles duplicate emits from the same socket
-    if (!isUserInRoom(roomId, socket)) {
-        if (roomExists(roomId) && roomInLobby(roomId) && !isRoomFull(roomId, io)) {
+async function joinRoom(roomId, username, io, socket) {
+    try {
+        if (await roomInLobby(roomId) && !await isRoomFull(roomId)) {
             console.log(`${socket.id} joining room: ${roomId}`)
             socket.join(roomId)
-            addUserToRoom(socket.id, roomId)
-            setUsername(roomId, username, io, socket)
+            await initializeUserInfo(socket.id)
+            await addUserToRoom(socket.id, roomId)
+            await setUsername(socket.id, username)
+            await broadcastUserInfo(roomId, io)
             socket.emit('roomJoined', getRoomConnectionMode(roomId), getRoomGameMode(roomId))
         } else {
             console.log(`${socket.id} failed to join room: ${roomId}`)
             socket.emit('failedToJoinRoom')
         }
+    } catch (error) {
+        console.error(`Error joining room: ${error.message}`)
+        throw error
     }
 }
 
-function handleCountdownStart(roomId, io) {
-    if (roomExists(roomId) && !hasCountdownStarted(roomId)) {
-        setCountdownStarted(roomId)
-        io.to(roomId).emit('countdownStarted')
-        let seconds
-        if (getRoomConnectionMode(roomId).includes('private')) {
-            seconds = PRIVATE_ROOM_COUNTDOWN_TIMER
-        } else if (getRoomConnectionMode(roomId).includes('public')) {
-            seconds = PUBLIC_ROOM_COUNTDOWN_TIMER
-        } else {
-            seconds = PUBLIC_ROOM_COUNTDOWN_TIMER
+async function handleCountdownStart(roomId, io) {
+    try {
+        if (!await hasCountdownStarted(roomId)) {
+            await setCountdownStarted(roomId)
+            io.to(roomId).emit('countdownStarted')
+            let seconds
+            const roomConnectionMode = await getRoomConnectionMode(roomId)
+            if (roomConnectionMode === 'online-private') {
+                seconds = PRIVATE_ROOM_COUNTDOWN_TIMER
+            } else if (roomConnectionMode === 'online-public') {
+                seconds = PUBLIC_ROOM_COUNTDOWN_TIMER
+            } else {
+                seconds = PUBLIC_ROOM_COUNTDOWN_TIMER
+            }
+
+            const countdownInterval = setInterval(async () => {
+                if (!await hasCountdownStarted(roomId)) {
+                    clearInterval(countdownInterval)
+                    return
+                }
+                seconds--
+                io.to(roomId).emit('countdownTick', seconds)
+    
+                if (seconds === 0) {
+                    clearInterval(countdownInterval)
+                    startRoom(roomId, io)
+                }
+            }, 1000)
         }
-
-        const countdownInterval = setInterval(() => {
-            if (!hasCountdownStarted(roomId)) {
-                clearInterval(countdownInterval)
-                return
-            }
-            seconds--
-            io.to(roomId).emit('countdownTick', seconds)
-
-            if (seconds === 0) {
-                clearInterval(countdownInterval)
-                startRoom(roomId, io)
-            }
-        }, 1000)
+    } catch (error) {
+        console.error(`Error starting countdown: ${error.message}`)
+        throw error
     }
 }
 
-function handleCountdownStop(roomId, io) {
-    if (roomExists(roomId) && hasCountdownStarted(roomId)) {
-        resetCountdown(roomId)
+async function handleCountdownStop(roomId) {
+    try {
+        if (await hasCountdownStarted(roomId)) {
+            resetCountdown(roomId)
+        }
+    } catch (error) {
+        console.error(`Error stopping countdown: ${error.message}`)
+        throw error
+    }
+}
+
+async function handleMatchmaking(gameMode, socket) {
+    try {
+        const matchingRoom = await Room.findOne({ connectionMode: 'online-public', gameMode, inGame: false })
+        if (matchingRoom) {
+            console.log('match found', matchingRoom)
+            socket.emit('matchFound', matchingRoom.roomId)
+        } else {
+            console.log('no match found')
+            socket.emit('noMatchesFound')
+        }
+    } catch (error) {
+        console.error(`Error with matchmaking: ${error.message}`)
+        throw error
     }
 }
 
 function startRoom(roomId, io) {
-    if (roomExists(roomId)) {
+    if (roomId) {
         io.to(roomId).emit('roomStarted')
     }
 }
 
-// Will always be online-public connection mode
-function handleMatchmaking(gameMode, socket, io) {
-    const publicRooms = getRoomTypeFromConnection('online-public')
-    let matchingRoomId
-
-    for (const [roomId, roomInfo] of publicRooms) {
-        if (gameMode === roomInfo.gameMode && roomInLobby(roomId) && !isRoomFull(roomId, io)) {
-            matchingRoomId = roomId
-            break
-        }
-    }
-
-    if (matchingRoomId) {
-        socket.emit('matchFound', matchingRoomId)
-    } else {
-        socket.emit('noMatchesFound')
-    }
-}
-
-export { createRoom, joinRoom, handleCountdownStart, handleCountdownStop, startRoom, handleMatchmaking }
+export { createRoom, joinRoom, handleCountdownStart, handleCountdownStop, handleMatchmaking }

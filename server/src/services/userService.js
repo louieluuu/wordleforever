@@ -1,110 +1,140 @@
+// Database models
+import { User, Room } from '../database/models.js'
+
+// Services
 import {
-    getRoomFromId,
-    deleteRoom,
-    roomExists,
-    roomInLobby,
-    getRoomSize,
-    removeUserFromRoom,
+    getRoom,
     getUserRoom,
+    roomInLobby,
+    deleteRoom,
+    removeUserFromRoom,
+    isRoomEmpty,
 } from './roomService.js'
 
-// Set the username initially when joining the room
-function setUsername(roomId, username, io, socket) {
-    if (roomExists(roomId) && roomInLobby(roomId)) {
-        const allUserInfo = getUserInfo(roomId)
-        const currUserInfo = allUserInfo.get(socket.id) || {}
-        allUserInfo.set(socket.id, {
-            ...currUserInfo,
-            username: username,
-        })
-        broadcastUserInfo(roomId, io)
-    }    
+
+
+async function initializeUserInfo(userId) {
+    try {
+        const user = new User({ userId })
+        await user.save()
+        return user
+    } catch (error) {
+        console.error(`Error initializing user info in the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function getUser(userId) {
+    try {
+        const user = await User.findOne({ userId }).lean()
+        return user
+    } catch (error) {
+        console.error(`Error getting user info from the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function getAllUserInfoInRoom(roomId) {
+    try {
+        const room = await getRoom(roomId)
+        if (room) {
+            const allUserInfo = User.find({ userId: { $in: room.users }}).lean()
+            return allUserInfo
+        }
+    } catch (error) {
+        console.error(`Error getting user info from room: ${error.message}`)
+        throw error
+    }
+}
+
+async function deleteUser(userId) {
+    try {
+        await User.deleteOne({ userId })
+    } catch (error) {
+        console.error(`Error deleting user from the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function setUsername(userId, username) {
+    try {
+        await User.updateOne({ userId }, { $set: { username }})
+    } catch (error) {
+        console.error(`Error setting username in the database: ${error.message}`);
+        throw error;
+    }
 }
 
 // Already need to be in the room to keep username up to date with changes
-// Was needed to split this from setUsername due to a userInfo object being created for a socket even if they failed to join the room through (socket.emit('updateUsername'))
-function handleUsernameUpdate(roomId, username, io, socket) {
-    if (roomExists(roomId) && roomInLobby(roomId) && isUserInRoom(roomId, socket)) {
-        const allUserInfo = getUserInfo(roomId)
-        const currUserInfo = allUserInfo.get(socket.id) || {}
-        allUserInfo.set(socket.id, {
-            ...currUserInfo,
-            username: username,
-        })
+async function handleUsernameUpdate(roomId, username, io, userId) {
+    if (await roomInLobby(roomId) && await isUserInRoom(roomId, userId)) {
+        await setUsername(userId, username)
         broadcastUserInfo(roomId, io)
     }    
 }
 
-function getUserInfo(roomId) {
-    if (roomExists(roomId)) {
-        return getRoomFromId(roomId).userInfo
+// Check if this is necessary later?
+async function isUserInRoom(roomId, userId) {
+    try {
+        const room = await Room.findOne({ roomId, users: userId })
+        return !!room
+    } catch (error) {
+        console.error(`Error checking if user is in the room in the database: ${error.message}`);
+        throw error;
     }
 }
 
-function isUserInRoom(roomId, socket) {
-    if (roomExists(roomId) && (getUserInfo(roomId).has(socket.id))) {
-        return true
-    }
-    return false
-}
-
-function mapToArray(userInfo) {
-    return Array.from(userInfo.entries(), ([socketId, info]) => {
-        const result = { socketId }
-
-        for (const [key, value] of Object.entries(info)) {
-            result[key] = value
-        }
-
-        return result
-    })
-}
-
-function broadcastUserInfo(roomId, io) {
-    if (roomExists(roomId)) {
-        io.to(roomId).emit('userInfoUpdated', mapToArray(getUserInfo(roomId)))
-    }
-}
-
-function broadcastFinalUserInfo(roomId, io) {
-    if (roomExists(roomId)) {
-        io.to(roomId).emit('finalUserInfo', mapToArray(getUserInfo(roomId)))
-    }
-}
-
-function removeUser(socket, io) {
-    const roomId = getUserRoom(socket.id)
-
-    if (roomId === undefined) {
-        console.log(`User ${socket.id} disconnected without connecting to a room`)
+async function broadcastUserInfo(roomId, io) {
+    if (roomId) {
+        io.to(roomId).emit('userInfoUpdated', await getAllUserInfoInRoom(roomId))
     } else {
-        console.log(`Removing user ${socket.id} from ${roomId}`)
-        removeUserFromRoom(socket.id)
-        const roomIsEmpty = getRoomSize(roomId, io) <= 1
-        const currUserInfo = getUserInfo(roomId)
-        if (currUserInfo) {
-            currUserInfo.delete(socket.id)
-            broadcastUserInfo(roomId, io)
-            if (roomIsEmpty) {
-                deleteRoom(roomId)
-            }
+        console.error('Invalid roomId for broadcasting user info')
+    }
+}
+
+async function broadcastFinalUserInfo(roomId, io) {
+    if (roomId) {
+        io.to(roomId).emit('finalUserInfo', await getAllUserInfoInRoom(roomId))
+    } else {
+        console.error('Invalid roomId for broadcasting final user info')
+    }
+}
+
+async function cleanupUser(userId) {
+    deleteUser(userId)
+    const roomId = await getUserRoom(userId)
+
+    if (!roomId) {
+        console.log(`User ${userId} disconnected without connecting to a room`)
+    } else {
+        console.log(`Removing user ${userId} from ${roomId}`)
+        await removeUserFromRoom(userId, roomId)
+        if (await isRoomEmpty(roomId)) {
+            deleteRoom(roomId)
         }
     }
 }
 
-function handleUserDisconnect(socket, io) {
-    console.log(`User ${socket.id} disconnected`)
-    removeUser(socket, io)
+async function handleUserDisconnect(userId, io) {
+    console.log(`User ${userId} disconnected`)
+    handleLeaveRoom(userId, io)
+}
+
+async function handleLeaveRoom(userId, io) {
+    const roomId = await getUserRoom(userId)
+    cleanupUser(userId)
+    broadcastUserInfo(roomId, io)
 }
 
 export {
+    initializeUserInfo,
+    getUser,
+    getAllUserInfoInRoom,
     setUsername,
     handleUsernameUpdate,
-    getUserInfo,
     isUserInRoom,
-    removeUser,
-    handleUserDisconnect,
-    mapToArray,
     broadcastUserInfo,
-    broadcastFinalUserInfo
+    broadcastFinalUserInfo,
+    handleUserDisconnect,
+    handleLeaveRoom,
 }

@@ -1,35 +1,225 @@
+// Data
 import VALID_WORDS from '../data/validWords.js'
 import WORDLE_ANSWERS from '../data/wordleAnswers.js'
 
+// Database models
+import { Game, User } from '../database/models.js'
+
+// Services
 import {
-    roomExists,
-    resetRoomInfo,
+    isRoomChallengeMode,
+    getUsersInRoom,
     getRoomConnectionMode,
     getRoomSize,
-    incrementCountGameOvers,
-    getCountGameOvers,
-    incrementCountOutOfGuesses,
-    getCountOutOfGuesses,
-    getRoomGameMode,
     setRoomInGame,
     setRoomOutOfGame,
-    roomInLobby
+    roomInLobby,
 } from './roomService.js'
-import { getUserInfo, mapToArray, broadcastFinalUserInfo } from './userService.js'
+import { getAllUserInfoInRoom, broadcastFinalUserInfo, getUser } from './userService.js'
 
-function handleGameStart(roomId, io) {
-    if (roomExists(roomId) && roomInLobby(roomId)) {
-        resetRoomInfo(roomId)
-        initializeGameBoards(roomId)
-        setRoomInGame(roomId)
+// New Game object will be initialized each time, even on game restart
+// The game record is deleted from the database when the game concludes
+async function initializeGameInfo(roomId) {
+    try {
         const newSolution = generateSolution()
+        const game = new Game({
+            roomId,
+            solution: newSolution,
+            startingWord: await isRoomChallengeMode(roomId) ? generateRandomFirstGuess(newSolution) : null,
+            users: await getUsersInRoom(roomId),
+            countGameOvers: 0,
+            countOutOfGuesses: 0,
+        })
+        await resetGameBoards(roomId)
+        await game.save()
+        console.log(`Game initialized and saved to the database: ${game.roomId}`)
+    } catch (error) {
+        console.error(`Error initializing game info in the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function getGame(roomId) {
+    try {
+        const game = await Game.findOne({ roomId }).lean()
+        return game
+    } catch (error) {
+        console.error(`Error getting game info from the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function deleteGame(roomId) {
+    try {
+		await Game.deleteOne({ roomId })
+    } catch (error) {
+        console.error(`Error deleting game from the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function getSolution(roomId) {
+    try {
+        const game = await getGame(roomId)
+        return game ? game.solution : null
+    } catch (error) {
+        console.error(`Error getting solution from the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function getStartingWord(roomId) {
+    try {
+        const game = await getGame(roomId)
+        return game ? game.startingWord : null
+    } catch (error) {
+        console.error(`Error getting starting word from the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function getUsersInGame(roomId) {
+    try {
+        const game = await getGame(roomId)
+        return game ? game.users : null
+    } catch (error) {
+        console.error(`Error getting users in game from the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function setGameBoard(userId, gameBoard) {
+    try {
+        await User.updateOne({ userId }, { $set: { gameBoard }})
+    } catch (error) {
+        console.error(`Error setting game board in the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function getGameBoard(userId) {
+    try {
+        const user = await getUser(userId)
+        return user ? user.gameBoard : null
+    } catch (error) {
+        console.error(`Error getting game board from the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function resetGameBoards(roomId) {
+    try {
+        const users = await getUsersInGame(roomId)
+        const resetPromises = users.map(async (userId) => {
+            await setGameBoard(userId, new Array(6).fill().map(() => new Array(5).fill({ letter: '', color: '' })))
+        })
+        await Promise.all(resetPromises)
+    } catch (error) {
+        console.error(`Error resetting game boards in the database: ${error.message}`)
+        throw error
+    }
+}
+
+
+async function getCountGameOvers(roomId) {
+    try {
+        const game = await getGame(roomId)
+        return game ? game.countGameOvers : 0
+    } catch (error) {
+        console.error(`Error getting count game overs from the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function incrementCountGameOvers(roomId) {
+    try {
+		await Game.updateOne({ roomId }, { $inc: { countGameOvers: 1 } })
+    } catch (error) {
+        console.error(`Error incrementing countGameOvers in the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function getCountOutOfGuesses(roomId) {
+    try {
+        const game = await getGame(roomId)
+        return game ? game.countOutOfGuesses : 0
+    } catch (error) {
+        console.error(`Error getting count out of guesses from the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function incrementCountOutOfGuesses(roomId) {
+    try {
+		await Game.updateOne({ roomId }, { $inc: { countOutOfGuesses: 1 } })
+    } catch (error) {
+        console.error(`Error incrementing countOutOfGuesses in the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function broadcastGameBoard(roomId, userId, io) {
+    if (roomId) {
+        const noLettersBoard = getGameBoard(userId).map((row) => row.map((cell) => ({ ...cell, letter: ''})))
+        io.to(roomId).emit('gameBoardsUpdated', userId, noLettersBoard)
+    } else {
+        console.error('Invalid roomId for broadcasting game board')
+    }
+}
+
+async function handleGameStart(roomId, io) {
+    if (roomId && roomInLobby(roomId)) {
+        setRoomInGame(roomId)
+        await initializeGameInfo(roomId)
         io.to(roomId).emit(
             'gameStarted',
-            mapToArray(getUserInfo(roomId)),
-            newSolution,
-            (getRoomGameMode(roomId) === 'Challenge') ? generateRandomFirstGuess(newSolution) : null,
-        )
+            await getAllUserInfoInRoom(roomId),
+            await getSolution(roomId),
+            await getStartingWord(roomId),
+            )
+    } else {
+        console.error('Invalid roomId for starting game')
     }
+}
+
+async function handleWrongGuess(roomId, userId, updatedGameBoard, io) {
+    await setGameBoard(userId, updatedGameBoard)
+    broadcastGameBoard(roomId, userId, io)
+}
+
+async function handleCorrectGuess(roomId, userId, updatedGameBoard, io) {
+    await incrementCountGameOvers(roomId)
+    await setGameBoard(userId, updatedGameBoard)
+    if (await isGameOver(roomId)) {
+        broadcastFinalUserInfo(roomId, io)
+    } else {
+        broadcastGameBoard(roomId, userId, io)
+    }
+}
+
+async function handleOutOfGuesses(roomId, io) {
+    await incrementCountGameOvers(roomId)
+    await incrementCountOutOfGuesses(roomId)
+    if (await isGameOver(roomId)) {
+        broadcastFinalUserInfo(roomId, io)
+    }
+}
+
+async function isGameOver(roomId) {
+    if (await getRoomConnectionMode(roomId) === 'online-private') {
+        if (await getCountGameOvers(roomId) >= await getRoomSize(roomId)) {
+            await setRoomOutOfGame(roomId)
+            deleteGame(roomId)
+            return true
+        }
+    } else if (await getRoomConnectionMode(roomId) === 'online-public') {
+        if (await getCountGameOvers(roomId) > 0) {
+            deleteGame(roomId)
+            return true
+        }
+    }
+    return false
 }
 
 function generateSolution() {
@@ -55,80 +245,8 @@ function generateRandomFirstGuess(solution) {
     }
 }
 
-function initializeGameBoards(roomId) {
-    if (roomExists(roomId)) {
-        const allUserInfo = getUserInfo(roomId)
-        allUserInfo.forEach((userInfo, socketId) => {
-            allUserInfo.set(socketId, {
-                ...userInfo,
-                gameBoard: new Array(6).fill().map((_) => new Array(5).fill({ letter: '', color: '' })),
-            })
-        })
-    }
-}
-
-function setGameBoard(roomId, updatedGameBoard, socket) {
-    if (roomExists(roomId)) {
-        const allUserInfo = getUserInfo(roomId)
-        const currUserInfo = allUserInfo.get(socket.id)
-        allUserInfo.set(socket.id, {
-            ...currUserInfo,
-            gameBoard: updatedGameBoard
-        })
-    }
-}
-
-function getGameBoard(roomId, socket) {
-    return getUserInfo(roomId).get(socket.id).gameBoard
-}
-
-function broadcastGameBoard(roomId, io, socket) {
-    if (roomExists(roomId)) {
-        const noLettersBoard = getGameBoard(roomId, socket).map((row) => row.map((cell) => ({ ...cell, letter: ''})))
-        io.to(roomId).emit('gameBoardsUpdated', socket.id, noLettersBoard)
-    }
-}
-
-function handleWrongGuess(roomId, updatedGameBoard, io, socket) {
-    setGameBoard(roomId, updatedGameBoard, socket)
-    broadcastGameBoard(roomId, io, socket)
-}
-
-function handleCorrectGuess(roomId, updatedGameBoard, io, socket) {
-    incrementCountGameOvers(roomId)
-    setGameBoard(roomId, updatedGameBoard, socket)
-    if (isGameOver(roomId, io)) {
-        broadcastFinalUserInfo(roomId, io)
-    } else {
-        broadcastGameBoard(roomId, io, socket)
-    }
-}
-
-function handleOutOfGuesses(roomId, io) {
-    incrementCountGameOvers(roomId)
-    incrementCountOutOfGuesses(roomId)
-    if (isGameOver(roomId, io)) {
-        broadcastFinalUserInfo(roomId, io)
-    }
-}
-
-function isGameOver(roomId, io) {
-    if (getRoomConnectionMode(roomId) === 'online-private') {
-        if (getCountGameOvers(roomId) >= getRoomSize(roomId, io)) {
-            setRoomOutOfGame(roomId)
-            return true
-        }
-    } else if (getRoomConnectionMode(roomId) === 'online-public') {
-        if (getCountGameOvers(roomId) > 0) {
-            return true
-        }
-    }
-    return false
-}
-
 export {
     generateSolution,
-    initializeGameBoards,
     handleGameStart,
     handleWrongGuess,
     handleCorrectGuess,

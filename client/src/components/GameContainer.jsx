@@ -59,7 +59,7 @@ function GameContainer({
     useEffect(() => {
         if (connectionMode === 'offline' && gameMode === 'Challenge' && solution !== '') {
             generateRandomFirstGuess(solution)
-        } else if (connectionMode.includes('online') && gameMode === 'Challenge' && solution !== '' && challengeModeGuess !== null) {
+        } else if (typeof connectionMode === 'string' && connectionMode.includes('online') && gameMode === 'Challenge' && solution !== '' && challengeModeGuess !== null) {
             setUserGuess(challengeModeGuess)
         }
     }, [solution])
@@ -67,6 +67,7 @@ function GameContainer({
     // Online game flow
     useEffect(() => {
         socket.on('gameStarted', (initialUserInfo, newSolution, newChallengeModeGuess) => {
+            console.log('initial user info is', initialUserInfo)
             resetStates()
             const sortedUserInfo = initialUserInfo.sort((obj) => {
                 return obj.socketId === socket.id ? -1 : 1
@@ -106,9 +107,9 @@ function GameContainer({
     // Helper functions
 
     function startNewGame() {
-        if (connectionMode.includes('online')) {
+        if (typeof connectionMode === 'string' && connectionMode.includes('online')) {
             socket.emit('startOnlineGame', roomId)
-        } else if (connectionMode.includes('offline')) {
+        } else if (connectionMode === 'offline') {
             // Host is necessary for some rendering, so always set to host in offline
             setIsHost(true)
             resetStates()
@@ -233,7 +234,7 @@ function GameContainer({
         updateHints(colorizedGuess)
 
         if (guess === solution) {
-            if (connectionMode.includes('online')) {
+            if (typeof connectionMode === 'string' && connectionMode.includes('online')) {
                 socket.emit('correctGuess', roomId, updatedBoard)
             }
             setIsGameWon(true)
@@ -241,7 +242,7 @@ function GameContainer({
                 setIsGameOver(true)
             }
         } else {
-            if (connectionMode.includes('online')) {
+            if (typeof connectionMode === 'string' && connectionMode.includes('online')) {
                 socket.emit('wrongGuess', roomId, updatedBoard)
             }
             setSubmittedGuesses([...submittedGuesses, activeRowIndex])
@@ -250,7 +251,7 @@ function GameContainer({
             setActiveCellIndex(0)
             if (nextRow >= board.length) {
                 setIsOutOfGuesses(true)
-                if (connectionMode.includes('offline')) {
+                if (connectionMode === 'offline') {
                     setIsGameOver(true)
                 } else {
                     socket.emit('outOfGuesses', roomId)
@@ -397,26 +398,26 @@ function GameContainer({
 
     return (
         <div className='game-container'>
-            <LobbyInfo gameMode={gameMode} connectionMode={connectionMode} />
+            {/* <LobbyInfo gameMode={gameMode} connectionMode={connectionMode} /> */}
             <AlertModal
                 showAlertModal={showAlertModal}
                 setShowAlertModal={setShowAlertModal}
                 message={alertMessage}
             />
-            <GameOverMessage
+            {/* <GameOverMessage
                 isGameOver={isGameOver}
                 isGameWon={isGameWon}
                 setIsHost={setIsHost}
                 startNewGame={startNewGame}
                 gameMode={gameMode}
                 connectionMode={connectionMode}
-            />
-            <GameBoardContainer
+            /> */}
+            {/* <GameBoardContainer
                 connectionMode={connectionMode}
                 board={board}
                 username={username}
                 userInfo={userInfo}
-            />
+            /> */}
             <Keyboard handleKeyPress={handleKeyPress} hints={hints} />
         </div>
     )

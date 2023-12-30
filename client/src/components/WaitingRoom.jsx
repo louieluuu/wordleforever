@@ -22,16 +22,17 @@ function WaitingRoom({
     const [userInfo, setUserInfo] = useState([])
     const [message, setMessage] = useState('')
     const [showCountdownModal, setShowCountdownModal] = useState(false)
+    const [joinRoom, setJoinRoom] = useState(false)
 
     // Main useEffect loop
     useEffect(() => {
 
         if (socket.id === undefined) {
             socket.on('connect', () => {
-                socket.emit('joinRoom', roomId, username)
+                setJoinRoom(true)
             })
         } else {
-            socket.emit('joinRoom', roomId, username)
+            setJoinRoom(true)
         }
 
         // Make sure modes are set, important for users joining from a link
@@ -77,6 +78,13 @@ function WaitingRoom({
         }
     }, [])
 
+    // Join room once
+    useEffect(() => {
+        if (joinRoom) {
+            socket.emit('joinRoom', roomId, username)
+        }
+    }, [joinRoom])
+
     // Keep username up to date
     useEffect(() => {
         socket.emit('updateUsername', roomId, username)
@@ -85,7 +93,8 @@ function WaitingRoom({
     // Keep track of number of users in room
     // Start countdown in public game when at least 2 users, stop when less than 2 users
     useEffect(() => {
-        if (connectionMode.includes('public')) {
+        console.log(userInfo)
+        if (typeof connectionMode === 'string' && connectionMode.includes('public')) {
             if (userInfo.length > 1) {
                 startCountdown()
             }
@@ -142,8 +151,8 @@ function WaitingRoom({
                 />
             )}
             <div className={getUsernamesClassName()}>
-                {userInfo.map((info) => (
-                    <div key={info.socketId}>{info.username}</div>
+                {userInfo.map((user) => (
+                    <div key={user.userId}>{user.username}</div>
                 ))}
             </div>
             <div className='waiting-room-buttons'>

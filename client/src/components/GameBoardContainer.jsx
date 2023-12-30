@@ -19,7 +19,7 @@ function GameBoardContainer({
 
   return (
     <>
-        {connectionMode.includes('offline') ? (
+        {connectionMode === 'offline' ? (
             <GameBoard board={board} username={username} />
         ) : (
             <div className='boards-container'>
