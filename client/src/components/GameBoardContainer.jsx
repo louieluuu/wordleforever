@@ -25,7 +25,7 @@ function GameBoardContainer({
             <div className='boards-container'>
                 <GameBoard board={board} username={username} isUserBoard={true}/>
                 {otherUserInfo().map((obj) => (
-                    <GameBoard key={obj.socketId} board={obj.gameBoard} username={obj.username} isUserBoard={false}/>
+                    <GameBoard key={obj.userId} board={obj.gameBoard} username={obj.username} isUserBoard={false}/>
                 ))}
             </div>
         )}

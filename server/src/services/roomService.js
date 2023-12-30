@@ -133,10 +133,7 @@ async function roomInLobby(roomId) {
 
 async function isRoomFull(roomId) {
     try {
-        console.log('checking if room is full')
         const room = await getRoom(roomId)
-        console.log('room is', room)
-        console.log('room size is', room.users.length)
         return room && room.users.length >= MAX_ROOM_SIZE
     } catch (error) {
         console.error(`Error checking if room is full in the database: ${error.message}`)

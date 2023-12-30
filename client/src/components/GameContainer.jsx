@@ -67,21 +67,20 @@ function GameContainer({
     // Online game flow
     useEffect(() => {
         socket.on('gameStarted', (initialUserInfo, newSolution, newChallengeModeGuess) => {
-            console.log('initial user info is', initialUserInfo)
             resetStates()
             const sortedUserInfo = initialUserInfo.sort((obj) => {
-                return obj.socketId === socket.id ? -1 : 1
+                return obj.userId === socket.id ? -1 : 1
             })
             setUserInfo(sortedUserInfo)
             setSolution(newSolution)
             setChallengeModeGuess(newChallengeModeGuess)
         })
 
-        socket.on('gameBoardsUpdated', (updatedSocketId, updatedBoard) => {
+        socket.on('gameBoardsUpdated', (updatedUserId, updatedBoard) => {
             setUserInfo(prevUserInfo => {
                 const updatedUserInfo = [...prevUserInfo]
                 updatedUserInfo.forEach((obj) => {
-                    if (obj.socketId !== socket.id && obj.socketId === updatedSocketId) {
+                    if (obj.userId !== socket.id && obj.userId === updatedUserId) {
                         obj.gameBoard = updatedBoard
                     }
                 })
@@ -91,7 +90,7 @@ function GameContainer({
 
         socket.on('finalUserInfo', (finalUserInfo) => {
             const sortedUserInfo = finalUserInfo.sort((obj) => {
-                return obj.socketId === socket.id ? -1 : 1
+                return obj.userId === socket.id ? -1 : 1
             })
             setUserInfo(sortedUserInfo)
             setIsGameOver(true)
@@ -398,26 +397,26 @@ function GameContainer({
 
     return (
         <div className='game-container'>
-            {/* <LobbyInfo gameMode={gameMode} connectionMode={connectionMode} /> */}
+            <LobbyInfo gameMode={gameMode} connectionMode={connectionMode} />
             <AlertModal
                 showAlertModal={showAlertModal}
                 setShowAlertModal={setShowAlertModal}
                 message={alertMessage}
             />
-            {/* <GameOverMessage
+            <GameOverMessage
                 isGameOver={isGameOver}
                 isGameWon={isGameWon}
                 setIsHost={setIsHost}
                 startNewGame={startNewGame}
                 gameMode={gameMode}
                 connectionMode={connectionMode}
-            /> */}
-            {/* <GameBoardContainer
+            />
+            <GameBoardContainer
                 connectionMode={connectionMode}
                 board={board}
                 username={username}
                 userInfo={userInfo}
-            /> */}
+            />
             <Keyboard handleKeyPress={handleKeyPress} hints={hints} />
         </div>
     )

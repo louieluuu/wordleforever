@@ -13,7 +13,7 @@ import {
     hasCountdownStarted,
     setCountdownStarted,
 } from '../services/roomService.js'
-import { isUserInRoom, initializeUserInfo, setUsername, broadcastUserInfo } from '../services/userService.js'
+import { setUsername, broadcastUserInfo } from '../services/userService.js'
 
 const PRIVATE_ROOM_COUNTDOWN_TIMER = 4
 const PUBLIC_ROOM_COUNTDOWN_TIMER = 8
@@ -34,11 +34,10 @@ async function joinRoom(roomId, username, io, socket) {
         if (await roomInLobby(roomId) && !await isRoomFull(roomId)) {
             console.log(`${socket.id} joining room: ${roomId}`)
             socket.join(roomId)
-            await initializeUserInfo(socket.id)
             await addUserToRoom(socket.id, roomId)
             await setUsername(socket.id, username)
             await broadcastUserInfo(roomId, io)
-            socket.emit('roomJoined', getRoomConnectionMode(roomId), getRoomGameMode(roomId))
+            socket.emit('roomJoined', await getRoomConnectionMode(roomId), await getRoomGameMode(roomId))
         } else {
             console.log(`${socket.id} failed to join room: ${roomId}`)
             socket.emit('failedToJoinRoom')
@@ -99,10 +98,8 @@ async function handleMatchmaking(gameMode, socket) {
     try {
         const matchingRoom = await Room.findOne({ connectionMode: 'online-public', gameMode, inGame: false })
         if (matchingRoom) {
-            console.log('match found', matchingRoom)
             socket.emit('matchFound', matchingRoom.roomId)
         } else {
-            console.log('no match found')
             socket.emit('noMatchesFound')
         }
     } catch (error) {

@@ -17,22 +17,28 @@ import {
 } from './roomService.js'
 import { getAllUserInfoInRoom, broadcastFinalUserInfo, getUser } from './userService.js'
 
+// Lock
+import AsyncLock from 'async-lock'
+const lock = new AsyncLock()
+
 // New Game object will be initialized each time, even on game restart
 // The game record is deleted from the database when the game concludes
 async function initializeGameInfo(roomId) {
     try {
-        const newSolution = generateSolution()
-        const game = new Game({
-            roomId,
-            solution: newSolution,
-            startingWord: await isRoomChallengeMode(roomId) ? generateRandomFirstGuess(newSolution) : null,
-            users: await getUsersInRoom(roomId),
-            countGameOvers: 0,
-            countOutOfGuesses: 0,
-        })
-        await resetGameBoards(roomId)
-        await game.save()
-        console.log(`Game initialized and saved to the database: ${game.roomId}`)
+        if (!await getGame(roomId)) {
+            const newSolution = generateSolution()
+            const game = new Game({
+                roomId,
+                solution: newSolution,
+                startingWord: await isRoomChallengeMode(roomId) ? generateRandomFirstGuess(newSolution) : null,
+                users: await getUsersInRoom(roomId),
+                countGameOvers: 0,
+                countOutOfGuesses: 0,
+            })
+            await resetGameBoards(roomId)
+            await game.save()
+            console.log(`Game initialized and saved to the database: ${game.roomId}`)
+        }
     } catch (error) {
         console.error(`Error initializing game info in the database: ${error.message}`)
         throw error
@@ -110,10 +116,12 @@ async function getGameBoard(userId) {
 async function resetGameBoards(roomId) {
     try {
         const users = await getUsersInGame(roomId)
-        const resetPromises = users.map(async (userId) => {
-            await setGameBoard(userId, new Array(6).fill().map(() => new Array(5).fill({ letter: '', color: '' })))
-        })
-        await Promise.all(resetPromises)
+        if (users) {
+            const resetPromises = users.map(async (userId) => {
+                await setGameBoard(userId, new Array(6).fill().map(() => new Array(5).fill({ letter: '', color: '' })))
+            })
+            await Promise.all(resetPromises)
+        }
     } catch (error) {
         console.error(`Error resetting game boards in the database: ${error.message}`)
         throw error
@@ -161,7 +169,8 @@ async function incrementCountOutOfGuesses(roomId) {
 
 async function broadcastGameBoard(roomId, userId, io) {
     if (roomId) {
-        const noLettersBoard = getGameBoard(userId).map((row) => row.map((cell) => ({ ...cell, letter: ''})))
+        const userBoard = await getGameBoard(userId)
+        const noLettersBoard = userBoard.map((row) => row.map((cell) => ({ ...cell, letter: ''})))
         io.to(roomId).emit('gameBoardsUpdated', userId, noLettersBoard)
     } else {
         console.error('Invalid roomId for broadcasting game board')
@@ -169,17 +178,23 @@ async function broadcastGameBoard(roomId, userId, io) {
 }
 
 async function handleGameStart(roomId, io) {
-    if (roomId && roomInLobby(roomId)) {
-        setRoomInGame(roomId)
-        await initializeGameInfo(roomId)
-        io.to(roomId).emit(
-            'gameStarted',
-            await getAllUserInfoInRoom(roomId),
-            await getSolution(roomId),
-            await getStartingWord(roomId),
-            )
-    } else {
-        console.error('Invalid roomId for starting game')
+    try {
+        await lock.acquire('gameStartLock', async() => {
+            if (roomId && roomInLobby(roomId)) {
+                await setRoomInGame(roomId)
+                await initializeGameInfo(roomId)
+                io.to(roomId).emit(
+                    'gameStarted',
+                    await getAllUserInfoInRoom(roomId),
+                    await getSolution(roomId),
+                    await getStartingWord(roomId),
+                    )
+            } else {
+                console.error('Invalid roomId for starting game')
+            }
+        })
+    } catch (error) {
+        console.error('Error acquiring lock:', error)
     }
 }
 

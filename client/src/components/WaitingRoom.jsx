@@ -93,7 +93,6 @@ function WaitingRoom({
     // Keep track of number of users in room
     // Start countdown in public game when at least 2 users, stop when less than 2 users
     useEffect(() => {
-        console.log(userInfo)
         if (typeof connectionMode === 'string' && connectionMode.includes('public')) {
             if (userInfo.length > 1) {
                 startCountdown()

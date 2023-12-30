@@ -56,6 +56,4 @@ function handleStartPublicGame(connectionMode, gameMode, setIsHost) {
     })
 }
 
-
-
 export { handleStartPrivateGame, handleStartPublicGame }

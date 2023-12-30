@@ -1,8 +1,7 @@
 {
   "dependencies": {
-    "mongoose": "^8.0.3",
+    "async-lock": "^1.4.1",
     "react-confetti": "^6.1.0",
-    "uuid": "^9.0.1",
-    "winston": "^3.11.0"
+    "uuid": "^9.0.1"
   }
 }

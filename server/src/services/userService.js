@@ -66,7 +66,7 @@ async function setUsername(userId, username) {
 }
 
 // Already need to be in the room to keep username up to date with changes
-async function handleUsernameUpdate(roomId, username, io, userId) {
+async function handleUsernameUpdate(roomId, userId, username, io) {
     if (await roomInLobby(roomId) && await isUserInRoom(roomId, userId)) {
         await setUsername(userId, username)
         broadcastUserInfo(roomId, io)
@@ -100,29 +100,21 @@ async function broadcastFinalUserInfo(roomId, io) {
     }
 }
 
-async function cleanupUser(userId) {
+async function handleUserDisconnect(userId, io) {
+    console.log(`User ${userId} disconnected`)
+    handleLeaveRoom(userId, io)
     deleteUser(userId)
-    const roomId = await getUserRoom(userId)
+}
 
-    if (!roomId) {
-        console.log(`User ${userId} disconnected without connecting to a room`)
-    } else {
+async function handleLeaveRoom(userId, io) {
+    const roomId = await getUserRoom(userId)
+    if (roomId) {
         console.log(`Removing user ${userId} from ${roomId}`)
         await removeUserFromRoom(userId, roomId)
         if (await isRoomEmpty(roomId)) {
             deleteRoom(roomId)
         }
     }
-}
-
-async function handleUserDisconnect(userId, io) {
-    console.log(`User ${userId} disconnected`)
-    handleLeaveRoom(userId, io)
-}
-
-async function handleLeaveRoom(userId, io) {
-    const roomId = await getUserRoom(userId)
-    cleanupUser(userId)
     broadcastUserInfo(roomId, io)
 }
 
@@ -132,7 +124,6 @@ export {
     getAllUserInfoInRoom,
     setUsername,
     handleUsernameUpdate,
-    isUserInRoom,
     broadcastUserInfo,
     broadcastFinalUserInfo,
     handleUserDisconnect,
