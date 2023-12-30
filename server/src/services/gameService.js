@@ -35,7 +35,6 @@ async function initializeGameInfo(roomId) {
                 countGameOvers: 0,
                 countOutOfGuesses: 0,
             })
-            await resetGameBoards(roomId)
             await game.save()
             console.log(`Game initialized and saved to the database: ${game.roomId}`)
         }
@@ -57,6 +56,7 @@ async function getGame(roomId) {
 
 async function deleteGame(roomId) {
     try {
+        await resetGameBoards(roomId)
 		await Game.deleteOne({ roomId })
     } catch (error) {
         console.error(`Error deleting game from the database: ${error.message}`)

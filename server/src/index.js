@@ -2,7 +2,6 @@ import express from 'express'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
 import './database/db.js'
-import { cleanupDatabase } from './database/db.js'
 import cors from 'cors'
 
 // Controllers
