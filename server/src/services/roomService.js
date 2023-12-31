@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 
 // Database models
-import { Room } from '../database/models.js'
+import { Room, Game } from '../database/models.js'
 
 // Services
 import { getUser } from './userService.js'
@@ -47,6 +47,8 @@ async function getRoom(roomId) {
 async function deleteRoom(roomId) {
     try {
 		await Room.deleteOne({ roomId })
+        // Delete all associated games as well
+        await Game.deleteMany({ roomId })
     } catch (error) {
         console.error(`Error deleting room from the database: ${error.message}`)
         throw error
