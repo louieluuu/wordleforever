@@ -116,6 +116,7 @@ function GameContainer({
         } else if (connectionMode === 'offline') {
             // Host is necessary for some rendering, so always set to host in offline
             setIsHost(true)
+            resetStates()
             const newSolution = generateSolution()
             setSolution(newSolution)
         }
@@ -132,7 +133,6 @@ function GameContainer({
         setSubmittedGuesses([])
         setHints({ green: new Set(), yellow: new Set(), grey: new Set() })
         setShowAlertModal(false)
-        setUserInfo([])
     }
 
     function handleKeyPress(e) {
