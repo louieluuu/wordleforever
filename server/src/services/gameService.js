@@ -207,7 +207,8 @@ async function handleCorrectGuess(roomId, userId, updatedGameBoard, io) {
     await incrementCountGameOvers(roomId)
     await setGameBoard(userId, updatedGameBoard)
     if (await isGameOver(roomId)) {
-        broadcastFinalUserInfo(roomId, io)
+        await broadcastFinalUserInfo(roomId, io)
+        deleteGame(roomId)
     } else {
         broadcastGameBoard(roomId, userId, io)
     }
@@ -225,12 +226,10 @@ async function isGameOver(roomId) {
     if (await getRoomConnectionMode(roomId) === 'online-private') {
         if (await getCountGameOvers(roomId) >= await getRoomSize(roomId)) {
             await setRoomOutOfGame(roomId)
-            deleteGame(roomId)
             return true
         }
     } else if (await getRoomConnectionMode(roomId) === 'online-public') {
         if (await getCountGameOvers(roomId) > 0) {
-            deleteGame(roomId)
             return true
         }
     }

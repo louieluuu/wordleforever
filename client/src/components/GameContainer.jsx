@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import socket from '../socket'
 import Confetti from 'react-confetti'
@@ -43,10 +43,11 @@ function GameContainer({
     // Solution
     const [solution, setSolution] = useState('')
 
-    // Multiplayer states
+    // Online states
     const { roomId } = useParams()
     const [userInfo, setUserInfo] = useState([])
     const [challengeModeGuess, setChallengeModeGuess] = useState(null)
+    const hasOnlineGameStarted = useRef(false)
 
     // useEffect hooks
 
@@ -67,13 +68,16 @@ function GameContainer({
     // Online game flow
     useEffect(() => {
         socket.on('gameStarted', (initialUserInfo, newSolution, newChallengeModeGuess) => {
-            resetStates()
-            const sortedUserInfo = initialUserInfo.sort((obj) => {
-                return obj.userId === socket.id ? -1 : 1
-            })
-            setUserInfo(sortedUserInfo)
-            setSolution(newSolution)
-            setChallengeModeGuess(newChallengeModeGuess)
+            if (!hasOnlineGameStarted.current) {
+                hasOnlineGameStarted.current = true
+                resetStates()
+                const sortedUserInfo = initialUserInfo.sort((obj) => {
+                    return obj.userId === socket.id ? -1 : 1
+                })
+                setUserInfo(sortedUserInfo)
+                setSolution(newSolution)
+                setChallengeModeGuess(newChallengeModeGuess)
+            }
         })
 
         socket.on('gameBoardsUpdated', (updatedUserId, updatedBoard) => {
@@ -94,6 +98,7 @@ function GameContainer({
             })
             setUserInfo(sortedUserInfo)
             setIsGameOver(true)
+            hasOnlineGameStarted.current = false
         })
 
         return () => {
@@ -111,7 +116,6 @@ function GameContainer({
         } else if (connectionMode === 'offline') {
             // Host is necessary for some rendering, so always set to host in offline
             setIsHost(true)
-            resetStates()
             const newSolution = generateSolution()
             setSolution(newSolution)
         }
@@ -128,6 +132,7 @@ function GameContainer({
         setSubmittedGuesses([])
         setHints({ green: new Set(), yellow: new Set(), grey: new Set() })
         setShowAlertModal(false)
+        setUserInfo([])
     }
 
     function handleKeyPress(e) {
@@ -237,7 +242,7 @@ function GameContainer({
                 socket.emit('correctGuess', roomId, updatedBoard)
             }
             setIsGameWon(true)
-            if (connectionMode === 'offline' || connectionMode === 'online-public') {
+            if (connectionMode === 'offline') {
                 setIsGameOver(true)
             }
         } else {

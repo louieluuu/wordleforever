@@ -9,10 +9,6 @@ function GameBoardContainer({
     userInfo,
 }) {
 
-    function myInfo() {
-        return userInfo[0]
-    }
-
     function otherUserInfo() {
         return userInfo.slice(1) || []
     }
