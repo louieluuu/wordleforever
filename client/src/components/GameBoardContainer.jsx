@@ -35,6 +35,7 @@ function GameBoardContainer({
                     activeCell={activeCell}
                     username={userInfo[0].username}
                     points={userInfo[0].points}
+                    streak={userInfo[0].streak}
                     connectionMode={connectionMode}
                     isUserBoard={true}
                     />
@@ -45,6 +46,7 @@ function GameBoardContainer({
                         board={obj.gameBoard}
                         username={obj.username}
                         points={obj.points}
+                        streak={obj.streak}
                         connectionMode={connectionMode}
                         isUserBoard={false}
                     />

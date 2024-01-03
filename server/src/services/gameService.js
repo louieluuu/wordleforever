@@ -119,7 +119,7 @@ async function resetGameBoards(roomId) {
         const users = await getUsersInGame(roomId)
         if (users) {
             const resetPromises = users.map(async (userId) => {
-                await setGameBoard(userId, new Array(6).fill().map(() => new Array(5).fill({ letter: '', color: '' })))
+                return setGameBoard(userId, new Array(6).fill().map(() => new Array(5).fill({ letter: '', color: '' })))
             })
             await Promise.all(resetPromises)
         }
@@ -184,12 +184,32 @@ async function resetPoints(roomId) {
         const users = await getUsersInGame(roomId)
         if (users) {
             const resetPromises = users.map(async (userId) => {
-                await User.updateOne({ userId }, { $set: { points: 0 }})
+                return User.updateOne({ userId }, { $set: { points: 0 }})
             })
             await Promise.all(resetPromises)
         }
     } catch (error) {
         console.error(`Error resetting points in the database: ${error.message}`)
+        throw error
+    }
+}
+
+// Reset the streak for everyone except the winner, increment winner streak by 1
+async function setStreaks(winnerUserId, roomId) {
+    try {
+        const users = await getUsersInGame(roomId)
+        if (users) {
+            const resetPromises = users.map(async (userId) => {
+                if (userId === winnerUserId) {
+                    return User.updateOne({ userId }, { $inc: { streak: 1 }})
+                } else {
+                    return User.updateOne({ userId }, { $set: { streak: 0 }})
+                }
+            })
+            await Promise.all(resetPromises)
+        }
+    } catch (error) {
+        console.error(`Error setting streaks in the database: ${error.message}`)
         throw error
     }
 }
@@ -231,7 +251,11 @@ async function handleWrongGuess(roomId, userId, updatedGameBoard, io) {
 }
 
 async function handleCorrectGuess(roomId, userId, updatedGameBoard, io) {
-    await updatePoints(userId)
+    if (await getRoomConnectionMode(roomId) === 'online-private') {
+        await updatePoints(userId)
+    } else if (await getRoomConnectionMode(roomId) === 'online-public') {
+        await setStreaks(userId, roomId)
+    }
     await incrementCountGameOvers(roomId)
     await setGameBoard(userId, updatedGameBoard)
     if (await isGameOver(roomId)) {

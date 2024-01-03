@@ -647,3 +647,23 @@ body {
     color: white;
     border-radius: 0.75rem;
 }
+
+.streak {
+    &--0 {
+        opacity: 20%;
+    }
+    &--1-3 {
+        opacity: 50%;
+    }
+    &--4-6 {
+        opacity: 70%;
+    }
+    &--7-9 {
+        opacity: 100%;
+        transform: scale(1.2)
+    }
+    &--10 {
+        opacity: 100%;
+        transform: scale(1.3)
+    }
+}
