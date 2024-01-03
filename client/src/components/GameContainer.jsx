@@ -408,6 +408,13 @@ function GameContainer({
                 setShowAlertModal={setShowAlertModal}
                 message={alertMessage}
             />
+            <GameBoardContainer
+                connectionMode={connectionMode}
+                board={board}
+                username={username}
+                userInfo={userInfo}
+            />
+            <Keyboard handleKeyPress={handleKeyPress} hints={hints} />
             <GameOverMessage
                 isGameOver={isGameOver}
                 isGameWon={isGameWon}
@@ -416,13 +423,6 @@ function GameContainer({
                 gameMode={gameMode}
                 connectionMode={connectionMode}
             />
-            <GameBoardContainer
-                connectionMode={connectionMode}
-                board={board}
-                username={username}
-                userInfo={userInfo}
-            />
-            <Keyboard handleKeyPress={handleKeyPress} hints={hints} />
         </div>
     )
 }

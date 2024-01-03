@@ -1,4 +1,4 @@
-import { mongoose } from "./db.js"
+import { mongoose } from './db.js'
 
 const UserSchema = new mongoose.Schema({
     userId: String,
@@ -7,6 +7,7 @@ const UserSchema = new mongoose.Schema({
       type: [[{ letter: { type: String, default: '' }, color: { type: String, default: '' } }]],
       default: new Array(6).fill().map(() => new Array(5).fill({ letter: '', color: '' })),
     },
+    points: { type: Number, default: 0 }
 })
 
 const RoomSchema = new mongoose.Schema({

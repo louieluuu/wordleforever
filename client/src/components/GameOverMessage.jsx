@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Confetti from 'react-confetti'
+import { IoReturnDownBackSharp } from "react-icons/io5"
 
 // Helpers
 import { handleStartPublicGame } from '../helpers/socketHelpers'
-import Confetti from 'react-confetti'
+
+// Data
+import WIN_MESSAGES from '../data/winMessages'
 
 function GameOverMessage( {
     isGameOver,
@@ -16,6 +20,7 @@ function GameOverMessage( {
 
     const navigate = useNavigate()
     const [isConfettiRunning, setIsConfettiRunning] = useState(false)
+    const [winMessage, setWinMessage] = useState('')
 
     useEffect(() => {
         const confettiTimer = setTimeout(() => {
@@ -32,6 +37,11 @@ function GameOverMessage( {
         setIsConfettiRunning(isGameWon)
 
     }, [isGameOver])
+
+    useEffect(() => {
+        const message = WIN_MESSAGES[Math.floor(Math.random() * WIN_MESSAGES.length)]
+        setWinMessage(message)
+    }, [])
 
     async function handlePlayAgain() {
         try {
@@ -63,16 +73,21 @@ function GameOverMessage( {
             {isGameWon ? (
                 <>
                     {isConfettiRunning && <Confetti numberOfPieces={200} initialVelocityY={-10}/>}
-                    <div className='win-message'>
-                        <h2>Congratulations! You guessed the word!</h2>
+                    <div className='post-game-message'>
+                        {winMessage}
                     </div>
                 </>
             ) : (
-                <div className='loss-message'>
-                    <h2>Truly unfortunate. Maybe next time bud.</h2>
+                <div className='post-game-message'>
+                    Game Over
                 </div>
             )}
-            <button onClick={handlePlayAgain}>Play Again</button>
+            <button
+                className='play-again-button'
+                onClick={handlePlayAgain}>
+                Play Again
+                <IoReturnDownBackSharp/>
+            </button>
         </>
         )}
     </>

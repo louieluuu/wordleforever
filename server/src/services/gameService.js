@@ -14,6 +14,7 @@ import {
     setRoomInGame,
     setRoomOutOfGame,
     roomInLobby,
+    getUserRoom,
 } from './roomService.js'
 import { getAllUserInfoInRoom, broadcastFinalUserInfo, getUser } from './userService.js'
 
@@ -167,6 +168,32 @@ async function incrementCountOutOfGuesses(roomId) {
     }
 }
 
+async function updatePoints(userId) {
+    try {
+        const roomId = await getUserRoom(userId)
+        const newPoints = await getRoomSize(roomId) - await getCountGameOvers(roomId) + await getCountOutOfGuesses(roomId)
+        await User.updateOne({ userId }, { $inc: { points: newPoints }})
+    } catch (error) {
+        console.error(`Error updating user points in the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function resetPoints(roomId) {
+    try {
+        const users = await getUsersInGame(roomId)
+        if (users) {
+            const resetPromises = users.map(async (userId) => {
+                await User.updateOne({ userId }, { $set: { points: 0 }})
+            })
+            await Promise.all(resetPromises)
+        }
+    } catch (error) {
+        console.error(`Error resetting points in the database: ${error.message}`)
+        throw error
+    }
+}
+
 async function broadcastGameBoard(roomId, userId, io) {
     if (roomId) {
         const userBoard = await getGameBoard(userId)
@@ -204,6 +231,7 @@ async function handleWrongGuess(roomId, userId, updatedGameBoard, io) {
 }
 
 async function handleCorrectGuess(roomId, userId, updatedGameBoard, io) {
+    await updatePoints(userId)
     await incrementCountGameOvers(roomId)
     await setGameBoard(userId, updatedGameBoard)
     if (await isGameOver(roomId)) {
@@ -218,7 +246,8 @@ async function handleOutOfGuesses(roomId, io) {
     await incrementCountGameOvers(roomId)
     await incrementCountOutOfGuesses(roomId)
     if (await isGameOver(roomId)) {
-        broadcastFinalUserInfo(roomId, io)
+        await broadcastFinalUserInfo(roomId, io)
+        deleteGame(roomId)
     }
 }
 
@@ -260,6 +289,7 @@ function generateRandomFirstGuess(solution) {
 }
 
 export {
+    resetPoints,
     generateSolution,
     handleGameStart,
     handleWrongGuess,

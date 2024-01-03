@@ -5,6 +5,7 @@ import { Room, Game } from '../database/models.js'
 
 // Services
 import { getUser } from './userService.js'
+import { resetPoints } from './gameService.js'
 
 const MAX_ROOM_SIZE = 4
 
@@ -49,6 +50,8 @@ async function deleteRoom(roomId) {
 		await Room.deleteOne({ roomId })
         // Delete all associated games as well
         await Game.deleteMany({ roomId })
+        // Reset all user points
+        await resetPoints(roomId)
     } catch (error) {
         console.error(`Error deleting room from the database: ${error.message}`)
         throw error

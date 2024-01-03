@@ -5,6 +5,8 @@ function GameBoard({
     username,
     activeRow,
     activeCell,
+    points,
+    connectionMode,
     isUserBoard=false,
 }) {
 
@@ -34,6 +36,12 @@ function GameBoard({
         <div className='game-board'>
             <div className='game-board-info'>
                 {username}
+                {connectionMode === 'online-private' && (
+                    <>
+                    &nbsp;-&nbsp;
+                    {points}
+                    </>
+                )}
             </div>
             {board.map((row, rowIndex) => (
                 <div key={rowIndex} className='game-board__row'>
