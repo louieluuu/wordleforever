@@ -178,6 +178,11 @@ body {
             border-color: hsl(240, 2, 48);
             background-color: hsl(240, 2, 48);
         }
+
+        &--active {
+            @extend .game-board__cell;
+            border-color: hsl(240, 2, 48);
+        }
     }
 
     &__cell.user {

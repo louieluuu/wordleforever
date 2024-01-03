@@ -5,6 +5,8 @@ import GameBoard from './GameBoard'
 function GameBoardContainer({
     connectionMode,
     board,
+    activeRow,
+    activeCell,
     username,
     userInfo,
 }) {
@@ -16,13 +18,21 @@ function GameBoardContainer({
   return (
     <>
         {connectionMode === 'offline' ? (
-            <GameBoard board={board} username={username} connectionMode={connectionMode}/>
+            <GameBoard
+                board={board}
+                activeRow={activeRow}
+                activeCell={activeCell}
+                username={username}
+                connectionMode={connectionMode}
+            />
         ) : (
             <div className='boards-container'>
                 {userInfo.length > 0 && (
                     <GameBoard
                     key={userInfo[0].userId}
                     board={board}
+                    activeRow={activeRow}
+                    activeCell={activeCell}
                     username={userInfo[0].username}
                     points={userInfo[0].points}
                     connectionMode={connectionMode}

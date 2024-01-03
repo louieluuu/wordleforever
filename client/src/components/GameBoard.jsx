@@ -13,7 +13,7 @@ function GameBoard({
     function getCellClassName(board, row, cellIndex) {
         let cellClassName = 'game-board__cell'
     
-        if (board[row][cellIndex].color === 'none') {
+        if (board[row][cellIndex].color === '') {
           if (row === activeRow && cellIndex < activeCell) {
             cellClassName += '--active'
           }

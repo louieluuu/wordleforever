@@ -411,6 +411,8 @@ function GameContainer({
             <GameBoardContainer
                 connectionMode={connectionMode}
                 board={board}
+                activeRow={activeRowIndex}
+                activeCell={activeCellIndex}
                 username={username}
                 userInfo={userInfo}
             />
