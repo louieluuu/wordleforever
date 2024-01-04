@@ -1,5 +1,5 @@
 // Database models
-import { User, Room } from '../database/models.js'
+import { User } from '../database/models.js'
 
 // Services
 import {

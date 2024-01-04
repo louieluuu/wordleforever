@@ -19,7 +19,7 @@ app.use(cors())
 
 process.on('unhandledRejection', (reason, promise) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason)
-  })
+})
 
 const io = new Server(server, {
     cors: {

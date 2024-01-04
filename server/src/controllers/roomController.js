@@ -1,6 +1,3 @@
-// Database models
-import { Room } from '../database/models.js'
-
 // Services
 import {
     initializeRoom,
@@ -16,11 +13,11 @@ import {
 import { setUsername, broadcastUserInfo } from '../services/userService.js'
 
 const PRIVATE_ROOM_COUNTDOWN_TIMER = 4
-const PUBLIC_ROOM_COUNTDOWN_TIMER = 7
+const PUBLIC_ROOM_COUNTDOWN_TIMER = 1
 
-async function createRoom(connectionMode, gameMode, socket) {
+function createRoom(connectionMode, gameMode, socket) {
     try {
-        const roomId = await initializeRoom(connectionMode, gameMode, socket.id)
+        const roomId = initializeRoom(connectionMode, gameMode)
         console.log(`Creating room: ${roomId}`)
         socket.emit('roomCreated', roomId)
     } catch (error) {

@@ -1,5 +1,15 @@
 import { mongoose } from './db.js'
 
+// Store stats for each user
+// Max streak
+// Current streak
+// Win percentage (total games, total wins)
+// Avg number of guesses (total guesses)
+// Avg solve time (total time in game, check if won)
+
+// User
+// ID, max streak, curr streak, total games, total wins, total guesses, total time in games won, points
+
 const UserSchema = new mongoose.Schema({
     userId: String,
     username: String,
@@ -9,16 +19,6 @@ const UserSchema = new mongoose.Schema({
     },
     points: { type: Number, default: 0 },
     streak: { type: Number, default: 0 },
-})
-
-const RoomSchema = new mongoose.Schema({
-    roomId: String,
-    connectionMode: String,
-    gameMode: String,
-    hostUserId: String,
-    users: [String],
-    inGame: { type: Boolean, default: false },
-    countdownStarted: { type: Boolean, default: false },
 })
 
 const GameSchema = new mongoose.Schema({
@@ -31,7 +31,6 @@ const GameSchema = new mongoose.Schema({
 })
 
 const User = mongoose.model('User', UserSchema)
-const Room = mongoose.model('Room', RoomSchema)
 const Game = mongoose.model('Game', GameSchema)
 
-export { User, Room, Game }
+export { User, Game }
