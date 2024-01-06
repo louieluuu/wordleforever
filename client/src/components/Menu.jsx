@@ -37,7 +37,7 @@ function Menu({
                     navigate(`/room/${privateRoomId}`)
                     break
                 case 'online-public':
-                    const publicRoomId = await handleStartPublicGame(connectionMode, gameMode, setIsHost)
+                    const publicRoomId = await handleStartPublicGame(connectionMode, gameMode)
                     navigate(`/room/${publicRoomId}`)
                     break
                 case 'offline':

@@ -49,7 +49,7 @@ io.on('connection', (socket) => {
     socket.on('startOnlineGame', async (roomId) => await handleGameStart(roomId, io))
     // General game flow
     socket.on('wrongGuess', (roomId, updatedGameBoard) => handleWrongGuess(roomId, socket.id, updatedGameBoard, io))
-    socket.on('correctGuess', async (roomId, updatedGameBoard) => await handleCorrectGuess(roomId, socket.id, updatedGameBoard, io))
+    socket.on('correctGuess', async (roomId, updatedGameBoard) => await handleCorrectGuess(roomId, socket.id, updatedGameBoard, socket, io))
     socket.on('outOfGuesses', (roomId) => handleOutOfGuesses(roomId, socket.id, io))
 
     // User disconnect and cleanup

@@ -184,7 +184,6 @@ export default class Game {
 
     broadcastStreak(roomId, userId, io) {
         if (roomId) {
-            console.log('resetting streak for', userId)
             io.to(roomId).emit('streakUpdated', userId, this.getStreak(userId))
         } else {
             console.error('Invalid roomId for broadcasting streak')

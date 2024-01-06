@@ -14,7 +14,7 @@ function handleStartPrivateGame(connectionMode, gameMode, setIsHost) {
     })
 }
 
-function handleStartPublicGame(connectionMode, gameMode, setIsHost) {
+function handleStartPublicGame(connectionMode, gameMode) {
     return new Promise((resolve, reject) => {
         socket.emit('findMatch', gameMode)
 
@@ -25,7 +25,7 @@ function handleStartPublicGame(connectionMode, gameMode, setIsHost) {
             handleNoMatchesFound(connectionMode, gameMode)
         })
         socket.on('roomCreated', (roomId) => {
-            handleRoomCreated(roomId, setIsHost)
+            handleRoomCreated(roomId)
         })
         socket.on('error', reject)
         setTimeout(() => reject(new Error('Timeout')), 5000)
@@ -41,8 +41,7 @@ function handleStartPublicGame(connectionMode, gameMode, setIsHost) {
             socket.off('noMatchesFound')
         }
         
-        function handleRoomCreated(roomId, setIsHost) {
-            setIsHost(true)
+        function handleRoomCreated(roomId) {
             cleanupAllSocketListeners()
             resolve(roomId)
         }

@@ -1,27 +1,48 @@
 import React, { useEffect } from 'react'
 
 
-function AlertModal({ showAlertModal, setShowAlertModal, message }) {
+function AlertModal({
+    showAlertModal,
+    setShowAlertModal,
+    message,
+    isOutOfGuesses,
+    isGameWon,
+}) {
     let alertTimeout
-  
+
     useEffect(() => {
-      if (showAlertModal) {
-        alertTimeout = setTimeout(() => {
-          setShowAlertModal(false)
-        }, 1500)
-      }
-  
-      return () => {
-        clearTimeout(alertTimeout)
-      }
-    }, [showAlertModal, setShowAlertModal])
-  
+        if (showAlertModal) {
+            // Most of these alerts are temporary (1s). The exceptions are:
+            // - out of guesses (infinite time)
+            // - win (8000ms, which just happens to be when the confetti disappears)
+            if (isOutOfGuesses) {
+                return
+            }
+
+            const ms = isGameWon ? 8000 : 1500
+            alertTimeout = setTimeout(() => {
+                setShowAlertModal(false)
+            }, ms)
+        }
+
+        return () => {
+            clearTimeout(alertTimeout)
+        }
+    }, [showAlertModal])
+
     return (
-        <div
-            className={`alert-modal${showAlertModal ? "" : " hide"}`}>
-            {message}
-        </div>
-      )
-  }
-  
-  export default AlertModal
+        <>
+        {showAlertModal && (
+            <div
+                className={`alert-modal${showAlertModal ? "" : " hide"}`}
+                onTransitionEnd={() => setShowAlertModal(false)}>
+                {message}
+            </div>
+        )}
+
+        </>
+
+    )
+}
+
+export default AlertModal

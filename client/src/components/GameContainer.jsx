@@ -1,17 +1,19 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
+import Confetti from 'react-confetti'
 import socket from '../socket'
 
 // Components
 import LobbyInfo from './LobbyInfo'
 import AlertModal from './AlertModal'
-import GameOverMessage from './GameOverMessage'
+import PlayAgainButton from './PlayAgainButton'
 import GameBoardContainer from './GameBoardContainer'
 import Keyboard from './Keyboard'
 
 // Data
 import VALID_WORDS from '../data/validWords'
 import WORDLE_ANSWERS from '../data/wordleAnswers'
+import WIN_MESSAGES from '../data/winMessages'
 
 
 
@@ -27,6 +29,7 @@ function GameContainer({
     const [isGameWon, setIsGameWon] = useState(false)
     const [isOutOfGuesses, setIsOutOfGuesses] = useState(false)
     const [isGameOver, setIsGameOver] = useState(false)
+    const [isConfettiRunning, setIsConfettiRunning] = useState(false)
 
     // Gameplay states
     const [board, setBoard] = useState(new Array(6).fill().map((_) => new Array(5).fill({ letter: '', color: '' })))
@@ -63,6 +66,17 @@ function GameContainer({
             setUserGuess(challengeModeGuess)
         }
     }, [solution])
+
+    // Confetti timer
+    useEffect(() => {
+        const confettiTimer = setTimeout(() => {
+            setIsConfettiRunning(false)
+        }, 5000)
+
+        return () => {
+            clearTimeout(confettiTimer)
+        }
+    }, [isConfettiRunning])
 
     // Online game flow
     useEffect(() => {
@@ -115,6 +129,10 @@ function GameContainer({
             })
         })
 
+        socket.on('firstSolve', () => {
+            showWinAnimations()
+        })
+
         socket.on('finalUserInfo', (finalUserInfo) => {
             const sortedUserInfo = finalUserInfo.sort((obj) => {
                 return obj.userId === socket.id ? -1 : 1
@@ -129,6 +147,7 @@ function GameContainer({
             socket.off('gameBoardsUpdated')
             socket.off('pointsUpdated')
             socket.off('streakUpdated')
+            socket.off('firstSolve')
             socket.off('finalUserInfo')
         }
     }, [])
@@ -158,6 +177,7 @@ function GameContainer({
         setSubmittedGuesses([])
         setHints({ green: new Set(), yellow: new Set(), grey: new Set() })
         setShowAlertModal(false)
+        setIsConfettiRunning(false)
     }
 
     function handleKeyPress(e) {
@@ -222,12 +242,6 @@ function GameContainer({
         }
     }
 
-    function generateSolution() {
-        const newSolution = WORDLE_ANSWERS[Math.floor(Math.random() * WORDLE_ANSWERS.length)].toUpperCase()
-        console.log('Solution is', newSolution)
-        return newSolution
-    }
-
     function validateUserGuess(guess) {
         if (guess.length < 5) {
             setAlertMessage('Not enough letters')
@@ -265,10 +279,14 @@ function GameContainer({
         if (guess === solution) {
             if (typeof connectionMode === 'string' && connectionMode.includes('online')) {
                 socket.emit('correctGuess', roomId, updatedBoard)
+                if (typeof connectionMode === 'string' && connectionMode === 'online-public') {
+                    showWinAnimations()
+                }
             }
             setIsGameWon(true)
             if (connectionMode === 'offline') {
                 setIsGameOver(true)
+                showWinAnimations()
             }
         } else {
             if (typeof connectionMode === 'string' && connectionMode.includes('online')) {
@@ -393,6 +411,12 @@ function GameContainer({
         return result
     }
 
+    function generateSolution() {
+        const newSolution = WORDLE_ANSWERS[Math.floor(Math.random() * WORDLE_ANSWERS.length)].toUpperCase()
+        console.log('Solution is', newSolution)
+        return newSolution
+    }
+
     // Used for challenge mode, generates a random starting word that always has exactly one letter in the correct spot
     function generateRandomFirstGuess(solution) {
         let randomFirstGuess
@@ -409,6 +433,13 @@ function GameContainer({
                 return randomFirstGuess
             }
         }
+    }
+
+    function showWinAnimations() {
+        const winMessage = WIN_MESSAGES[Math.floor(Math.random() * WIN_MESSAGES.length)]
+        setAlertMessage(winMessage)
+        setShowAlertModal(true)
+        setIsConfettiRunning(true)
     }
 
     // Could be generalized but no need for this game since the solution will always be 5 letters
@@ -428,10 +459,13 @@ function GameContainer({
     return (
         <div className='game-container'>
             <LobbyInfo gameMode={gameMode} connectionMode={connectionMode} />
+            {isConfettiRunning && <Confetti numberOfPieces={200} initialVelocityY={-10}/>}
             <AlertModal
                 showAlertModal={showAlertModal}
                 setShowAlertModal={setShowAlertModal}
                 message={alertMessage}
+                isOutOfGuesses={isOutOfGuesses}
+                isGameWon={isGameWon}
             />
             <GameBoardContainer
                 connectionMode={connectionMode}
@@ -442,10 +476,9 @@ function GameContainer({
                 userInfo={userInfo}
             />
             <Keyboard handleKeyPress={handleKeyPress} hints={hints} />
-            <GameOverMessage
+            <PlayAgainButton
                 isGameOver={isGameOver}
-                isGameWon={isGameWon}
-                setIsHost={setIsHost}
+                isHost={isHost}
                 startNewGame={startNewGame}
                 gameMode={gameMode}
                 connectionMode={connectionMode}
