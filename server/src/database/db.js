@@ -1,10 +1,9 @@
 import mongoose from 'mongoose'
-import { User, Game } from './models.js'
+import { User } from './models.js'
 
 async function cleanupDatabase() {
     try {
         await User.deleteMany({})
-        await Game.deleteMany({})
         console.log('Database cleanup successful')
     } catch (error) {
         console.log(`Error cleaning up database: ${error.message}`)

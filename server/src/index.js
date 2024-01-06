@@ -53,8 +53,8 @@ io.on('connection', (socket) => {
     socket.on('outOfGuesses', async (roomId) => await handleOutOfGuesses(roomId, io))
 
     // User disconnect and cleanup
-    socket.on('disconnecting', async () => await handleUserDisconnect(socket.id, io))
-    socket.on('leaveRoom', async () => await handleLeaveRoom(socket.id, io))
+    socket.on('disconnecting', async () => await handleUserDisconnect(socket, io))
+    socket.on('leaveRoom', async () => await handleLeaveRoom(socket, io))
 
 })
 

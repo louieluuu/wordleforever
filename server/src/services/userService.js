@@ -1,11 +1,15 @@
 // Database models
 import { User } from '../database/models.js'
 
+// Classes
+import Room from '../classes/Room.js'
+
 // Services
 import {
     getRoom,
-    getUserRoom,
     roomInLobby,
+    isUserInRoom,
+    getUsersInRoom,
     deleteRoom,
     removeUserFromRoom,
     isRoomEmpty,
@@ -36,8 +40,8 @@ async function getUser(userId) {
 
 async function getAllUserInfoInRoom(roomId) {
     try {
-        const room = await getRoom(roomId)
-        if (room) {
+        const room = getRoom(roomId)
+        if (room instanceof Room) {
             const allUserInfo = User.find({ userId: { $in: room.users }}).lean()
             return allUserInfo
         }
@@ -67,20 +71,30 @@ async function setUsername(userId, username) {
 
 // Already need to be in the room to keep username up to date with changes
 async function handleUsernameUpdate(roomId, userId, username, io) {
-    if (await roomInLobby(roomId) && await isUserInRoom(roomId, userId)) {
+    if (roomInLobby(roomId) && isUserInRoom(roomId, userId)) {
         await setUsername(userId, username)
         broadcastUserInfo(roomId, io)
     }    
 }
 
-// Check if this is necessary later?
-async function isUserInRoom(roomId, userId) {
+// Handle streak updates in the database for all users in the room
+async function handleUserStreakUpdates(winnerUserId, roomId) {
     try {
-        const room = await Room.findOne({ roomId, users: userId })
-        return !!room
+        const users = getUsersInRoom(roomId)
+        if (users) {
+            const resetPromises = users.map(async (userId) => {
+                if (userId === winnerUserId) {
+                    await User.updateOne({ userId }, { $inc: { currStreak: 1 }})
+                    return User.updateOne({ userId }, { $max: { maxStreak: '$currStreak' }})
+                } else {
+                    return User.updateOne({ userId }, { $set: { currStreak: 0 }})
+                }
+            })
+            await Promise.all(resetPromises)
+        }
     } catch (error) {
-        console.error(`Error checking if user is in the room in the database: ${error.message}`);
-        throw error;
+        console.error(`Error setting streaks in the database: ${error.message}`)
+        throw error
     }
 }
 
@@ -92,26 +106,19 @@ async function broadcastUserInfo(roomId, io) {
     }
 }
 
-async function broadcastFinalUserInfo(roomId, io) {
-    if (roomId) {
-        io.to(roomId).emit('finalUserInfo', await getAllUserInfoInRoom(roomId))
-    } else {
-        console.error('Invalid roomId for broadcasting final user info')
-    }
+async function handleUserDisconnect(socket, io) {
+    console.log(`User ${socket.id} disconnected`)
+    handleLeaveRoom(socket, io)
+    deleteUser(socket.id)
 }
 
-async function handleUserDisconnect(userId, io) {
-    console.log(`User ${userId} disconnected`)
-    handleLeaveRoom(userId, io)
-    deleteUser(userId)
-}
-
-async function handleLeaveRoom(userId, io) {
-    const roomId = await getUserRoom(userId)
+async function handleLeaveRoom(socket, io) {
+    const roomId = socket.roomId
     if (roomId) {
-        console.log(`Removing user ${userId} from ${roomId}`)
-        await removeUserFromRoom(userId, roomId)
-        if (await isRoomEmpty(roomId)) {
+        console.log(`Removing user ${socket.id} from ${roomId}`)
+        socket.roomId = null
+        removeUserFromRoom(socket.id, roomId)
+        if (isRoomEmpty(roomId)) {
             deleteRoom(roomId)
         }
     }
@@ -124,8 +131,8 @@ export {
     getAllUserInfoInRoom,
     setUsername,
     handleUsernameUpdate,
+    handleUserStreakUpdates,
     broadcastUserInfo,
-    broadcastFinalUserInfo,
     handleUserDisconnect,
     handleLeaveRoom,
 }

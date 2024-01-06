@@ -31,6 +31,7 @@ async function joinRoom(roomId, username, io, socket) {
         if (await roomInLobby(roomId) && !await isRoomFull(roomId)) {
             console.log(`${socket.id} joining room: ${roomId}`)
             socket.join(roomId)
+            socket.roomId = roomId
             await addUserToRoom(socket.id, roomId)
             await setUsername(socket.id, username)
             await broadcastUserInfo(roomId, io)
