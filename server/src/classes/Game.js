@@ -5,35 +5,24 @@ import WORDLE_ANSWERS from '../data/wordleAnswers.js'
 import { getUser } from '../services/userService.js'
 
 export default class Game {
-    constructor(users, prevPoints, isChallengeMode) {
-        this.solution = this.generateSolution()
-        this.startingWord = isChallengeMode ? this.generateRandomFirstGuess(this.solution) : null
-        this.allUserInfo = this.initializeAllUserInfo(users, prevPoints)
+    constructor() {
+        this.solution = null
+        this.startingWord = null
+        this.allUserInfo = new Map()
         this.countGameOvers = 0
         this.countOutOfGuesses = 0
     }
 
-    generateSolution() {
-        const newSolution = WORDLE_ANSWERS[Math.floor(Math.random() * WORDLE_ANSWERS.length)].toUpperCase()
-        console.log('Solution is', newSolution)
-        return newSolution
-    }
-    
-    // Used for challenge mode, generates a random starting word that always has exactly one letter in the correct spot
-    generateRandomFirstGuess(solution) {
-        let randomFirstGuess
-        while (true) {
-            randomFirstGuess = VALID_WORDS[Math.floor(Math.random() * VALID_WORDS.length)].toUpperCase()
-            let numGreenLetters = 0
-            for (let i = 0; i < randomFirstGuess.length; i++) {
-                if (randomFirstGuess[i] === solution[i]) {
-                numGreenLetters += 1
-                }
-            }
-            if (numGreenLetters === 1) {
-                return randomFirstGuess
-            }
-        }
+    static async createGame(users, prevPoints, isChallengeMode) {
+        const game = new Game()
+
+        game.solution = game.generateSolution()
+        game.startingWord = isChallengeMode ? game.generateRandomFirstGuess(game.solution) : null
+        game.allUserInfo = await game.initializeAllUserInfo(users, prevPoints)
+        game.countGameOvers = 0
+        game.countOutOfGuesses = 0
+
+        return game
     }
 
     async initializeAllUserInfo(users, prevPoints) {
@@ -58,7 +47,7 @@ export default class Game {
     }
 
     roomSize() {
-        return this.allUserInfo.length
+        return this.allUserInfo.size
     }
 
     getGameBoard(userId) {
@@ -76,6 +65,13 @@ export default class Game {
         }
     }
 
+    getPoints(userId) {
+        const userInfo = this.allUserInfo.get(userId)
+        if (userInfo) {
+            return userInfo.points
+        }
+    }
+
     getAllPoints() {
         const pointsMapping = new Map()
         this.allUserInfo.forEach((userInfo, userId) => {
@@ -90,6 +86,13 @@ export default class Game {
         if (userInfo) {
             const newPoints = this.roomSize() - this.countGameOvers + this.countOutOfGuesses
             userInfo.points += newPoints
+        }
+    }
+
+    getStreak(userId) {
+        const userInfo = this.allUserInfo.get(userId)
+        if (userInfo) {
+            return userInfo.streak
         }
     }
 
@@ -129,8 +132,31 @@ export default class Game {
         })
     }
 
+    generateSolution() {
+        const newSolution = WORDLE_ANSWERS[Math.floor(Math.random() * WORDLE_ANSWERS.length)].toUpperCase()
+        console.log('Solution is', newSolution)
+        return newSolution
+    }
+    
+    // Used for challenge mode, generates a random starting word that always has exactly one letter in the correct spot
+    generateRandomFirstGuess(solution) {
+        let randomFirstGuess
+        while (true) {
+            randomFirstGuess = VALID_WORDS[Math.floor(Math.random() * VALID_WORDS.length)].toUpperCase()
+            let numGreenLetters = 0
+            for (let i = 0; i < randomFirstGuess.length; i++) {
+                if (randomFirstGuess[i] === solution[i]) {
+                numGreenLetters += 1
+                }
+            }
+            if (numGreenLetters === 1) {
+                return randomFirstGuess
+            }
+        }
+    }
+
     // Emitting methods
-    startGame(roomId) {
+    startGame(roomId, io) {
         io.to(roomId).emit(
             'gameStarted',
             this.getAllUserInfo(),
@@ -145,6 +171,23 @@ export default class Game {
             io.to(roomId).emit('gameBoardsUpdated', userId, noLettersBoard)
         } else {
             console.error('Invalid roomId for broadcasting game board')
+        }
+    }
+
+    broadcastPoints(roomId, userId, io) {
+        if (roomId) {
+            io.to(roomId).emit('pointsUpdated', userId, this.getPoints(userId))
+        } else {
+            console.error('Invalid roomId for broadcasting points')
+        }
+    }
+
+    broadcastStreak(roomId, userId, io) {
+        if (roomId) {
+            console.log('resetting streak for', userId)
+            io.to(roomId).emit('streakUpdated', userId, this.getStreak(userId))
+        } else {
+            console.error('Invalid roomId for broadcasting streak')
         }
     }
 

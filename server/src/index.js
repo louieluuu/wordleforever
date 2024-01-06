@@ -33,24 +33,24 @@ io.on('connection', (socket) => {
 
     // Interact with WaitingRoom component
     // Find match
-    socket.on('findMatch', async (gameMode) => await handleMatchmaking(gameMode, socket))
+    socket.on('findMatch', (gameMode) => handleMatchmaking(gameMode, socket))
     // Create room
-    socket.on('createRoom', async (connectionMode, gameMode) => await createRoom(connectionMode, gameMode, socket))
+    socket.on('createRoom', (connectionMode, gameMode) => createRoom(connectionMode, gameMode, socket))
     // Join room
     socket.on('joinRoom', async (roomId, username) => await joinRoom(roomId, username, io, socket))
     // Username update
     socket.on('updateUsername', async (roomId, username) => await handleUsernameUpdate(roomId, socket.id, username, io))
     // Start countdown before starting the game -> navigate to game room
-    socket.on('startCountdown', async (roomId) => await handleCountdownStart(roomId, io))
+    socket.on('startCountdown', (roomId) => handleCountdownStart(roomId, io))
     // Stop countdown - no longer enough users in the room
-    socket.on('stopCountdown', async (roomId) => await handleCountdownStop(roomId, io))
+    socket.on('stopCountdown', (roomId) => handleCountdownStop(roomId, io))
 
     // Interact with GameContainer component
     socket.on('startOnlineGame', async (roomId) => await handleGameStart(roomId, io))
     // General game flow
-    socket.on('wrongGuess', async (roomId, updatedGameBoard) => await handleWrongGuess(roomId, socket.id, updatedGameBoard, io))
+    socket.on('wrongGuess', (roomId, updatedGameBoard) => handleWrongGuess(roomId, socket.id, updatedGameBoard, io))
     socket.on('correctGuess', async (roomId, updatedGameBoard) => await handleCorrectGuess(roomId, socket.id, updatedGameBoard, io))
-    socket.on('outOfGuesses', async (roomId) => await handleOutOfGuesses(roomId, io))
+    socket.on('outOfGuesses', (roomId) => handleOutOfGuesses(roomId, socket.id, io))
 
     // User disconnect and cleanup
     socket.on('disconnecting', async () => await handleUserDisconnect(socket, io))

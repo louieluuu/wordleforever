@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import socket from '../socket'
-import Confetti from 'react-confetti'
 
 // Components
 import LobbyInfo from './LobbyInfo'
@@ -92,6 +91,30 @@ function GameContainer({
             })
         })
 
+        socket.on('pointsUpdated', (updatedUserId, updatedPoints) => {
+            setUserInfo(prevUserInfo => {
+                const updatedUserInfo = [...prevUserInfo]
+                updatedUserInfo.forEach((obj) => {
+                    if (obj.userId === updatedUserId) {
+                        obj.points = updatedPoints
+                    }
+                })
+                return updatedUserInfo
+            })
+        })
+
+        socket.on('streakUpdated', (updatedUserId, updatedStreak) => {
+            setUserInfo(prevUserInfo => {
+                const updatedUserInfo = [...prevUserInfo]
+                updatedUserInfo.forEach((obj) => {
+                    if (obj.userId === updatedUserId) {
+                        obj.streak = updatedStreak
+                    }
+                })
+                return updatedUserInfo
+            })
+        })
+
         socket.on('finalUserInfo', (finalUserInfo) => {
             const sortedUserInfo = finalUserInfo.sort((obj) => {
                 return obj.userId === socket.id ? -1 : 1
@@ -104,7 +127,9 @@ function GameContainer({
         return () => {
             socket.off('gameStarted')
             socket.off('gameBoardsUpdated')
-            socket.off('userInfoUpdated')
+            socket.off('pointsUpdated')
+            socket.off('streakUpdated')
+            socket.off('finalUserInfo')
         }
     }, [])
 

@@ -1,5 +1,5 @@
 // Database models
-import { User } from '../database/models.js'
+import User from '../database/User.js'
 
 // Classes
 import Room from '../classes/Room.js'
@@ -83,17 +83,29 @@ async function handleUserStreakUpdates(winnerUserId, roomId) {
         const users = getUsersInRoom(roomId)
         if (users) {
             const resetPromises = users.map(async (userId) => {
-                if (userId === winnerUserId) {
-                    await User.updateOne({ userId }, { $inc: { currStreak: 1 }})
-                    return User.updateOne({ userId }, { $max: { maxStreak: '$currStreak' }})
-                } else {
-                    return User.updateOne({ userId }, { $set: { currStreak: 0 }})
+                const user = await User.findOne({ userId })
+                if (user) {
+                    if (userId === winnerUserId) {
+                        await User.updateOne({ userId }, { $inc: { currStreak: 1 }})
+                        return User.updateOne({ userId }, { $max: { maxStreak: user.currStreak }})
+                    } else {
+                        return User.updateOne({ userId }, { $set: { currStreak: 0 }})
+                    }
                 }
             })
             await Promise.all(resetPromises)
         }
     } catch (error) {
         console.error(`Error setting streaks in the database: ${error.message}`)
+        throw error
+    }
+}
+
+async function handleUserStreakReset(userId) {
+    try {
+        await User.updateOne({ userId }, { $set: { currStreak: 0 }})
+    } catch (error) {
+        console.error(`Error resetting streaks in the database: ${error.message}`)
         throw error
     }
 }
@@ -132,6 +144,7 @@ export {
     setUsername,
     handleUsernameUpdate,
     handleUserStreakUpdates,
+    handleUserStreakReset,
     broadcastUserInfo,
     handleUserDisconnect,
     handleLeaveRoom,

@@ -10,7 +10,7 @@ import {
     setRoomOutOfGame,
     roomInLobby,
 } from './roomService.js'
-import { handleUserStreakUpdates } from './userService.js'
+import { handleUserStreakUpdates, handleUserStreakReset } from './userService.js'
 
 // Lock
 import AsyncLock from 'async-lock'
@@ -20,14 +20,14 @@ const Games = new Map()
 
 // For now games will be indexed by roomId and deleted when the room is deleted
 // Possible new feature: store game info in DB for match history, in which case they'll need a new gameId
-function initializeGameInfo(roomId) {
+async function initializeGameInfo(roomId) {
     // Should only be set for subsequent games in private games, games should be deleted upon room deletion
     let prevPoints = new Map()
     if (Games.has(roomId)) {
-        prevPoints = Games.get(roomId)
+        prevPoints = Games.get(roomId).getAllPoints()
         deleteGame(roomId)
     }
-    const game = new Game(getUsersInRoom(roomId), prevPoints, isRoomChallengeMode(roomId))
+    const game = await Game.createGame(getUsersInRoom(roomId), prevPoints, isRoomChallengeMode(roomId))
     Games.set(roomId, game)
 }
 
@@ -39,15 +39,16 @@ function deleteGame(roomId) {
     }
 }
 
+// check if the lock is needed
 async function handleGameStart(roomId, io) {
     try {
         await lock.acquire('gameStartLock', async() => {
             if (roomId && roomInLobby(roomId)) {
                 setRoomInGame(roomId)
-                initializeGameInfo(roomId)
+                await initializeGameInfo(roomId)
                 const game = Games.get(roomId)
                 if (game && game instanceof Game) {
-                    game.startGame(roomId)
+                    game.startGame(roomId, io)
                 }
             } else {
                 console.error('Invalid roomId for starting game')
@@ -72,9 +73,10 @@ async function handleCorrectGuess(roomId, userId, updatedGameBoard, io) {
         if (game && game instanceof Game) {
             if (getRoomConnectionMode(roomId) === 'online-private') {
                 game.updatePoints(userId)
+                game.broadcastPoints(roomId, userId, io)
             } else if (getRoomConnectionMode(roomId) === 'online-public') {
                 game.updateStreaks(userId)
-                await handleUserStreakUpdates(winnerUserId, roomId)
+                await handleUserStreakUpdates(userId, roomId)
             }
             game.countGameOvers += 1
             game.setGameBoard(userId, updatedGameBoard)
@@ -90,9 +92,14 @@ async function handleCorrectGuess(roomId, userId, updatedGameBoard, io) {
     }
 }
 
-function handleOutOfGuesses(roomId, io) {
+async function handleOutOfGuesses(roomId, userId, io) {
     const game = Games.get(roomId)
     if (game && game instanceof Game) {
+        if (getRoomConnectionMode(roomId) === 'online-public') {
+            game.resetStreak(userId)
+            await handleUserStreakReset(userId, roomId)
+            game.broadcastStreak(roomId, userId, io)
+        }
         game.countGameOvers += 1
         game.countOutOfGuesses += 1
         if (isGameOver(roomId)) {
@@ -105,13 +112,12 @@ function isGameOver(roomId) {
     const game = Games.get(roomId)
     if (game && game instanceof Game) {
         if (getRoomConnectionMode(roomId) === 'online-private') {
-            if (game.countGameOvers >= game.roomSize) {
+            if (game.countGameOvers >= game.roomSize()) {
                 setRoomOutOfGame(roomId)
                 return true
             }
         } else if (getRoomConnectionMode(roomId) === 'online-public') {
-            // bug here
-            if (game.countGameOvers > 0) {
+            if (game.countGameOvers > game.countOutOfGuesses || game.countGameOvers >= game.roomSize()) {
                 return true
             }
         }

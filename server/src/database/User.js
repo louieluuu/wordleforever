@@ -21,6 +21,4 @@ const UserSchema = new mongoose.Schema({
     totalTimeInGamesWon: { type: Number, default: 0 },
 })
 
-const User = mongoose.model('User', UserSchema)
-
-export { User }
+export default mongoose.model('User', UserSchema)

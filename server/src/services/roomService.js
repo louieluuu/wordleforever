@@ -59,14 +59,6 @@ function isRoomChallengeMode(roomId) {
     return false
 }
 
-function getRoomSize(roomId) {
-    const room = Rooms.get(roomId)
-    if (room && room instanceof Room) {
-        return room.users.length
-    }
-    return 0
-}
-
 function isRoomEmpty(roomId) {
     const room = Rooms.get(roomId)
     if (room && room instanceof Room) {
@@ -136,7 +128,6 @@ async function addUserToRoom(userId, roomId) {
             const room = Rooms.get(roomId)
             if (room && room instanceof Room) {
                 room.users.push(userId)
-                userRoom.set(userId) = roomId
             }
         }
     } catch (error) {
@@ -166,6 +157,16 @@ function isUserInRoom(roomId, userId) {
     }
 }
 
+function findMatchingRoom(gameMode) {
+    let matchingRoomId
+    Rooms.forEach((room, roomId) => {
+        if (room.connectionMode === 'online-public' && room.gameMode === gameMode && !room.inGame) {
+            matchingRoomId = roomId
+        }
+    })
+    return matchingRoomId
+}
+
 export {
     initializeRoom,
     getRoom,
@@ -173,7 +174,6 @@ export {
     getRoomConnectionMode,
     getRoomGameMode,
     isRoomChallengeMode,
-	getRoomSize,
     isRoomEmpty,
     setRoomInGame,
     setRoomOutOfGame,
@@ -186,4 +186,5 @@ export {
     removeUserFromRoom,
     getUsersInRoom,
     isUserInRoom,
+    findMatchingRoom,
 }
