@@ -22,7 +22,6 @@ function GameContainer({
     gameMode,
     connectionMode,
     isHost,
-    setIsHost,
 }) {
 
     // Gameflow states

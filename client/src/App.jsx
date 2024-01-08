@@ -64,7 +64,6 @@ function App() {
                                 gameMode={gameMode}
                                 connectionMode={connectionMode}
                                 isHost={isHost}
-                                setIsHost={setIsHost}
                             />
                         }
                         />
@@ -76,7 +75,6 @@ function App() {
                                 gameMode={gameMode}
                                 connectionMode={connectionMode}
                                 isHost={isHost}
-                                setIsHost={setIsHost}
                             />
                         }
                     />
