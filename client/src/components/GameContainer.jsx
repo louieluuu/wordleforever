@@ -95,7 +95,6 @@ function GameContainer({
         })
 
         socket.on('gameBoardsUpdated', (updatedUserId, updatedBoard) => {
-            console.log('solution is', solution)
             setUserInfo(prevUserInfo => {
                 const updatedUserInfo = [...prevUserInfo]
                 updatedUserInfo.forEach((obj) => {
@@ -287,9 +286,6 @@ function GameContainer({
         updatedBoard[activeRowIndex] = colorizedGuess
         setBoard(updatedBoard)
         updateHints(colorizedGuess)
-
-        console.log('guess is', guess)
-        console.log('solution is', solution)
 
         if (guess === solution) {
             if (typeof connectionMode === 'string' && connectionMode.includes('online')) {
