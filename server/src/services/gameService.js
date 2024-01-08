@@ -35,6 +35,7 @@ async function initializeGameInfo(roomId) {
 function deleteGame(roomId) {
     const game = Games.get(roomId)
     if (game && game instanceof Game) {
+        console.log(`Deleting game: ${roomId}`)
         Games.delete(roomId)
     }
 }

@@ -30,6 +30,7 @@ function getRoom(roomId) {
 function deleteRoom(roomId) {
     const room = Rooms.get(roomId)
     if (room && room instanceof Room) {
+        console.log(`Deleting room: ${roomId}`)
         Rooms.delete(roomId)
         deleteGame(roomId)
     }
