@@ -41,7 +41,7 @@ function PlayAgainButton( {
     <>
         {isGameOver && (
             <>
-                {(connectionMode === 'online-public' || isHost) && (
+                {(connectionMode !== 'online-private' || isHost) && (
                     <button
                         className='play-again-button'
                         onClick={handlePlayAgain}>

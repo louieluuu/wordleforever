@@ -83,7 +83,7 @@ async function handleCorrectGuess(roomId, userId, updatedGameBoard, socket, io) 
             }
             game.countGameOvers += 1
             game.setGameBoard(userId, updatedGameBoard)
-            if (isGameOver(roomId)) {
+            if (isGameOver(roomId, io)) {
                 game.broadcastFinalUserInfo(roomId, io)
             } else {
                 game.broadcastNoLetterGameBoard(roomId, userId, io)
@@ -105,15 +105,19 @@ async function handleOutOfGuesses(roomId, userId, io) {
         }
         game.countGameOvers += 1
         game.countOutOfGuesses += 1
-        if (isGameOver(roomId)) {
+        if (isGameOver(roomId, io)) {
             game.broadcastFinalUserInfo(roomId, io)
         }
     }
 }
 
-function isGameOver(roomId) {
+function isGameOver(roomId, io) {
     const game = Games.get(roomId)
     if (game && game instanceof Game) {
+        if (game.countOutOfGuesses >= game.roomSize()) {
+            game.solutionNotFound(roomId, io)
+            return true
+        }
         if (getRoomConnectionMode(roomId) === 'online-private') {
             if (game.countGameOvers >= game.roomSize()) {
                 setRoomOutOfGame(roomId)

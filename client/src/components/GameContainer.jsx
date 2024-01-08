@@ -49,6 +49,7 @@ function GameContainer({
     const { roomId } = useParams()
     const [userInfo, setUserInfo] = useState([])
     const [challengeModeGuess, setChallengeModeGuess] = useState(null)
+    const [solutionNotFound, setSolutionNotFound] = useState(false)
     const hasOnlineGameStarted = useRef(false)
 
     // useEffect hooks
@@ -94,6 +95,7 @@ function GameContainer({
         })
 
         socket.on('gameBoardsUpdated', (updatedUserId, updatedBoard) => {
+            console.log('solution is', solution)
             setUserInfo(prevUserInfo => {
                 const updatedUserInfo = [...prevUserInfo]
                 updatedUserInfo.forEach((obj) => {
@@ -133,6 +135,10 @@ function GameContainer({
             showWinAnimations()
         })
 
+        socket.on('solutionNotFound', () => {
+            setSolutionNotFound(true)
+        })
+
         socket.on('finalUserInfo', (finalUserInfo) => {
             const sortedUserInfo = finalUserInfo.sort((obj) => {
                 return obj.userId === socket.id ? -1 : 1
@@ -148,9 +154,17 @@ function GameContainer({
             socket.off('pointsUpdated')
             socket.off('streakUpdated')
             socket.off('firstSolve')
+            socket.off('solutionNotFound')
             socket.off('finalUserInfo')
         }
     }, [])
+
+    // Display the solution in online game modes if nobody solves (otherwise you can just see the solution on someone else's board)
+    useEffect(() => {
+        if (solutionNotFound) {
+            displaySolution()
+        }
+    }, [solutionNotFound])
 
     // Helper functions
 
@@ -158,8 +172,6 @@ function GameContainer({
         if (typeof connectionMode === 'string' && connectionMode.includes('online')) {
             socket.emit('startOnlineGame', roomId)
         } else if (connectionMode === 'offline') {
-            // Host is necessary for some rendering, so always set to host in offline
-            setIsHost(true)
             resetStates()
             const newSolution = generateSolution()
             setSolution(newSolution)
@@ -276,6 +288,9 @@ function GameContainer({
         setBoard(updatedBoard)
         updateHints(colorizedGuess)
 
+        console.log('guess is', guess)
+        console.log('solution is', solution)
+
         if (guess === solution) {
             if (typeof connectionMode === 'string' && connectionMode.includes('online')) {
                 socket.emit('correctGuess', roomId, updatedBoard)
@@ -300,6 +315,7 @@ function GameContainer({
                 setIsOutOfGuesses(true)
                 if (connectionMode === 'offline') {
                     setIsGameOver(true)
+                    displaySolution()
                 } else {
                     socket.emit('outOfGuesses', roomId)
                 }
@@ -440,6 +456,11 @@ function GameContainer({
         setAlertMessage(winMessage)
         setShowAlertModal(true)
         setIsConfettiRunning(true)
+    }
+
+    function displaySolution() {
+        setAlertMessage(solution)
+        setShowAlertModal(true)
     }
 
     // Could be generalized but no need for this game since the solution will always be 5 letters
