@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FaRegCircleQuestion } from 'react-icons/fa6'
-import { MdOutlineLeaderboard } from 'react-icons/md'
-import { FaGear } from 'react-icons/fa6'
 
 import InfoModal from './InfoModal'
 
@@ -32,15 +30,16 @@ function NavBar({
     return (
         <>
             <div className='navbar'>
-                <div className='navbar__left'>
-                    <Link to='/' onClick={handleTitleClick} className='title'>
-                    Wordle Battle
-                    </Link>
+                <div className='navbar__left' onClick={handleTitleClick}>
+                    <div className='logo'>
+                        <div className="logo__wordmark">
+                            <strong className="logo__wordmark--left">Wordle&nbsp;</strong>
+                            <strong className="logo__wordmark--right">Forever</strong>
+                        </div>
+                    </div>
                 </div>
                 <div className='navbar__right'>
                     <FaRegCircleQuestion className='navbar__info' onClick={openInfoModal} />
-                    <MdOutlineLeaderboard />
-                    <FaGear />
                 </div>
                 <InfoModal show={showInfoModal} handleClose={closeInfoModal} />
             </div>
