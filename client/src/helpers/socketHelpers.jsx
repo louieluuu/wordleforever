@@ -1,8 +1,8 @@
 import socket from '../socket'
 
-function handleStartPrivateGame(connectionMode, gameMode, setIsHost) {
+function handleStartPrivateGame(gameMode, setIsHost) {
     return new Promise((resolve, reject) => {
-        socket.emit('createRoom', connectionMode, gameMode)
+        socket.emit('createRoom', 'online-private', gameMode)
 
         socket.on('roomCreated', (roomId) => {
             setIsHost(true)
@@ -14,7 +14,7 @@ function handleStartPrivateGame(connectionMode, gameMode, setIsHost) {
     })
 }
 
-function handleStartPublicGame(connectionMode, gameMode) {
+function handleStartPublicGame(gameMode) {
     return new Promise((resolve, reject) => {
         socket.emit('findMatch', gameMode)
 
@@ -22,7 +22,7 @@ function handleStartPublicGame(connectionMode, gameMode) {
             handleMatchFound(roomId)
         })
         socket.on('noMatchesFound', () => {
-            handleNoMatchesFound(connectionMode, gameMode)
+            handleNoMatchesFound(gameMode)
         })
         socket.on('roomCreated', (roomId) => {
             handleRoomCreated(roomId)
@@ -35,8 +35,8 @@ function handleStartPublicGame(connectionMode, gameMode) {
             resolve(roomId)
         }
         
-        function handleNoMatchesFound(connectionMode, gameMode) {
-            socket.emit('createRoom', connectionMode, gameMode)
+        function handleNoMatchesFound(gameMode) {
+            socket.emit('createRoom', 'online-public', gameMode)
             socket.off('matchFound')
             socket.off('noMatchesFound')
         }

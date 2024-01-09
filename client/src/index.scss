@@ -19,10 +19,36 @@ body {
     margin: 0;
 }
 
-:root {
-    font-family: 'Roboto', sans-serif;
-    user-select: none;
+a {
+    color: hsl(197, 100%, 40%);
+    text-decoration: none;
 }
+
+:root {
+    font-family: "Roboto", sans-serif;
+}
+
+#root {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; // prevent scrolling on mobile
+}
+
+html {
+    --btn-online: hsl(93, 77%, 38%);
+    --btn-offline: hsl(197, 89%, 26%);
+
+    --btn-online-hover: hsl(93, 77%, 48%);
+    --btn-offline-hover: hsl(197, 89%, 36%);
+}
+
+// Button colours
+$btn-online: var(--btn-online);
+$btn-offline: var(--btn-offline);
+
+$btn-online-hover: var(--btn-online-hover);
+$btn-offline-hover: var(--btn-offline-hover);
 
 .navbar {
     display: flex;
@@ -101,6 +127,59 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 1rem;
+
+    &__btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-evenly;
+
+        width: 15rem;
+        height: 5rem;
+
+        font-weight: 300;
+        font-family: "Oswald", sans-serif;
+        font-size: 1.5rem;
+
+        color: white;
+        border-radius: 2rem;
+        cursor: pointer;
+
+        &:active {
+            width: 17.5rem;
+            transition-timing-function: ease-out;
+        }
+
+        &:hover {
+            transition-duration: 0.1s;
+            transition-timing-function: ease-in;
+        }
+    }
+
+    &__btn--online {
+        @extend .menu__btn;
+
+        background-color: $btn-online;
+        border: 3px solid hsl(93, 77%, 35%);
+
+        &:hover {
+            background-color: $btn-online-hover;
+            border: 3px solid $btn-online-hover;
+        }
+    }
+
+    &__btn--offline {
+        @extend .menu__btn;
+
+        background-color: $btn-offline;
+        border: 3px solid hsl(197, 89%, 23%);
+
+        &:hover {
+            background-color: $btn-offline-hover;
+            border: 3px solid $btn-offline-hover;
+        }
+    }
 }
 
 .welcome-message {

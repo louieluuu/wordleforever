@@ -1,18 +1,14 @@
-# Wordle Battle
+# Wordle Forever
 
-Inspired by the classic Wordle game, this variant turns the massively popular single player game into an interactive experience. Now you can race your friends to find the mystery word first.
+Wordle Forever is a multiplayer recreation of [Wordle](https://www.nytimes.com/games/wordle/index.html) with a new Challenge Mode and additional QOL features. Built from scratch using React and Socket.IO.
 
 Original Wordle: https://www.nytimes.com/games/wordle/index.html
 
 # Current features
 
-Single player functionality (all difficulties) is implemented.
-
-Online private multiplayer functionality is mostly done.
-
-## Known bugs
-
-Sometimes online challenge mode either renders no board or two initial guesses
+- **Multiplayer**: Compete against up to 4 other friends (or strangers)!
+- **Challenge Mode**: Tired of _STARE_-ing at *CLOUD*s? Get a random starting word every time and stick to the hints!
+- **QOL**: Unlimited words, quick restarts, and a great interface!
 
 ## Images used
 

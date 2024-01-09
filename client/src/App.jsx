@@ -4,9 +4,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 // Components
 import NavBar from './components/NavBar'
-import Menu from './components/Menu'
-import WaitingRoom from './components/WaitingRoom'
 import GameContainer from './components/GameContainer'
+import MenuRoutes from './components/MenuRoutes'
 
 function App() {
 
@@ -24,61 +23,49 @@ function App() {
                     setGameMode={setGameMode}
                     setConnectionMode={setConnectionMode}
                 />
-                <Routes>
-                    <Route
-                        path='/'
-                        element={
-                            <Menu
-                                username={username}
-                                setUsername={setUsername}
-                                inputWidth={inputWidth}
-                                setInputWidth={setInputWidth}
-                                gameMode={gameMode}
-                                setGameMode={setGameMode}
-                                connectionMode={connectionMode}
-                                setConnectionMode={setConnectionMode}
-                                setIsHost={setIsHost}
-                            />
-                        }
+                    <Routes>
+                        <Route
+                            path='/*'
+                            element={
+                                <MenuRoutes
+                                    username={username}
+                                    setUsername={setUsername}
+                                    inputWidth={inputWidth}
+                                    setInputWidth={setInputWidth}
+                                    gameMode={gameMode}
+                                    setGameMode={setGameMode}
+                                    connectionMode={connectionMode}
+                                    setConnectionMode={setConnectionMode}
+                                    isHost={isHost}
+                                    setIsHost={setIsHost}
+                                />
+                            }
                         />
-                    <Route
-                        path='/room/:roomId'
-                        element={
-                            <WaitingRoom
-                                username={username}
-                                setUsername={setUsername}
-                                inputWidth={inputWidth}
-                                setInputWidth={setInputWidth}
-                                connectionMode={connectionMode}
-                                setConnectionMode={setConnectionMode}
-                                setGameMode={setGameMode}
-                                isHost={isHost}
-                            />
-                        }
+
+                        <Route
+                            path='/game/:roomId'
+                            element={
+                                <GameContainer
+                                    username={username}
+                                    gameMode={gameMode}
+                                    connectionMode={connectionMode}
+                                    isHost={isHost}
+                                />
+                            }
                         />
-                    <Route
-                        path='/game/:roomId'
-                        element={
-                            <GameContainer
-                                username={username}
-                                gameMode={gameMode}
-                                connectionMode={connectionMode}
-                                isHost={isHost}
-                            />
-                        }
+                        <Route
+                            path='/offline/classic'
+                            element={
+                                <GameContainer
+                                    username={username}
+                                    gameMode={gameMode}
+                                    connectionMode={connectionMode}
+                                    isHost={isHost}
+                                />
+                            }
                         />
-                    <Route
-                        path='/offline'
-                        element={
-                            <GameContainer
-                                username={username}
-                                gameMode={gameMode}
-                                connectionMode={connectionMode}
-                                isHost={isHost}
-                            />
-                        }
-                    />
-                </Routes>
+                    </Routes>
+
             </Router>
         </>
     )

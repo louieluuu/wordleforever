@@ -4,14 +4,10 @@ import socket from '../socket'
 import WAITING_ROOM_MESSAGES from '../data/waitingRoomMessages'
 
 // Components
-import WelcomeMessage from './WelcomeMessage'
 import LobbyCountdownModal from './LobbyCountdownModal'
 
 function WaitingRoom({
     username,
-    setUsername,
-    inputWidth,
-    setInputWidth,
     connectionMode,
     setConnectionMode,
     setGameMode,
@@ -123,7 +119,7 @@ function WaitingRoom({
 
     function leaveRoom() {
         socket.emit('leaveRoom', roomId)
-        navigate('/')
+        navigate('/online')
     }
 
     function getUsernamesClassName() {
@@ -136,12 +132,6 @@ function WaitingRoom({
 
   return (
     <div>
-        <WelcomeMessage
-            username={username}
-            setUsername={setUsername}
-            inputWidth={inputWidth}
-            setInputWidth={setInputWidth}
-        />
         <div className='waiting-room-background'>
             <h1 className="waiting-message">[{message}]</h1>
             {showLobbyCountdownModal && (
