@@ -9,7 +9,7 @@ export default class Game {
         this.solution = null
         this.startingWord = null
         this.allUserInfo = new Map()
-        this.countGameOvers = 0
+        this.countSolved = 0
         this.countOutOfGuesses = 0
     }
 
@@ -19,7 +19,7 @@ export default class Game {
         game.solution = game.generateSolution()
         game.startingWord = isChallengeMode ? game.generateRandomFirstGuess(game.solution) : null
         game.allUserInfo = await game.initializeAllUserInfo(users, prevPoints)
-        game.countGameOvers = 0
+        game.countSolved = 0
         game.countOutOfGuesses = 0
 
         return game
@@ -84,7 +84,7 @@ export default class Game {
     updatePoints(userId) {
         const userInfo = this.allUserInfo.get(userId)
         if (userInfo) {
-            const newPoints = this.roomSize() - this.countGameOvers + this.countOutOfGuesses
+            const newPoints = this.roomSize() - this.countSolved
             userInfo.points += newPoints
         }
     }

@@ -75,14 +75,14 @@ async function handleCorrectGuess(roomId, userId, updatedGameBoard, socket, io) 
             if (getRoomConnectionMode(roomId) === 'online-private') {
                 game.updatePoints(userId)
                 game.broadcastPoints(roomId, userId, io)
-                if (game.countGameOvers === 0) {
+                if (game.countSolved === 0) {
                     socket.emit('firstSolve')
                 }
             } else if (getRoomConnectionMode(roomId) === 'online-public') {
                 game.updateStreaks(userId)
                 await handleUserStreakUpdates(userId, roomId)
             }
-            game.countGameOvers += 1
+            game.countSolved += 1
             game.setGameBoard(userId, updatedGameBoard)
             if (isGameOver(roomId, io)) {
                 game.broadcastFinalUserInfo(roomId, io)
@@ -104,7 +104,6 @@ async function handleOutOfGuesses(roomId, userId, io) {
             await handleUserStreakReset(userId, roomId)
             game.broadcastStreak(roomId, userId, io)
         }
-        game.countGameOvers += 1
         game.countOutOfGuesses += 1
         if (isGameOver(roomId, io)) {
             game.broadcastFinalUserInfo(roomId, io)
@@ -120,12 +119,12 @@ function isGameOver(roomId, io) {
             return true
         }
         if (getRoomConnectionMode(roomId) === 'online-private') {
-            if (game.countGameOvers >= game.roomSize()) {
+            if (game.countSolved + game.countOutOfGuesses >= game.roomSize()) {
                 setRoomOutOfGame(roomId)
                 return true
             }
         } else if (getRoomConnectionMode(roomId) === 'online-public') {
-            if (game.countGameOvers > game.countOutOfGuesses || game.countGameOvers >= game.roomSize()) {
+            if (game.countSolved > 0 || game.countOutOfGuesses >= game.roomSize()) {
                 return true
             }
         }
