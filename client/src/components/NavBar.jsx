@@ -24,19 +24,22 @@ function NavBar({
   function handleTitleClick() {
     setGameMode('Easy')
     setConnectionMode('offline')
-    navigate('/')
+    // Surely this is not the best fix, or even a fix at all, but without the timeout, some errors appear in console before the page refresh
+    setTimeout(() => {
+      window.location.href = '/'
+    }, 0)
   }
 
   return (
     <>
-      <div className="navbar">
-        <div className="navbar__left">
-          <Link to="/" onClick={handleTitleClick} className="title">
+      <div className='navbar'>
+        <div className='navbar__left'>
+          <Link to='/' onClick={handleTitleClick} className='title'>
             Wordle Battle
           </Link>
         </div>
-        <div className="navbar__right">
-          <FaRegCircleQuestion className="navbar__info" onClick={openInfoModal} />
+        <div className='navbar__right'>
+          <FaRegCircleQuestion className='navbar__info' onClick={openInfoModal} />
           <MdOutlineLeaderboard />
           <FaGear />
         </div>
