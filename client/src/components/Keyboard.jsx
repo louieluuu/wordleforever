@@ -1,9 +1,28 @@
 import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { MdOutlineBackspace } from 'react-icons/md'
 import { AiOutlineEnter } from 'react-icons/ai'
+import { IoReturnDownBackSharp } from "react-icons/io5"
 
-function Keyboard({ handleKeyPress, hints }) {
+// Helpers
+import { handleStartPublicGame } from '../helpers/socketHelpers'
+
+function Keyboard({
+    handleLetter,
+    handleBackspace,
+    handleEnter,
+    hints,
+    isGameOver,
+    hasSolved,
+    isOutOfGuesses,
+    gameMode,
+    connectionMode,
+    isHost,
+    startNewGame,
+}) {
+
+    const navigate = useNavigate()
 
     useEffect(() => {
         function onKeyPress(e) {
@@ -22,6 +41,49 @@ function Keyboard({ handleKeyPress, hints }) {
             window.removeEventListener('keydown', onKeyPress)
         }
     }, [handleKeyPress])
+
+    async function handleKeyPress(key) {
+        if (hasSolved && !isGameOver) {
+            return
+        }
+        if (isOutOfGuesses && !isGameOver) {
+            return
+        }
+        if (isGameOver && key === 'Enter') {
+            await handlePlayAgain()
+            return
+        }
+        if (key.match(/^[a-zA-Z]$/)) {
+            handleLetter(key)
+        } else if (key === 'Backspace') {
+            handleBackspace()
+        } else if (key === 'Enter') {
+            handleEnter()
+        }
+    }
+
+    async function handlePlayAgain() {
+        try {
+            if (!gameMode || !connectionMode) {
+                return
+            }
+
+            switch (connectionMode) {
+                case 'online-private':
+                    startNewGame()
+                    break
+                case 'online-public':
+                    const publicRoomId = await handleStartPublicGame(connectionMode, gameMode)
+                    navigate(`/room/${publicRoomId}`)
+                    break
+                case 'offline':
+                    startNewGame()
+                    break
+            }
+        } catch (error) {
+            console.error('Error:', error)
+        }
+    }
 
     function getCellClassName(letter) {
         let tileClassName = "keyboard__cell"
@@ -79,6 +141,18 @@ function Keyboard({ handleKeyPress, hints }) {
                 className="keyboard__cell"
                 onClick={() => handleKeyPress("Backspace")}/>
         </div>
+        {isGameOver && (
+            <>
+                {(connectionMode !== 'online-private' || isHost) && (
+                    <button
+                        className='play-again-button'
+                        onClick={handlePlayAgain}>
+                        Play Again
+                        <IoReturnDownBackSharp />
+                    </button>
+                )}
+            </>
+        )}
     </div>
   )
 }

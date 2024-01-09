@@ -6,7 +6,6 @@ import socket from '../socket'
 // Components
 import LobbyInfo from './LobbyInfo'
 import AlertModal from './AlertModal'
-import PlayAgainButton from './PlayAgainButton'
 import GameBoardContainer from './GameBoardContainer'
 import Keyboard from './Keyboard'
 
@@ -25,7 +24,7 @@ function GameContainer({
 }) {
 
     // Gameflow states
-    const [isGameWon, setIsGameWon] = useState(false)
+    const [hasSolved, setHasSolved] = useState(false)
     const [isOutOfGuesses, setIsOutOfGuesses] = useState(false)
     const [isGameOver, setIsGameOver] = useState(false)
     const [isConfettiRunning, setIsConfettiRunning] = useState(false)
@@ -179,7 +178,7 @@ function GameContainer({
 
     function resetStates() {
         setIsGameOver(false)
-        setIsGameWon(false)
+        setHasSolved(false)
         setIsOutOfGuesses(false)
         setBoard(new Array(6).fill().map((_) => new Array(5).fill({ letter: '', color: '' })))
         setActiveRowIndex(0)
@@ -188,18 +187,6 @@ function GameContainer({
         setHints({ green: new Set(), yellow: new Set(), grey: new Set() })
         setShowAlertModal(false)
         setIsConfettiRunning(false)
-    }
-
-    function handleKeyPress(e) {
-        if (!isGameOver && !isGameWon && !isOutOfGuesses) {
-            if (e.match(/^[a-zA-Z]$/)) {
-                handleLetter(e)
-            } else if (e === 'Backspace') {
-                handleBackspace()
-            } else if (e === 'Enter') {
-                handleEnter()
-            }
-        }
     }
 
     function handleLetter(e) {
@@ -287,13 +274,13 @@ function GameContainer({
         updateHints(colorizedGuess)
 
         if (guess === solution) {
+            setHasSolved(true)
             if (typeof connectionMode === 'string' && connectionMode.includes('online')) {
                 socket.emit('correctGuess', roomId, updatedBoard)
                 if (typeof connectionMode === 'string' && connectionMode === 'online-public') {
                     showWinAnimations()
                 }
             }
-            setIsGameWon(true)
             if (connectionMode === 'offline') {
                 setIsGameOver(true)
                 showWinAnimations()
@@ -481,7 +468,7 @@ function GameContainer({
                 setShowAlertModal={setShowAlertModal}
                 message={alertMessage}
                 isOutOfGuesses={isOutOfGuesses}
-                isGameWon={isGameWon}
+                isConfettiRunning={isConfettiRunning}
             />
             <GameBoardContainer
                 connectionMode={connectionMode}
@@ -491,13 +478,18 @@ function GameContainer({
                 username={username}
                 userInfo={userInfo}
             />
-            <Keyboard handleKeyPress={handleKeyPress} hints={hints} />
-            <PlayAgainButton
-                isGameOver={isGameOver}
-                isHost={isHost}
-                startNewGame={startNewGame}
-                gameMode={gameMode}
-                connectionMode={connectionMode}
+            <Keyboard
+            handleLetter={handleLetter}
+            handleBackspace={handleBackspace}
+            handleEnter={handleEnter}
+            hints={hints}
+            isGameOver={isGameOver}
+            hasSolved={hasSolved}
+            isOutOfGuesses={isOutOfGuesses}
+            gameMode={gameMode}
+            connectionMode={connectionMode}
+            isHost={isHost}
+            startNewGame={startNewGame}
             />
         </div>
     )

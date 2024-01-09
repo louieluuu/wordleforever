@@ -6,7 +6,7 @@ function AlertModal({
     setShowAlertModal,
     message,
     isOutOfGuesses,
-    isGameWon,
+    isConfettiRunning,
 }) {
     let alertTimeout
 
@@ -19,7 +19,7 @@ function AlertModal({
                 return
             }
 
-            const ms = isGameWon ? 8000 : 1500
+            const ms = isConfettiRunning ? 8000 : 1500
             alertTimeout = setTimeout(() => {
                 setShowAlertModal(false)
             }, ms)
