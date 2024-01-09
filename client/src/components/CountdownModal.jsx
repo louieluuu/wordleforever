@@ -1,23 +1,33 @@
-import { useState, useEffect } from 'react'
-import socket from '../socket'
+import React, { useEffect, useState } from 'react'
 
-function CountdownModal({ setShowCountdownModal }) {
-    const [seconds, setSeconds] = useState('')
+function CountdownModal({ isCountdownRunning, setIsCountdownRunning }) {
+  const [seconds, setSeconds] = useState(3)
 
-    useEffect(() => {
-        socket.on('countdownTick', (seconds) => {
-            setShowCountdownModal(true)
-            setSeconds(seconds)
-        })
+  useEffect(() => {
+    function resetCountdown() {
+      setIsCountdownRunning(false)
+      setSeconds(3)
+    }
 
-        return () => {
-            socket.off('countdownTick')
-        }
-    }, [])
+    const timer = setInterval(() => {
+      setSeconds((prev) => prev - 1)
+    }, 1000)
+
+    if (seconds <= 0) {
+      clearInterval(timer)
+      resetCountdown()
+    }
+
+    return () => {
+      clearInterval(timer)
+    }
+  }, [seconds])
 
   return (
-    <div className='countdown-timer'>
-        <p>Starting in... {seconds}</p>
+    <div>
+      <dialog className='countdown-timer' open={isCountdownRunning}>
+        <p>The game will start in... {seconds}</p>
+      </dialog>
     </div>
   )
 }

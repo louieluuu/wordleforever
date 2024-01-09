@@ -13,6 +13,7 @@ function Keyboard({
     handleBackspace,
     handleEnter,
     hints,
+    isCountdownRunning,
     isGameOver,
     hasSolved,
     isOutOfGuesses,
@@ -43,6 +44,10 @@ function Keyboard({
     }, [handleKeyPress])
 
     async function handleKeyPress(key) {
+        // Logic to lock keyboard input depending on certain states
+        if (isCountdownRunning) {
+            return
+        }
         if (hasSolved && !isGameOver) {
             return
         }
@@ -53,6 +58,7 @@ function Keyboard({
             await handlePlayAgain()
             return
         }
+
         if (key.match(/^[a-zA-Z]$/)) {
             handleLetter(key)
         } else if (key === 'Backspace') {

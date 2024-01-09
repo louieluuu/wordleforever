@@ -13,8 +13,8 @@ import {
 } from '../services/roomService.js'
 import { setUsername, broadcastUserInfo } from '../services/userService.js'
 
-const PRIVATE_ROOM_COUNTDOWN_TIMER = 4
-const PUBLIC_ROOM_COUNTDOWN_TIMER = 7
+const PRIVATE_ROOM_COUNTDOWN_TIMER = 1
+const PUBLIC_ROOM_COUNTDOWN_TIMER = 1
 
 function createRoom(connectionMode, gameMode, socket) {
     try {

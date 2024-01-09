@@ -5,6 +5,7 @@ import socket from '../socket'
 
 // Components
 import LobbyInfo from './LobbyInfo'
+import CountdownModal from './CountdownModal'
 import AlertModal from './AlertModal'
 import GameBoardContainer from './GameBoardContainer'
 import Keyboard from './Keyboard'
@@ -48,6 +49,7 @@ function GameContainer({
     const [userInfo, setUserInfo] = useState([])
     const [challengeModeGuess, setChallengeModeGuess] = useState(null)
     const [solutionNotFound, setSolutionNotFound] = useState(false)
+    const [isCountdownRunning, setIsCountdownRunning] = useState(false)
     const hasOnlineGameStarted = useRef(false)
 
     // useEffect hooks
@@ -89,6 +91,7 @@ function GameContainer({
                 setUserInfo(sortedUserInfo)
                 setSolution(newSolution)
                 setChallengeModeGuess(newChallengeModeGuess)
+                setIsCountdownRunning(true)
             }
         })
 
@@ -462,6 +465,7 @@ function GameContainer({
     return (
         <div className='game-container'>
             <LobbyInfo gameMode={gameMode} connectionMode={connectionMode} />
+            {isCountdownRunning && <CountdownModal isCountdownRunning={isCountdownRunning} setIsCountdownRunning={setIsCountdownRunning}/>}
             {isConfettiRunning && <Confetti numberOfPieces={200} initialVelocityY={-10}/>}
             <AlertModal
                 showAlertModal={showAlertModal}
@@ -483,6 +487,7 @@ function GameContainer({
             handleBackspace={handleBackspace}
             handleEnter={handleEnter}
             hints={hints}
+            isCountdownRunning={isCountdownRunning}
             isGameOver={isGameOver}
             hasSolved={hasSolved}
             isOutOfGuesses={isOutOfGuesses}

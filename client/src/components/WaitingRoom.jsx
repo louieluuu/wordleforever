@@ -5,7 +5,7 @@ import WAITING_ROOM_MESSAGES from '../data/waitingRoomMessages'
 
 // Components
 import WelcomeMessage from './WelcomeMessage'
-import CountdownModal from './CountdownModal'
+import LobbyCountdownModal from './LobbyCountdownModal'
 
 function WaitingRoom({
     username,
@@ -21,7 +21,7 @@ function WaitingRoom({
     const { roomId } = useParams()
     const [userInfo, setUserInfo] = useState([])
     const [message, setMessage] = useState('')
-    const [showCountdownModal, setShowCountdownModal] = useState(false)
+    const [showLobbyCountdownModal, setShowLobbyCountdownModal] = useState(false)
     const [joinRoom, setJoinRoom] = useState(false)
 
     // Main useEffect loop
@@ -55,11 +55,11 @@ function WaitingRoom({
         })
 
         socket.on('countdownStarted', () => {
-            setShowCountdownModal(true)
+            setShowLobbyCountdownModal(true)
         })
 
         socket.on('countdownTick', () => {
-            setShowCountdownModal(true)
+            setShowLobbyCountdownModal(true)
         })
 
         socket.on('roomStarted', () => {
@@ -118,7 +118,7 @@ function WaitingRoom({
     function stopCountdown() {
         // TODO: display something to the user?
         socket.emit('stopCountdown', roomId)
-        setShowCountdownModal(false)
+        setShowLobbyCountdownModal(false)
     }
 
     function leaveRoom() {
@@ -144,9 +144,9 @@ function WaitingRoom({
         />
         <div className='waiting-room-background'>
             <h1 className="waiting-message">[{message}]</h1>
-            {showCountdownModal && (
-                <CountdownModal
-                    setShowCountdownModal={setShowCountdownModal}
+            {showLobbyCountdownModal && (
+                <LobbyCountdownModal
+                    setShowLobbyCountdownModal={setShowLobbyCountdownModal}
                 />
             )}
             <div className={getUsernamesClassName()}>
