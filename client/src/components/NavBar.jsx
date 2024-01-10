@@ -3,7 +3,7 @@ import { FaRegCircleQuestion } from "react-icons/fa6"
 
 import InfoModal from "./InfoModal"
 
-function NavBar({ setGameMode, setConnectionMode }) {
+function NavBar({ setConnectionMode }) {
   const [showInfoModal, setShowInfoModal] = useState(false)
 
   function openInfoModal() {
@@ -15,7 +15,6 @@ function NavBar({ setGameMode, setConnectionMode }) {
   }
 
   function handleTitleClick() {
-    setGameMode("Easy")
     setConnectionMode("offline")
     // Surely this is not the best fix, or even a fix at all, but without the timeout, some errors appear in console before the page refresh
     setTimeout(() => {

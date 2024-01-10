@@ -9,10 +9,6 @@ $color_hover: hsl(0, 0%, 70%);
 $cell-size: 2rem;
 $cell-padding: 0.5rem;
 
-$card-width: 7rem;
-$card-height: 10rem;
-$card-margin: 1rem;
-
 // Overwrite default values, allows navbar to be flush with page
 body {
   margin: 0;
@@ -406,168 +402,6 @@ $btn-offline-hover: var(--btn-offline-hover);
   margin-bottom: 0;
 }
 
-.mode-selector {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-}
-
-.card-container {
-  display: flex;
-  flex-direction: row;
-}
-
-.card {
-  width: $card-width;
-  height: $card-height;
-  border: 3px solid hsl(0, 0%, 50%);
-  border-radius: 1rem;
-  display: flex;
-  align-items: center;
-  text-align: center;
-  justify-content: center;
-  margin: $card-margin;
-  font-family: "Bubblegum Sans", cursive;
-  font-size: 1.1rem;
-  position: relative;
-  cursor: pointer;
-
-  perspective: 1000px;
-  transform-style: preserve-3d;
-  transition: transform 0.3s ease;
-
-  .info-button {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    cursor: pointer;
-    color: hsl(0, 0%, 20%);
-
-    &:hover {
-      transform: scale(1.05);
-      transition: transform 0.3s ease;
-    }
-  }
-
-  &__front {
-    &__easy,
-    &__hard,
-    &__challenge,
-    &__offline,
-    &__online-private,
-    &__online-public {
-      @extend .card;
-      position: relative;
-      overflow: hidden;
-
-      &:hover {
-        transform: scale(1.05);
-        transition: transform 0.3s ease;
-      }
-
-      &.selected {
-        transform: scale(1.1);
-        border: 3px solid hsl(0, 0%, 20%);
-      }
-
-      &:before {
-        content: "";
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: -1;
-      }
-    }
-
-    &__easy {
-      &:before {
-        background-image: url("./assets/easy.png");
-        background-size: 100% 100%;
-        opacity: 0.5;
-        filter: blur(1.75px);
-      }
-    }
-    &__hard {
-      &:before {
-        background-image: url("./assets/hard.png");
-        background-size: 100% 100%;
-        opacity: 0.5;
-        filter: blur(1.75px);
-      }
-    }
-    &__challenge {
-      &:before {
-        background-image: url("./assets/challenge.png");
-        background-size: 100% 100%;
-        opacity: 0.5;
-        filter: blur(1.75px);
-      }
-    }
-    &__offline {
-      &:before {
-        background-image: url("./assets/offline.png");
-        background-size: 100% 100%;
-        opacity: 0.2;
-        filter: blur(2px);
-      }
-    }
-    &__online-private {
-      &:before {
-        background-image: url("./assets/friends.png");
-        background-size: 100% 100%;
-        opacity: 0.2;
-        filter: blur(2px);
-      }
-    }
-    &__online-public {
-      &:before {
-        background-image: url("./assets/online.png");
-        background-size: 100% 100%;
-        opacity: 0.2;
-        filter: blur(2px);
-      }
-    }
-  }
-
-  &__back {
-    @extend .card;
-    transform: rotateY(180deg);
-
-    &:hover {
-      transform: rotateY(180deg) scale(1.05);
-      transition: transform 0.3s ease;
-    }
-
-    &.selected {
-      transform: rotateY(180deg) scale(1.1);
-      border: 3px solid hsl(0, 0%, 20%);
-    }
-
-    .info-button {
-      position: absolute;
-      top: 5px;
-      left: 5px;
-      cursor: pointer;
-      color: hsl(0, 0%, 20%);
-      transform: rotateY(180deg);
-
-      &:hover {
-        transform: rotateY(180deg) scale(1.05);
-        transition: transform 0.3s ease;
-      }
-    }
-
-    p {
-      transform: rotateY(180deg);
-      font-size: 0.8rem;
-      padding: 1rem;
-      z-index: -1;
-    }
-  }
-}
-
 .waiting-room-background {
   display: flex;
   flex-direction: column;
@@ -693,21 +527,6 @@ $btn-offline-hover: var(--btn-offline-hover);
     font-family: "Suwannaphum";
     font-size: 3rem;
     mix-blend-mode: overlay;
-  }
-}
-
-.play-button {
-  margin-top: 1rem;
-  color: hsla(0, 96%, 44%, 0.7);
-  width: 2.5rem;
-  height: 2.5rem;
-  cursor: pointer;
-
-  &.clickable {
-    &:hover {
-      transform: scale(1.2);
-      transition: transform 0.3s ease;
-    }
   }
 }
 

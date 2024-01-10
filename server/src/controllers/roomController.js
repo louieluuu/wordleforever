@@ -6,19 +6,19 @@ import {
   resetCountdown,
   addUserToRoom,
   getRoomConnectionMode,
-  getRoomGameMode,
   hasCountdownStarted,
   setCountdownStarted,
   findMatchingRoom,
+  isRoomChallengeMode,
 } from "../services/roomService.js"
 import { setUsername, broadcastUserInfo } from "../services/userService.js"
 
 const PRIVATE_ROOM_COUNTDOWN_TIMER = 1
 const PUBLIC_ROOM_COUNTDOWN_TIMER = 1
 
-function createRoom(connectionMode, gameMode, socket) {
+function createRoom(connectionMode, isChallengeOn, socket) {
   try {
-    const roomId = initializeRoom(connectionMode, gameMode)
+    const roomId = initializeRoom(connectionMode, isChallengeOn)
     console.log(`Creating room: ${roomId}`)
     socket.emit("roomCreated", roomId)
   } catch (error) {
@@ -39,7 +39,7 @@ async function joinRoom(roomId, username, io, socket) {
       socket.emit(
         "roomJoined",
         getRoomConnectionMode(roomId),
-        getRoomGameMode(roomId)
+        isRoomChallengeMode(roomId)
       )
     } else {
       console.log(`${socket.id} failed to join room: ${roomId}`)
@@ -87,8 +87,8 @@ function handleCountdownStop(roomId) {
   }
 }
 
-function handleMatchmaking(gameMode, socket) {
-  const matchingRoomId = findMatchingRoom(gameMode)
+function handleMatchmaking(isChallengeOn, socket) {
+  const matchingRoomId = findMatchingRoom(isChallengeOn)
   if (matchingRoomId) {
     socket.emit("matchFound", matchingRoomId)
   } else {

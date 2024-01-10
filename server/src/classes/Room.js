@@ -1,7 +1,7 @@
 export default class Room {
-  constructor(connectionMode, gameMode) {
+  constructor(connectionMode, isChallengeOn) {
     this.connectionMode = connectionMode
-    this.gameMode = gameMode
+    this.isChallengeOn = isChallengeOn
     this.users = []
     this.inGame = false
     this.countdownStarted = false

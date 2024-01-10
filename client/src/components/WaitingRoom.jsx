@@ -10,7 +10,7 @@ function WaitingRoom({
   username,
   connectionMode,
   setConnectionMode,
-  setGameMode,
+  setIsChallengeOn,
   isHost,
 }) {
   const navigate = useNavigate()
@@ -31,9 +31,10 @@ function WaitingRoom({
     }
 
     // Make sure modes are set, important for users joining from a link
-    socket.on("roomJoined", (roomConnectionMode, roomGameMode) => {
+    socket.on("roomJoined", (roomConnectionMode, isChallengeOn) => {
       setConnectionMode(roomConnectionMode)
-      setGameMode(roomGameMode)
+      setIsChallengeOn(isChallengeOn)
+      console.log("setting challenge mode to", isChallengeOn)
     })
 
     socket.on("failedToJoinRoom", () => {

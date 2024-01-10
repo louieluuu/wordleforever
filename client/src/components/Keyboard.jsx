@@ -17,7 +17,7 @@ function Keyboard({
   isGameOver,
   hasSolved,
   isOutOfGuesses,
-  gameMode,
+  isChallengeOn,
   connectionMode,
   isHost,
   startNewGame,
@@ -68,8 +68,9 @@ function Keyboard({
   }
 
   async function handlePlayAgain() {
+    console.log("handling play again", isChallengeOn)
     try {
-      if (!gameMode || !connectionMode) {
+      if (!connectionMode) {
         return
       }
 
@@ -78,10 +79,8 @@ function Keyboard({
           startNewGame()
           break
         case "online-public":
-          const publicRoomId = await handleStartPublicGame(
-            connectionMode,
-            gameMode
-          )
+          console.log("online public game", isChallengeOn)
+          const publicRoomId = await handleStartPublicGame(isChallengeOn)
           navigate(`/room/${publicRoomId}`)
           break
         case "offline":

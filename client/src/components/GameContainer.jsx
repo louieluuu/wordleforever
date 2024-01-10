@@ -4,7 +4,6 @@ import Confetti from "react-confetti"
 import socket from "../socket"
 
 // Components
-import LobbyInfo from "./LobbyInfo"
 import CountdownModal from "./CountdownModal"
 import AlertModal from "./AlertModal"
 import GameBoardContainer from "./GameBoardContainer"
@@ -15,7 +14,7 @@ import VALID_WORDS from "../data/validWords"
 import WORDLE_ANSWERS from "../data/wordleAnswers"
 import WIN_MESSAGES from "../data/winMessages"
 
-function GameContainer({ username, gameMode, connectionMode, isHost }) {
+function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
   // Gameflow states
   const [hasSolved, setHasSolved] = useState(false)
   const [isOutOfGuesses, setIsOutOfGuesses] = useState(false)
@@ -59,16 +58,12 @@ function GameContainer({ username, gameMode, connectionMode, isHost }) {
 
   // Some race condition happening here where the first run is happening before solution gets updated
   useEffect(() => {
-    if (
-      connectionMode === "offline" &&
-      gameMode === "Challenge" &&
-      solution !== ""
-    ) {
+    if (connectionMode === "offline" && isChallengeOn && solution !== "") {
       generateRandomFirstGuess(solution)
     } else if (
       typeof connectionMode === "string" &&
       connectionMode.includes("online") &&
-      gameMode === "Challenge" &&
+      isChallengeOn &&
       solution !== "" &&
       challengeModeGuess !== null
     ) {
@@ -190,7 +185,7 @@ function GameContainer({ username, gameMode, connectionMode, isHost }) {
       const newSolution = generateSolution()
       setSolution(newSolution)
     }
-    console.log("Starting game with", gameMode, connectionMode)
+    console.log("Starting game with", connectionMode, isChallengeOn)
   }
 
   function resetStates() {
@@ -280,10 +275,7 @@ function GameContainer({ username, gameMode, connectionMode, isHost }) {
       setAlertMessage("Not in word list")
       setShowAlertModal(true)
       return false
-    } else if (
-      (gameMode === "Hard" || gameMode === "Challenge") &&
-      !usesPreviousHints(guess).isValid
-    ) {
+    } else if (isChallengeOn && !usesPreviousHints(guess).isValid) {
       if (usesPreviousHints(guess).failCondition.color === "green") {
         const index = usesPreviousHints(guess).failCondition.index
         const letter = usesPreviousHints(guess).failCondition.letter
@@ -520,7 +512,6 @@ function GameContainer({ username, gameMode, connectionMode, isHost }) {
 
   return (
     <div className="game-container">
-      <LobbyInfo gameMode={gameMode} connectionMode={connectionMode} />
       {isCountdownRunning && (
         <CountdownModal
           isCountdownRunning={isCountdownRunning}
@@ -554,7 +545,7 @@ function GameContainer({ username, gameMode, connectionMode, isHost }) {
         isGameOver={isGameOver}
         hasSolved={hasSolved}
         isOutOfGuesses={isOutOfGuesses}
-        gameMode={gameMode}
+        isChallengeOn={isChallengeOn}
         connectionMode={connectionMode}
         isHost={isHost}
         startNewGame={startNewGame}

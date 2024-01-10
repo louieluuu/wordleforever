@@ -12,18 +12,18 @@ import {
   handleStartPublicGame,
 } from "../helpers/socketHelpers"
 
-function MenuOnlineModes({ gameMode, setConnectionMode, setIsHost }) {
+function MenuOnlineModes({ isChallengeOn, setConnectionMode, setIsHost }) {
   const navigate = useNavigate()
 
   async function selectPublicGame() {
     setConnectionMode("online-public")
-    const publicRoomId = await handleStartPublicGame(gameMode)
+    const publicRoomId = await handleStartPublicGame(isChallengeOn)
     navigate(`/room/${publicRoomId}`)
   }
 
   async function selectPrivateGame() {
     setConnectionMode("online-private")
-    const privateRoomId = await handleStartPrivateGame(gameMode, setIsHost)
+    const privateRoomId = await handleStartPrivateGame(isChallengeOn, setIsHost)
     navigate(`/room/${privateRoomId}`)
   }
 

@@ -1,5 +1,5 @@
 import React from "react"
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, useParams } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 
 // Components
@@ -8,19 +8,22 @@ import MenuLandingPage from "./MenuLandingPage"
 import MenuOnlineModes from "./MenuOnlineModes"
 import MenuOfflineModes from "./MenuOfflineModes"
 import WaitingRoom from "./WaitingRoom"
+import ChallengeForm from "./ChallengeForm"
 
 function MenuRoutes({
   username,
   setUsername,
   inputWidth,
   setInputWidth,
-  gameMode,
-  setGameMode,
+  isChallengeOn,
+  setIsChallengeOn,
   connectionMode,
   setConnectionMode,
   isHost,
   setIsHost,
 }) {
+  const roomId = useParams()["*"]
+
   return (
     <>
       <WelcomeMessage
@@ -29,6 +32,12 @@ function MenuRoutes({
         inputWidth={inputWidth}
         setInputWidth={setInputWidth}
       />
+      {!roomId.includes("room") && (
+        <ChallengeForm
+          isChallengeOn={isChallengeOn}
+          setIsChallengeOn={setIsChallengeOn}
+        />
+      )}
       <AnimatePresence mode="wait">
         <Routes>
           <Route path="/" element={<MenuLandingPage />} />
@@ -36,7 +45,7 @@ function MenuRoutes({
             path="/online"
             element={
               <MenuOnlineModes
-                gameMode={gameMode}
+                isChallengeOn={isChallengeOn}
                 setConnectionMode={setConnectionMode}
                 setIsHost={setIsHost}
               />
@@ -53,7 +62,7 @@ function MenuRoutes({
                 username={username}
                 connectionMode={connectionMode}
                 setConnectionMode={setConnectionMode}
-                setGameMode={setGameMode}
+                setIsChallengeOn={setIsChallengeOn}
                 isHost={isHost}
               />
             }

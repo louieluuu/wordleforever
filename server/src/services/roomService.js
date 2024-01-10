@@ -11,13 +11,13 @@ const Rooms = new Map()
 
 const MAX_ROOM_SIZE = 4
 
-function initializeRoom(connectionMode, gameMode) {
+function initializeRoom(connectionMode, isChallengeOn) {
   let roomId = uuidv4()
   // Non-colliding rooms
   while (Rooms.has(roomId)) {
     roomId = uuidv4()
   }
-  const room = new Room(connectionMode, gameMode)
+  const room = new Room(connectionMode, isChallengeOn)
   Rooms.set(roomId, room)
   return roomId
 }
@@ -44,18 +44,10 @@ function getRoomConnectionMode(roomId) {
   return null
 }
 
-function getRoomGameMode(roomId) {
-  const room = Rooms.get(roomId)
-  if (room && room instanceof Room) {
-    return room.gameMode
-  }
-  return null
-}
-
 function isRoomChallengeMode(roomId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
-    return room.gameMode === "Challenge"
+    return room.isChallengeOn
   }
   return false
 }
@@ -158,12 +150,12 @@ function isUserInRoom(roomId, userId) {
   }
 }
 
-function findMatchingRoom(gameMode) {
+function findMatchingRoom(isChallengeOn) {
   let matchingRoomId
   Rooms.forEach((room, roomId) => {
     if (
       room.connectionMode === "online-public" &&
-      room.gameMode === gameMode &&
+      room.isChallengeOn === isChallengeOn &&
       !room.inGame
     ) {
       matchingRoomId = roomId
@@ -177,7 +169,6 @@ export {
   getRoom,
   deleteRoom,
   getRoomConnectionMode,
-  getRoomGameMode,
   isRoomChallengeMode,
   isRoomEmpty,
   setRoomInGame,

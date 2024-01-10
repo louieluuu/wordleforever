@@ -8,8 +8,11 @@ import GameContainer from "./components/GameContainer"
 import MenuRoutes from "./components/MenuRoutes"
 
 function App() {
-  const [gameMode, setGameMode] = useState("Easy")
   const [connectionMode, setConnectionMode] = useState("offline")
+  // localStorage stores items as strings, so we use JSON.parse to convert it back to its original type.
+  const [isChallengeOn, setIsChallengeOn] = useState(
+    JSON.parse(localStorage.getItem("isChallengeOn")) || false
+  )
 
   const [username, setUsername] = useState(
     localStorage.getItem("username") || "Wordler"
@@ -20,10 +23,7 @@ function App() {
   return (
     <>
       <Router>
-        <NavBar
-          setGameMode={setGameMode}
-          setConnectionMode={setConnectionMode}
-        />
+        <NavBar setConnectionMode={setConnectionMode} />
         <Routes>
           <Route
             path="/*"
@@ -33,8 +33,8 @@ function App() {
                 setUsername={setUsername}
                 inputWidth={inputWidth}
                 setInputWidth={setInputWidth}
-                gameMode={gameMode}
-                setGameMode={setGameMode}
+                isChallengeOn={isChallengeOn}
+                setIsChallengeOn={setIsChallengeOn}
                 connectionMode={connectionMode}
                 setConnectionMode={setConnectionMode}
                 isHost={isHost}
@@ -48,7 +48,7 @@ function App() {
             element={
               <GameContainer
                 username={username}
-                gameMode={gameMode}
+                isChallengeOn={isChallengeOn}
                 connectionMode={connectionMode}
                 isHost={isHost}
               />
@@ -59,7 +59,7 @@ function App() {
             element={
               <GameContainer
                 username={username}
-                gameMode={gameMode}
+                isChallengeOn={isChallengeOn}
                 connectionMode={connectionMode}
                 isHost={isHost}
               />
