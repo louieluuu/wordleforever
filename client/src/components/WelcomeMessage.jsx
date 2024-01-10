@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react"
+import { HiOutlinePencilSquare } from "react-icons/hi2"
 
 function WelcomeMessage({ username, setUsername, inputWidth, setInputWidth }) {
   const usernameRef = useRef(null)
@@ -28,31 +29,47 @@ function WelcomeMessage({ username, setUsername, inputWidth, setInputWidth }) {
     }
   }
 
-  function handleUserNameClick() {
+  function setCaretInvisible() {
+    usernameRef.current.style.caretColor = "transparent"
+  }
+
+  function setCaretPosition() {
+    // This hsl works pretty well for both light and dark mode.
+    usernameRef.current.style.caretColor = "hsl(50, 50%, 40%)"
+    const length = usernameRef.current.value.length
+    usernameRef.current.setSelectionRange(length, length)
+  }
+
+  function focusUsernameForm() {
     if (usernameRef.current) {
-      setTimeout(() => {
-        usernameRef.current.select()
-      }, 0)
+      usernameRef.current.focus()
     }
   }
 
   return (
     <div className="welcome-message">
-      <h1>Welcome, </h1>
-      <input
-        ref={usernameRef}
-        className="username"
-        type="text"
-        value={username}
-        onChange={handleUserNameChange}
-        onBlur={handleUserNameChange}
-        onClick={handleUserNameClick}
-        style={{ width: `${inputWidth}px` }}
+      Hey there,
+      <div className="username-line">
+        <input
+          ref={usernameRef}
+          className="username-form"
+          type="text"
+          value={username}
+          onChange={handleUserNameChange}
+          onBlur={handleUserNameChange}
+          onClick={setCaretPosition}
+          onMouseDown={setCaretInvisible}
+          style={{ width: `${inputWidth}px` }}
+        />
+        !
+        <span ref={textWidthRef} className="hidden-span">
+          {username}
+        </span>
+      </div>
+      <HiOutlinePencilSquare
+        className="username-form__pencil"
+        onClick={focusUsernameForm}
       />
-      <span ref={textWidthRef} className="hidden-span">
-        {username}
-      </span>
-      <h1>!</h1>
     </div>
   )
 }

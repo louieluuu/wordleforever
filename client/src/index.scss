@@ -36,6 +36,9 @@ html {
 
   --btn-online-hover: hsl(93, 77%, 48%);
   --btn-offline-hover: hsl(197, 89%, 36%);
+
+  --username: hsl(278, 37%, 69%);
+  --username-hover: brightness(110%);
 }
 
 // Button colours
@@ -44,6 +47,10 @@ $btn-offline: var(--btn-offline);
 
 $btn-online-hover: var(--btn-online-hover);
 $btn-offline-hover: var(--btn-offline-hover);
+
+// Miscellaneous
+$username: var(--username);
+$username-hover: var(--username-hover);
 
 .navbar {
   display: flex;
@@ -178,39 +185,52 @@ $btn-offline-hover: var(--btn-offline-hover);
 }
 
 .welcome-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Calistoga";
+  font-size: 3.5rem;
+  line-height: 0.8;
+  margin-block: 2rem;
+}
+
+.username-line {
+  display: flex;
+  flex-direction: row;
+  line-height: 1.28;
+}
+
+.username-form {
+
+  display: flex;
+  color: $username;
+  background-color: transparent;
   text-align: center;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: "Lobster";
+  font-size: 3.5rem;
+  text-decoration: underline dotted;
+  text-underline-offset: 0.5rem;
 
-  h1 {
-    font-family: "Calistoga";
-    font-size: 3.5rem;
-    margin-bottom: 0;
-    margin-left: 0;
-    display: inline;
-    padding: 0;
+  &:hover {
+    filter: $username-hover;
   }
 
-  .username {
-    font-size: 3rem;
-    font-family: "Pacifico", cursive;
-    font-weight: bold;
-    color: pink;
-    border: none;
-    outline: none;
+  &__pencil {
+    font-size: 2rem;
+    stroke-width: 0.11rem;
     cursor: pointer;
-
-    &::selection {
-      background: hsl(0, 0%, 95%);
-    }
   }
+}
 
-  .hidden-span {
-    position: absolute;
-    visibility: hidden;
-    white-space: nowrap;
-    font-family: "Pacifico", cursive;
-    font-size: 3rem;
-    font-weight: bold;
-  }
+.hidden-span {
+  position: absolute;
+  visibility: hidden;
+  white-space: nowrap;
+  font-family: "Lobster";
+  font-size: 3.5rem;
 }
 
 .game-container {
