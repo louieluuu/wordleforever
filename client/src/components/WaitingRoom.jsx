@@ -19,6 +19,7 @@ function WaitingRoom({
   const [message, setMessage] = useState("")
   const [showLobbyCountdownModal, setShowLobbyCountdownModal] = useState(false)
   const [joinRoom, setJoinRoom] = useState(false)
+  const [isCopied, setIsCopied] = useState(false)
 
   // Main useEffect loop
   useEffect(() => {
@@ -34,7 +35,6 @@ function WaitingRoom({
     socket.on("roomJoined", (roomConnectionMode, isChallengeOn) => {
       setConnectionMode(roomConnectionMode)
       setIsChallengeOn(isChallengeOn)
-      console.log("setting challenge mode to", isChallengeOn)
     })
 
     socket.on("failedToJoinRoom", () => {
@@ -135,42 +135,61 @@ function WaitingRoom({
     return usernamesClassName
   }
 
+  function copyLink() {
+    navigator.clipboard.writeText(window.location.href)
+    setIsCopied(true)
+  }
+
   return (
     <div>
       <div className="waiting-room-background">
         <h1 className="waiting-message">[{message}]</h1>
+
         {showLobbyCountdownModal && (
           <LobbyCountdownModal
             setShowLobbyCountdownModal={setShowLobbyCountdownModal}
           />
         )}
+
+        {connectionMode === "online-private" && isHost && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <b style={{ fontWeight: 900 }}>1.&nbsp;&nbsp;</b>
+            <button className="menu__btn--copy" onClick={copyLink}>
+              {isCopied ? "LINK COPIED" : "COPY LINK"}
+            </button>
+          </div>
+        )}
+
         <div className={getUsernamesClassName()}>
           {userInfo.map((user) => (
             <div key={user.userId}>{user.username}</div>
           ))}
         </div>
-        <div className="waiting-room-buttons">
-          {connectionMode === "online-private" && (
-            <>
-              <button
-                className="copy-btn"
-                onClick={() => {
-                  navigator.clipboard.writeText(window.location.href)
-                }}
-              >
-                Copy Link
-              </button>
-              {isHost && (
-                <button className="start-btn" onClick={startCountdown}>
-                  Start Game
-                </button>
-              )}
-            </>
-          )}
-          <button className="leave-btn" onClick={leaveRoom}>
-            Cancel
-          </button>
-        </div>
+
+        {connectionMode === "online-private" && isHost && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <b style={{ fontWeight: 900 }}>2.&nbsp;&nbsp;</b>
+            <button className="menu__btn--start-game" onClick={startCountdown}>
+              START GAME
+            </button>
+          </div>
+        )}
+
+        <button className="menu__btn--cancel" onClick={leaveRoom}>
+          Cancel
+        </button>
       </div>
     </div>
   )
