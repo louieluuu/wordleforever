@@ -68,7 +68,6 @@ function Keyboard({
   }
 
   async function handlePlayAgain() {
-    console.log("handling play again", isChallengeOn)
     try {
       if (!connectionMode) {
         return
@@ -79,7 +78,6 @@ function Keyboard({
           startNewGame()
           break
         case "online-public":
-          console.log("online public game", isChallengeOn)
           const publicRoomId = await handleStartPublicGame(isChallengeOn)
           navigate(`/room/${publicRoomId}`)
           break

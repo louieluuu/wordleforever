@@ -484,7 +484,7 @@ $username-hover: var(--username-hover);
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 01rem;
+  margin: 1rem;
   position: relative;
   height: 500px;
   overflow: hidden;
@@ -520,85 +520,29 @@ $username-hover: var(--username-hover);
     font-size: 2rem;
   }
 
-  .waiting-room-usernames {
+  .waiting-room-user-info {
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-    font-size: 2rem;
-    font-weight: bold;
-    margin: 2.5rem;
-    gap: 2rem 10rem;
+    font-family: "Roboto Slab";
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 1.5rem;
+    gap: 1rem 10rem;
+    border: 2px dashed hsl(0, 0%, 60%);
     padding-inline: 5rem;
     padding-block: 2rem;
 
-    &--1 {
-      @extend .waiting-room-usernames;
+    &--1, &--2 {
+      @extend .waiting-room-user-info;
     }
 
-    &--2 {
-      @extend .waiting-room-usernames;
-    }
-
-    &--3 {
-      @extend .waiting-room-usernames;
+    &--3, &--4 {
+      @extend .waiting-room-user-info;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
     }
 
-    &--4 {
-      @extend .waiting-room-usernames;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  .waiting-room-buttons {
-    display: flex;
-    flex-direction: row;
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    gap: 10rem;
-    padding: 2rem;
-    border-radius: 2rem;
-    cursor: pointer;
-
-    button {
-      font-size: 1.5rem;
-      font-weight: bold;
-      width: 11rem;
-      padding: 1rem;
-      border: 1px solid black;
-      border-radius: 1rem;
-      cursor: pointer;
-    }
-
-    & .copy-btn {
-      background-color: hsl(0, 2%, 90%);
-
-      &:hover {
-        background-color: hsl(0, 2%, 80%);
-      }
-    }
-
-    & .start-btn {
-      color: white;
-      background-color: hsl(0, 96%, 44%);
-
-      &:hover {
-        background-color: hsl(0, 96%, 70%);
-      }
-    }
-
-    & .leave-btn {
-      background-color: hsl(0, 0%, 90%);
-
-      &:hover {
-        background-color: hsl(0, 2%, 80%);
-      }
-    }
   }
 
   .waiting-message {

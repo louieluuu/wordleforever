@@ -128,7 +128,7 @@ function WaitingRoom({
   }
 
   function getUsernamesClassName() {
-    let usernamesClassName = "waiting-room-usernames"
+    let usernamesClassName = "waiting-room-user-info"
     if (userInfo && userInfo.length > 0) {
       usernamesClassName += `--${userInfo.length}`
     }
@@ -168,7 +168,12 @@ function WaitingRoom({
 
         <div className={getUsernamesClassName()}>
           {userInfo.map((user) => (
-            <div key={user.userId}>{user.username}</div>
+            <div key={user.userId}>
+              {user.username}
+              {connectionMode === "online-public" && user.currStreak !== 0 && (
+                <span> &nbsp;&nbsp;{user.currStreak}🔥 </span>
+              )}
+            </div>
           ))}
         </div>
 
