@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react"
 
 function CountdownModal({ isCountdownRunning, setIsCountdownRunning }) {
   const [seconds, setSeconds] = useState(3)
@@ -25,7 +25,7 @@ function CountdownModal({ isCountdownRunning, setIsCountdownRunning }) {
 
   return (
     <div>
-      <dialog className='countdown-timer' open={isCountdownRunning}>
+      <dialog className="countdown-timer" open={isCountdownRunning}>
         <p>The game will start in... {seconds}</p>
       </dialog>
     </div>

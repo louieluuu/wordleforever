@@ -1,25 +1,23 @@
 import React from "react"
 
-function LobbyInfo({
-    gameMode,
-    connectionMode,
-}) {
-
+function LobbyInfo({ gameMode, connectionMode }) {
   function formatMode(mode) {
-    if (mode === 'offline') {
-      return 'Offline'
+    if (mode === "offline") {
+      return "Offline"
     }
-    if (mode === 'online-private') {
-      return 'Online (Private)'
+    if (mode === "online-private") {
+      return "Online (Private)"
     }
-    if (mode === 'online-public') {
-      return 'Online (Public)'
+    if (mode === "online-public") {
+      return "Online (Public)"
     }
     return mode
-}
+  }
 
   return (
-    <div className='lobby-info'>{formatMode(connectionMode)} - {gameMode}</div>
+    <div className="lobby-info">
+      {formatMode(connectionMode)} - {gameMode}
+    </div>
   )
 }
 

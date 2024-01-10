@@ -1,23 +1,23 @@
-import { useState, useEffect } from 'react'
-import socket from '../socket'
+import { useState, useEffect } from "react"
+import socket from "../socket"
 
 function LobbyCountdownModal({ setShowLobbyCountdownModal }) {
-    const [seconds, setSeconds] = useState('')
+  const [seconds, setSeconds] = useState("")
 
-    useEffect(() => {
-        socket.on('countdownTick', (seconds) => {
-            setShowLobbyCountdownModal(true)
-            setSeconds(seconds)
-        })
+  useEffect(() => {
+    socket.on("countdownTick", (seconds) => {
+      setShowLobbyCountdownModal(true)
+      setSeconds(seconds)
+    })
 
-        return () => {
-            socket.off('countdownTick')
-        }
-    }, [])
+    return () => {
+      socket.off("countdownTick")
+    }
+  }, [])
 
   return (
-    <div className='lobby-countdown-timer'>
-        <p>Starting in... {seconds}</p>
+    <div className="lobby-countdown-timer">
+      <p>Starting in... {seconds}</p>
     </div>
   )
 }

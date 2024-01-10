@@ -1,8 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Bubblegum+Sans:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Calistoga&display=swap');
-
+@import url("https://fonts.googleapis.com/css2?family=Montserrat&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bubblegum+Sans:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Calistoga&display=swap");
 
 $main_color: hsl(0, 0%, 85%);
 $color_hover: hsl(0, 0%, 70%);
@@ -16,31 +15,31 @@ $card-margin: 1rem;
 
 // Overwrite default values, allows navbar to be flush with page
 body {
-    margin: 0;
+  margin: 0;
 }
 
 a {
-    color: hsl(197, 100%, 40%);
-    text-decoration: none;
+  color: hsl(197, 100%, 40%);
+  text-decoration: none;
 }
 
 :root {
-    font-family: "Roboto", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 #root {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden; // prevent scrolling on mobile
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; // prevent scrolling on mobile
 }
 
 html {
-    --btn-online: hsl(93, 77%, 38%);
-    --btn-offline: hsl(197, 89%, 26%);
+  --btn-online: hsl(93, 77%, 38%);
+  --btn-offline: hsl(197, 89%, 26%);
 
-    --btn-online-hover: hsl(93, 77%, 48%);
-    --btn-offline-hover: hsl(197, 89%, 36%);
+  --btn-online-hover: hsl(93, 77%, 48%);
+  --btn-offline-hover: hsl(197, 89%, 36%);
 }
 
 // Button colours
@@ -51,717 +50,711 @@ $btn-online-hover: var(--btn-online-hover);
 $btn-offline-hover: var(--btn-offline-hover);
 
 .navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-inline: 0.3rem;
+
+  border-bottom: 1px solid $main_color;
+
+  &__left {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-inline: 0.3rem;
-  
-    border-bottom: 1px solid $main_color;
+    width: 2.75rem;
+    height: 2.75rem;
+    gap: 0.5rem;
+    cursor: pointer;
 
-    &__left {
-        display: flex;
-        width: 2.75rem;
-        height: 2.75rem;
-        gap: 0.5rem;
-        cursor: pointer;
-
-        &:hover {
-            opacity: 65%;
-            transition-duration: 0.1s;
-          }
-      
-          &:active {
-            transform: scale(0.97);
-          }
+    &:hover {
+      opacity: 65%;
+      transition-duration: 0.1s;
     }
 
-    &__right {
-        display: flex;
-        justify-content: flex-end;
-        gap: 2rem;
-        padding-inline-end: 1rem;
+    &:active {
+      transform: scale(0.97);
+    }
+  }
+
+  &__right {
+    display: flex;
+    justify-content: flex-end;
+    gap: 2rem;
+    padding-inline-end: 1rem;
+  }
+
+  &__info {
+    cursor: pointer;
+
+    &:hover {
+      color: hsl(0, 0%, 47.5%);
+      transition-duration: 0.1s;
     }
 
-    &__info {
-        cursor: pointer;
-
-        &:hover {
-            color: hsl(0, 0%, 47.5%);
-            transition-duration: 0.1s;
-          }
-      
-          &:active {
-            transform: scale(0.9);
-          }
+    &:active {
+      transform: scale(0.9);
     }
+  }
 }
 
 .logo {
-    display: flex;
-    gap: 0.5rem;
-  
-    &__wordmark {
-      align-self: center;
-      font-size: 1.85rem;
-      font-family: "Lobster", serif;
-    }
-  
-    &__wordmark--left {
-      color: hsl(240, 3%, 7%);
-    }
-  
-    &__wordmark--right {
-      color: hsl(240, 3%, 37%);
-    }
+  display: flex;
+  gap: 0.5rem;
+
+  &__wordmark {
+    align-self: center;
+    font-size: 1.85rem;
+    font-family: "Lobster", serif;
   }
 
+  &__wordmark--left {
+    color: hsl(240, 3%, 7%);
+  }
+
+  &__wordmark--right {
+    color: hsl(240, 3%, 37%);
+  }
+}
+
 .lobby-info {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 1rem;
-    font-weight: bolder;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 1rem;
+  font-weight: bolder;
 }
 
 .menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+
+  &__btn {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    justify-content: space-evenly;
 
-    &__btn {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-evenly;
+    width: 15rem;
+    height: 5rem;
 
-        width: 15rem;
-        height: 5rem;
+    font-weight: 300;
+    font-family: "Oswald", sans-serif;
+    font-size: 1.5rem;
 
-        font-weight: 300;
-        font-family: "Oswald", sans-serif;
-        font-size: 1.5rem;
+    color: white;
+    border-radius: 2rem;
+    cursor: pointer;
 
-        color: white;
-        border-radius: 2rem;
-        cursor: pointer;
-
-        &:active {
-            width: 17.5rem;
-            transition-timing-function: ease-out;
-        }
-
-        &:hover {
-            transition-duration: 0.1s;
-            transition-timing-function: ease-in;
-        }
+    &:active {
+      width: 17.5rem;
+      transition-timing-function: ease-out;
     }
 
-    &__btn--online {
-        @extend .menu__btn;
-
-        background-color: $btn-online;
-        border: 3px solid hsl(93, 77%, 35%);
-
-        &:hover {
-            background-color: $btn-online-hover;
-            border: 3px solid $btn-online-hover;
-        }
+    &:hover {
+      transition-duration: 0.1s;
+      transition-timing-function: ease-in;
     }
+  }
 
-    &__btn--offline {
-        @extend .menu__btn;
+  &__btn--online {
+    @extend .menu__btn;
 
-        background-color: $btn-offline;
-        border: 3px solid hsl(197, 89%, 23%);
+    background-color: $btn-online;
+    border: 3px solid hsl(93, 77%, 35%);
 
-        &:hover {
-            background-color: $btn-offline-hover;
-            border: 3px solid $btn-offline-hover;
-        }
+    &:hover {
+      background-color: $btn-online-hover;
+      border: 3px solid $btn-online-hover;
     }
+  }
+
+  &__btn--offline {
+    @extend .menu__btn;
+
+    background-color: $btn-offline;
+    border: 3px solid hsl(197, 89%, 23%);
+
+    &:hover {
+      background-color: $btn-offline-hover;
+      border: 3px solid $btn-offline-hover;
+    }
+  }
 }
 
 .welcome-message {
-    text-align: center;
+  text-align: center;
 
-    h1 {
-        font-family: 'Calistoga';
-        font-size: 3.5rem;
-        margin-bottom: 0;
-        margin-left: 0;
-        display: inline;
-        padding: 0;
+  h1 {
+    font-family: "Calistoga";
+    font-size: 3.5rem;
+    margin-bottom: 0;
+    margin-left: 0;
+    display: inline;
+    padding: 0;
+  }
+
+  .username {
+    font-size: 3rem;
+    font-family: "Pacifico", cursive;
+    font-weight: bold;
+    color: pink;
+    border: none;
+    outline: none;
+    cursor: pointer;
+
+    &::selection {
+      background: hsl(0, 0%, 95%);
     }
+  }
 
-    .username {
-        font-size: 3rem;
-        font-family: 'Pacifico', cursive;
-        font-weight: bold;
-        color: pink;
-        border: none;
-        outline: none;
-        cursor: pointer;
-
-        &::selection {
-            background: hsl(0, 0%, 95%);;
-        }
-    }
-
-    .hidden-span {
-        position: absolute;
-        visibility: hidden;
-        white-space: nowrap;
-        font-family: 'Pacifico', cursive;
-        font-size: 3rem;
-        font-weight: bold;
-      }
+  .hidden-span {
+    position: absolute;
+    visibility: hidden;
+    white-space: nowrap;
+    font-family: "Pacifico", cursive;
+    font-size: 3rem;
+    font-weight: bold;
+  }
 }
 
 .game-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  height: 100vh;
 }
 
 .boards-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 2rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2rem;
 }
 
 .game-board {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  &__row {
+    @extend .game-board;
+    flex-direction: row;
+  }
+
+  &__cell {
     display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+    justify-content: center;
+    align-items: center;
 
-    &__row {
-        @extend .game-board;
-        flex-direction: row;
+    width: $cell-size;
+    height: $cell-size;
+    font-size: $cell-size;
+    font-weight: bold;
+    border: 2px solid $main_color;
+    padding: $cell-padding;
+
+    &--green {
+      @extend .game-board__cell;
+      color: white;
+      border-color: hsl(115, 29, 52);
+      background-color: hsl(115, 29, 52);
     }
 
-    &__cell {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        width: $cell-size;
-        height: $cell-size;
-        font-size: $cell-size;
-        font-weight: bold;
-        border: 2px solid $main_color;
-        padding: $cell-padding;
-
-        &--green {
-            @extend .game-board__cell;
-            color: white;
-            border-color: hsl(115, 29, 52);
-            background-color: hsl(115, 29, 52);
-        }
-
-        &--yellow {
-            @extend .game-board__cell;
-            color: white;
-            border-color: hsl(49, 51, 57);
-            background-color: hsl(49, 51, 57);
-        }
-
-        &--grey {
-            @extend .game-board__cell;
-            color: white;
-            border-color: hsl(240, 2, 48);
-            background-color: hsl(240, 2, 48);
-        }
-
-        &--active {
-            @extend .game-board__cell;
-            border-color: hsl(240, 2, 48);
-        }
+    &--yellow {
+      @extend .game-board__cell;
+      color: white;
+      border-color: hsl(49, 51, 57);
+      background-color: hsl(49, 51, 57);
     }
 
-    &__cell.user {
-        border: 4px solid $main_color;
+    &--grey {
+      @extend .game-board__cell;
+      color: white;
+      border-color: hsl(240, 2, 48);
+      background-color: hsl(240, 2, 48);
     }
+
+    &--active {
+      @extend .game-board__cell;
+      border-color: hsl(240, 2, 48);
+    }
+  }
+
+  &__cell.user {
+    border: 4px solid $main_color;
+  }
 }
 
 .game-board-info {
-    font-size: 1.4rem;
-    font-weight: bold;
-    margin-bottom: 0.25rem;
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
 }
 
 .keyboard {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
 
-    &__row {
-        @extend .keyboard;
-        flex-direction: row;
+  &__row {
+    @extend .keyboard;
+    flex-direction: row;
+  }
+
+  &__cell {
+    padding: 1rem;
+    font-weight: bold;
+    background-color: $main_color;
+    border: none;
+    border-radius: 0.2rem;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $color-hover;
+      transition-duration: 0.1s;
+      transition-timing-function: ease-in;
     }
 
-    &__cell {
-        padding: 1rem;
-        font-weight: bold;
-        background-color: $main_color;
-        border: none;
-        border-radius: 0.2rem;
-        cursor: pointer;
-
-        &:hover {
-            background-color: $color-hover;
-            transition-duration: 0.1s;
-            transition-timing-function: ease-in;
-        }
-
-        &--green {
-            @extend .keyboard__cell;
-            color: white;
-            border-color: hsl(115, 29, 52);
-            background-color: hsl(115, 29, 52);
-        }
-
-        &--yellow {
-            @extend .keyboard__cell;
-            color: white;
-            border-color: hsl(49, 51, 57);
-            background-color: hsl(49, 51, 57);
-        }
-
-        &--grey {
-            @extend .keyboard__cell;
-            color: white;
-            border-color: hsl(240, 2, 48);
-            background-color: hsl(240, 2, 48);
-        }
+    &--green {
+      @extend .keyboard__cell;
+      color: white;
+      border-color: hsl(115, 29, 52);
+      background-color: hsl(115, 29, 52);
     }
 
+    &--yellow {
+      @extend .keyboard__cell;
+      color: white;
+      border-color: hsl(49, 51, 57);
+      background-color: hsl(49, 51, 57);
+    }
+
+    &--grey {
+      @extend .keyboard__cell;
+      color: white;
+      border-color: hsl(240, 2, 48);
+      background-color: hsl(240, 2, 48);
+    }
+  }
 }
 
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
 
-    &.display {
-        display: block;
-    }
-
-    &.hide {
-        display: none;
-    }
+  &.display {
+    display: block;
   }
-  
+
+  &.hide {
+    display: none;
+  }
+}
 
 .info {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+
+  font-family: "Montserrat";
+  font-size: 0.9rem;
+  padding-bottom: 1rem;
+  font-weight: 500;
+
+  &__close {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #fff;
-    padding: 20px;
-
-    font-family: 'Montserrat';
-    font-size: 0.9rem;
-    padding-bottom: 1rem;
-    font-weight: 500;
-
-    &__close {
-        position: absolute;
-        width: 1rem;
-        height: 1rem;
-        top: 0;
-        right: 0;
-        padding: 1rem;
-        cursor: pointer;
-    }
+    width: 1rem;
+    height: 1rem;
+    top: 0;
+    right: 0;
+    padding: 1rem;
+    cursor: pointer;
+  }
 }
 
 .alert-modal {
-    display: flex;
-    align-items: center;
-    top: 10px;
-    padding-inline: 1rem;
-    padding-block: 0.6rem;
-    background-color: hsl(0, 0%, 10%, 90%);
+  display: flex;
+  align-items: center;
+  top: 10px;
+  padding-inline: 1rem;
+  padding-block: 0.6rem;
+  background-color: hsl(0, 0%, 10%, 90%);
 
-    color: white;
+  color: white;
 
-    opacity: 1;
-    transition: opacity 0.5s ease-out;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
 
-    &.hide {
-        opacity: 0;
-    }
+  &.hide {
+    opacity: 0;
+  }
 }
 
 .menu h3 {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .mode-selector {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 }
 
 .card-container {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 .card {
-    width: $card-width;
-    height: $card-height;
-    border: 3px solid hsl(0, 0%, 50%);
-    border-radius: 1rem;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-    margin: $card-margin;
-    font-family: 'Bubblegum Sans', cursive;
-    font-size: 1.1rem;
-    position: relative;
-    cursor: pointer;
+  width: $card-width;
+  height: $card-height;
+  border: 3px solid hsl(0, 0%, 50%);
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  margin: $card-margin;
+  font-family: "Bubblegum Sans", cursive;
+  font-size: 1.1rem;
+  position: relative;
+  cursor: pointer;
 
-    perspective: 1000px;
-    transform-style: preserve-3d;
-    transition: transform 0.3s ease;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+
+  .info-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    color: hsl(0, 0%, 20%);
+
+    &:hover {
+      transform: scale(1.05);
+      transition: transform 0.3s ease;
+    }
+  }
+
+  &__front {
+    &__easy,
+    &__hard,
+    &__challenge,
+    &__offline,
+    &__online-private,
+    &__online-public {
+      @extend .card;
+      position: relative;
+      overflow: hidden;
+
+      &:hover {
+        transform: scale(1.05);
+        transition: transform 0.3s ease;
+      }
+
+      &.selected {
+        transform: scale(1.1);
+        border: 3px solid hsl(0, 0%, 20%);
+      }
+
+      &:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: -1;
+      }
+    }
+
+    &__easy {
+      &:before {
+        background-image: url("./assets/easy.png");
+        background-size: 100% 100%;
+        opacity: 0.5;
+        filter: blur(1.75px);
+      }
+    }
+    &__hard {
+      &:before {
+        background-image: url("./assets/hard.png");
+        background-size: 100% 100%;
+        opacity: 0.5;
+        filter: blur(1.75px);
+      }
+    }
+    &__challenge {
+      &:before {
+        background-image: url("./assets/challenge.png");
+        background-size: 100% 100%;
+        opacity: 0.5;
+        filter: blur(1.75px);
+      }
+    }
+    &__offline {
+      &:before {
+        background-image: url("./assets/offline.png");
+        background-size: 100% 100%;
+        opacity: 0.2;
+        filter: blur(2px);
+      }
+    }
+    &__online-private {
+      &:before {
+        background-image: url("./assets/friends.png");
+        background-size: 100% 100%;
+        opacity: 0.2;
+        filter: blur(2px);
+      }
+    }
+    &__online-public {
+      &:before {
+        background-image: url("./assets/online.png");
+        background-size: 100% 100%;
+        opacity: 0.2;
+        filter: blur(2px);
+      }
+    }
+  }
+
+  &__back {
+    @extend .card;
+    transform: rotateY(180deg);
+
+    &:hover {
+      transform: rotateY(180deg) scale(1.05);
+      transition: transform 0.3s ease;
+    }
+
+    &.selected {
+      transform: rotateY(180deg) scale(1.1);
+      border: 3px solid hsl(0, 0%, 20%);
+    }
 
     .info-button {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        cursor: pointer;
-        color: hsl(0, 0%, 20%);
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      cursor: pointer;
+      color: hsl(0, 0%, 20%);
+      transform: rotateY(180deg);
 
-        &:hover {
-            transform: scale(1.05);
-            transition: transform 0.3s ease;
-        }
+      &:hover {
+        transform: rotateY(180deg) scale(1.05);
+        transition: transform 0.3s ease;
+      }
     }
 
-    &__front {
-        &__easy,
-        &__hard,
-        &__challenge,
-        &__offline,
-        &__online-private,
-        &__online-public {
-            @extend .card;
-            position: relative;
-            overflow: hidden;
-
-            &:hover {
-                transform: scale(1.05);
-                transition: transform 0.3s ease;
-            }
-        
-            &.selected {
-                transform: scale(1.1);
-                border: 3px solid hsl(0, 0%, 20%);
-            }
-            
-            &:before {
-                content: '';
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                z-index: -1;
-            }
-        }
-
-        &__easy {
-            &:before {
-                background-image: url('./assets/easy.png');
-                background-size: 100% 100%;
-                opacity: 0.5;
-                filter: blur(1.75px);
-            }
-        }
-        &__hard {
-            &:before {
-                background-image: url('./assets/hard.png');
-                background-size: 100% 100%;
-                opacity: 0.5;
-                filter: blur(1.75px);
-            }
-        }
-        &__challenge {
-            &:before {
-                background-image: url('./assets/challenge.png');
-                background-size: 100% 100%;
-                opacity: 0.5;
-                filter: blur(1.75px);
-            }
-        }
-        &__offline {
-            &:before {
-                background-image: url('./assets/offline.png');
-                background-size: 100% 100%;
-                opacity: 0.2;
-                filter: blur(2px);
-            }
-        }
-        &__online-private {
-            &:before {
-                background-image: url('./assets/friends.png');
-                background-size: 100% 100%;
-                opacity: 0.2;
-                filter: blur(2px);
-            }
-        }
-        &__online-public {
-            &:before {
-                background-image: url('./assets/online.png');
-                background-size: 100% 100%;
-                opacity: 0.2;
-                filter: blur(2px);
-            }
-        }
+    p {
+      transform: rotateY(180deg);
+      font-size: 0.8rem;
+      padding: 1rem;
+      z-index: -1;
     }
-
-    &__back {
-        @extend .card;
-        transform: rotateY(180deg);
-
-        &:hover {
-            transform: rotateY(180deg) scale(1.05);
-            transition: transform 0.3s ease;
-        }
-    
-        &.selected {
-            transform: rotateY(180deg) scale(1.1);
-            border: 3px solid hsl(0, 0%, 20%);
-        }
-
-        .info-button {
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            cursor: pointer;
-            color: hsl(0, 0%, 20%);
-            transform: rotateY(180deg);
-    
-            &:hover {
-                transform: rotateY(180deg) scale(1.05);
-                transition: transform 0.3s ease;
-            }
-        }
-
-        p {
-            transform: rotateY(180deg);
-            font-size: 0.8rem;
-            padding: 1rem;
-            z-index: -1;
-        }
-    }
-    
+  }
 }
 
 .waiting-room-background {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 01rem;
+  position: relative;
+  height: 500px;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    border-radius: 2rem;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background-image: url("./assets/waiting_room.jpg");
+    background-size: cover;
+    background-repeat: repeat-x;
+    background-position: 0 0;
+    animation: slide 45s linear infinite;
+  }
+
+  @keyframes slide {
+    to {
+      background-position: -1920px 0;
+    }
+  }
+
+  .lobby-countdown-timer {
+    color: hsl(0, 0%, 30%);
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    font-weight: bold;
+    font-size: 2rem;
+  }
+
+  .waiting-room-usernames {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 01rem;
-    position: relative;
-    height: 500px;
-    overflow: hidden;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 2.5rem;
+    gap: 2rem 15rem;
+    padding-inline: 5rem;
+    padding-block: 2rem;
 
-    &::before {
-        content: '';
-        position: absolute;
-        border-radius: 2rem;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: -1;
-        background-image: url('./assets/waiting_room.jpg');
-        background-size: cover;
-        background-repeat: repeat-x;
-        background-position: 0 0;
-        animation: slide 45s linear infinite;
+    &--1 {
+      @extend .waiting-room-usernames;
     }
 
-    @keyframes slide {
-        to {
-            background-position: -1920px 0;
-        }
+    &--2 {
+      @extend .waiting-room-usernames;
     }
 
-    .lobby-countdown-timer {
-        color: hsl(0, 0%, 30%);
-        position: absolute;
-        top: 2rem;
-        right: 2rem;
-        font-weight: bold;
-        font-size: 2rem;
+    &--3 {
+      @extend .waiting-room-usernames;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
     }
 
-    .waiting-room-usernames {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        font-weight: bold;
-        margin: 2.5rem;
-        gap: 2rem 15rem;
-        padding-inline: 5rem;
-        padding-block: 2rem;
-
-        &--1 {
-            @extend .waiting-room-usernames;
-        }
-
-        &--2 {
-            @extend .waiting-room-usernames;
-        }
-
-        &--3 {
-            @extend .waiting-room-usernames;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        &--4 {
-            @extend .waiting-room-usernames;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-        }
+    &--4 {
+      @extend .waiting-room-usernames;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
     }
-    
-    .waiting-room-buttons {
-        display: flex;
-        flex-direction: row;
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        gap: 10rem;
-        padding: 2rem;
-        border-radius: 2rem;
-        cursor: pointer;
+  }
 
-        button {
-            font-size: 1.5rem;
-            font-weight: bold;
-            width: 11rem;
-            padding: 1rem;
-            border: 1px solid black;
-            border-radius: 1rem;
-            cursor: pointer;
-        }
-
-        & .copy-btn {
-            background-color: hsl(0, 2%, 90%);
-
-            &:hover {
-                background-color: hsl(0, 2%, 80%);
-            }
-        }
-    
-        & .start-btn {
-            color: white;
-            background-color: hsl(0, 96%, 44%);
-
-            &:hover {
-                background-color: hsl(0, 96%, 70%);
-            }
-        }
-    
-        & .leave-btn {
-            background-color: hsl(0, 0%, 90%);
-
-            &:hover {
-                background-color: hsl(0, 2%, 80%);
-            }
-        }
-    }
-
-    .waiting-message {
-        font-family: "Suwannaphum";
-        font-size: 3rem;
-        mix-blend-mode: overlay;
-    }
-
-}
-
-
-
-.play-button {
-    margin-top: 1rem;
-    color: hsla(0, 96%, 44%, 0.7);
-    width: 2.5rem;
-    height: 2.5rem;
+  .waiting-room-buttons {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    gap: 10rem;
+    padding: 2rem;
+    border-radius: 2rem;
     cursor: pointer;
 
-    &.clickable {
-        &:hover {
-            transform: scale(1.2);
-            transition: transform 0.3s ease;
-        }
+    button {
+      font-size: 1.5rem;
+      font-weight: bold;
+      width: 11rem;
+      padding: 1rem;
+      border: 1px solid black;
+      border-radius: 1rem;
+      cursor: pointer;
     }
+
+    & .copy-btn {
+      background-color: hsl(0, 2%, 90%);
+
+      &:hover {
+        background-color: hsl(0, 2%, 80%);
+      }
+    }
+
+    & .start-btn {
+      color: white;
+      background-color: hsl(0, 96%, 44%);
+
+      &:hover {
+        background-color: hsl(0, 96%, 70%);
+      }
+    }
+
+    & .leave-btn {
+      background-color: hsl(0, 0%, 90%);
+
+      &:hover {
+        background-color: hsl(0, 2%, 80%);
+      }
+    }
+  }
+
+  .waiting-message {
+    font-family: "Suwannaphum";
+    font-size: 3rem;
+    mix-blend-mode: overlay;
+  }
+}
+
+.play-button {
+  margin-top: 1rem;
+  color: hsla(0, 96%, 44%, 0.7);
+  width: 2.5rem;
+  height: 2.5rem;
+  cursor: pointer;
+
+  &.clickable {
+    &:hover {
+      transform: scale(1.2);
+      transition: transform 0.3s ease;
+    }
+  }
 }
 
 .play-again-button {
-    font-size: 1rem;
-    padding: 0.5rem;
-    border: none;
-    border-radius: 1rem;
-    cursor: pointer;
+  font-size: 1rem;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
 
-    color: white;
-    background-color: hsl(0, 96%, 44%);
+  color: white;
+  background-color: hsl(0, 96%, 44%);
 
-    &:hover {
-        background-color: hsl(0, 96%, 70%);
-    }
+  &:hover {
+    background-color: hsl(0, 96%, 70%);
+  }
 }
 
 .post-game-message {
-    position: absolute;
-    top: 10px;
-    padding-inline: 1rem;
-    padding-block: 0.6rem;
+  position: absolute;
+  top: 10px;
+  padding-inline: 1rem;
+  padding-block: 0.6rem;
 
-    font-size: 1rem;
+  font-size: 1rem;
 
-    background-color: hsl(0, 0%, 10%, 90%);
-    color: white;
-    border-radius: 0.75rem;
+  background-color: hsl(0, 0%, 10%, 90%);
+  color: white;
+  border-radius: 0.75rem;
 }
 
 .streak {
-    &--0 {
-        opacity: 20%;
-    }
-    &--1-3 {
-        opacity: 50%;
-    }
-    &--4-6 {
-        opacity: 70%;
-    }
-    &--7-9 {
-        opacity: 100%;
-        transform: scale(1.2)
-    }
-    &--10 {
-        opacity: 100%;
-        transform: scale(1.3)
-    }
+  &--0 {
+    opacity: 20%;
+  }
+  &--1-3 {
+    opacity: 50%;
+  }
+  &--4-6 {
+    opacity: 70%;
+  }
+  &--7-9 {
+    opacity: 100%;
+    transform: scale(1.2);
+  }
+  &--10 {
+    opacity: 100%;
+    transform: scale(1.3);
+  }
 }

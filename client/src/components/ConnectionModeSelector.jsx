@@ -1,32 +1,31 @@
-import React from 'react'
-import Card from './Card'
+import React from "react"
+import Card from "./Card"
 
 function ConnectionModeSelector({
-    connectionMode,
-    setConnectionMode,
-    paragraphWrapper,
+  connectionMode,
+  setConnectionMode,
+  paragraphWrapper,
 }) {
-    const connectionModes = ['offline', 'online-private', 'online-public']
+  const connectionModes = ["offline", "online-private", "online-public"]
 
-    const gameModeDescriptions = {
-        'offline': 'Single player mode',
-        'online-private': 'Create a private room that your friends can join',
-        'online-public': 'Queue into a Wordle Battle with other users from around the world',
-
-    }
+  const gameModeDescriptions = {
+    offline: "Single player mode",
+    "online-private": "Create a private room that your friends can join",
+    "online-public":
+      "Queue into a Wordle Battle with other users from around the world",
+  }
 
   return (
-    <div className='card-container'>
-        {connectionModes.map((mode, index) => (
-            <Card
-            key={index}
-            mode={mode}
-            setMode={setConnectionMode}
-            selected={mode === connectionMode}
-            description={paragraphWrapper(gameModeDescriptions[mode])}
-            >
-            </Card>
-        ))}
+    <div className="card-container">
+      {connectionModes.map((mode, index) => (
+        <Card
+          key={index}
+          mode={mode}
+          setMode={setConnectionMode}
+          selected={mode === connectionMode}
+          description={paragraphWrapper(gameModeDescriptions[mode])}
+        ></Card>
+      ))}
     </div>
   )
 }
