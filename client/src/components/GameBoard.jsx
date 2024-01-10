@@ -9,7 +9,6 @@ function GameBoard({
   points,
   streak,
   connectionMode,
-  isUserBoard = false,
 }) {
   function getCellClassName(board, row, cellIndex) {
     let cellClassName = "game-board__cell"
@@ -24,10 +23,6 @@ function GameBoard({
       cellClassName += "--yellow"
     } else if (board[row][cellIndex].color === "grey") {
       cellClassName += "--grey"
-    }
-
-    if (isUserBoard) {
-      cellClassName += " user"
     }
 
     return cellClassName

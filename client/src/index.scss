@@ -1,11 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Bubblegum+Sans:wght@400;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Calistoga&display=swap");
-
-$main_color: hsl(0, 0%, 85%);
-$color_hover: hsl(0, 0%, 70%);
-
 $cell-size: 2rem;
 $cell-padding: 0.5rem;
 
@@ -33,6 +25,18 @@ a {
 html {
   --color: hsl(240, 3%, 7%);
 
+  --correct: hsl(115, 29%, 53%);
+  --wrong-position: hsl(49, 51%, 57%);
+  --wrong: hsl(200, 2%, 48%);
+  --key: hsl(0, 0%, 85%);
+  --active: hsl(0, 0%, 55%);
+  --border: hsl(0, 0%, 80%);
+
+  --correct-hover: hsl(115, 29%, 63%);
+  --wrong-position-hover: hsl(49, 51%, 67%);
+  --wrong-hover: hsl(200, 2%, 58%);
+  --key-hover: hsl(0, 0%, 80%);
+
   --btn-online: hsl(93, 77%, 38%);
   --btn-offline: hsl(197, 89%, 26%);
   --btn-game: hsl(0, 52%, 48%);
@@ -52,7 +56,20 @@ html {
 // Main colors
 $color: var(--color);
 
-// Button colours
+// Game colors
+$correct: var(--correct);
+$wrong-position: var(--wrong-position);
+$wrong: var(--wrong);
+$active: var(--active);
+$key: var(--key);
+$border: var(--border);
+
+$correct-hover: var(--correct-hover);
+$wrong-position-hover: var(--wrong-position-hover);
+$wrong-hover: var(--wrong-hover);
+$key-hover: var(--key-hover);
+
+// Button colors
 $btn-online: var(--btn-online);
 $btn-offline: var(--btn-offline);
 $btn-game: var(--btn-game);
@@ -75,7 +92,7 @@ $username-hover: var(--username-hover);
   align-items: center;
   padding-inline: 0.3rem;
 
-  border-bottom: 1px solid $main_color;
+  border-bottom: 1px solid $border;
 
   &__left {
     display: flex;
@@ -296,18 +313,16 @@ $username-hover: var(--username-hover);
 }
 
 .game-container {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  height: 100vh;
+  margin-top: 1rem;
 }
 
 .boards-container {
   display: flex;
   flex-direction: row;
-  align-items: center;
   gap: 2rem;
 }
 
@@ -330,68 +345,69 @@ $username-hover: var(--username-hover);
     height: $cell-size;
     font-size: $cell-size;
     font-weight: bold;
-    border: 2px solid $main_color;
+    border: 2px solid $border;
     padding: $cell-padding;
 
     &--green {
       @extend .game-board__cell;
       color: white;
-      border-color: hsl(115, 29, 52);
-      background-color: hsl(115, 29, 52);
+      border-color: $correct;
+      background-color: $correct;
     }
 
     &--yellow {
       @extend .game-board__cell;
       color: white;
-      border-color: hsl(49, 51, 57);
-      background-color: hsl(49, 51, 57);
+      border-color: $wrong-position;
+      background-color: $wrong-position;
     }
 
     &--grey {
       @extend .game-board__cell;
       color: white;
-      border-color: hsl(240, 2, 48);
-      background-color: hsl(240, 2, 48);
+      border-color: $wrong;
+      background-color: $wrong;
     }
 
     &--active {
       @extend .game-board__cell;
-      border-color: hsl(240, 2, 48);
+      color: $color;
+      border-color: $active;
     }
-  }
-
-  &__cell.user {
-    border: 4px solid $main_color;
   }
 }
 
 .game-board-info {
-  font-size: 1.4rem;
+  font-size: 0.8rem;
   font-weight: bold;
   margin-bottom: 0.25rem;
 }
 
 .keyboard {
+  position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
   align-items: center;
   gap: 0.25rem;
 
   &__row {
-    @extend .keyboard;
+    display: flex;
     flex-direction: row;
+    gap: 0.25rem;
   }
 
   &__cell {
+    display: flex;
+    gap: 0.25rem;
     padding: 1rem;
     font-weight: bold;
-    background-color: $main_color;
+    background-color: $border;
     border: none;
     border-radius: 0.2rem;
     cursor: pointer;
 
     &:hover {
-      background-color: $color-hover;
       transition-duration: 0.1s;
       transition-timing-function: ease-in;
     }
@@ -399,22 +415,22 @@ $username-hover: var(--username-hover);
     &--green {
       @extend .keyboard__cell;
       color: white;
-      border-color: hsl(115, 29, 52);
-      background-color: hsl(115, 29, 52);
+      border-color: $correct;
+      background-color: $correct;
     }
 
     &--yellow {
       @extend .keyboard__cell;
       color: white;
-      border-color: hsl(49, 51, 57);
-      background-color: hsl(49, 51, 57);
+      border-color: $wrong-position;
+      background-color: $wrong-position;
     }
 
     &--grey {
       @extend .keyboard__cell;
       color: white;
-      border-color: hsl(240, 2, 48);
-      background-color: hsl(240, 2, 48);
+      border-color: $wrong;
+      background-color: $wrong;
     }
   }
 }
@@ -446,7 +462,6 @@ $username-hover: var(--username-hover);
   background-color: #fff;
   padding: 20px;
 
-  font-family: "Montserrat";
   font-size: 0.9rem;
   padding-bottom: 1rem;
   font-weight: 500;

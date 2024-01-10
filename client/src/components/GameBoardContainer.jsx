@@ -36,7 +36,6 @@ function GameBoardContainer({
               points={userInfo[0].points}
               streak={userInfo[0].streak}
               connectionMode={connectionMode}
-              isUserBoard={true}
             />
           )}
           {otherUserInfo().map((obj) => (
@@ -47,7 +46,6 @@ function GameBoardContainer({
               points={obj.points}
               streak={obj.streak}
               connectionMode={connectionMode}
-              isUserBoard={false}
             />
           ))}
         </div>
