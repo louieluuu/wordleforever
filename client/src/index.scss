@@ -24,6 +24,7 @@ a {
 
 html {
   --color: hsl(240, 3%, 7%);
+  --color-secondary: hsl(240, 3%, 37%);
 
   --correct: hsl(115, 29%, 53%);
   --wrong-position: hsl(49, 51%, 57%);
@@ -51,14 +52,15 @@ html {
   --btn-copy-hover: hsl(0, 0%, 95%);
   --btn-neutral-hover: hsl(0, 0%, 90%);
 
+  --challenge: hsl(12, 90%, 35%);
   --username: hsl(278, 37%, 69%);
   --username-hover: brightness(110%);
-
-  --header-hover: opacity: 65%;
+  --header-hover: 65%;
 }
 
 // Main colors
 $color: var(--color);
+$color-secondary: var(--color-secondary);
 
 // Game colors
 $correct: var(--correct);
@@ -89,9 +91,9 @@ $btn-copy-hover: var(--btn-copy-hover);
 $btn-neutral-hover: var(--btn-neutral-hover);
 
 // Miscellaneous
+$challenge: var(--challenge);
 $username: var(--username);
 $username-hover: var(--username-hover);
-
 $header-hover: var(--header-hover);
 
 .navbar {
@@ -151,11 +153,11 @@ $header-hover: var(--header-hover);
   }
 
   &__wordmark--left {
-    color: hsl(240, 3%, 7%);
+    color: $color;
   }
 
   &__wordmark--right {
-    color: hsl(240, 3%, 37%);
+    color: $color-secondary;
   }
 }
 
@@ -353,6 +355,16 @@ $header-hover: var(--header-hover);
   white-space: nowrap;
   font-family: "Lobster";
   font-size: 3.5rem;
+}
+
+.challenge {
+  &__checkbox {
+    accent-color: $challenge;
+
+    &:hover {
+      accent-color: hsl(12, 90%, 50%);
+    }
+  }
 }
 
 .game-container {
