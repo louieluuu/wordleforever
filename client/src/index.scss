@@ -726,6 +726,12 @@ $cell-padding: 0.5rem;
     }
   }
 
+  .non-host-waiting-message {
+    font-family: "Roboto Slab";
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
   .waiting-message {
     font-family: "Suwannaphum";
     font-size: 2.5rem;

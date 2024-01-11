@@ -21,6 +21,7 @@ function WaitingRoom({
   const [showLobbyCountdownModal, setShowLobbyCountdownModal] = useState(false)
   const [joinRoom, setJoinRoom] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
+  const [trailingPeriods, setTrailingPeriods] = useState(0)
 
   const [alertMessage, setAlertMessage] = useState("")
   const [showAlertModal, setShowAlertModal] = useState(false)
@@ -115,6 +116,15 @@ function WaitingRoom({
     setMessage(randomMessage)
   }, [])
 
+  // Cycle through trailing periods
+  useEffect(() => {
+    const cycle = setInterval(() => {
+      setTrailingPeriods((prevNumPeriods) => (prevNumPeriods + 1) % 4)
+    }, 1000)
+
+    return () => clearInterval(cycle)
+  }, [])
+
   function startCountdown() {
     if (userInfo.length < 2) {
       setAlertMessage("Need at least 2 players to start a room")
@@ -192,19 +202,31 @@ function WaitingRoom({
           ))}
         </div>
 
-        {connectionMode === "online-private" && isHost && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <b style={{ fontWeight: 900 }}>2.&nbsp;&nbsp;</b>
-            <button className="menu__btn--start-game" onClick={startCountdown}>
-              START GAME
-            </button>
-          </div>
+        {connectionMode === "online-private" && (
+          <>
+            {isHost ? (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <b style={{ fontWeight: 900 }}>2.&nbsp;&nbsp;</b>
+                <button
+                  className="menu__btn--start-game"
+                  onClick={startCountdown}
+                >
+                  START GAME
+                </button>
+              </div>
+            ) : (
+              // I'd like the "Waiting for host" part to stay aligned in the center, not sure how
+              <div className="non-host-waiting-message">
+                Waiting for host{Array(trailingPeriods).fill(".").join("")}
+              </div>
+            )}
+          </>
         )}
 
         <button className="menu__btn--cancel" onClick={leaveRoom}>
