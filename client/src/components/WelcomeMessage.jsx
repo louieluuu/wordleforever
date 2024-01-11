@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react"
+import React, { useRef, useLayoutEffect } from "react"
 import { HiOutlinePencilSquare } from "react-icons/hi2"
 
 function WelcomeMessage({ username, setUsername, inputWidth, setInputWidth }) {
@@ -6,7 +6,7 @@ function WelcomeMessage({ username, setUsername, inputWidth, setInputWidth }) {
   /** Seems a bit hacky but works, uses a hidden span element to measure the width and sets the input box size to that width. Dynamically sizing the input box was tricky */
   const textWidthRef = useRef(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (textWidthRef.current) {
       const textWidth = textWidthRef.current.clientWidth
       setInputWidth(textWidth + 10)

@@ -1,28 +1,6 @@
-$cell-size: 2rem;
-$cell-padding: 0.5rem;
-
-// Overwrite default values, allows navbar to be flush with page
-body {
-  margin: 0;
-}
-
-a {
-  color: hsl(197, 100%, 40%);
-  text-decoration: none;
-}
-
-:root {
-  font-family: "Roboto", sans-serif;
-}
-
-#root {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden; // prevent scrolling on mobile
-}
-
-html {
+html,
+html[data-theme="light"] {
+  --bg-main: hsl(0, 0%, 100%);
   --color: hsl(240, 3%, 7%);
   --color-secondary: hsl(240, 3%, 37%);
 
@@ -56,9 +34,52 @@ html {
   --username: hsl(278, 37%, 69%);
   --username-hover: brightness(110%);
   --header-hover: 65%;
+  --waiting-room-background: url(./assets/waiting_room.jpg);
+  --waiting-room-vertical: 10%;
+}
+
+html,
+html[data-theme="dark"] {
+  --bg-main: hsl(240, 3%, 7%);
+  --color: hsl(0, 0%, 95%);
+  --color-secondary: hsl(0, 0%, 85%);
+
+  --correct: hsl(115, 29%, 43%);
+  --wrong-position: hsl(49, 51%, 47%);
+  --wrong: hsl(240, 5%, 25%);
+  --key: hsl(200, 1%, 51%);
+  --active: hsl(0, 0%, 35%);
+  --border: hsl(0, 0%, 20%);
+
+  --correct-hover: hsl(115, 29%, 53%);
+  --wrong-position-hover: hsl(49, 51%, 57%);
+  --wrong-hover: hsl(240, 5%, 35%);
+  --key-hover: hsl(0, 0%, 60%);
+
+  --btn-online: hsl(93, 77%, 30%);
+  --btn-offline: hsl(197, 89%, 18%);
+  --btn-game: hsl(0, 52%, 40%);
+  --btn-copy: hsl(0, 0%, 20%);
+  --btn-neutral: hsl(0, 0%, 85%);
+
+  --btn-copy-border: hsl(0, 0%, 23%);
+
+  --btn-online-hover: hsl(93, 77%, 40%);
+  --btn-offline-hover: hsl(197, 89%, 28%);
+  --btn-game-hover: hsl(0, 52%, 53%);
+  --btn-copy-hover: hsl(0, 0%, 30%);
+  --btn-neutral-hover: hsl(0, 0%, 90%);
+
+  --challenge: hsl(12, 90%, 40%);
+  --username: hsl(40, 78%, 53%);
+  --username-hover: brightness(112%);
+  --header-hover: 85%;
+  --waiting-room-background: url(./assets/waiting_room_dark.jpg);
+  --waiting-room-vertical: 30%;
 }
 
 // Main colors
+$bg-main: var(--bg-main);
 $color: var(--color);
 $color-secondary: var(--color-secondary);
 
@@ -95,6 +116,34 @@ $challenge: var(--challenge);
 $username: var(--username);
 $username-hover: var(--username-hover);
 $header-hover: var(--header-hover);
+$waiting-room-background: var(--waiting-room-background);
+$waiting-room-vertical: var(--waiting-room-vertical);
+
+// Overwrite default values, allows navbar to be flush with page
+body {
+  margin: 0;
+  background-color: $bg-main;
+  color: $color;
+}
+
+a {
+  color: hsl(197, 100%, 40%);
+  text-decoration: none;
+}
+
+:root {
+  font-family: "Roboto", sans-serif;
+}
+
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; // prevent scrolling on mobile
+}
+
+$cell-size: 2rem;
+$cell-padding: 0.5rem;
 
 .navbar {
   display: flex;
@@ -124,20 +173,41 @@ $header-hover: var(--header-hover);
   &__right {
     display: flex;
     justify-content: flex-end;
-    gap: 2rem;
+    gap: 1rem;
     padding-inline-end: 1rem;
   }
 
   &__info {
+    width: 1.5rem;
+    height: 1.5rem;
     cursor: pointer;
 
     &:hover {
-      color: hsl(0, 0%, 47.5%);
+      opacity: $header-hover;
       transition-duration: 0.1s;
     }
 
     &:active {
       transform: scale(0.9);
+    }
+  }
+
+  &__color-theme {
+    width: 1.5rem;
+    height: 1.5rem;
+    cursor: pointer;
+
+    &:hover {
+      opacity: $header-hover;
+      transition-duration: 0.1s;
+    }
+
+    &:active {
+      transform: scale(0.9);
+    }
+
+    &.dark {
+      transform: rotateY(180deg);
     }
   }
 }
@@ -325,7 +395,6 @@ $header-hover: var(--header-hover);
 }
 
 .username-form {
-
   display: flex;
   color: $username;
   background-color: transparent;
@@ -561,7 +630,6 @@ $header-hover: var(--header-hover);
 
   opacity: 1;
 
-
   &.hide {
     opacity: 0;
     transition: opacity 0.5s ease-out;
@@ -590,16 +658,15 @@ $header-hover: var(--header-hover);
     right: 0;
     bottom: 0;
     z-index: -1;
-    background-image: url("./assets/waiting_room.jpg");
-    background-size: cover;
+    background-image: $waiting-room-background;
     background-repeat: repeat-x;
-    background-position: 0 0;
+    background-position: 0 $waiting-room-vertical;
     animation: slide 45s linear infinite;
   }
 
   @keyframes slide {
     to {
-      background-position: -1920px 0;
+      background-position: -1920px $waiting-room-vertical;
     }
   }
 
@@ -625,16 +692,17 @@ $header-hover: var(--header-hover);
     padding-inline: 5rem;
     padding-block: 2rem;
 
-    &--1, &--2 {
+    &--1,
+    &--2 {
       @extend .waiting-room-user-info;
     }
 
-    &--3, &--4 {
+    &--3,
+    &--4 {
       @extend .waiting-room-user-info;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
     }
-
   }
 
   .waiting-message {

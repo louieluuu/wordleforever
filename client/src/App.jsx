@@ -23,7 +23,7 @@ function App() {
   return (
     <>
       <Router>
-        <NavBar setConnectionMode={setConnectionMode} />
+        <NavBar/>
         <Routes>
           <Route
             path="/*"
