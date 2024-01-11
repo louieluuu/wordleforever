@@ -31,14 +31,12 @@ function AlertModal({
 
   return (
     <>
-      {showAlertModal && (
-        <div
-          className={`alert-modal${showAlertModal ? "" : " hide"}`}
-          onTransitionEnd={() => setShowAlertModal(false)}
-        >
-          {message}
-        </div>
-      )}
+      <div
+        className={`alert-modal${showAlertModal ? "" : " hide"}`}
+        onTransitionEnd={() => setShowAlertModal(false)}
+      >
+        {message}
+      </div>
     </>
   )
 }
