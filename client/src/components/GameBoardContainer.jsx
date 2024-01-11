@@ -19,7 +19,7 @@ function GameBoardContainer({
       let maxPoints = 0
       let leadingUser
       userInfo.forEach((userInfoObject) => {
-        // If all first place users are tied, no one is leading
+        // If there are multiple "leaders", then there is no leader
         if (userInfoObject.points === maxPoints) {
           leadingUser = null
         }
