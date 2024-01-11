@@ -338,7 +338,11 @@ function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
         if (connectionMode === "offline") {
           setIsGameOver(true)
           displaySolution()
-        } else {
+        } else if (connectionMode === "online-public") {
+          socket.emit("outOfGuesses", roomId)
+          setIsGameOver(true)
+          displaySolution()
+        } else if (connectionMode === "online-private") {
           socket.emit("outOfGuesses", roomId)
         }
       }
