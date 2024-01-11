@@ -14,6 +14,27 @@ function GameBoardContainer({
     return userInfo.slice(1) || []
   }
 
+  function isUserLeading(currUserId) {
+    if (connectionMode === 'online-private') {
+      let maxPoints = 0
+      let leadingUser
+      userInfo.forEach((userInfoObject) => {
+        // If all first place users are tied, no one is leading
+        if (userInfoObject.points === maxPoints) {
+          leadingUser = null
+        }
+        if (userInfoObject.points > maxPoints) {
+          maxPoints = userInfoObject.points
+          leadingUser = userInfoObject.userId
+        }
+      })
+      if (leadingUser === currUserId) {
+        return true
+      }
+    }
+    return false
+  }
+
   return (
     <>
       {connectionMode === "offline" ? (
@@ -36,6 +57,7 @@ function GameBoardContainer({
               points={userInfo[0].points}
               streak={userInfo[0].streak}
               connectionMode={connectionMode}
+              isLeading={isUserLeading(userInfo[0].userId)}
             />
           )}
           {otherUserInfo().map((obj) => (
@@ -46,6 +68,7 @@ function GameBoardContainer({
               points={obj.points}
               streak={obj.streak}
               connectionMode={connectionMode}
+              isLeading={isUserLeading(obj.userId)}
             />
           ))}
         </div>

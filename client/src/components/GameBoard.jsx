@@ -9,6 +9,7 @@ function GameBoard({
   points,
   streak,
   connectionMode,
+  isLeading,
 }) {
   function getCellClassName(board, row, cellIndex) {
     let cellClassName = "game-board__cell"
@@ -47,6 +48,7 @@ function GameBoard({
   return (
     <div className="game-board">
       <div className="game-board-info">
+        {isLeading && <span style={{ fontSize: "0.70rem" }}>👑</span>}
         {username}
         {connectionMode === "online-private" && (
           <>
