@@ -15,10 +15,6 @@ import {
   handleUserStreakReset,
 } from "./userService.js"
 
-// Lock
-import AsyncLock from "async-lock"
-const lock = new AsyncLock()
-
 const Games = new Map()
 
 // For now games will be indexed by roomId and deleted when the room is deleted
@@ -53,18 +49,16 @@ function deleteGame(roomId) {
 // check if the lock is needed
 async function handleGameStart(roomId, io) {
   try {
-    await lock.acquire("gameStartLock", async () => {
-      if (roomId && roomInLobby(roomId)) {
-        setRoomInGame(roomId)
-        await initializeGameInfo(roomId)
-        const game = Games.get(roomId)
-        if (game && game instanceof Game) {
-          game.startGame(roomId, io)
-        }
-      } else {
-        console.error("Invalid roomId for starting game")
+    if (roomId && roomInLobby(roomId)) {
+      setRoomInGame(roomId)
+      await initializeGameInfo(roomId)
+      const game = Games.get(roomId)
+      if (game && game instanceof Game) {
+        game.startGame(roomId, io)
       }
-    })
+    } else {
+      console.error("Invalid roomId for starting game")
+    }
   } catch (error) {
     console.error("Error acquiring lock:", error)
   }
