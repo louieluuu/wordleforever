@@ -437,11 +437,20 @@ $cell-padding: 0.5rem;
 }
 
 .game-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
   margin-top: 1rem;
+}
+
+.round-counter {
+  position: absolute;
+  top: -0.5rem;
+  right: 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 .boards-container {
@@ -637,7 +646,10 @@ $cell-padding: 0.5rem;
 }
 
 .countdown-timer {
+  position: absolute;
+  top: 10vh;
   z-index: 1;
+  font-size: 1.2rem;
 }
 
 .waiting-room-background {

@@ -47,6 +47,7 @@ function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
   const [challengeModeGuess, setChallengeModeGuess] = useState(null)
   const [solutionNotFound, setSolutionNotFound] = useState(false)
   const [isCountdownRunning, setIsCountdownRunning] = useState(false)
+  const [roundCounter, setRoundCounter] = useState(0)
   const hasOnlineGameStarted = useRef(false)
 
   // useEffect hooks
@@ -86,7 +87,7 @@ function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
   useEffect(() => {
     socket.on(
       "gameStarted",
-      (initialUserInfo, newSolution, newChallengeModeGuess) => {
+      (initialUserInfo, newSolution, newChallengeModeGuess, round) => {
         if (!hasOnlineGameStarted.current) {
           hasOnlineGameStarted.current = true
           resetStates()
@@ -97,6 +98,7 @@ function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
           setSolution(newSolution)
           setChallengeModeGuess(newChallengeModeGuess)
           setIsCountdownRunning(true)
+          setRoundCounter(round)
         }
       }
     )
@@ -520,6 +522,9 @@ function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
       )}
       {isConfettiRunning && (
         <Confetti numberOfPieces={200} initialVelocityY={-10} />
+      )}
+      {roundCounter !== 0 && (
+        <div className="round-counter">Round: {roundCounter}</div>
       )}
       <AlertModal
         showAlertModal={showAlertModal}

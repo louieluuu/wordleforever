@@ -26,13 +26,16 @@ const Games = new Map()
 async function initializeGameInfo(roomId) {
   // Should only be set for subsequent games in private games, games should be deleted upon room deletion
   let prevPoints = new Map()
+  let prevRound = 0
   if (Games.has(roomId)) {
     prevPoints = Games.get(roomId).getAllPoints()
+    prevRound = Games.get(roomId).round
     deleteGame(roomId)
   }
   const game = await Game.createGame(
     getUsersInRoom(roomId),
     prevPoints,
+    prevRound,
     isRoomChallengeMode(roomId)
   )
   Games.set(roomId, game)

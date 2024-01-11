@@ -24,11 +24,9 @@ function CountdownModal({ isCountdownRunning, setIsCountdownRunning }) {
   }, [seconds])
 
   return (
-    <div>
-      <dialog className="countdown-timer" open={isCountdownRunning}>
-        <p>The game will start in... {seconds}</p>
-      </dialog>
-    </div>
+    <dialog className="countdown-timer" open={isCountdownRunning}>
+      <p>The game will start in... {seconds}</p>
+    </dialog>
   )
 }
 

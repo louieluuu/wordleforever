@@ -11,9 +11,10 @@ export default class Game {
     this.allUserInfo = new Map()
     this.countSolved = 0
     this.countOutOfGuesses = 0
+    this.round = 0
   }
 
-  static async createGame(users, prevPoints, isChallengeMode) {
+  static async createGame(users, prevPoints, prevRound, isChallengeMode) {
     const game = new Game()
 
     game.solution = game.generateSolution()
@@ -23,6 +24,7 @@ export default class Game {
     game.allUserInfo = await game.initializeAllUserInfo(users, prevPoints)
     game.countSolved = 0
     game.countOutOfGuesses = 0
+    game.round = prevRound + 1
 
     return game
   }
@@ -170,7 +172,8 @@ export default class Game {
       "gameStarted",
       this.getAllUserInfo(),
       this.solution,
-      this.startingWord
+      this.startingWord,
+      this.round
     )
   }
 
