@@ -154,8 +154,8 @@ function Keyboard({
       {isGameOver && (
         <>
           {(connectionMode !== "online-private" || isHost) && (
-            <button className="play-again-button" onClick={handlePlayAgain}>
-              Play Again
+            <button className="menu__btn--new-game" onClick={handlePlayAgain}>
+              NEW GAME
               <IoReturnDownBackSharp />
             </button>
           )}

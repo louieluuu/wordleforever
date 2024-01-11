@@ -41,6 +41,7 @@ html {
   --btn-offline: hsl(197, 89%, 26%);
   --btn-game: hsl(0, 52%, 48%);
   --btn-copy: hsl(0, 0%, 90%);
+  --btn-neutral: hsl(0, 0%, 95%);
 
   --btn-copy-border: hsl(0, 0%, 77%);
 
@@ -48,9 +49,12 @@ html {
   --btn-offline-hover: hsl(197, 89%, 36%);
   --btn-game-hover: hsl(0, 52%, 58%);
   --btn-copy-hover: hsl(0, 0%, 95%);
+  --btn-neutral-hover: hsl(0, 0%, 90%);
 
   --username: hsl(278, 37%, 69%);
   --username-hover: brightness(110%);
+
+  --header-hover: opacity: 65%;
 }
 
 // Main colors
@@ -74,6 +78,7 @@ $btn-online: var(--btn-online);
 $btn-offline: var(--btn-offline);
 $btn-game: var(--btn-game);
 $btn-copy: var(--btn-copy);
+$btn-neutral: var(--btn-neutral);
 
 $btn-copy-border: var(--btn-copy-border);
 
@@ -81,10 +86,13 @@ $btn-online-hover: var(--btn-online-hover);
 $btn-offline-hover: var(--btn-offline-hover);
 $btn-game-hover: var(--btn-game-hover);
 $btn-copy-hover: var(--btn-copy-hover);
+$btn-neutral-hover: var(--btn-neutral-hover);
 
 // Miscellaneous
 $username: var(--username);
 $username-hover: var(--username-hover);
+
+$header-hover: var(--header-hover);
 
 .navbar {
   display: flex;
@@ -102,7 +110,7 @@ $username-hover: var(--username-hover);
     cursor: pointer;
 
     &:hover {
-      opacity: 65%;
+      opacity: $header-hover;
       transition-duration: 0.1s;
     }
 
@@ -250,6 +258,41 @@ $username-hover: var(--username-hover);
 
     &:active {
       font-size: 1.2rem;
+    }
+  }
+
+  &__btn--new-game {
+    @extend .menu__btn--start-game;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9;
+  }
+
+  &__btn--back {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+
+    background-color: $btn-neutral;
+    border: 2px solid hsl(0, 0%, 50%);
+
+    border-radius: 1rem;
+    cursor: pointer;
+
+    font-size: 1.5rem;
+    width: 3rem;
+    height: 3rem;
+    color: black;
+
+    &:active {
+      background-color: hsl(0, 0%, 40%);
+    }
+
+    &:hover {
+      background-color: $btn-neutral-hover;
+      transition-duration: 0.1s;
+      transition-timing-function: ease-in;
     }
   }
 
@@ -586,21 +629,6 @@ $username-hover: var(--username-hover);
     font-family: "Suwannaphum";
     font-size: 3rem;
     mix-blend-mode: overlay;
-  }
-}
-
-.play-again-button {
-  font-size: 1rem;
-  padding: 0.5rem;
-  border: none;
-  border-radius: 1rem;
-  cursor: pointer;
-
-  color: white;
-  background-color: hsl(0, 96%, 44%);
-
-  &:hover {
-    background-color: hsl(0, 96%, 70%);
   }
 }
 
