@@ -35,7 +35,7 @@ function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
   })
 
   // Alert states
-  const [alertMessage, setAlertMessage] = useState(".")
+  const [alertMessage, setAlertMessage] = useState("")
   const [showAlertModal, setShowAlertModal] = useState(false)
 
   // Solution
@@ -532,6 +532,7 @@ function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
         message={alertMessage}
         isOutOfGuesses={isOutOfGuesses}
         isConfettiRunning={isConfettiRunning}
+        inGame={true}
       />
       <GameBoardContainer
         connectionMode={connectionMode}

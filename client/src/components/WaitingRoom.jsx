@@ -5,6 +5,7 @@ import WAITING_ROOM_MESSAGES from "../data/waitingRoomMessages"
 
 // Components
 import LobbyCountdownModal from "./LobbyCountdownModal"
+import AlertModal from "./AlertModal"
 
 function WaitingRoom({
   username,
@@ -20,6 +21,9 @@ function WaitingRoom({
   const [showLobbyCountdownModal, setShowLobbyCountdownModal] = useState(false)
   const [joinRoom, setJoinRoom] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
+
+  const [alertMessage, setAlertMessage] = useState("")
+  const [showAlertModal, setShowAlertModal] = useState(false)
 
   // Main useEffect loop
   useEffect(() => {
@@ -87,19 +91,18 @@ function WaitingRoom({
   }, [username])
 
   // Keep track of number of users in room
-  // Start countdown in public game when at least 2 users, stop when less than 2 users
+  // Start countdown in public game when at least 2 users, stop countdown for both private/public when less than 2 users
   useEffect(() => {
     if (
       typeof connectionMode === "string" &&
-      connectionMode.includes("public")
+      connectionMode === "online-public" &&
+      userInfo.length > 1
     ) {
-      if (userInfo.length > 1) {
-        startCountdown()
-      }
-      // Might be a bit hacky since it "should" be < 2, but this was running on the empty first initialized userInfo array when a new user joins in the middle of a countdown
-      else if (userInfo.length === 1) {
-        stopCountdown()
-      }
+      startCountdown()
+    }
+    // Might be a bit hacky since it "should" be < 2, but this was running on the empty first initialized userInfo array when a new user joins in the middle of a countdown
+    if (userInfo.length === 1) {
+      stopCountdown()
     }
   }, [userInfo])
 
@@ -113,7 +116,12 @@ function WaitingRoom({
   }, [])
 
   function startCountdown() {
-    socket.emit("startCountdown", roomId)
+    if (userInfo.length < 2) {
+      setAlertMessage("Need at least 2 players to start a room")
+      setShowAlertModal(true)
+    } else {
+      socket.emit("startCountdown", roomId)
+    }
   }
 
   function stopCountdown() {
@@ -150,6 +158,13 @@ function WaitingRoom({
             setShowLobbyCountdownModal={setShowLobbyCountdownModal}
           />
         )}
+
+        <AlertModal
+          showAlertModal={showAlertModal}
+          setShowAlertModal={setShowAlertModal}
+          message={alertMessage}
+          inGame={false}
+        />
 
         {connectionMode === "online-private" && isHost && (
           <div

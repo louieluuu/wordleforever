@@ -6,6 +6,7 @@ function AlertModal({
   message,
   isOutOfGuesses,
   isConfettiRunning,
+  inGame,
 }) {
   let alertTimeout
 
@@ -32,7 +33,7 @@ function AlertModal({
   return (
     <>
       <div
-        className={`alert-modal${showAlertModal ? "" : " hide"}`}
+        className={`alert-modal${inGame ? "__game" : "__lobby"}${showAlertModal ? "" : " hide"}`}
         onTransitionEnd={() => setShowAlertModal(false)}
       >
         {message}
