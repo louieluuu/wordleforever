@@ -523,7 +523,7 @@ function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
       {isConfettiRunning && (
         <Confetti numberOfPieces={200} initialVelocityY={-10} />
       )}
-      {roundCounter !== 0 && (
+      {connectionMode === "online-private" && roundCounter !== 0 && (
         <div className="round-counter">Round: {roundCounter}</div>
       )}
       <AlertModal
