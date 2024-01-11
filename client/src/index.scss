@@ -402,12 +402,13 @@ $username-hover: var(--username-hover);
     gap: 0.25rem;
     padding: 1rem;
     font-weight: bold;
-    background-color: $border;
+    background-color: $key;
     border: none;
     border-radius: 0.2rem;
     cursor: pointer;
 
     &:hover {
+      background-color: $key-hover;
       transition-duration: 0.1s;
       transition-timing-function: ease-in;
     }
@@ -417,6 +418,10 @@ $username-hover: var(--username-hover);
       color: white;
       border-color: $correct;
       background-color: $correct;
+
+      &:hover {
+        background-color: $correct-hover;
+      }
     }
 
     &--yellow {
@@ -424,6 +429,10 @@ $username-hover: var(--username-hover);
       color: white;
       border-color: $wrong-position;
       background-color: $wrong-position;
+
+      &:hover {
+        background-color: $wrong-position-hover;
+      }
     }
 
     &--grey {
@@ -431,6 +440,10 @@ $username-hover: var(--username-hover);
       color: white;
       border-color: $wrong;
       background-color: $wrong;
+
+      &:hover {
+        background-color: $wrong-hover;
+      }
     }
   }
 }
