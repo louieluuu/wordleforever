@@ -464,6 +464,11 @@ $cell-padding: 0.5rem;
   flex-direction: column;
   gap: 0.25rem;
 
+  &--game-over {
+    @extend .game-board;
+    opacity: 60%;
+  }
+
   &__row {
     @extend .game-board;
     flex-direction: row;

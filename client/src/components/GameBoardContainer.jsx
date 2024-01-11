@@ -9,6 +9,7 @@ function GameBoardContainer({
   activeCell,
   username,
   userInfo,
+  isOutOfGuesses,
 }) {
   function otherUserInfo() {
     return userInfo.slice(1) || []
@@ -44,6 +45,7 @@ function GameBoardContainer({
           activeCell={activeCell}
           username={username}
           connectionMode={connectionMode}
+          isOutOfGuesses={isOutOfGuesses}
         />
       ) : (
         <div className="boards-container">
@@ -57,6 +59,7 @@ function GameBoardContainer({
               points={userInfo[0].points}
               streak={userInfo[0].streak}
               connectionMode={connectionMode}
+              isOutOfGuesses={isOutOfGuesses}
               isLeading={isUserLeading(userInfo[0].userId)}
             />
           )}
@@ -68,6 +71,7 @@ function GameBoardContainer({
               points={obj.points}
               streak={obj.streak}
               connectionMode={connectionMode}
+              isOutOfGuesses={isOutOfGuesses}
               isLeading={isUserLeading(obj.userId)}
             />
           ))}

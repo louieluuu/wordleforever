@@ -9,6 +9,7 @@ function GameBoard({
   points,
   streak,
   connectionMode,
+  isOutOfGuesses,
   isLeading,
 }) {
   function getCellClassName(board, row, cellIndex) {
@@ -46,7 +47,7 @@ function GameBoard({
   }
 
   return (
-    <div className="game-board">
+    <div className={`game-board${isOutOfGuesses ? "--game-over" : ""}`}>
       <div className="game-board-info">
         {isLeading && <span style={{ fontSize: "0.70rem" }}>👑</span>}
         {username}

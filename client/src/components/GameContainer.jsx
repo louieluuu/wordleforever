@@ -545,6 +545,7 @@ function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
         activeCell={activeCellIndex}
         username={username}
         userInfo={userInfo}
+        isOutOfGuesses={isOutOfGuesses}
       />
       <Keyboard
         handleLetter={handleLetter}
