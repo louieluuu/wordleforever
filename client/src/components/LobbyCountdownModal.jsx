@@ -17,7 +17,7 @@ function LobbyCountdownModal({ setShowLobbyCountdownModal }) {
 
   return (
     <div className="lobby-countdown-timer">
-      <p>Starting in... {seconds}</p>
+      <p>{seconds}</p>
     </div>
   )
 }

@@ -13,8 +13,8 @@ import {
 } from "../services/roomService.js"
 import { setUsername, broadcastUserInfo } from "../services/userService.js"
 
-const PRIVATE_ROOM_COUNTDOWN_TIMER = 4
-const PUBLIC_ROOM_COUNTDOWN_TIMER = 5
+const PRIVATE_ROOM_COUNTDOWN_TIMER = 6
+const PUBLIC_ROOM_COUNTDOWN_TIMER = 6
 
 function createRoom(connectionMode, isChallengeOn, socket) {
   try {
@@ -73,7 +73,7 @@ function handleCountdownStart(roomId, io) {
       seconds--
       io.to(roomId).emit("countdownTick", seconds)
 
-      if (seconds === 0) {
+      if (seconds === 3) {
         clearInterval(countdownInterval)
         startRoom(roomId, io)
       }
