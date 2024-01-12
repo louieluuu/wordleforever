@@ -20,6 +20,8 @@ function GameContainer({
   connectionMode,
   isHost,
   setIsHost,
+  isSpectating,
+  setIsSpectating,
 }) {
   // Gameflow states
   const [hasSolved, setHasSolved] = useState(false)
@@ -53,13 +55,18 @@ function GameContainer({
   const [challengeModeGuess, setChallengeModeGuess] = useState(null)
   const [isCountdownRunning, setIsCountdownRunning] = useState(false)
   const [roundCounter, setRoundCounter] = useState(0)
-  const hasOnlineGameStarted = useRef(false)
+  const [hasOnlineGameStarted, setHasOnlineGameStarted] = useState(false)
 
   // useEffect hooks
 
   // Run once when the component mounts
   useEffect(() => {
-    startNewGame()
+    if (isSpectating) {
+      socket.emit("gameJoinedInProgress", roomId)
+      setHasOnlineGameStarted(true)
+    } else {
+      startNewGame()
+    }
   }, [])
 
   // Generate and set challenge mode guess in offline mode
@@ -97,75 +104,114 @@ function GameContainer({
     }
   }, [isConfettiRunning])
 
+  useEffect(() => {
+    if (isCountdownRunning) {
+      setIsSpectating(false)
+    }
+  }, [isCountdownRunning])
+
   // Online game flow
+
+  // This runs on component mount and always listens for the "gameStarted" socket event
+  // The states set here need to already be set for the rest of the game logic, so we can't run the other socket events in this useEffect
+  // Instead we will set hasOnlineGameStarted, and have our main useEffect loop have that as a dependency -> it will run once the initial states are set
   useEffect(() => {
     socket.on(
       "gameStarted",
       (initialUserInfo, newSolution, newChallengeModeGuess, round) => {
-        if (!hasOnlineGameStarted.current) {
-          hasOnlineGameStarted.current = true
-          resetStates()
-          const sortedUserInfo = initialUserInfo.sort((obj) => {
-            return obj.userId === socket.id ? -1 : 1
-          })
-          setUserInfo(sortedUserInfo)
-          setSolution(newSolution)
-          setChallengeModeGuess(newChallengeModeGuess)
-          setIsCountdownRunning(true)
-          setRoundCounter(round)
-        }
+        setHasOnlineGameStarted(true)
+        resetStates()
+        const sortedUserInfo = initialUserInfo.sort((obj) => {
+          return obj.userId === socket.id ? -1 : 1
+        })
+        setUserInfo(sortedUserInfo)
+        setSolution(newSolution)
+        setChallengeModeGuess(newChallengeModeGuess)
+        setIsCountdownRunning(true)
+        setRoundCounter(round)
       }
     )
 
-    socket.on("gameBoardsUpdated", (updatedUserId, updatedBoard) => {
-      setUserInfo((prevUserInfo) => {
-        const updatedUserInfo = [...prevUserInfo]
-        updatedUserInfo.forEach((obj) => {
-          if (obj.userId !== socket.id && obj.userId === updatedUserId) {
-            obj.gameBoard = updatedBoard
-          }
+    return () => {
+      socket.off("gameStarted")
+    }
+  }, [])
+
+
+  // Main useEffect loop for online game logic
+  useEffect(() => {
+    if (hasOnlineGameStarted) {
+      socket.on("spectatorInfo", (allUserInfo, round) => {
+        setUserInfo(allUserInfo)
+        setRoundCounter(round)
+      })
+
+      socket.on("gameBoardsUpdated", (updatedUserId, updatedBoard) => {
+        setUserInfo((prevUserInfo) => {
+          const updatedUserInfo = [...prevUserInfo]
+          updatedUserInfo.forEach((obj) => {
+            if (obj.userId !== socket.id && obj.userId === updatedUserId) {
+              if (isSpectating) {
+                obj.gameBoard = updatedBoard
+              } else {
+                obj.gameBoard = hideGuess(updatedBoard)
+              }
+            }
+          })
+          return updatedUserInfo
         })
-        return updatedUserInfo
       })
-    })
 
-    socket.on("pointsUpdated", (updatedUserId, updatedPoints) => {
-      setUserInfo((prevUserInfo) => {
-        const updatedUserInfo = [...prevUserInfo]
-        updatedUserInfo.forEach((obj) => {
-          if (obj.userId === updatedUserId) {
-            obj.points = updatedPoints
-          }
+      socket.on("pointsUpdated", (updatedUserId, updatedPoints) => {
+        setUserInfo((prevUserInfo) => {
+          const updatedUserInfo = [...prevUserInfo]
+          updatedUserInfo.forEach((obj) => {
+            if (obj.userId === updatedUserId) {
+              obj.points = updatedPoints
+            }
+          })
+          return updatedUserInfo
         })
-        return updatedUserInfo
       })
-    })
 
-    socket.on("streakUpdated", (updatedUserId, updatedStreak) => {
-      setUserInfo((prevUserInfo) => {
-        const updatedUserInfo = [...prevUserInfo]
-        updatedUserInfo.forEach((obj) => {
-          if (obj.userId === updatedUserId) {
-            obj.streak = updatedStreak
-          }
+      socket.on("streakUpdated", (updatedUserId, updatedStreak) => {
+        setUserInfo((prevUserInfo) => {
+          const updatedUserInfo = [...prevUserInfo]
+          updatedUserInfo.forEach((obj) => {
+            if (obj.userId === updatedUserId) {
+              obj.streak = updatedStreak
+            }
+          })
+          return updatedUserInfo
         })
-        return updatedUserInfo
       })
-    })
 
-    socket.on("firstSolve", () => {
-      showWinAnimations()
-    })
-
-    socket.on("finalUserInfo", (finalUserInfo) => {
-      const sortedUserInfo = finalUserInfo.sort((obj) => {
-        return obj.userId === socket.id ? -1 : 1
+      socket.on("firstSolve", () => {
+        showWinAnimations()
       })
-      setUserInfo(sortedUserInfo)
-      setIsGameOver(true)
-      hasOnlineGameStarted.current = false
-    })
 
+      socket.on("finalUserInfo", (finalUserInfo) => {
+        const sortedUserInfo = finalUserInfo.sort((obj) => {
+          return obj.userId === socket.id ? -1 : 1
+        })
+        setUserInfo(sortedUserInfo)
+        setIsGameOver(true)
+        setHasOnlineGameStarted(false)
+      })
+
+      return () => {
+        socket.off("gameBoardsUpdated")
+        socket.off("pointsUpdated")
+        socket.off("streakUpdated")
+        socket.off("firstSolve")
+        socket.off("finalUserInfo")
+      }
+    }
+  }, [hasOnlineGameStarted])
+
+
+  // This can't be in the main useEffect loop, as host transfer needs to happen even when hasOnlineGameStarted is false
+  useEffect(() => {
     socket.on("newHost", (newHostId) => {
       if (socket.id === newHostId) {
         setIsHost(true)
@@ -173,19 +219,13 @@ function GameContainer({
     })
 
     return () => {
-      socket.off("gameStarted")
-      socket.off("gameBoardsUpdated")
-      socket.off("pointsUpdated")
-      socket.off("streakUpdated")
-      socket.off("firstSolve")
-      socket.off("finalUserInfo")
       socket.off("newHost")
     }
-  }, [])
+  })
 
   // Display solution as an alert
   useEffect(() => {
-    if (isGameOver && !hasSolved) {
+    if (isGameOver && !hasSolved && !isSpectating) {
       displaySolution()
     }
   }, [isGameOver, hasSolved])
@@ -221,6 +261,7 @@ function GameContainer({
     setHints({ green: new Set(), yellow: new Set(), grey: new Set() })
     setShowAlertModal(false)
     setIsConfettiRunning(false)
+    setIsSpectating(false)
   }
 
   function handleLetter(e) {
@@ -483,6 +524,13 @@ function GameContainer({
     return result
   }
 
+  function hideGuess(updatedBoard) {
+    const noLettersBoard = updatedBoard.map((row) =>
+      row.map((cell) => ({ ...cell, letter: "" }))
+    )
+    return noLettersBoard
+  }
+
   function generateSolution() {
     const newSolution =
       WORDLE_ANSWERS[
@@ -558,6 +606,7 @@ function GameContainer({
         showAlertModal={showAlertModal}
         setShowAlertModal={setShowAlertModal}
         message={alertMessage}
+        isGameOver={isGameOver}
         hasSolved={hasSolved}
         isConfettiRunning={isConfettiRunning}
         inGame={true}
@@ -570,21 +619,24 @@ function GameContainer({
         username={username}
         userInfo={userInfo}
         isOutOfGuesses={isOutOfGuesses}
+        isSpectating={isSpectating}
       />
-      <Keyboard
-        handleLetter={handleLetter}
-        handleBackspace={handleBackspace}
-        handleEnter={handleEnter}
-        hints={hints}
-        isCountdownRunning={isCountdownRunning}
-        isGameOver={isGameOver}
-        hasSolved={hasSolved}
-        isOutOfGuesses={isOutOfGuesses}
-        isChallengeOn={isChallengeOn}
-        connectionMode={connectionMode}
-        isHost={isHost}
-        startNewGame={startNewGame}
-      />
+      {!isSpectating && (
+        <Keyboard
+          handleLetter={handleLetter}
+          handleBackspace={handleBackspace}
+          handleEnter={handleEnter}
+          hints={hints}
+          isCountdownRunning={isCountdownRunning}
+          isGameOver={isGameOver}
+          hasSolved={hasSolved}
+          isOutOfGuesses={isOutOfGuesses}
+          isChallengeOn={isChallengeOn}
+          connectionMode={connectionMode}
+          isHost={isHost}
+          startNewGame={startNewGame}
+        />
+      )}
     </div>
   )
 }

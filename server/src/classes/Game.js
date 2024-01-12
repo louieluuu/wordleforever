@@ -177,12 +177,25 @@ export default class Game {
     )
   }
 
-  broadcastNoLetterGameBoard(roomId, userId, io) {
+  broadcastSpectatorInfo(socket) {
+    socket.emit("spectatorInfo", this.getAllUserInfo(), this.round)
+  }
+
+  /* Commenting this out for spectators to be able to receive the full game boards, not necessarily sure how I feel about always sending this information to client and having them do the processing */
+  // broadcastNoLetterGameBoard(roomId, userId, io) {
+  //   if (roomId) {
+  //     const noLettersBoard = this.getGameBoard(userId).map((row) =>
+  //       row.map((cell) => ({ ...cell, letter: "" }))
+  //     )
+  //     io.to(roomId).emit("gameBoardsUpdated", userId, noLettersBoard)
+  //   } else {
+  //     console.error("Invalid roomId for broadcasting game board")
+  //   }
+  // }
+
+  broadcastGameBoard(roomId, userId, io) {
     if (roomId) {
-      const noLettersBoard = this.getGameBoard(userId).map((row) =>
-        row.map((cell) => ({ ...cell, letter: "" }))
-      )
-      io.to(roomId).emit("gameBoardsUpdated", userId, noLettersBoard)
+      io.to(roomId).emit("gameBoardsUpdated", userId, this.getGameBoard(userId))
     } else {
       console.error("Invalid roomId for broadcasting game board")
     }

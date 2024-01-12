@@ -21,6 +21,7 @@ function MenuRoutes({
   setConnectionMode,
   isHost,
   setIsHost,
+  setIsSpectating,
 }) {
   const roomId = useParams()["*"]
 
@@ -65,6 +66,7 @@ function MenuRoutes({
                 setIsChallengeOn={setIsChallengeOn}
                 isHost={isHost}
                 setIsHost={setIsHost}
+                setIsSpectating={setIsSpectating}
               />
             }
           />

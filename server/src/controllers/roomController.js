@@ -1,7 +1,7 @@
 // Services
 import {
   initializeRoom,
-  roomInLobby,
+  isRoomInProgress,
   isRoomFull,
   resetCountdown,
   addUserToRoom,
@@ -27,20 +27,31 @@ function createRoom(connectionMode, isChallengeOn, socket) {
   }
 }
 
+// Contains logic to join room in progress, which only applies to private games
+// Don't need extra logic for public games though because the matchmaking functions account for this
 async function joinRoom(roomId, username, io, socket) {
   try {
-    if (roomInLobby(roomId) && !isRoomFull(roomId)) {
+    if (!isRoomFull(roomId)) {
       console.log(`${socket.id} joining room: ${roomId}`)
       socket.join(roomId)
       socket.roomId = roomId
       await addUserToRoom(socket.id, roomId)
       await setUsername(socket.id, username)
       await broadcastUserInfo(roomId, io)
-      socket.emit(
-        "roomJoined",
-        getRoomConnectionMode(roomId),
-        isRoomChallengeMode(roomId)
-      )
+      if (!isRoomInProgress(roomId)) {
+        socket.emit(
+          "roomJoined",
+          getRoomConnectionMode(roomId),
+          isRoomChallengeMode(roomId)
+        )
+      } else {
+        socket.emit(
+          "roomJoinedInProgress",
+          getRoomConnectionMode(roomId),
+          isRoomChallengeMode(roomId)
+        )
+      }
+
     } else {
       console.log(`${socket.id} failed to join room: ${roomId}`)
       socket.emit("failedToJoinRoom")

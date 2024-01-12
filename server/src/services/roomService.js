@@ -101,6 +101,21 @@ function roomInLobby(roomId) {
   return false
 }
 
+function isRoomInProgress(roomId) {
+  const room = Rooms.get(roomId)
+  if (room && room instanceof Room) {
+    return room.inProgress
+  }
+  return false
+}
+
+function setRoomInProgress(roomId) {
+  const room = Rooms.get(roomId)
+  if (room && room instanceof Room) {
+    room.inProgress = true
+  }
+}
+
 function isRoomFull(roomId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
@@ -195,6 +210,8 @@ export {
   setRoomInGame,
   setRoomOutOfGame,
   roomInLobby,
+  isRoomInProgress,
+  setRoomInProgress,
   isRoomFull,
   hasCountdownStarted,
   setCountdownStarted,

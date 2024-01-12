@@ -4,6 +4,7 @@ function AlertModal({
   showAlertModal,
   setShowAlertModal,
   message,
+  isGameOver,
   hasSolved,
   isConfettiRunning,
   inGame,
@@ -15,7 +16,7 @@ function AlertModal({
       // Most of these alerts are temporary (1.5s). The exceptions are:
       // - didn't solve (infinite time)
       // - win (8000ms, which just happens to be when the confetti disappears)
-      if (inGame && !hasSolved) {
+      if (inGame && isGameOver && !hasSolved) {
         return
       }
 

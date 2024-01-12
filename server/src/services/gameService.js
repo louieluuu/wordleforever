@@ -6,6 +6,7 @@ import {
   isRoomChallengeMode,
   getUsersInRoom,
   getRoomConnectionMode,
+  setRoomInProgress,
   setRoomInGame,
   setRoomOutOfGame,
   roomInLobby,
@@ -49,6 +50,7 @@ function deleteGame(roomId) {
 async function handleGameStart(roomId, io) {
   try {
     if (roomId && roomInLobby(roomId)) {
+      setRoomInProgress(roomId)
       setRoomInGame(roomId)
       await initializeGameInfo(roomId)
       const game = Games.get(roomId)
@@ -63,11 +65,18 @@ async function handleGameStart(roomId, io) {
   }
 }
 
+function handleGameJoinedInProgress(roomId, socket) {
+  const game = Games.get(roomId)
+  if (game && game instanceof Game) {
+    game.broadcastSpectatorInfo(socket)
+  }
+}
+
 function handleWrongGuess(roomId, userId, updatedGameBoard, io) {
   const game = Games.get(roomId)
   if (game && game instanceof Game) {
     game.setGameBoard(userId, updatedGameBoard)
-    game.broadcastNoLetterGameBoard(roomId, userId, io)
+    game.broadcastGameBoard(roomId, userId, io)
   }
 }
 
@@ -96,7 +105,7 @@ async function handleCorrectGuess(
       if (isGameOver(roomId, io)) {
         game.broadcastFinalUserInfo(roomId, io)
       } else {
-        game.broadcastNoLetterGameBoard(roomId, userId, io)
+        game.broadcastGameBoard(roomId, userId, io)
       }
     }
   } catch (error) {
@@ -143,4 +152,5 @@ export {
   handleWrongGuess,
   handleCorrectGuess,
   handleOutOfGuesses,
+  handleGameJoinedInProgress,
 }

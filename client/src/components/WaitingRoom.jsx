@@ -14,6 +14,7 @@ function WaitingRoom({
   setIsChallengeOn,
   isHost,
   setIsHost,
+  setIsSpectating,
 }) {
   const navigate = useNavigate()
   const { roomId } = useParams()
@@ -42,6 +43,13 @@ function WaitingRoom({
     socket.on("roomJoined", (roomConnectionMode, isChallengeOn) => {
       setConnectionMode(roomConnectionMode)
       setIsChallengeOn(isChallengeOn)
+    })
+
+    socket.on("roomJoinedInProgress", (roomConnectionMode, isChallengeOn) => {
+      setConnectionMode(roomConnectionMode)
+      setIsChallengeOn(isChallengeOn)
+      setIsSpectating(true)
+      navigate(`/game/${roomId}`)
     })
 
     socket.on("failedToJoinRoom", () => {

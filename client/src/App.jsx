@@ -18,6 +18,7 @@ function App() {
     localStorage.getItem("username") || "Wordler"
   )
   const [isHost, setIsHost] = useState(false)
+  const [isSpectating, setIsSpectating] = useState(false)
   const [inputWidth, setInputWidth] = useState(0)
 
   return (
@@ -39,6 +40,7 @@ function App() {
                 setConnectionMode={setConnectionMode}
                 isHost={isHost}
                 setIsHost={setIsHost}
+                setIsSpectating={setIsSpectating}
               />
             }
           />
@@ -52,6 +54,8 @@ function App() {
                 connectionMode={connectionMode}
                 isHost={isHost}
                 setIsHost={setIsHost}
+                isSpectating={isSpectating}
+                setIsSpectating={setIsSpectating}
               />
             }
           />

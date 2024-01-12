@@ -25,6 +25,7 @@ import {
   handleWrongGuess,
   handleCorrectGuess,
   handleOutOfGuesses,
+  handleGameJoinedInProgress,
 } from "./services/gameService.js"
 
 const app = express()
@@ -86,6 +87,7 @@ io.on("connection", (socket) => {
   socket.on("outOfGuesses", (roomId) =>
     handleOutOfGuesses(roomId, socket.id, io)
   )
+  socket.on("gameJoinedInProgress", (roomId) => handleGameJoinedInProgress(roomId, socket))
 
   // User disconnect and cleanup
   socket.on("disconnecting", async () => await handleUserDisconnect(socket, io))
