@@ -1,8 +1,7 @@
 import React, { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { MdOutlineBackspace } from "react-icons/md"
-import { AiOutlineEnter } from "react-icons/ai"
+import { IoBackspaceOutline } from "react-icons/io5"
 import { IoReturnDownBackSharp } from "react-icons/io5"
 
 // Helpers
@@ -133,10 +132,12 @@ function Keyboard({
         ))}
       </div>
       <div className="keyboard__row">
-        <AiOutlineEnter
-          className="keyboard__cell"
+        <div
+          className="keyboard__cell--large"
           onClick={() => handleKeyPress("Enter")}
-        />
+        >
+          ENTER
+        </div>
         {botRow.map((letter, index) => (
           <button
             key={index}
@@ -146,10 +147,13 @@ function Keyboard({
             {letter}
           </button>
         ))}
-        <MdOutlineBackspace
-          className="keyboard__cell"
-          onClick={() => handleKeyPress("Backspace")}
-        />
+        <div
+          className="keyboard__cell--large--icon"
+          key="Backspace"
+          onClick={() => handleKeyboardInput("Backspace")}
+        >
+          <IoBackspaceOutline />
+        </div>
       </div>
       {isGameOver && (
         <>
