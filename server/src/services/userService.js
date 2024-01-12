@@ -13,6 +13,8 @@ import {
   deleteRoom,
   removeUserFromRoom,
   isRoomEmpty,
+  isUserHostInRoom,
+  generateNewHostInRoom,
 } from "./roomService.js"
 
 async function initializeUserInfo(userId) {
@@ -135,6 +137,11 @@ async function handleLeaveRoom(socket, io) {
     removeUserFromRoom(socket.id, roomId)
     if (isRoomEmpty(roomId)) {
       deleteRoom(roomId)
+    } else {
+      if (isUserHostInRoom(roomId, socket.id)) {
+        const newHostId = generateNewHostInRoom(roomId)
+        io.to(roomId).emit("newHost", newHostId)
+      }
     }
   }
   broadcastUserInfo(roomId, io)

@@ -11,13 +11,13 @@ const Rooms = new Map()
 
 const MAX_ROOM_SIZE = 4
 
-function initializeRoom(connectionMode, isChallengeOn) {
+function initializeRoom(connectionMode, isChallengeOn, userId) {
   let roomId = uuidv4()
   // Non-colliding rooms
   while (Rooms.has(roomId)) {
     roomId = uuidv4()
   }
-  const room = new Room(connectionMode, isChallengeOn)
+  const room = new Room(connectionMode, isChallengeOn, userId)
   Rooms.set(roomId, room)
   return roomId
 }
@@ -50,6 +50,25 @@ function isRoomChallengeMode(roomId) {
     return room.isChallengeOn
   }
   return false
+}
+
+function isUserHostInRoom(roomId, userId) {
+  const room = Rooms.get(roomId)
+  if (room && room instanceof Room) {
+    if (userId === room.hostUserId) {
+      return true
+    }
+  }
+  return false
+}
+
+function generateNewHostInRoom(roomId) {
+  const room = Rooms.get(roomId)
+  if (room && room instanceof Room && room.users.length > 0) {
+    room.hostUserId = room.users[0]
+    return room.hostUserId
+  }
+  return null
 }
 
 function isRoomEmpty(roomId) {
@@ -170,6 +189,8 @@ export {
   deleteRoom,
   getRoomConnectionMode,
   isRoomChallengeMode,
+  isUserHostInRoom,
+  generateNewHostInRoom,
   isRoomEmpty,
   setRoomInGame,
   setRoomOutOfGame,

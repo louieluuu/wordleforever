@@ -64,6 +64,7 @@ function MenuRoutes({
                 setConnectionMode={setConnectionMode}
                 setIsChallengeOn={setIsChallengeOn}
                 isHost={isHost}
+                setIsHost={setIsHost}
               />
             }
           />

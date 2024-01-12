@@ -13,6 +13,7 @@ function WaitingRoom({
   setConnectionMode,
   setIsChallengeOn,
   isHost,
+  setIsHost,
 }) {
   const navigate = useNavigate()
   const { roomId } = useParams()
@@ -53,6 +54,12 @@ function WaitingRoom({
 
     socket.on("userInfoUpdated", (updatedUserInfo) => {
       setUserInfo(updatedUserInfo)
+    })
+
+    socket.on("newHost", (newHostId) => {
+      if (socket.id === newHostId) {
+        setIsHost(true)
+      }
     })
 
     socket.on("countdownStarted", () => {

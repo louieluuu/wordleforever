@@ -18,7 +18,7 @@ const PUBLIC_ROOM_COUNTDOWN_TIMER = 6
 
 function createRoom(connectionMode, isChallengeOn, socket) {
   try {
-    const roomId = initializeRoom(connectionMode, isChallengeOn)
+    const roomId = initializeRoom(connectionMode, isChallengeOn, socket.id)
     console.log(`Creating room: ${roomId}`)
     socket.emit("roomCreated", roomId)
   } catch (error) {
