@@ -45,7 +45,6 @@ function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
   const { roomId } = useParams()
   const [userInfo, setUserInfo] = useState([])
   const [challengeModeGuess, setChallengeModeGuess] = useState(null)
-  const [solutionNotFound, setSolutionNotFound] = useState(false)
   const [isCountdownRunning, setIsCountdownRunning] = useState(false)
   const [roundCounter, setRoundCounter] = useState(0)
   const hasOnlineGameStarted = useRef(false)
@@ -143,10 +142,6 @@ function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
       showWinAnimations()
     })
 
-    socket.on("solutionNotFound", () => {
-      setSolutionNotFound(true)
-    })
-
     socket.on("finalUserInfo", (finalUserInfo) => {
       const sortedUserInfo = finalUserInfo.sort((obj) => {
         return obj.userId === socket.id ? -1 : 1
@@ -162,17 +157,16 @@ function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
       socket.off("pointsUpdated")
       socket.off("streakUpdated")
       socket.off("firstSolve")
-      socket.off("solutionNotFound")
       socket.off("finalUserInfo")
     }
   }, [])
 
-  // Display the solution in online game modes if nobody solves (otherwise you can just see the solution on someone else's board)
+  // Display solution as an alert
   useEffect(() => {
-    if (solutionNotFound) {
+    if (isGameOver && !hasSolved) {
       displaySolution()
     }
-  }, [solutionNotFound])
+  }, [isGameOver, hasSolved])
 
   // Helper functions
 
@@ -337,11 +331,9 @@ function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
         setIsOutOfGuesses(true)
         if (connectionMode === "offline") {
           setIsGameOver(true)
-          displaySolution()
         } else if (connectionMode === "online-public") {
           socket.emit("outOfGuesses", roomId)
           setIsGameOver(true)
-          displaySolution()
         } else if (connectionMode === "online-private") {
           socket.emit("outOfGuesses", roomId)
         }
@@ -534,7 +526,7 @@ function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
         showAlertModal={showAlertModal}
         setShowAlertModal={setShowAlertModal}
         message={alertMessage}
-        isOutOfGuesses={isOutOfGuesses}
+        hasSolved={hasSolved}
         isConfettiRunning={isConfettiRunning}
         inGame={true}
       />

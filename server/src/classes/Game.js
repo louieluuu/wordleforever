@@ -211,12 +211,4 @@ export default class Game {
       console.error("Invalid roomId for broadcasting final user info")
     }
   }
-
-  solutionNotFound(roomId, io) {
-    if (roomId) {
-      io.to(roomId).emit("solutionNotFound")
-    } else {
-      console.error("Invalid roomId for broadcasting solution not found")
-    }
-  }
 }

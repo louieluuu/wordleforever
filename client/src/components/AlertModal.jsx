@@ -4,7 +4,7 @@ function AlertModal({
   showAlertModal,
   setShowAlertModal,
   message,
-  isOutOfGuesses,
+  hasSolved,
   isConfettiRunning,
   inGame,
 }) {
@@ -13,9 +13,9 @@ function AlertModal({
   useEffect(() => {
     if (showAlertModal) {
       // Most of these alerts are temporary (1.5s). The exceptions are:
-      // - out of guesses (infinite time)
+      // - didn't solve (infinite time)
       // - win (8000ms, which just happens to be when the confetti disappears)
-      if (isOutOfGuesses) {
+      if (!hasSolved) {
         return
       }
 

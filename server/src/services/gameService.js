@@ -46,7 +46,6 @@ function deleteGame(roomId) {
   }
 }
 
-// check if the lock is needed
 async function handleGameStart(roomId, io) {
   try {
     if (roomId && roomInLobby(roomId)) {
@@ -60,7 +59,7 @@ async function handleGameStart(roomId, io) {
       console.error("Invalid roomId for starting game")
     }
   } catch (error) {
-    console.error("Error acquiring lock:", error)
+    console.error("Error starting game:", error)
   }
 }
 
@@ -124,10 +123,6 @@ async function handleOutOfGuesses(roomId, userId, io) {
 function isGameOver(roomId, io) {
   const game = Games.get(roomId)
   if (game && game instanceof Game) {
-    if (game.countOutOfGuesses >= game.roomSize()) {
-      game.solutionNotFound(roomId, io)
-      return true
-    }
     if (getRoomConnectionMode(roomId) === "online-private") {
       if (game.countSolved + game.countOutOfGuesses >= game.roomSize()) {
         setRoomOutOfGame(roomId)
