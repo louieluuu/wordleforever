@@ -240,9 +240,9 @@ function WaitingRoom({
                 </button>
               </div>
             ) : (
-              <div className="non-host-waiting-message">
-                {nonHostMessage}
-              </div>
+              !showLobbyCountdownModal && (
+                <div className="non-host-waiting-message">{nonHostMessage}</div>
+              )
             )}
           </>
         )}
