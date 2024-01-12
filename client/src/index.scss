@@ -336,6 +336,7 @@ $cell-padding: 0.5rem;
   &__btn--new-game {
     @extend .menu__btn--start-game;
     position: absolute;
+    bottom: 5%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 9;
@@ -671,7 +672,7 @@ $cell-padding: 0.5rem;
 
   &__lobby {
     @extend .alert-modal;
-    top: 25vh;
+    top: 50vh;
   }
 }
 
