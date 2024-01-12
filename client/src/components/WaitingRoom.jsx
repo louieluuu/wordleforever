@@ -22,7 +22,8 @@ function WaitingRoom({
   const [showLobbyCountdownModal, setShowLobbyCountdownModal] = useState(false)
   const [joinRoom, setJoinRoom] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
-  const [trailingPeriods, setTrailingPeriods] = useState(0)
+  const [nonHostMessage, setNonHostMessage] = useState("")
+  const [messageIndex, setMessageIndex] = useState(0)
 
   const [alertMessage, setAlertMessage] = useState("")
   const [showAlertModal, setShowAlertModal] = useState(false)
@@ -126,11 +127,22 @@ function WaitingRoom({
   // Cycle through trailing periods
   useEffect(() => {
     const cycle = setInterval(() => {
-      setTrailingPeriods((prevNumPeriods) => (prevNumPeriods + 1) % 4)
+      setMessageIndex((prevMessageIndex) => (prevMessageIndex + 1) % 4)
     }, 1000)
 
     return () => clearInterval(cycle)
   }, [])
+
+  useEffect(() => {
+    setNonHostMessage(NON_HOST_MESSAGES[messageIndex])
+  }, [messageIndex])
+
+  const NON_HOST_MESSAGES = [
+    "Waiting for host   ",
+    "Waiting for host.  ",
+    "Waiting for host.. ",
+    "Waiting for host...",
+  ]
 
   function startCountdown() {
     if (userInfo.length < 2) {
@@ -228,9 +240,8 @@ function WaitingRoom({
                 </button>
               </div>
             ) : (
-              // I'd like the "Waiting for host" part to stay aligned in the center, not sure how
               <div className="non-host-waiting-message">
-                Waiting for host{Array(trailingPeriods).fill(".").join("")}
+                {nonHostMessage}
               </div>
             )}
           </>
