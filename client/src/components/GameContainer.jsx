@@ -14,7 +14,13 @@ import VALID_WORDS from "../data/validWords"
 import WORDLE_ANSWERS from "../data/wordleAnswers"
 import WIN_MESSAGES from "../data/winMessages"
 
-function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
+function GameContainer({
+  username,
+  isChallengeOn,
+  connectionMode,
+  isHost,
+  setIsHost,
+}) {
   // Gameflow states
   const [hasSolved, setHasSolved] = useState(false)
   const [isOutOfGuesses, setIsOutOfGuesses] = useState(false)
@@ -160,6 +166,12 @@ function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
       hasOnlineGameStarted.current = false
     })
 
+    socket.on("newHost", (newHostId) => {
+      if (socket.id === newHostId) {
+        setIsHost(true)
+      }
+    })
+
     return () => {
       socket.off("gameStarted")
       socket.off("gameBoardsUpdated")
@@ -167,6 +179,7 @@ function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
       socket.off("streakUpdated")
       socket.off("firstSolve")
       socket.off("finalUserInfo")
+      socket.off("newHost")
     }
   }, [])
 

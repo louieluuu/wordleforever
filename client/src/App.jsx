@@ -51,6 +51,7 @@ function App() {
                 isChallengeOn={isChallengeOn}
                 connectionMode={connectionMode}
                 isHost={isHost}
+                setIsHost={setIsHost}
               />
             }
           />
@@ -62,6 +63,7 @@ function App() {
                 isChallengeOn={isChallengeOn}
                 connectionMode={connectionMode}
                 isHost={isHost}
+                setIsHost={setIsHost}
               />
             }
           />
