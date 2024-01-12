@@ -56,20 +56,29 @@ function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
     startNewGame()
   }, [])
 
-  // Some race condition happening here where the first run is happening before solution gets updated
+  // Generate and set challenge mode guess in offline mode
   useEffect(() => {
     if (connectionMode === "offline" && isChallengeOn && solution !== "") {
       generateRandomFirstGuess(solution)
-    } else if (
+    }
+  }, [solution])
+
+  // Set the challenge mode guess in online mode (only colorize after the countdown is finished)
+  useEffect(() => {
+    if (
       typeof connectionMode === "string" &&
       connectionMode.includes("online") &&
       isChallengeOn &&
       solution !== "" &&
       challengeModeGuess !== null
     ) {
-      setUserGuess(challengeModeGuess)
+      if (isCountdownRunning) {
+        displayGuess(challengeModeGuess)
+      } else {
+        setUserGuess(challengeModeGuess)
+      }
     }
-  }, [solution])
+  }, [isCountdownRunning, solution])
 
   // Confetti timer
   useEffect(() => {
@@ -289,6 +298,16 @@ function GameContainer({ username, isChallengeOn, connectionMode, isHost }) {
     }
 
     return true
+  }
+
+  function displayGuess(guess) {
+    let uncolorizedGuess = new Array(5).fill({ letter: "", color: "" })
+    for (let i = 0; i < guess.length; i++) {
+      uncolorizedGuess[i] = { letter: guess[i] }
+    }
+    const updatedBoard = board.map((row) => [...row])
+    updatedBoard[activeRowIndex] = uncolorizedGuess
+    setBoard(updatedBoard)
   }
 
   function setUserGuess(guess) {
