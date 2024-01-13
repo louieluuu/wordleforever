@@ -1,5 +1,13 @@
+// Current progress
+// Design has been focused for desktop users (not completely finished though)
+// Will be working on both base phone design alongside finishing desktop design, and desktop design will temporary encompass all other designs (large phones, tablets, laptops)
+
 @import "variables";
-@import "./responsive/desktop";
+
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
 
 body {
   margin: 0;
@@ -15,3 +23,45 @@ a {
 :root {
   font-family: "Roboto", sans-serif;
 }
+
+// Temporary breakpoints
+
+@media only screen and (max-width: $breakpoint-sm) {
+  // TODO
+}
+
+@media only screen and (min-width: $breakpoint-sm) {
+  @import "./responsive/desktop";
+}
+
+// This is what I want the eventual breakpoints to look like, will be extended as each responsive design is done, until then thresholds will be merged
+
+// // Design for most phones (priority: 1)
+// @media only screen and (max-width: $breakpoint-sm) {
+//   // This will be changed when done
+//   //@import "./responsive/desktop";
+// }
+
+// // Design for large phones - uncommon (priority: 5)
+// @media only screen and (min-width: $breakpoint-sm) and (max-width: $breakpoint-md) {
+//   // This will be changed when done
+//   //@import "./responsive/desktop";
+// }
+
+// // Design for tablets - (priority: 3)
+// @media only screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg) {
+//   // This will be changed when done
+//   //@import "./responsive/desktop";
+// }
+
+// // Design for laptops - (priority: 4)
+// @media only screen and (min-width: $breakpoint-lg) and (max-width: $breakpoint-xl) {
+//   // This will be changed when done
+//   //@import "./responsive/desktop";
+// }
+
+// // Design for desktops - (priority: 2)
+// @media only screen and (min-width: $breakpoint-xl) {
+//   // This will be changed when done
+//   @import "./responsive/desktop";
+// }
