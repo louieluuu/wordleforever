@@ -1,2 +1,17 @@
 @import "variables";
 @import "./responsive/desktop";
+
+body {
+  margin: 0;
+  background-color: $bg-main;
+  color: $color;
+}
+
+a {
+  color: hsl(197, 100%, 40%);
+  text-decoration: none;
+}
+
+:root {
+  font-family: "Roboto", sans-serif;
+}

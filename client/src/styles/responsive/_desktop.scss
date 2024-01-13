@@ -7,22 +7,6 @@
 @import "./desktop_components/alert-modal";
 @import "./desktop_components/streak";
 
-// Overwrite default values, allows navbar to be flush with page
-body {
-  margin: 0;
-  background-color: $bg-main;
-  color: $color;
-}
-
-a {
-  color: hsl(197, 100%, 40%);
-  text-decoration: none;
-}
-
-:root {
-  font-family: "Roboto", sans-serif;
-}
-
 #root {
   height: 100%;
   display: flex;
