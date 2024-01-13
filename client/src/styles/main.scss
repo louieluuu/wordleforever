@@ -34,7 +34,7 @@ html[data-theme="light"] {
   --username: hsl(278, 37%, 69%);
   --username-hover: brightness(110%);
   --header-hover: 65%;
-  --waiting-room-background: url(./assets/waiting_room.jpg);
+  --waiting-room-background: url(../assets/waiting_room.jpg);
   --waiting-room-vertical: 10%;
 }
 
@@ -74,7 +74,7 @@ html[data-theme="dark"] {
   --username: hsl(40, 78%, 53%);
   --username-hover: brightness(112%);
   --header-hover: 85%;
-  --waiting-room-background: url(./assets/waiting_room_dark.jpg);
+  --waiting-room-background: url(../assets/waiting_room_dark.jpg);
   --waiting-room-vertical: 30%;
 }
 
