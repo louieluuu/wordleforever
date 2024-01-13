@@ -137,7 +137,6 @@ function GameContainer({
     }
   }, [])
 
-
   // Main useEffect loop for online game logic
   useEffect(() => {
     if (hasOnlineGameStarted) {
@@ -208,7 +207,6 @@ function GameContainer({
       }
     }
   }, [hasOnlineGameStarted])
-
 
   // This can't be in the main useEffect loop, as host transfer needs to happen even when hasOnlineGameStarted is false
   useEffect(() => {
