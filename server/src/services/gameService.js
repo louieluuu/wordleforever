@@ -133,12 +133,15 @@ function isGameOver(roomId) {
   const game = Games.get(roomId)
   if (game && game instanceof Game) {
     if (getRoomConnectionMode(roomId) === "online-private") {
-      if (game.countSolved + game.countOutOfGuesses >= game.roomSize()) {
+      if (game.countSolved + game.countOutOfGuesses >= game.getRoomSize()) {
         setRoomOutOfGame(roomId)
         return true
       }
     } else if (getRoomConnectionMode(roomId) === "online-public") {
-      if (game.countSolved > 0 || game.countOutOfGuesses >= game.roomSize()) {
+      if (
+        game.countSolved > 0 ||
+        game.countOutOfGuesses >= game.getRoomSize()
+      ) {
         return true
       }
     }

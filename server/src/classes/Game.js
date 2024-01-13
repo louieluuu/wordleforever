@@ -51,7 +51,7 @@ export default class Game {
     return allUserInfoMap
   }
 
-  roomSize() {
+  getRoomSize() {
     return this.allUserInfo.size
   }
 
@@ -89,7 +89,7 @@ export default class Game {
   updatePoints(userId) {
     const userInfo = this.allUserInfo.get(userId)
     if (userInfo) {
-      const newPoints = this.roomSize() - this.countSolved
+      const newPoints = this.getRoomSize() - this.countSolved
       userInfo.points += newPoints
     }
   }
