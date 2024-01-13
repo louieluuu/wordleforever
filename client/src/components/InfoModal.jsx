@@ -10,8 +10,8 @@ function InfoModal({ show, handleClose }) {
   return (
     <div className={show ? "modal display" : "modal hide"}>
       <div className="info">
-        <div className="info__close">
-          <IoCloseSharp onClick={handleInfoModalClose} />
+        <div className="info__close" onClick={handleInfoModalClose}>
+          <IoCloseSharp />
         </div>
         <h1 style={{ marginBottom: 0, fontFamily: "Merriweather" }}>
           How To Play
