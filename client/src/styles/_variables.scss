@@ -1,0 +1,120 @@
+html,
+html[data-theme="light"] {
+  --bg-main: hsl(0, 0%, 100%);
+  --color: hsl(240, 3%, 7%);
+  --color-secondary: hsl(240, 3%, 37%);
+
+  --correct: hsl(115, 29%, 53%);
+  --wrong-position: hsl(49, 51%, 57%);
+  --wrong: hsl(200, 2%, 48%);
+  --key: hsl(0, 0%, 85%);
+  --active: hsl(0, 0%, 55%);
+  --border: hsl(0, 0%, 80%);
+
+  --correct-hover: hsl(115, 29%, 63%);
+  --wrong-position-hover: hsl(49, 51%, 67%);
+  --wrong-hover: hsl(200, 2%, 58%);
+  --key-hover: hsl(0, 0%, 80%);
+
+  --btn-online: hsl(93, 77%, 38%);
+  --btn-offline: hsl(197, 89%, 26%);
+  --btn-game: hsl(0, 52%, 48%);
+  --btn-copy: hsl(0, 0%, 90%);
+  --btn-neutral: hsl(0, 0%, 95%);
+
+  --btn-copy-border: hsl(0, 0%, 77%);
+
+  --btn-online-hover: hsl(93, 77%, 48%);
+  --btn-offline-hover: hsl(197, 89%, 36%);
+  --btn-game-hover: hsl(0, 52%, 58%);
+  --btn-copy-hover: hsl(0, 0%, 95%);
+  --btn-neutral-hover: hsl(0, 0%, 90%);
+
+  --challenge: hsl(12, 90%, 35%);
+  --username: hsl(278, 37%, 69%);
+  --username-hover: brightness(110%);
+  --header-hover: 65%;
+  --waiting-room-background: url(../assets/waiting_room.jpg);
+  --waiting-room-vertical: 10%;
+}
+
+html,
+html[data-theme="dark"] {
+  --bg-main: hsl(240, 3%, 7%);
+  --color: hsl(0, 0%, 95%);
+  --color-secondary: hsl(0, 0%, 85%);
+
+  --correct: hsl(115, 29%, 43%);
+  --wrong-position: hsl(49, 51%, 47%);
+  --wrong: hsl(240, 5%, 25%);
+  --key: hsl(200, 1%, 51%);
+  --active: hsl(0, 0%, 35%);
+  --border: hsl(0, 0%, 20%);
+
+  --correct-hover: hsl(115, 29%, 53%);
+  --wrong-position-hover: hsl(49, 51%, 57%);
+  --wrong-hover: hsl(240, 5%, 35%);
+  --key-hover: hsl(0, 0%, 60%);
+
+  --btn-online: hsl(93, 77%, 30%);
+  --btn-offline: hsl(197, 89%, 18%);
+  --btn-game: hsl(0, 52%, 40%);
+  --btn-copy: hsl(0, 0%, 20%);
+  --btn-neutral: hsl(0, 0%, 85%);
+
+  --btn-copy-border: hsl(0, 0%, 23%);
+
+  --btn-online-hover: hsl(93, 77%, 40%);
+  --btn-offline-hover: hsl(197, 89%, 28%);
+  --btn-game-hover: hsl(0, 52%, 53%);
+  --btn-copy-hover: hsl(0, 0%, 30%);
+  --btn-neutral-hover: hsl(0, 0%, 90%);
+
+  --challenge: hsl(12, 90%, 40%);
+  --username: hsl(40, 78%, 53%);
+  --username-hover: brightness(112%);
+  --header-hover: 85%;
+  --waiting-room-background: url(../assets/waiting_room_dark.jpg);
+  --waiting-room-vertical: 30%;
+}
+
+// Main colors
+$bg-main: var(--bg-main);
+$color: var(--color);
+$color-secondary: var(--color-secondary);
+
+// Game colors
+$correct: var(--correct);
+$wrong-position: var(--wrong-position);
+$wrong: var(--wrong);
+$active: var(--active);
+$key: var(--key);
+$border: var(--border);
+
+$correct-hover: var(--correct-hover);
+$wrong-position-hover: var(--wrong-position-hover);
+$wrong-hover: var(--wrong-hover);
+$key-hover: var(--key-hover);
+
+// Button colors
+$btn-online: var(--btn-online);
+$btn-offline: var(--btn-offline);
+$btn-game: var(--btn-game);
+$btn-copy: var(--btn-copy);
+$btn-neutral: var(--btn-neutral);
+
+$btn-copy-border: var(--btn-copy-border);
+
+$btn-online-hover: var(--btn-online-hover);
+$btn-offline-hover: var(--btn-offline-hover);
+$btn-game-hover: var(--btn-game-hover);
+$btn-copy-hover: var(--btn-copy-hover);
+$btn-neutral-hover: var(--btn-neutral-hover);
+
+// Miscellaneous
+$challenge: var(--challenge);
+$username: var(--username);
+$username-hover: var(--username-hover);
+$header-hover: var(--header-hover);
+$waiting-room-background: var(--waiting-room-background);
+$waiting-room-vertical: var(--waiting-room-vertical);
