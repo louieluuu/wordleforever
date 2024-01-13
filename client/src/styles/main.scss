@@ -27,7 +27,7 @@ a {
 // Temporary breakpoints
 
 @media only screen and (max-width: $breakpoint-sm) {
-  // TODO
+  // @import "./responsive/phone";
 }
 
 @media only screen and (min-width: $breakpoint-sm) {
@@ -38,30 +38,25 @@ a {
 
 // // Design for most phones (priority: 1)
 // @media only screen and (max-width: $breakpoint-sm) {
-//   // This will be changed when done
-//   //@import "./responsive/desktop";
+//   //@import "./responsive/phone";
 // }
 
 // // Design for large phones - uncommon (priority: 5)
 // @media only screen and (min-width: $breakpoint-sm) and (max-width: $breakpoint-md) {
-//   // This will be changed when done
-//   //@import "./responsive/desktop";
+//   //@import "./responsive/lg-phone";
 // }
 
 // // Design for tablets - (priority: 3)
 // @media only screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg) {
-//   // This will be changed when done
-//   //@import "./responsive/desktop";
+//   //@import "./responsive/tablet";
 // }
 
 // // Design for laptops - (priority: 4)
 // @media only screen and (min-width: $breakpoint-lg) and (max-width: $breakpoint-xl) {
-//   // This will be changed when done
-//   //@import "./responsive/desktop";
+//   //@import "./responsive/laptop";
 // }
 
 // // Design for desktops - (priority: 2)
 // @media only screen and (min-width: $breakpoint-xl) {
-//   // This will be changed when done
 //   @import "./responsive/desktop";
 // }
