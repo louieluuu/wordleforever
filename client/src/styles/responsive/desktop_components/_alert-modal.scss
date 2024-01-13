@@ -1,0 +1,31 @@
+.alert-modal {
+  position: fixed;
+
+  z-index: 1;
+  padding-inline: 1rem;
+  padding-block: 0.6rem;
+  background-color: hsl(0, 0%, 10%, 90%);
+
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+
+  opacity: 1;
+
+  &.hide {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+  }
+
+  &__game {
+    @extend .alert-modal;
+    top: 8vh;
+  }
+
+  &__lobby {
+    @extend .alert-modal;
+    top: 50vh;
+  }
+}

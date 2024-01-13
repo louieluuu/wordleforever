@@ -1,0 +1,104 @@
+$cell-size: 2rem;
+$cell-padding: 0.5rem;
+
+.game-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.boards-container {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+}
+
+.game-board {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  &--game-over {
+    @extend .game-board;
+    opacity: 60%;
+  }
+
+  &__row {
+    @extend .game-board;
+    flex-direction: row;
+  }
+
+  &__cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: $cell-size;
+    height: $cell-size;
+    font-size: $cell-size;
+    font-weight: bold;
+    border: 2px solid $border;
+    padding: $cell-padding;
+
+    &--green {
+      @extend .game-board__cell;
+      color: white;
+      border-color: $correct;
+      background-color: $correct;
+    }
+
+    &--yellow {
+      @extend .game-board__cell;
+      color: white;
+      border-color: $wrong-position;
+      background-color: $wrong-position;
+    }
+
+    &--grey {
+      @extend .game-board__cell;
+      color: white;
+      border-color: $wrong;
+      background-color: $wrong;
+    }
+
+    &--active {
+      @extend .game-board__cell;
+      color: $color;
+      border-color: $active;
+    }
+  }
+}
+
+.game-board-info {
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.countdown-timer {
+  position: absolute;
+  top: 10vh;
+  z-index: 1;
+  font-size: 1.2rem;
+}
+
+.round-counter {
+  position: absolute;
+  top: -0.5rem;
+  right: 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.spectator-message {
+  font-family: "Roboto Slab";
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.hidden-periods {
+  visibility: hidden;
+}

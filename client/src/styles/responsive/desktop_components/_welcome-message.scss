@@ -1,0 +1,47 @@
+.welcome-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Calistoga";
+  font-size: 3.5rem;
+  line-height: 0.8;
+  margin-block: 2rem;
+}
+
+.username-line {
+  display: flex;
+  flex-direction: row;
+  line-height: 1.28;
+}
+
+.username-form {
+  display: flex;
+  color: $username;
+  background-color: transparent;
+  text-align: center;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: "Lobster";
+  font-size: 3.5rem;
+  text-decoration: underline dotted;
+  text-underline-offset: 0.5rem;
+
+  &:hover {
+    filter: $username-hover;
+  }
+
+  &__pencil {
+    font-size: 2rem;
+    stroke-width: 0.11rem;
+    cursor: pointer;
+  }
+}
+
+.hidden-span {
+  position: absolute;
+  visibility: hidden;
+  white-space: nowrap;
+  font-family: "Lobster";
+  font-size: 3.5rem;
+}

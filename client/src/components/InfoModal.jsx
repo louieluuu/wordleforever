@@ -8,9 +8,9 @@ function InfoModal({ show, handleClose }) {
   }
 
   return (
-    <div className={show ? "modal display" : "modal hide"}>
-      <div className="info">
-        <div className="info__close" onClick={handleInfoModalClose}>
+    <div className={show ? "info-modal display" : "info-modal hide"}>
+      <div className="info-content">
+        <div className="info-content__close" onClick={handleInfoModalClose}>
           <IoCloseSharp />
         </div>
         <h1 style={{ marginBottom: 0, fontFamily: "Merriweather" }}>

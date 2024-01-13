@@ -1,0 +1,157 @@
+.menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+
+  &__btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+
+    width: 15rem;
+    height: 5rem;
+
+    font-weight: 300;
+    font-family: "Oswald", sans-serif;
+    font-size: 1.5rem;
+
+    color: white;
+    border-radius: 2rem;
+    cursor: pointer;
+
+    &:active {
+      width: 17.5rem;
+      transition-timing-function: ease-out;
+    }
+
+    &:hover {
+      transition-duration: 0.1s;
+      transition-timing-function: ease-in;
+    }
+  }
+
+  &__btn--online {
+    @extend .menu__btn;
+
+    background-color: $btn-online;
+    border: 3px solid hsl(93, 77%, 35%);
+
+    &:hover {
+      background-color: $btn-online-hover;
+      border: 3px solid $btn-online-hover;
+    }
+  }
+
+  &__btn--offline {
+    @extend .menu__btn;
+
+    background-color: $btn-offline;
+    border: 3px solid hsl(197, 89%, 23%);
+
+    &:hover {
+      background-color: $btn-offline-hover;
+      border: 3px solid $btn-offline-hover;
+    }
+  }
+
+  &__btn--start-game {
+    @extend .menu__btn;
+    flex-direction: row;
+
+    width: 10rem;
+    height: 2.5rem;
+    font-size: 1.3rem;
+
+    background-color: $btn-game;
+
+    border: 3px solid hsl(0, 52%, 45%);
+    border-radius: 2rem;
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.95);
+      width: 10rem;
+      transition-timing-function: ease-out;
+    }
+
+    &:hover {
+      background-color: $btn-game-hover;
+      border: 3px solid $btn-game-hover;
+    }
+  }
+
+  &__btn--copy {
+    @extend .menu__btn--start-game;
+
+    color: $color;
+    background-color: $btn-copy;
+    border: 3px solid $btn-copy-border;
+    font-weight: 400;
+
+    &:hover {
+      background-color: $btn-copy-hover;
+      border: 3px solid $btn-copy-hover;
+    }
+
+    &:active {
+      font-size: 1.2rem;
+    }
+  }
+
+  &__btn--new-game {
+    @extend .menu__btn--start-game;
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9;
+  }
+
+  &__btn--back {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+
+    background-color: $btn-neutral;
+    border: 2px solid hsl(0, 0%, 50%);
+
+    border-radius: 1rem;
+    cursor: pointer;
+
+    font-size: 1.5rem;
+    width: 3rem;
+    height: 3rem;
+    color: black;
+
+    &:active {
+      background-color: hsl(0, 0%, 40%);
+    }
+
+    &:hover {
+      background-color: $btn-neutral-hover;
+      transition-duration: 0.1s;
+      transition-timing-function: ease-in;
+    }
+  }
+
+  &__btn--cancel {
+    border: 1px solid black;
+    border-radius: 0.3rem;
+    padding-inline: 0.5rem;
+    padding-block: 0.15rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+}
+
+.challenge {
+  &__checkbox {
+    accent-color: $challenge;
+
+    &:hover {
+      accent-color: hsl(12, 90%, 50%);
+    }
+  }
+}
