@@ -68,6 +68,7 @@ function App() {
                 connectionMode={connectionMode}
                 isHost={isHost}
                 setIsHost={setIsHost}
+                setIsSpectating={setIsSpectating}
               />
             }
           />
