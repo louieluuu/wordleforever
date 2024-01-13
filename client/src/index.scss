@@ -602,6 +602,17 @@ $cell-padding: 0.5rem;
   }
 }
 
+.spectator-message {
+  font-family: "Roboto Slab";
+  font-size: 1.5rem;
+  font-weight: 500;
+  white-space: pre;
+}
+
+.hidden-periods {
+  visibility: hidden;
+}
+
 .modal {
   display: none;
   position: fixed;

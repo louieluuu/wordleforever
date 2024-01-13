@@ -57,6 +57,11 @@ function GameContainer({
   const [roundCounter, setRoundCounter] = useState(0)
   const [hasOnlineGameStarted, setHasOnlineGameStarted] = useState(false)
 
+  // Spectator states
+  const [spectatorMessage, setSpectatorMessage] = useState("")
+  const [hiddenPeriods, setHiddenPeriods] = useState("")
+  const [messageIndex, setMessageIndex] = useState(0)
+
   // useEffect hooks
 
   // Run once when the component mounts
@@ -227,6 +232,30 @@ function GameContainer({
       displaySolution()
     }
   }, [isGameOver, hasSolved])
+
+  // Cycle through trailing periods for spectator message
+  useEffect(() => {
+    const cycle = setInterval(() => {
+      setMessageIndex((prevMessageIndex) => (prevMessageIndex + 1) % 4)
+    }, 1000)
+
+    return () => clearInterval(cycle)
+  }, [])
+
+  // Set spectator message and corresponding remaining periods (which are hidden for styling)
+  useEffect(() => {
+    setSpectatorMessage(SPECTATOR_MESSAGES[messageIndex])
+    setHiddenPeriods(HIDDEN_PERIODS[messageIndex])
+  }, [messageIndex])
+
+  const SPECTATOR_MESSAGES = [
+    "Joining next round",
+    "Joining next round.",
+    "Joining next round..",
+    "Joining next round...",
+  ]
+
+  const HIDDEN_PERIODS = ["...", "..", ".", ""]
 
   // Helper functions
 
@@ -619,7 +648,7 @@ function GameContainer({
         isOutOfGuesses={isOutOfGuesses}
         isSpectating={isSpectating}
       />
-      {!isSpectating && (
+      {!isSpectating ? (
         <Keyboard
           handleLetter={handleLetter}
           handleBackspace={handleBackspace}
@@ -634,6 +663,11 @@ function GameContainer({
           isHost={isHost}
           startNewGame={startNewGame}
         />
+      ) : (
+        <div className="spectator-message">
+          {spectatorMessage}
+          <span className="hidden-periods">{hiddenPeriods}</span>
+        </div>
       )}
     </div>
   )

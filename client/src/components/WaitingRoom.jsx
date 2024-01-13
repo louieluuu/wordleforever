@@ -23,7 +23,9 @@ function WaitingRoom({
   const [showLobbyCountdownModal, setShowLobbyCountdownModal] = useState(false)
   const [joinRoom, setJoinRoom] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
+
   const [nonHostMessage, setNonHostMessage] = useState("")
+  const [hiddenPeriods, setHiddenPeriods] = useState("")
   const [messageIndex, setMessageIndex] = useState(0)
 
   const [alertMessage, setAlertMessage] = useState("")
@@ -141,16 +143,20 @@ function WaitingRoom({
     return () => clearInterval(cycle)
   }, [])
 
+  // Set non host message and corresponding remaining periods (which are hidden for styling)
   useEffect(() => {
     setNonHostMessage(NON_HOST_MESSAGES[messageIndex])
+    setHiddenPeriods(HIDDEN_PERIODS[messageIndex])
   }, [messageIndex])
 
   const NON_HOST_MESSAGES = [
-    "Waiting for host   ",
-    "Waiting for host.  ",
-    "Waiting for host.. ",
+    "Waiting for host",
+    "Waiting for host.",
+    "Waiting for host..",
     "Waiting for host...",
   ]
+
+  const HIDDEN_PERIODS = ["...", "..", ".", ""]
 
   function startCountdown() {
     if (userInfo.length < 2) {
@@ -249,7 +255,10 @@ function WaitingRoom({
               </div>
             ) : (
               !showLobbyCountdownModal && (
-                <div className="non-host-waiting-message">{nonHostMessage}</div>
+                <div className="non-host-waiting-message">
+                  {nonHostMessage}
+                  <span className="hidden-periods">{hiddenPeriods}</span>
+                </div>
               )
             )}
           </>
