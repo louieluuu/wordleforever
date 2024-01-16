@@ -617,58 +617,62 @@ function GameContainer({
 
   return (
     <div className="game-container">
-      {isCountdownRunning && (
-        <CountdownModal
-          isCountdownRunning={isCountdownRunning}
-          setIsCountdownRunning={setIsCountdownRunning}
-        />
-      )}
-      {isConfettiRunning && (
-        <Confetti numberOfPieces={200} initialVelocityY={-10} />
-      )}
-      {connectionMode === "online-private" && roundCounter !== 0 && (
-        <div className="round-counter">Round: {roundCounter}</div>
-      )}
-      <AlertModal
-        showAlertModal={showAlertModal}
-        setShowAlertModal={setShowAlertModal}
-        message={alertMessage}
-        isGameOver={isGameOver}
-        hasSolved={hasSolved}
-        isConfettiRunning={isConfettiRunning}
-        inGame={true}
-      />
-      <GameBoardContainer
-        connectionMode={connectionMode}
-        board={board}
-        activeRow={activeRowIndex}
-        activeCell={activeCellIndex}
-        username={username}
-        userInfo={userInfo}
-        isOutOfGuesses={isOutOfGuesses}
-        isSpectating={isSpectating}
-      />
-      {!isSpectating ? (
-        <Keyboard
-          handleLetter={handleLetter}
-          handleBackspace={handleBackspace}
-          handleEnter={handleEnter}
-          hints={hints}
-          isCountdownRunning={isCountdownRunning}
+      <div className="upper-game-container">
+        {isCountdownRunning && (
+          <CountdownModal
+            isCountdownRunning={isCountdownRunning}
+            setIsCountdownRunning={setIsCountdownRunning}
+          />
+        )}
+        {isConfettiRunning && (
+          <Confetti numberOfPieces={200} initialVelocityY={-10} />
+        )}
+        {connectionMode === "online-private" && roundCounter !== 0 && (
+          <div className="round-counter">Round: {roundCounter}</div>
+        )}
+        <AlertModal
+          showAlertModal={showAlertModal}
+          setShowAlertModal={setShowAlertModal}
+          message={alertMessage}
           isGameOver={isGameOver}
           hasSolved={hasSolved}
-          isOutOfGuesses={isOutOfGuesses}
-          isChallengeOn={isChallengeOn}
-          connectionMode={connectionMode}
-          isHost={isHost}
-          startNewGame={startNewGame}
+          isConfettiRunning={isConfettiRunning}
+          inGame={true}
         />
-      ) : (
-        <div className="spectator-message">
-          {spectatorMessage}
-          <span className="hidden-periods">{hiddenPeriods}</span>
-        </div>
-      )}
+        <GameBoardContainer
+          connectionMode={connectionMode}
+          board={board}
+          activeRow={activeRowIndex}
+          activeCell={activeCellIndex}
+          username={username}
+          userInfo={userInfo}
+          isOutOfGuesses={isOutOfGuesses}
+          isSpectating={isSpectating}
+        />
+      </div>
+      <div className="lower-game-container">
+        {!isSpectating ? (
+          <Keyboard
+            handleLetter={handleLetter}
+            handleBackspace={handleBackspace}
+            handleEnter={handleEnter}
+            hints={hints}
+            isCountdownRunning={isCountdownRunning}
+            isGameOver={isGameOver}
+            hasSolved={hasSolved}
+            isOutOfGuesses={isOutOfGuesses}
+            isChallengeOn={isChallengeOn}
+            connectionMode={connectionMode}
+            isHost={isHost}
+            startNewGame={startNewGame}
+          />
+        ) : (
+          <div className="spectator-message">
+            {spectatorMessage}
+            <span className="hidden-periods">{hiddenPeriods}</span>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

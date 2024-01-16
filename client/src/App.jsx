@@ -24,55 +24,57 @@ function App() {
   return (
     <>
       <Router>
-        <NavBar />
-        <Routes>
-          <Route
-            path="/*"
-            element={
-              <MenuRoutes
-                username={username}
-                setUsername={setUsername}
-                inputWidth={inputWidth}
-                setInputWidth={setInputWidth}
-                isChallengeOn={isChallengeOn}
-                setIsChallengeOn={setIsChallengeOn}
-                connectionMode={connectionMode}
-                setConnectionMode={setConnectionMode}
-                isHost={isHost}
-                setIsHost={setIsHost}
-                setIsSpectating={setIsSpectating}
-              />
-            }
-          />
+        <div className="full-page">
+          <NavBar />
+          <Routes>
+            <Route
+              path="/*"
+              element={
+                <MenuRoutes
+                  username={username}
+                  setUsername={setUsername}
+                  inputWidth={inputWidth}
+                  setInputWidth={setInputWidth}
+                  isChallengeOn={isChallengeOn}
+                  setIsChallengeOn={setIsChallengeOn}
+                  connectionMode={connectionMode}
+                  setConnectionMode={setConnectionMode}
+                  isHost={isHost}
+                  setIsHost={setIsHost}
+                  setIsSpectating={setIsSpectating}
+                />
+              }
+            />
 
-          <Route
-            path="/game/:roomId"
-            element={
-              <GameContainer
-                username={username}
-                isChallengeOn={isChallengeOn}
-                connectionMode={connectionMode}
-                isHost={isHost}
-                setIsHost={setIsHost}
-                isSpectating={isSpectating}
-                setIsSpectating={setIsSpectating}
-              />
-            }
-          />
-          <Route
-            path="/offline/classic"
-            element={
-              <GameContainer
-                username={username}
-                isChallengeOn={isChallengeOn}
-                connectionMode={connectionMode}
-                isHost={isHost}
-                setIsHost={setIsHost}
-                setIsSpectating={setIsSpectating}
-              />
-            }
-          />
-        </Routes>
+            <Route
+              path="/game/:roomId"
+              element={
+                <GameContainer
+                  username={username}
+                  isChallengeOn={isChallengeOn}
+                  connectionMode={connectionMode}
+                  isHost={isHost}
+                  setIsHost={setIsHost}
+                  isSpectating={isSpectating}
+                  setIsSpectating={setIsSpectating}
+                />
+              }
+            />
+            <Route
+              path="/offline/classic"
+              element={
+                <GameContainer
+                  username={username}
+                  isChallengeOn={isChallengeOn}
+                  connectionMode={connectionMode}
+                  isHost={isHost}
+                  setIsHost={setIsHost}
+                  setIsSpectating={setIsSpectating}
+                />
+              }
+            />
+          </Routes>
+        </div>
       </Router>
     </>
   )

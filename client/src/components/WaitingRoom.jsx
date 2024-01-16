@@ -223,7 +223,7 @@ function WaitingRoom({
         </div>
       )}
 
-      <div className={getUsernamesClassName()}>
+      <div className="waiting-room-user-info">
         {userInfo.map((user) => (
           <div key={user.userId}>
             {user.username}

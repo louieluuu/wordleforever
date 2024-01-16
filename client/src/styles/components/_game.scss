@@ -8,10 +8,23 @@
 .game-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  flex: 1;
+  // gap: 1rem;
+}
+
+.upper-game-container {
+  display: flex;
+  flex: 1;
   justify-content: center;
-  height: 70vh;
-  gap: 1rem;
+  align-items: center;
+  width: 100%;
+}
+
+.lower-game-container {
+  align-self: flex-end;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 .boards-container {

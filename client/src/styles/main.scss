@@ -4,6 +4,7 @@
 
 @import "variables";
 @import "./components/navbar";
+@import "./components/page-content";
 @import "./components/menu";
 @import "./components/welcome-message";
 @import "./components/waiting-room";
@@ -36,6 +37,7 @@ a {
   height: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 // Temporary breakpoints
@@ -43,6 +45,8 @@ a {
 @media only screen and (max-width: $breakpoint-sm) {
   @include phone-styles-keyboard;
   @include phone-styles-game-board;
+  @include phone-styles-waiting-room;
+  @include phone-styles-welcome-message;
 }
 
 @media only screen and (min-width: $breakpoint-sm) {

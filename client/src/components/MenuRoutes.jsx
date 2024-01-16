@@ -26,7 +26,7 @@ function MenuRoutes({
   const roomId = useParams()["*"]
 
   return (
-    <>
+    <div className="page-content">
       <WelcomeMessage
         username={username}
         setUsername={setUsername}
@@ -72,7 +72,7 @@ function MenuRoutes({
           />
         </Routes>
       </AnimatePresence>
-    </>
+    </div>
   )
 }
 

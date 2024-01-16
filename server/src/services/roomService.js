@@ -9,7 +9,7 @@ import { deleteGame } from "./gameService.js"
 
 const Rooms = new Map()
 
-const MAX_ROOM_SIZE = 4
+const MAX_ROOM_SIZE = 8
 
 function initializeRoom(connectionMode, isChallengeOn, userId) {
   let roomId = uuidv4()
@@ -119,7 +119,7 @@ function setRoomInProgress(roomId) {
 function isRoomFull(roomId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
-    room.users.length >= MAX_ROOM_SIZE
+    return room.users.length >= MAX_ROOM_SIZE
   }
   return false
 }
