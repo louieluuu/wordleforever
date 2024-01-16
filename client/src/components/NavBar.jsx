@@ -75,6 +75,7 @@ function NavBar() {
             className={getColorThemeClassName()}
             onClick={switchColorTheme}
           />
+          <button>SIGN IN</button>
         </div>
         <InfoModal show={showInfoModal} handleClose={closeInfoModal} />
       </header>

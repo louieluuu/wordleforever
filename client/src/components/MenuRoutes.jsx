@@ -9,6 +9,7 @@ import MenuOnlineModes from "./MenuOnlineModes"
 import MenuOfflineModes from "./MenuOfflineModes"
 import WaitingRoom from "./WaitingRoom"
 import ChallengeForm from "./ChallengeForm"
+import LoginPage from "./LoginPage"
 
 function MenuRoutes({
   username,
@@ -27,6 +28,7 @@ function MenuRoutes({
 
   return (
     <div className="page-content">
+      <LoginPage />
       <WelcomeMessage
         username={username}
         setUsername={setUsername}
