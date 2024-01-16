@@ -1,4 +1,28 @@
+@mixin phone-styles-keyboard {
+  .keyboard__row {
+    gap: 1vw;
+  }
+  .keyboard__cell {
+    width: 9vw;
+    height: 7vh;
+    font-size: 1rem;
+
+    &--large {
+      @extend .keyboard__cell;
+      width: 14vw;
+      font-size: 0.6rem;
+
+      &--icon {
+        @extend .keyboard__cell--large;
+        font-size: 1.2rem;
+      }
+    }
+  }
+}
+
 .keyboard {
+  position: fixed;
+  bottom: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -8,7 +32,7 @@
 
   &__row {
     display: flex;
-    gap: 0.45rem;
+    gap: 0.5rem;
   }
 
   &__cell {

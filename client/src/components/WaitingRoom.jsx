@@ -192,82 +192,80 @@ function WaitingRoom({
   }
 
   return (
-    <div>
-      <div className="waiting-room-background">
-        <h1 className="waiting-message">[{message}]</h1>
+    <div className="waiting-room-background">
+      <h1 className="waiting-message">[{message}]</h1>
 
-        {showLobbyCountdownModal && (
-          <LobbyCountdownModal
-            setShowLobbyCountdownModal={setShowLobbyCountdownModal}
-          />
-        )}
-
-        <AlertModal
-          showAlertModal={showAlertModal}
-          setShowAlertModal={setShowAlertModal}
-          message={alertMessage}
-          inGame={false}
+      {showLobbyCountdownModal && (
+        <LobbyCountdownModal
+          setShowLobbyCountdownModal={setShowLobbyCountdownModal}
         />
+      )}
 
-        {connectionMode === "online-private" && isHost && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <b style={{ fontWeight: 900 }}>1.&nbsp;&nbsp;</b>
-            <button className="menu__btn--copy" onClick={copyLink}>
-              {isCopied ? "LINK COPIED" : "COPY LINK"}
-            </button>
-          </div>
-        )}
+      <AlertModal
+        showAlertModal={showAlertModal}
+        setShowAlertModal={setShowAlertModal}
+        message={alertMessage}
+        inGame={false}
+      />
 
-        <div className={getUsernamesClassName()}>
-          {userInfo.map((user) => (
-            <div key={user.userId}>
-              {user.username}
-              {connectionMode === "online-public" && user.currStreak !== 0 && (
-                <span> &nbsp;&nbsp;{user.currStreak}🔥 </span>
-              )}
-            </div>
-          ))}
+      {connectionMode === "online-private" && isHost && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <b style={{ fontWeight: 900 }}>1.&nbsp;&nbsp;</b>
+          <button className="menu__btn--copy" onClick={copyLink}>
+            {isCopied ? "LINK COPIED" : "COPY LINK"}
+          </button>
         </div>
+      )}
 
-        {connectionMode === "online-private" && (
-          <>
-            {isHost ? (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <b style={{ fontWeight: 900 }}>2.&nbsp;&nbsp;</b>
-                <button
-                  className="menu__btn--start-game"
-                  onClick={startCountdown}
-                >
-                  START GAME
-                </button>
-              </div>
-            ) : (
-              !showLobbyCountdownModal && (
-                <div className="non-host-waiting-message">
-                  {nonHostMessage}
-                  <span className="hidden-periods">{hiddenPeriods}</span>
-                </div>
-              )
+      <div className={getUsernamesClassName()}>
+        {userInfo.map((user) => (
+          <div key={user.userId}>
+            {user.username}
+            {connectionMode === "online-public" && user.currStreak !== 0 && (
+              <span> &nbsp;&nbsp;{user.currStreak}🔥 </span>
             )}
-          </>
-        )}
-
-        <button className="menu__btn--cancel" onClick={leaveRoom}>
-          Cancel
-        </button>
+          </div>
+        ))}
       </div>
+
+      {connectionMode === "online-private" && (
+        <>
+          {isHost ? (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <b style={{ fontWeight: 900 }}>2.&nbsp;&nbsp;</b>
+              <button
+                className="menu__btn--start-game"
+                onClick={startCountdown}
+              >
+                START GAME
+              </button>
+            </div>
+          ) : (
+            !showLobbyCountdownModal && (
+              <div className="non-host-waiting-message">
+                {nonHostMessage}
+                <span className="hidden-periods">{hiddenPeriods}</span>
+              </div>
+            )
+          )}
+        </>
+      )}
+
+      <button className="menu__btn--cancel" onClick={leaveRoom}>
+        Cancel
+      </button>
     </div>
   )
 }

@@ -1,9 +1,13 @@
 .waiting-room-background {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  margin: 1rem;
+  padding-bottom: 1rem;
   position: relative;
+  margin-right: auto;
+  margin-left: auto;
+  padding-inline: 10rem;
 
   &::before {
     content: "";

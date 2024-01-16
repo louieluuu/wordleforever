@@ -1,13 +1,17 @@
-$cell-size: 2rem;
-$cell-padding: 0.5rem;
+@mixin phone-styles-game-board {
+  .game-board__cell {
+    width: 9vw;
+    height: 9vw;
+  }
+}
 
 .game-container {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  height: 70vh;
   gap: 1rem;
-  margin-top: 1rem;
 }
 
 .boards-container {
@@ -36,12 +40,12 @@ $cell-padding: 0.5rem;
     justify-content: center;
     align-items: center;
 
-    width: $cell-size;
-    height: $cell-size;
-    font-size: $cell-size;
+    width: 2rem;
+    height: 2rem;
+    font-size: 2rem;
     font-weight: bold;
     border: 2px solid $border;
-    padding: $cell-padding;
+    padding: 0.5rem;
 
     &--green {
       @extend .game-board__cell;

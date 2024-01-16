@@ -3,6 +3,14 @@
 // Will be working on both base phone design alongside finishing desktop design, and desktop design will temporary encompass all other designs (large phones, tablets, laptops)
 
 @import "variables";
+@import "./components/navbar";
+@import "./components/menu";
+@import "./components/welcome-message";
+@import "./components/waiting-room";
+@import "./components/game";
+@import "./components/keyboard";
+@import "./components/alert-modal";
+@import "./components/streak";
 
 $breakpoint-sm: 640px;
 $breakpoint-md: 768px;
@@ -24,39 +32,46 @@ a {
   font-family: "Roboto", sans-serif;
 }
 
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 // Temporary breakpoints
 
 @media only screen and (max-width: $breakpoint-sm) {
-  // @import "./responsive/phone";
+  @include phone-styles-keyboard;
+  @include phone-styles-game-board;
 }
 
 @media only screen and (min-width: $breakpoint-sm) {
-  @import "./responsive/desktop";
+  // @include desktop-styles;
 }
 
 // This is what I want the eventual breakpoints to look like, will be extended as each responsive design is done, until then thresholds will be merged
 
 // // Design for most phones (priority: 1)
 // @media only screen and (max-width: $breakpoint-sm) {
-//   //@import "./responsive/phone";
+//   //@include phone-styles
 // }
 
 // // Design for large phones - uncommon (priority: 5)
 // @media only screen and (min-width: $breakpoint-sm) and (max-width: $breakpoint-md) {
-//   //@import "./responsive/lg-phone";
+//   //@include lg-phone-styles
 // }
 
 // // Design for tablets - (priority: 3)
 // @media only screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg) {
-//   //@import "./responsive/tablet";
+//   //@include tablet-styles
 // }
 
 // // Design for laptops - (priority: 4)
 // @media only screen and (min-width: $breakpoint-lg) and (max-width: $breakpoint-xl) {
-//   //@import "./responsive/laptop";
+//   //@include laptop-styles
 // }
 
 // // Design for desktops - (priority: 2)
 // @media only screen and (min-width: $breakpoint-xl) {
-//   @import "./responsive/desktop";
+//   //@include desktop-styles
 // }
