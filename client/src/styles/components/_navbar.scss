@@ -88,6 +88,25 @@
       transform: scale(0.9);
     }
   }
+
+  &__logout {
+    width: 1.5rem;
+    height: 1.5rem;
+    cursor: pointer;
+
+    &:hover {
+      opacity: $header-hover;
+      transition-duration: 0.1s;
+    }
+
+    &:active {
+      transform: scale(0.9);
+    }
+
+    &.dark {
+      transform: rotateY(180deg);
+    }
+  }
 }
 
 // Logo isn't actually implemented yet, but it will come before the "Wordle Forever"
