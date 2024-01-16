@@ -3,6 +3,12 @@ import React, { useState } from "react"
 import { auth } from "../firebase"
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth"
 
+// TODO: add error handling for Register Form. undecided
+// TODO: whether errors should be modals, Alert components, or just text
+
+// Firebase gives us: invalid-email, email-already-in-use, weak-password
+// We need to implement: username-already-in-use
+
 function RegisterPage() {
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
@@ -20,13 +26,7 @@ function RegisterPage() {
   if (loading) {
     return <p>Loading...</p>
   }
-  if (user) {
-    return (
-      <div>
-        <p>Registered User: {user.user.email}</p>
-      </div>
-    )
-  }
+
   return (
     <div className="auth">
       <input

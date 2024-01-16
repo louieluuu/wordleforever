@@ -1,6 +1,6 @@
 import React, { useState, useLayoutEffect } from "react"
 import { auth } from "../firebase"
-import { useSignOut } from "react-firebase-hooks/auth"
+import { useAuthState, useSignOut } from "react-firebase-hooks/auth"
 
 import { FaRegCircleQuestion } from "react-icons/fa6"
 import { RiMoonClearFill } from "react-icons/ri"
@@ -13,6 +13,7 @@ function NavBar() {
   const [showInfoModal, setShowInfoModal] = useState(false)
   const [colorTheme, setColorTheme] = useState("")
 
+  const [user, loadingUser, errorUser] = useAuthState(auth)
   const [logout, loading, error] = useSignOut(auth)
 
   // Upon Mount, initialize theme preference based on localStorage or system preference.
@@ -82,8 +83,13 @@ function NavBar() {
             className={getColorThemeClassName()}
             onClick={switchColorTheme}
           />
-          <ImExit className="navbar__logout" onClick={logout} />
-          <button className="navbar__login">Sign in</button>
+          {user ? (
+            <ImExit className="navbar__logout" onClick={logout} />
+          ) : (
+            <button className="navbar__login" onClick={refreshPage}>
+              Sign in
+            </button>
+          )}
         </div>
         <InfoModal show={showInfoModal} handleClose={closeInfoModal} />
       </header>
