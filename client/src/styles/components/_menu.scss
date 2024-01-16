@@ -144,6 +144,19 @@
     margin-top: 2rem;
     margin-bottom: 1rem;
   }
+
+  &__btn--auth {
+    @extend .menu__btn;
+
+    font-weight: bold;
+    border-radius: 1rem;
+    border: none;
+    box-shadow: 0 7px 2px -1px $username-shadow;
+
+    background-color: $username;
+
+    margin-top: 2rem;
+  }
 }
 
 .challenge {

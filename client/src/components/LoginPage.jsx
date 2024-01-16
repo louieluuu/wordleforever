@@ -16,9 +16,11 @@ function LoginPage() {
       </div>
     )
   }
+
   if (loading) {
     return <p>Loading...</p>
   }
+
   if (user) {
     return (
       <div>
@@ -26,21 +28,36 @@ function LoginPage() {
       </div>
     )
   }
+
   return (
-    <div className="App">
+    <div className="auth">
       <input
+        className="auth__form"
         type="email"
+        placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
       <input
+        className="auth__form"
         type="password"
+        placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button onClick={() => signInWithEmailAndPassword(email, password)}>
-        Sign In
+      <button
+        className="menu__btn--auth"
+        onClick={() => signInWithEmailAndPassword(email, password)}
+      >
+        LOG IN
       </button>
+      <hr
+        style={{
+          marginBlock: "1.3rem",
+          borderColor: "black",
+          borderWidth: "1px",
+        }}
+      />
     </div>
   )
 }

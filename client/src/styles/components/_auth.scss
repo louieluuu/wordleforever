@@ -1,0 +1,16 @@
+.auth {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 25vw;
+  gap: 0.7rem;
+
+  &__form {
+    color: $color;
+    background-color: $bg-main;
+
+    border: $btn-copy-border 2px solid;
+
+    padding: 0.4rem;
+  }
+}

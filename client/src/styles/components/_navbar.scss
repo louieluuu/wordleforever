@@ -64,6 +64,30 @@
       transform: rotateY(180deg);
     }
   }
+
+  &__login {
+    color: white;
+    background-color: $username;
+
+    font-family: "Roboto";
+    font-weight: bold;
+    font-size: 0.9rem;
+
+    height: 2rem;
+
+    border: none;
+    padding-inline: 1rem;
+
+    &:hover {
+      opacity: $header-hover;
+      cursor: pointer;
+      transition-duration: 0.1s;
+    }
+
+    &:active {
+      transform: scale(0.9);
+    }
+  }
 }
 
 // Logo isn't actually implemented yet, but it will come before the "Wordle Forever"
