@@ -51,7 +51,6 @@ async function joinRoom(roomId, username, io, socket) {
           isRoomChallengeMode(roomId)
         )
       }
-
     } else {
       console.log(`${socket.id} failed to join room: ${roomId}`)
       socket.emit("failedToJoinRoom")
