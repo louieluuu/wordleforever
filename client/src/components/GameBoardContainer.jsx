@@ -14,18 +14,18 @@ function GameBoardContainer({
   isOutOfGuesses,
   isSpectating,
 }) {
-
   return (
     <>
       {connectionMode === "offline" ? (
-        <GameBoard
-          board={board}
-          activeRow={activeRow}
-          activeCell={activeCell}
-          username={username}
-          connectionMode={connectionMode}
-          isOutOfGuesses={isOutOfGuesses}
-        />
+        <div className="offline-board">
+          <GameBoard
+            board={board}
+            activeRow={activeRow}
+            activeCell={activeCell}
+            connectionMode={connectionMode}
+            isOutOfGuesses={isOutOfGuesses}
+          />
+        </div>
       ) : (
         <OnlineGameBoardContainer
           connectionMode={connectionMode}

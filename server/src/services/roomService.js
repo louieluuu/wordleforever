@@ -9,7 +9,7 @@ import { deleteGame } from "./gameService.js"
 
 const Rooms = new Map()
 
-const MAX_ROOM_SIZE = 8
+const MAX_ROOM_SIZE = 7
 
 function initializeRoom(connectionMode, isChallengeOn, userId) {
   let roomId = uuidv4()

@@ -118,3 +118,16 @@ $username-hover: var(--username-hover);
 $header-hover: var(--header-hover);
 $waiting-room-background: var(--waiting-room-background);
 $waiting-room-vertical: var(--waiting-room-vertical);
+
+// Breakpoints
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+
+:export {
+  breakpointSm: $breakpoint-sm;
+  breakpointMd: $breakpoint-md;
+  breakpointLg: $breakpoint-lg;
+  breakpointXl: $breakpoint-xl;
+}

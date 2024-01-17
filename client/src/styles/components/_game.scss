@@ -1,7 +1,99 @@
 @mixin phone-styles-game-board {
+  // Horizontal width of user board should line up with horizontal width of (2 compressed boards + gap)
+  // Width of user board:
+  // 5x .game-board__cell width = 60vw
+  // 4x .game-board gap = 2vw
+  // 10x .game-board__cell border = 8vw
+  // total width: 70vw
+  // Compressed board gap (other-boards gap): 5vw
+  // Width of each compressed board should be 32.5vw (32.5*2 + 5 = 70vw)
+  .game-board {
+    gap: 0.5vw;
+  }
+  .offline-board {
+    .game-board__cell {
+      width: 14vw;
+      height: 14vw;
+    }
+  }
   .game-board__cell {
-    width: 9vw;
-    height: 9vw;
+    width: 12vw;
+    height: 12vw;
+    border: 0.8vw solid $border;
+    font-size: 8vw;
+    padding: 0;
+
+    &--green {
+      @extend .game-board__cell;
+      color: white;
+      border-color: $correct;
+      background-color: $correct;
+    }
+
+    &--yellow {
+      @extend .game-board__cell;
+      color: white;
+      border-color: $wrong-position;
+      background-color: $wrong-position;
+    }
+
+    &--grey {
+      @extend .game-board__cell;
+      color: white;
+      border-color: $wrong;
+      background-color: $wrong;
+    }
+
+    &--active {
+      @extend .game-board__cell;
+      color: $color;
+      border-color: $active;
+    }
+  }
+
+  .boards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .other-boards {
+    flex: 1;
+    align-items: start;
+
+    .compressed-game-board__cell {
+      width: 14vw;
+      height: 14vw;
+    }
+
+    .compressed-game-board-info {
+      font-size: 3vw;
+      font-weight: bold;
+      margin-bottom: 0.15rem;
+    }
+  }
+
+  .other-boards--grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0vw 5vw;
+    margin-inline: 15vw;
+  }
+
+  .compressed-game-board__cell {
+    width: 6.5vw;
+    height: 6.5vw;
+  }
+
+  .compressed-game-board-info {
+    font-size: 1.6vw;
+    font-weight: bold;
+    margin-bottom: 0.15rem;
+  }
+
+  .game-board-info {
+    font-size: 3.4vw;
+    font-weight: bold;
   }
 }
 
@@ -14,9 +106,8 @@
 
 .upper-game-container {
   display: flex;
+  flex-direction: column;
   flex: 1;
-  justify-content: center;
-  align-items: center;
 }
 
 .lower-game-container {
@@ -27,6 +118,34 @@
 .boards-container {
   display: flex;
   flex-direction: row;
+  flex: 1;
+}
+
+.offline-board {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-board {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+
+.other-boards {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+
+.other-boards--grid {
+  flex: 3;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
 }
 
@@ -86,10 +205,61 @@
   }
 }
 
+.compressed-game-board {
+  display: flex;
+  flex-direction: column;
+
+  &--game-over {
+    @extend .compressed-game-board;
+    opacity: 60%;
+  }
+
+  &__row {
+    @extend .compressed-game-board;
+    flex-direction: row;
+  }
+
+  &__cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 2rem;
+    height: 2rem;
+    font-size: 2rem;
+    font-weight: bold;
+
+    &--empty {
+      @extend .compressed-game-board__cell;
+      background-color: $border;
+    }
+
+    &--green {
+      @extend .compressed-game-board__cell;
+      color: white;
+      border-color: $correct;
+      background-color: $correct;
+    }
+
+    &--yellow {
+      @extend .compressed-game-board__cell;
+      color: white;
+      border-color: $wrong-position;
+      background-color: $wrong-position;
+    }
+
+    &--grey {
+      @extend .compressed-game-board__cell;
+      color: white;
+      border-color: $wrong;
+      background-color: $wrong;
+    }
+  }
+}
+
 .game-board-info {
   font-size: 0.8rem;
   font-weight: bold;
-  margin-bottom: 0.25rem;
 }
 
 .countdown-timer {
