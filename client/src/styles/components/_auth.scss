@@ -2,8 +2,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 25vw;
-  gap: 0.7rem;
+  gap: 1rem;
+
+  margin-top: 3rem;
+
+  font-size: 0.8rem;
 
   &__error {
     color: red;
@@ -11,11 +14,37 @@
   }
 
   &__form {
+    width: 15rem;
+
     color: $color;
     background-color: $bg-main;
-
     border: $btn-copy-border 2px solid;
 
     padding: 0.4rem;
+  }
+
+  &__divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+
+    width: 100%;
+
+    margin: 1.5rem;
+
+    &::before,
+    &::after {
+      content: "";
+      flex: 1;
+      border-bottom: 1px solid $border;
+    }
+
+    &:not(:empty)::before {
+      margin-right: 0.5rem;
+    }
+
+    &:not(:empty)::after {
+      margin-left: 0.5rem;
+    }
   }
 }

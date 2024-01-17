@@ -59,7 +59,7 @@ function LoginPage() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <Link style={{ fontSize: "0.8rem" }} reloadDocument to="/forgot">
+      <Link style={{ alignSelf: "flex-end" }} reloadDocument to="/forgot">
         Forgot Password?
       </Link>
       <button
@@ -68,15 +68,14 @@ function LoginPage() {
       >
         LOG IN
       </button>
-      <hr
-        style={{
-          marginBlock: "1.3rem",
-          borderColor: "black",
-          borderWidth: "1px",
-        }}
-      />
-      <Link reloadDocument to="/register">
-        Register
+
+      <div className="auth__divider">OR</div>
+
+      <button className="menu__btn--auth--google">GOOGLE</button>
+      <button className="menu__btn--auth--google">GOOGLE</button>
+
+      <Link style={{ fontWeight: "500" }} reloadDocument to="/register">
+        New user? Register here!
       </Link>
     </div>
   )

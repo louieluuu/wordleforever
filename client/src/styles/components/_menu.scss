@@ -148,6 +148,8 @@
   &__btn--auth {
     @extend .menu__btn;
 
+    width: 15rem;
+
     font-weight: bold;
     border-radius: 1rem;
     border: none;
@@ -155,7 +157,7 @@
 
     background-color: $username;
 
-    margin-top: 2rem;
+    margin-top: 2.5rem;
 
     &:active {
       transform: scale(0.95);
@@ -166,6 +168,10 @@
     &:hover {
       background-color: $username-hover;
       box-shadow: 0 7px 2px -1px $username-shadow-hover;
+    }
+
+    &--google {
+      color: red;
     }
   }
 }
