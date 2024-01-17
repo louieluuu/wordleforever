@@ -1,10 +1,18 @@
+// Horizontal width of user board should line up with horizontal width of (2 compressed boards + gap)
+// Width of user board:
+// 5x $phone-user-cell-size = 68vw
+// 4x $phone-user-cell-gap = 2vw
+// total width: 70vw
+// Compressed board gap ($phone-others-board-gap): 5vw (horizontally)
+// Width of each compressed board should be 32.5vw (32.5*2 + 5 = 70vw)
+
 // Styles for main game boards (the users board)
 
 // Cell sizes
-$desktop-cell-size: 2rem;
+$desktop-cell-size: 3.5rem;
 
-$phone-user-cell-size: 12vw;
-$phone-offline-cell-size: 14vw;
+$phone-user-cell-size: 13.6vw;
+$phone-offline-cell-size: 15.6vw;
 
 // Padding
 $desktop-cell-padding: 0.5rem;
@@ -51,14 +59,6 @@ $phone-others-board-gap: 0vw 5vw;
 $phone-margin-inline: 15vw;
 
 @mixin phone-styles-game-board {
-  // Horizontal width of user board should line up with horizontal width of (2 compressed boards + gap)
-  // Width of user board:
-  // 5x .game-board__cell width = 60vw
-  // 4x .game-board gap = 2vw
-  // 10x .game-board__cell border = 8vw
-  // total width: 70vw
-  // Compressed board gap (other-boards gap): 5vw
-  // Width of each compressed board should be 32.5vw (32.5*2 + 5 = 70vw)
   .game-board {
     gap: $phone-user-cell-gap;
   }

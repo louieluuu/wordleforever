@@ -13,6 +13,10 @@
 @import "./components/alert-modal";
 @import "./components/streak";
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   background-color: $bg-main;
