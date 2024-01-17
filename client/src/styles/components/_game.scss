@@ -9,7 +9,8 @@
 // Styles for main game boards (the users board)
 
 // Cell sizes
-$desktop-cell-size: 3.5rem;
+$desktop-cell-size: 3rem;
+$desktop-small-cell-size: 2rem;
 
 $phone-user-cell-size: 13.6vw;
 $phone-offline-cell-size: 15.6vw;
@@ -31,14 +32,16 @@ $phone-user-cell-gap: 0.5vw;
 
 // Font sizes
 $desktop-cell-font-size: 2rem;
-$desktop-user-info-font-size: 0.8rem;
+$desktop-others-cell-font-size: 1.2rem;
+$desktop-user-info-font-size: 1rem;
 
 $phone-user-font-size: 8vw;
 $phone-user-info-font-size: 4vw;
 $phone-user-crown-size: 3.5vw;
 
 // Max width
-$desktop-user-info-max-width: 30rem;
+$desktop-user-info-max-width: 13rem;
+$desktop-others-info-max-width: 8.5rem;
 
 $phone-user-info-max-width: 60vw;
 
@@ -215,6 +218,7 @@ $desktop-others-crown-size: 0.7rem;
   display: flex;
   flex-direction: column;
   flex: 1;
+  justify-content: center;
 }
 
 .lower-game-container {
@@ -278,7 +282,7 @@ $desktop-others-crown-size: 0.7rem;
     width: $desktop-cell-size;
     height: $desktop-cell-size;
     font-size: $desktop-cell-font-size;
-    font-weight: bold;
+    font-weight: 600;
     border: $desktop-cell-border $border;
     padding: $desktop-cell-padding;
 
@@ -305,6 +309,62 @@ $desktop-others-crown-size: 0.7rem;
 
     &--active {
       @extend .game-board__cell;
+      color: $color;
+      border-color: $active;
+    }
+  }
+}
+
+.small-game-board {
+  display: flex;
+  flex-direction: column;
+  gap: $desktop-cell-gap;
+
+  &--game-over {
+    @extend .small-game-board;
+    opacity: 60%;
+  }
+
+  &__row {
+    @extend .small-game-board;
+    flex-direction: row;
+  }
+
+  &__cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: $desktop-small-cell-size;
+    height: $desktop-small-cell-size;
+    font-size: $desktop-others-cell-font-size;
+    font-weight: 500;
+    border: $desktop-cell-border $border;
+    padding: $desktop-cell-padding;
+
+    &--green {
+      @extend .small-game-board__cell;
+      color: white;
+      border-color: $correct;
+      background-color: $correct;
+    }
+
+    &--yellow {
+      @extend .small-game-board__cell;
+      color: white;
+      border-color: $wrong-position;
+      background-color: $wrong-position;
+    }
+
+    &--grey {
+      @extend .small-game-board__cell;
+      color: white;
+      border-color: $wrong;
+      background-color: $wrong;
+    }
+
+    &--active {
+      @extend .small-game-board__cell;
       color: $color;
       border-color: $active;
     }
@@ -364,6 +424,7 @@ $desktop-others-crown-size: 0.7rem;
 .game-board-info {
   font-size: $desktop-user-info-font-size;
   font-weight: bold;
+  display: flex;
 
   .game-board-username {
     max-width: $desktop-user-info-max-width;
@@ -373,6 +434,23 @@ $desktop-others-crown-size: 0.7rem;
   }
 
   .game-board-crown {
+    font-size: $desktop-others-crown-size;
+  }
+}
+
+.small-game-board-info {
+  font-size: $desktop-user-info-font-size;
+  font-weight: bold;
+  display: flex;
+
+  .small-game-board-username {
+    max-width: $desktop-others-info-max-width;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .small-game-board-crown {
     font-size: $desktop-others-crown-size;
   }
 }

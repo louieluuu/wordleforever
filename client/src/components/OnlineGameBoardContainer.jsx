@@ -44,10 +44,17 @@ function OnlineGameBoardContainer({
 
   function getOtherBoardsClassName() {
     let otherBoardsClassName = "other-boards"
-    if (userInfo && userInfo.length > 3) {
+    if (isMoreThanTwoPlayers()) {
       otherBoardsClassName += `--grid`
     }
     return otherBoardsClassName
+  }
+
+  function isMoreThanTwoPlayers() {
+    if (userInfo && userInfo.length > 2) {
+      return true
+    }
+    return false
   }
   return (
     <>
@@ -81,6 +88,7 @@ function OnlineGameBoardContainer({
                     connectionMode={connectionMode}
                     isOutOfGuesses={isOutOfGuesses}
                     isLeading={isUserLeading(obj.userId)}
+                    isSmall={isMoreThanTwoPlayers()}
                   />
                 ))
               : otherUserInfo().map((obj) => (

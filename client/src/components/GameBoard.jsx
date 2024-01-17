@@ -11,9 +11,10 @@ function GameBoard({
   connectionMode,
   isOutOfGuesses,
   isLeading,
+  isSmall,
 }) {
   function getCellClassName(board, row, cellIndex) {
-    let cellClassName = "game-board__cell"
+    let cellClassName = `${isSmall ? "small-" : ""}game-board__cell`
 
     if (board[row][cellIndex].color === "") {
       if (row === activeRow && cellIndex < activeCell) {
@@ -47,10 +48,18 @@ function GameBoard({
   }
 
   return (
-    <div className={`game-board${isOutOfGuesses ? "--game-over" : ""}`}>
-      <div className="game-board-info">
-        <span className="game-board-username">
-          {isLeading && <span className="game-board-crown">👑&nbsp;</span>}
+    <div
+      className={`${isSmall ? "small-" : ""}game-board${
+        isOutOfGuesses ? "--game-over" : ""
+      }`}
+    >
+      <div className={`${isSmall ? "small-" : ""}game-board-info`}>
+        <span className={`${isSmall ? "small-" : ""}game-board-username`}>
+          {isLeading && (
+            <span className={`${isSmall ? "small-" : ""}game-board-crown`}>
+              👑&nbsp;
+            </span>
+          )}
           {username}
         </span>
         {connectionMode === "online-private" && (
@@ -71,7 +80,10 @@ function GameBoard({
         )}
       </div>
       {board.map((row, rowIndex) => (
-        <div key={rowIndex} className="game-board__row">
+        <div
+          key={rowIndex}
+          className={`${isSmall ? "small-" : ""}game-board__row`}
+        >
           {row.map((cell, cellIndex) => (
             <div
               key={cellIndex}
