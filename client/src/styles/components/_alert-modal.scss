@@ -22,6 +22,8 @@
   &__game {
     @extend .alert-modal;
     top: 8vh;
+    left: 50vw;
+    transform: translateX(-50%);
   }
 
   &__lobby {
