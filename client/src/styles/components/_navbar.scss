@@ -79,7 +79,7 @@
     padding-inline: 1rem;
 
     &:hover {
-      opacity: $header-hover;
+      background-color: $username-hover;
       cursor: pointer;
       transition-duration: 0.1s;
     }

@@ -32,8 +32,10 @@ html[data-theme="light"] {
 
   --challenge: hsl(12, 90%, 35%);
   --username: hsl(278, 37%, 69%);
-  --username-hover: brightness(110%);
+  --username-hover: hsl(278, 37%, 74%);
+  --username-form-hover: brightness(110%);
   --username-shadow: hsl(278, 37%, 34%);
+  --username-shadow-hover: hsl(278, 37%, 44%);
   --header-hover: 65%;
   --waiting-room-background: url(../assets/waiting_room.jpg);
   --waiting-room-vertical: 10%;
@@ -73,8 +75,10 @@ html[data-theme="dark"] {
 
   --challenge: hsl(12, 90%, 40%);
   --username: hsl(40, 78%, 53%);
-  --username-hover: brightness(112%);
+  --username-hover: hsl(40, 78%, 58%);
+  --username-form-hover: brightness(112%);
   --username-shadow: hsl(40, 78%, 29%);
+  --username-shadow-hover: hsl(40, 78%, 39%);
   --header-hover: 85%;
   --waiting-room-background: url(../assets/waiting_room_dark.jpg);
   --waiting-room-vertical: 30%;
@@ -117,7 +121,9 @@ $btn-neutral-hover: var(--btn-neutral-hover);
 $challenge: var(--challenge);
 $username: var(--username);
 $username-hover: var(--username-hover);
+$username-form-hover: var(--username-form-hover);
 $username-shadow: var(--username-shadow);
+$username-shadow-hover: var(--username-shadow-hover);
 $header-hover: var(--header-hover);
 $waiting-room-background: var(--waiting-room-background);
 $waiting-room-vertical: var(--waiting-room-vertical);

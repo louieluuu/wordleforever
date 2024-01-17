@@ -77,14 +77,20 @@ function NavBar() {
         <div className="navbar__right">
           <FaRegCircleQuestion
             className="navbar__info"
+            title="Info"
             onClick={openInfoModal}
           />
           <RiMoonClearFill
             className={getColorThemeClassName()}
+            title="Switch Color Theme"
             onClick={switchColorTheme}
           />
           {user ? (
-            <ImExit className="navbar__logout" onClick={logout} />
+            <ImExit
+              className="navbar__logout"
+              title="Logout"
+              onClick={logout}
+            />
           ) : (
             <button className="navbar__login" onClick={refreshPage}>
               Sign in

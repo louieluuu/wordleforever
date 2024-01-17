@@ -5,6 +5,11 @@
   max-width: 25vw;
   gap: 0.7rem;
 
+  &__error {
+    color: red;
+    font-size: 0.8rem;
+  }
+
   &__form {
     color: $color;
     background-color: $bg-main;

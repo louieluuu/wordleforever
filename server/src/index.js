@@ -49,7 +49,9 @@ io.on("connection", (socket) => {
 
   // Interact with WaitingRoom component
   // Find match
-  socket.on("findMatch", (isChallengeOn) => handleMatchmaking(isChallengeOn, socket))
+  socket.on("findMatch", (isChallengeOn) =>
+    handleMatchmaking(isChallengeOn, socket)
+  )
   // Create room
   socket.on("createRoom", (connectionMode, isChallengeOn) =>
     createRoom(connectionMode, isChallengeOn, socket)
@@ -87,7 +89,9 @@ io.on("connection", (socket) => {
   socket.on("outOfGuesses", (roomId) =>
     handleOutOfGuesses(roomId, socket.id, io)
   )
-  socket.on("gameJoinedInProgress", (roomId) => handleGameJoinedInProgress(roomId, socket))
+  socket.on("gameJoinedInProgress", (roomId) =>
+    handleGameJoinedInProgress(roomId, socket)
+  )
 
   // User disconnect and cleanup
   socket.on("disconnecting", async () => await handleUserDisconnect(socket, io))

@@ -3,12 +3,6 @@ import React, { useState } from "react"
 import { auth } from "../firebase"
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth"
 
-// TODO: add error handling for Register Form. undecided
-// TODO: whether errors should be modals, Alert components, or just text
-
-// Firebase gives us: invalid-email, email-already-in-use, weak-password
-// We need to implement: username-already-in-use
-
 function RegisterPage() {
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
@@ -16,19 +10,35 @@ function RegisterPage() {
   const [createUserWithEmailAndPassword, user, loading, error] =
     useCreateUserWithEmailAndPassword(auth)
 
-  if (error) {
-    return (
-      <div>
-        <p>Error: {error.message}</p>
-      </div>
-    )
-  }
-  if (loading) {
-    return <p>Loading...</p>
+  function getErrorMessage() {
+    let errorMessage
+
+    if (error) {
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          errorMessage = "Email already in use."
+          break
+        case "auth/invalid-email":
+          errorMessage = "Invalid email address."
+          console.log("Invalid email address.")
+          break
+        case "auth/weak-password":
+          errorMessage = "Password must be at least 6 characters long."
+          break
+        default:
+          errorMessage = "An error occurred. Please try again."
+          console.log("An error occurred. Please try again.")
+      }
+    }
+
+    console.log(error.code)
+
+    return errorMessage
   }
 
   return (
     <div className="auth">
+      {error && <div className="auth__error">{getErrorMessage()}</div>}
       <input
         className="auth__form"
         placeholder="Username"

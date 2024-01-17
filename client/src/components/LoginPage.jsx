@@ -9,16 +9,41 @@ function LoginPage() {
   const [signInWithEmailAndPassword, user, loading, error] =
     useSignInWithEmailAndPassword(auth)
 
-  if (error) {
-    return (
-      <div>
-        <p>Error: {error.message}</p>
-      </div>
-    )
+  function getErrorMessage() {
+    let errorMessage
+
+    if (error) {
+      switch (error.code) {
+        case "auth/invalid-email":
+          errorMessage = "Invalid email address."
+          console.log("Invalid email address.")
+          break
+        case "auth/user-not-found":
+          console.log("No account found with this email address.")
+          break
+        case "auth/missing-password":
+          errorMessage = "Missing password."
+          console.log("Missing password.")
+          break
+        case "auth/invalid-credential":
+          errorMessage =
+            "Incorrect email address or password. Check that you have entered the correct email address and password, and try again."
+          console.log("Incorrect email address or password.")
+          break
+        default:
+          console.log("An error occurred. Please try again.")
+      }
+    }
+
+    console.log(error.code)
+
+    return errorMessage
   }
 
   return (
     <div className="auth">
+      {error && <div className="auth__error">{getErrorMessage()}</div>}
+
       <input
         className="auth__form"
         type="email"

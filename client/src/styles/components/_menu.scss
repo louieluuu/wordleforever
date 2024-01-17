@@ -156,6 +156,17 @@
     background-color: $username;
 
     margin-top: 2rem;
+
+    &:active {
+      transform: scale(0.95);
+      width: 10rem;
+      transition-timing-function: ease-out;
+    }
+
+    &:hover {
+      background-color: $username-hover;
+      box-shadow: 0 7px 2px -1px $username-shadow-hover;
+    }
   }
 }
 
