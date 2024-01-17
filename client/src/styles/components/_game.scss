@@ -270,9 +270,9 @@
 }
 
 .round-counter {
-  position: absolute;
-  top: -0.5rem;
-  right: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  margin-inline-end: 0.5rem;
   font-size: 0.8rem;
   font-weight: 600;
 }
