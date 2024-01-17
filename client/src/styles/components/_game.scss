@@ -71,6 +71,10 @@ $phone-margin-inline: 15vw;
 
 $desktop-others-crown-size: 0.7rem;
 
+// Miscellaneous styles
+$countdown-timer-placement: 35vh;
+$countdown-timer-font-size: 5.75vw;
+
 @mixin phone-styles-game-board {
   .game-board {
     gap: $phone-user-cell-gap;
@@ -202,6 +206,11 @@ $desktop-others-crown-size: 0.7rem;
     .game-board-crown {
       font-size: $phone-user-crown-size;
     }
+  }
+
+  .countdown-timer {
+    top: $countdown-timer-placement;
+    font-size: $countdown-timer-font-size;
   }
 }
 
@@ -457,9 +466,10 @@ $desktop-others-crown-size: 0.7rem;
 
 .countdown-timer {
   position: absolute;
-  top: 10vh;
+  top: 50vh;
+  transform: translateY(-50%);
   z-index: 1;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
 }
 
 .round-counter {
