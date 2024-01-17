@@ -10,10 +10,6 @@ import MenuOfflineModes from "./MenuOfflineModes"
 import WaitingRoom from "./WaitingRoom"
 import ChallengeForm from "./ChallengeForm"
 
-// TODO: LOUIE - Temporary placement (not sure where to put)
-import LoginPage from "./LoginPage"
-import RegisterPage from "./RegisterPage"
-
 function MenuRoutes({
   username,
   setUsername,
@@ -30,9 +26,7 @@ function MenuRoutes({
   const roomId = useParams()["*"]
 
   return (
-    <div className="page-content">
-      <LoginPage />
-      <RegisterPage />
+    <>
       <WelcomeMessage
         username={username}
         setUsername={setUsername}
@@ -78,7 +72,7 @@ function MenuRoutes({
           />
         </Routes>
       </AnimatePresence>
-    </div>
+    </>
   )
 }
 

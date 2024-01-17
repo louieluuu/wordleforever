@@ -616,8 +616,8 @@ function GameContainer({
   }
 
   return (
-    <div className="game-container">
-      <div className={`upper-game-container${isSpectating ? "--spec" : ""}`}>
+    <>
+      <div className="upper-game-container">
         {isCountdownRunning && (
           <CountdownModal
             isCountdownRunning={isCountdownRunning}
@@ -677,7 +677,7 @@ function GameContainer({
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }
 

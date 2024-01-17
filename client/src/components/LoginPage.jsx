@@ -1,5 +1,7 @@
 import React, { useState } from "react"
 
+import { Link } from "react-router-dom"
+
 import { auth } from "../firebase"
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth"
 
@@ -43,7 +45,6 @@ function LoginPage() {
   return (
     <div className="auth">
       {error && <div className="auth__error">{getErrorMessage()}</div>}
-
       <input
         className="auth__form"
         type="email"
@@ -58,6 +59,9 @@ function LoginPage() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
+      <Link style={{ fontSize: "0.8rem" }} reloadDocument to="/forgot">
+        Forgot Password?
+      </Link>
       <button
         className="menu__btn--auth"
         onClick={() => signInWithEmailAndPassword(email, password)}
@@ -71,6 +75,9 @@ function LoginPage() {
           borderWidth: "1px",
         }}
       />
+      <Link reloadDocument to="/register">
+        Register
+      </Link>
     </div>
   )
 }

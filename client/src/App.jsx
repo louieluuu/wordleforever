@@ -7,6 +7,9 @@ import NavBar from "./components/NavBar"
 import GameContainer from "./components/GameContainer"
 import MenuRoutes from "./components/MenuRoutes"
 
+import LoginPage from "./components/LoginPage"
+import RegisterPage from "./components/RegisterPage"
+
 function App() {
   const [connectionMode, setConnectionMode] = useState("offline")
   // localStorage stores items as strings, so we use JSON.parse to convert it back to its original type.
@@ -23,59 +26,61 @@ function App() {
 
   return (
     <>
-      <div className="full-page">
-        <NavBar />
-        <Router>
-          <Routes>
-            <Route
-              path="/*"
-              element={
-                <MenuRoutes
-                  username={username}
-                  setUsername={setUsername}
-                  inputWidth={inputWidth}
-                  setInputWidth={setInputWidth}
-                  isChallengeOn={isChallengeOn}
-                  setIsChallengeOn={setIsChallengeOn}
-                  connectionMode={connectionMode}
-                  setConnectionMode={setConnectionMode}
-                  isHost={isHost}
-                  setIsHost={setIsHost}
-                  setIsSpectating={setIsSpectating}
-                />
-              }
-            />
-
-            <Route
-              path="/game/:roomId"
-              element={
-                <GameContainer
-                  username={username}
-                  isChallengeOn={isChallengeOn}
-                  connectionMode={connectionMode}
-                  isHost={isHost}
-                  setIsHost={setIsHost}
-                  isSpectating={isSpectating}
-                  setIsSpectating={setIsSpectating}
-                />
-              }
-            />
-            <Route
-              path="/offline/classic"
-              element={
-                <GameContainer
-                  username={username}
-                  isChallengeOn={isChallengeOn}
-                  connectionMode={connectionMode}
-                  isHost={isHost}
-                  setIsHost={setIsHost}
-                  setIsSpectating={setIsSpectating}
-                />
-              }
-            />
-          </Routes>
-        </Router>
-      </div>
+      <Router>
+        <div className="full-page">
+          <NavBar />
+          <div className="page-content">
+            <Routes>
+              <Route
+                path="/*"
+                element={
+                  <MenuRoutes
+                    username={username}
+                    setUsername={setUsername}
+                    inputWidth={inputWidth}
+                    setInputWidth={setInputWidth}
+                    isChallengeOn={isChallengeOn}
+                    setIsChallengeOn={setIsChallengeOn}
+                    connectionMode={connectionMode}
+                    setConnectionMode={setConnectionMode}
+                    isHost={isHost}
+                    setIsHost={setIsHost}
+                    setIsSpectating={setIsSpectating}
+                  />
+                }
+              />
+              <Route path="/login" element={<LoginPage />} />
+              <Route
+                path="/game/:roomId"
+                element={
+                  <GameContainer
+                    username={username}
+                    isChallengeOn={isChallengeOn}
+                    connectionMode={connectionMode}
+                    isHost={isHost}
+                    setIsHost={setIsHost}
+                    isSpectating={isSpectating}
+                    setIsSpectating={setIsSpectating}
+                  />
+                }
+              />
+              <Route
+                path="/offline/classic"
+                element={
+                  <GameContainer
+                    username={username}
+                    isChallengeOn={isChallengeOn}
+                    connectionMode={connectionMode}
+                    isHost={isHost}
+                    setIsHost={setIsHost}
+                    setIsSpectating={setIsSpectating}
+                  />
+                }
+              />
+            </Routes>
+          </div>
+        </div>
+      </Router>
     </>
   )
 }

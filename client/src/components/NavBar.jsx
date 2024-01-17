@@ -1,4 +1,7 @@
 import React, { useState, useLayoutEffect } from "react"
+
+import { Link } from "react-router-dom"
+
 import { auth } from "../firebase"
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth"
 
@@ -92,9 +95,9 @@ function NavBar() {
               onClick={logout}
             />
           ) : (
-            <button className="navbar__login" onClick={refreshPage}>
-              Sign in
-            </button>
+            <Link reloadDocument to="/login">
+              <button className="navbar__login">Sign in</button>
+            </Link>
           )}
         </div>
         <InfoModal show={showInfoModal} handleClose={closeInfoModal} />
