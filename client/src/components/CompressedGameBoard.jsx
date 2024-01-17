@@ -68,8 +68,12 @@ function CompressedGameBoard({
       className={`compressed-game-board${isOutOfGuesses ? "--game-over" : ""}`}
     >
       <div className="compressed-game-board-info">
-        {isLeading && <span style={{ fontSize: "0.70rem" }}>👑</span>}
-        {username}
+        <span className="compressed-game-board-username">
+          {isLeading && (
+            <span className="compressed-game-board-crown">👑&nbsp;</span>
+          )}
+          {username}
+        </span>
         {connectionMode === "online-private" && (
           <>
             &nbsp;-&nbsp;

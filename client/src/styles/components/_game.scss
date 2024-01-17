@@ -34,7 +34,13 @@ $desktop-cell-font-size: 2rem;
 $desktop-user-info-font-size: 0.8rem;
 
 $phone-user-font-size: 8vw;
-$phone-user-info-font-size: 3.4vw;
+$phone-user-info-font-size: 4vw;
+$phone-user-crown-size: 3.5vw;
+
+// Max width
+$desktop-user-info-max-width: 30rem;
+
+$phone-user-info-max-width: 60vw;
 
 // Gap between user board and other boards
 $desktop-board-gap: 1.5rem;
@@ -53,10 +59,14 @@ $phone-other-info-font-size: 3vw;
 // 1vX specific styles
 $phone-others-cell-size: 6.5vw;
 $phone-others-cell-font-size: 4vw;
-$phone-others-info-font-size: 1.6vw;
+$phone-others-info-font-size: 2.6vw;
+$phone-others-info-max-width: 26vw;
+$phone-others-crown-size: 2.3vw;
 
 $phone-others-board-gap: 0vw 5vw;
 $phone-margin-inline: 15vw;
+
+$desktop-others-crown-size: 0.7rem;
 
 @mixin phone-styles-game-board {
   .game-board {
@@ -125,8 +135,20 @@ $phone-margin-inline: 15vw;
     }
 
     .compressed-game-board-info {
-      font-size: $phone-other-info-font-size;
+      font-size: $phone-user-info-font-size;
       font-weight: bold;
+      display: flex;
+
+      .compressed-game-board-username {
+        max-width: $phone-user-info-max-width;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .compressed-game-board-crown {
+        font-size: $phone-user-crown-size;
+      }
     }
   }
 
@@ -148,11 +170,35 @@ $phone-margin-inline: 15vw;
   .compressed-game-board-info {
     font-size: $phone-others-info-font-size;
     font-weight: bold;
+    display: flex;
+
+    .compressed-game-board-username {
+      max-width: $phone-others-info-max-width;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .compressed-game-board-crown {
+      font-size: $phone-others-crown-size;
+    }
   }
 
   .game-board-info {
     font-size: $phone-user-info-font-size;
     font-weight: bold;
+    display: flex;
+
+    .game-board-username {
+      max-width: $phone-user-info-max-width;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .game-board-crown {
+      font-size: $phone-user-crown-size;
+    }
   }
 }
 
@@ -318,6 +364,17 @@ $phone-margin-inline: 15vw;
 .game-board-info {
   font-size: $desktop-user-info-font-size;
   font-weight: bold;
+
+  .game-board-username {
+    max-width: $desktop-user-info-max-width;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .game-board-crown {
+    font-size: $desktop-others-crown-size;
+  }
 }
 
 .countdown-timer {

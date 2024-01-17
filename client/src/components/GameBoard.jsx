@@ -49,8 +49,10 @@ function GameBoard({
   return (
     <div className={`game-board${isOutOfGuesses ? "--game-over" : ""}`}>
       <div className="game-board-info">
-        {isLeading && <span style={{ fontSize: "0.70rem" }}>👑</span>}
-        {username}
+        <span className="game-board-username">
+          {isLeading && <span className="game-board-crown">👑&nbsp;</span>}
+          {username}
+        </span>
         {connectionMode === "online-private" && (
           <>
             &nbsp;-&nbsp;
