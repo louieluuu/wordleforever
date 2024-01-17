@@ -23,9 +23,9 @@ function App() {
 
   return (
     <>
-      <Router>
-        <div className="full-page">
-          <NavBar />
+      <div className="full-page">
+        <NavBar />
+        <Router>
           <Routes>
             <Route
               path="/*"
@@ -74,8 +74,8 @@ function App() {
               }
             />
           </Routes>
-        </div>
-      </Router>
+        </Router>
+      </div>
     </>
   )
 }
