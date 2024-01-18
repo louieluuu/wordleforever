@@ -22,9 +22,9 @@ function MenuRoutes({
   isHost,
   setIsHost,
   setIsSpectating,
+  roomId,
+  setRoomId,
 }) {
-  const roomId = useParams()["*"]
-
   return (
     <>
       <WelcomeMessage
@@ -33,7 +33,7 @@ function MenuRoutes({
         inputWidth={inputWidth}
         setInputWidth={setInputWidth}
       />
-      {!roomId.includes("room") && (
+      {!roomId && (
         <ChallengeForm
           isChallengeOn={isChallengeOn}
           setIsChallengeOn={setIsChallengeOn}
@@ -41,7 +41,7 @@ function MenuRoutes({
       )}
       <AnimatePresence mode="wait">
         <Routes>
-          <Route path="/" element={<MenuLandingPage />} />
+          <Route path="/" element={<MenuLandingPage setRoomId={setRoomId} />} />
           <Route
             path="/online"
             element={
@@ -49,12 +49,18 @@ function MenuRoutes({
                 isChallengeOn={isChallengeOn}
                 setConnectionMode={setConnectionMode}
                 setIsHost={setIsHost}
+                setRoomId={setRoomId}
               />
             }
           />
           <Route
             path="/offline"
-            element={<MenuOfflineModes setConnectionMode={setConnectionMode} />}
+            element={
+              <MenuOfflineModes
+                setConnectionMode={setConnectionMode}
+                setRoomId={setRoomId}
+              />
+            }
           />
           <Route
             path="/room/:roomId"
@@ -67,6 +73,8 @@ function MenuRoutes({
                 isHost={isHost}
                 setIsHost={setIsHost}
                 setIsSpectating={setIsSpectating}
+                roomId={roomId}
+                setRoomId={setRoomId}
               />
             }
           />

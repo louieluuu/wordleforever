@@ -11,8 +11,16 @@ import {
   handleStartPrivateGame,
   handleStartPublicGame,
 } from "../helpers/socketHelpers"
+import useSetRoomId from "../helpers/useSetRoomId"
 
-function MenuOnlineModes({ isChallengeOn, setConnectionMode, setIsHost }) {
+function MenuOnlineModes({
+  isChallengeOn,
+  setConnectionMode,
+  setIsHost,
+  setRoomId,
+}) {
+  useSetRoomId(setRoomId)
+
   const navigate = useNavigate()
 
   async function selectPublicGame() {

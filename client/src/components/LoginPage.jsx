@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
 
 import { Link, useNavigate } from "react-router-dom"
+import useSetRoomId from "../helpers/useSetRoomId"
 
 import { auth } from "../firebase"
 import {
@@ -8,7 +9,9 @@ import {
   useSignInWithEmailAndPassword,
 } from "react-firebase-hooks/auth"
 
-function LoginPage() {
+function LoginPage({ setRoomId }) {
+  useSetRoomId(setRoomId)
+
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 

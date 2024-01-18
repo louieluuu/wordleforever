@@ -14,7 +14,7 @@ import logo from "../assets/logo.svg"
 
 import InfoModal from "./InfoModal"
 
-function NavBar() {
+function NavBar({ roomId }) {
   const [showInfoModal, setShowInfoModal] = useState(false)
   const [colorTheme, setColorTheme] = useState("")
 
@@ -68,6 +68,10 @@ function NavBar() {
     window.location.href = "/"
   }
 
+  useLayoutEffect(() => {
+    console.log(roomId)
+  }, [roomId])
+
   return (
     <>
       <header className="navbar">
@@ -91,17 +95,19 @@ function NavBar() {
             title="Switch color theme"
             onClick={switchColorTheme}
           />
-          {user ? (
-            <ImExit
-              className="navbar__logout"
-              title="Logout"
-              onClick={logout}
-            />
-          ) : (
-            <Link reloadDocument to="/login">
-              <button className="navbar__login">Sign in</button>
-            </Link>
-          )}
+          {!roomId ? (
+            user ? (
+              <ImExit
+                className="navbar__logout"
+                title="Logout"
+                onClick={logout}
+              />
+            ) : (
+              <Link reloadDocument to="/login">
+                <button className="navbar__login">Sign in</button>
+              </Link>
+            )
+          ) : null}
         </div>
         <InfoModal show={showInfoModal} handleClose={closeInfoModal} />
       </header>

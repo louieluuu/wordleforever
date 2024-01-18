@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import socket from "../socket"
+import useSetRoomId from "../helpers/useSetRoomId"
 import WAITING_ROOM_MESSAGES from "../data/waitingRoomMessages"
 
 // Components
@@ -15,9 +16,12 @@ function WaitingRoom({
   isHost,
   setIsHost,
   setIsSpectating,
+  roomId,
+  setRoomId,
 }) {
+  useSetRoomId(setRoomId)
+
   const navigate = useNavigate()
-  const { roomId } = useParams()
   const [userInfo, setUserInfo] = useState([])
   const [message, setMessage] = useState("")
   const [showLobbyCountdownModal, setShowLobbyCountdownModal] = useState(false)

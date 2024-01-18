@@ -2,6 +2,8 @@ import { useState } from "react"
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
+import useSetRoomId from "./helpers/useSetRoomId"
+
 // Components
 import NavBar from "./components/NavBar"
 import GameContainer from "./components/GameContainer"
@@ -25,11 +27,13 @@ function App() {
   const [isSpectating, setIsSpectating] = useState(false)
   const [inputWidth, setInputWidth] = useState(0)
 
+  const [roomId, setRoomId] = useState("")
+
   return (
     <>
       <Router>
         <div className="full-page">
-          <NavBar />
+          <NavBar roomId={roomId} />
           <div className="page-content">
             <Routes>
               <Route
@@ -47,12 +51,23 @@ function App() {
                     isHost={isHost}
                     setIsHost={setIsHost}
                     setIsSpectating={setIsSpectating}
+                    roomId={roomId}
+                    setRoomId={setRoomId}
                   />
                 }
               />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/forgot" element={<ResetPasswordPage />} />
+              <Route
+                path="/login"
+                element={<LoginPage setRoomId={setRoomId} />}
+              />
+              <Route
+                path="/register"
+                element={<RegisterPage setRoomId={setRoomId} />}
+              />
+              <Route
+                path="/forgot"
+                element={<ResetPasswordPage setRoomId={setRoomId} />}
+              />
               <Route
                 path="/game/:roomId"
                 element={
@@ -64,6 +79,7 @@ function App() {
                     setIsHost={setIsHost}
                     isSpectating={isSpectating}
                     setIsSpectating={setIsSpectating}
+                    setRoomId={setRoomId}
                   />
                 }
               />
@@ -77,6 +93,7 @@ function App() {
                     isHost={isHost}
                     setIsHost={setIsHost}
                     setIsSpectating={setIsSpectating}
+                    setRoomId={setRoomId}
                   />
                 }
               />

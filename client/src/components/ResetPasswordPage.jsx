@@ -1,11 +1,13 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState } from "react"
 
-import { Link } from "react-router-dom"
+import useSetRoomId from "../helpers/useSetRoomId"
 
 import { auth } from "../firebase"
 import { useSendPasswordResetEmail } from "react-firebase-hooks/auth"
 
-function ResetPasswordPage() {
+function ResetPasswordPage({ setRoomId }) {
+  useSetRoomId(setRoomId)
+
   const [email, setEmail] = useState("")
   const [finalEmail, setFinalEmail] = useState("")
 

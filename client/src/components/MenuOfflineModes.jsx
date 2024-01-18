@@ -1,12 +1,15 @@
 import React from "react"
 import { useNavigate } from "react-router-dom"
+import useSetRoomId from "../helpers/useSetRoomId"
 
 import { HiOutlineArrowUturnLeft } from "react-icons/hi2"
 
 // Components
 import AnimatedPage from "./AnimatedPage"
 
-function MenuOfflineModes({ setConnectionMode }) {
+function MenuOfflineModes({ setConnectionMode, setRoomId }) {
+  useSetRoomId(setRoomId)
+
   const navigate = useNavigate()
 
   function selectClassicMode() {

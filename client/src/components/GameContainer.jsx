@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react"
 import { useParams } from "react-router-dom"
 import Confetti from "react-confetti"
 import socket from "../socket"
+import useSetRoomId from "../helpers/useSetRoomId"
 
 // Components
 import CountdownModal from "./CountdownModal"
@@ -22,7 +23,10 @@ function GameContainer({
   setIsHost,
   isSpectating,
   setIsSpectating,
+  setRoomId,
 }) {
+  useSetRoomId(setRoomId)
+
   // Gameflow states
   const [hasSolved, setHasSolved] = useState(false)
   const [isOutOfGuesses, setIsOutOfGuesses] = useState(false)

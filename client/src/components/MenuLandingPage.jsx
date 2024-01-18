@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom"
+import useSetRoomId from "../helpers/useSetRoomId"
 
 // Components
 import AnimatedPage from "./AnimatedPage"
 
-function MenuLandingPage() {
+function MenuLandingPage({ setRoomId }) {
+  useSetRoomId(setRoomId)
   return (
     <AnimatedPage>
       <div className="menu">
