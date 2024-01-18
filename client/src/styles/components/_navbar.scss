@@ -1,4 +1,3 @@
-// Overall navbar styling
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -112,13 +111,11 @@
   }
 }
 
-// Logo isn't actually implemented yet, but it will come before the "Wordle Forever"
 .logo {
   display: flex;
   gap: 0.5rem;
 
   &__wordmark {
-    align-self: center;
     font-size: 1.85rem;
     font-family: "Lobster", serif;
   }

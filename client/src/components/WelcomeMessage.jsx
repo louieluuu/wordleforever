@@ -59,6 +59,7 @@ function WelcomeMessage({ username, setUsername, inputWidth, setInputWidth }) {
           onBlur={handleUserNameChange}
           onClick={setCaretPosition}
           onMouseDown={setCaretInvisible}
+          spellCheck="false"
           style={{ width: `${inputWidth}px` }}
         />
         !
@@ -66,10 +67,17 @@ function WelcomeMessage({ username, setUsername, inputWidth, setInputWidth }) {
           {username}
         </span>
       </div>
-      <HiOutlinePencilSquare
-        className="username-form__pencil"
-        onClick={focusUsernameForm}
-      />
+      <span
+        style={{
+          display: "inline-flex",
+        }}
+        title="Change display name"
+      >
+        <HiOutlinePencilSquare
+          className="username-form__pencil"
+          onClick={focusUsernameForm}
+        />
+      </span>
     </div>
   )
 }
