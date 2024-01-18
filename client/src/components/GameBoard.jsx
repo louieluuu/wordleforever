@@ -12,9 +12,53 @@ function GameBoard({
   isOutOfGuesses,
   isLeading,
   isSmall,
+  isCompressed,
 }) {
+  const lastRowIndex = getLastRowIndex(board)
+  const isBoardEmpty = checkIsBoardEmpty(board)
+
+  function getLastRowIndex(board) {
+    let lastRowIndex = 0
+    board.forEach((row, rowIndex) => {
+      if (row[0].letter !== "" || row[0].color !== "") {
+        lastRowIndex = rowIndex
+      }
+    })
+
+    return lastRowIndex
+  }
+
+  function checkIsBoardEmpty(board) {
+    if (board[0][0].color === "") {
+      return true
+    }
+    return false
+  }
+
+  function addPrefix(baseName) {
+    if (isSmall) {
+      return "small-" + baseName
+    } else if (isCompressed) {
+      return "compressed-" + baseName
+    }
+    return baseName
+  }
+
+  function getBoardClassName() {
+    let boardClassName = addPrefix("game-board")
+    if (isOutOfGuesses) {
+      boardClassName += "--game-over"
+    }
+
+    return boardClassName
+  }
+
   function getCellClassName(board, row, cellIndex) {
-    let cellClassName = `${isSmall ? "small-" : ""}game-board__cell`
+    let cellClassName = addPrefix("game-board__cell")
+
+    if (isBoardEmpty && isCompressed) {
+      cellClassName += "--empty"
+    }
 
     if (board[row][cellIndex].color === "") {
       if (row === activeRow && cellIndex < activeCell) {
@@ -29,6 +73,22 @@ function GameBoard({
     }
 
     return cellClassName
+  }
+
+  function getRowClassName() {
+    return addPrefix("game-board__row")
+  }
+
+  function getInfoClassName() {
+    return addPrefix("game-board-info")
+  }
+
+  function getUsernameClassName() {
+    return addPrefix("game-board-username")
+  }
+
+  function getCrownClassName() {
+    return addPrefix("game-board-crown")
   }
 
   function getStreakClassName(streak) {
@@ -48,18 +108,10 @@ function GameBoard({
   }
 
   return (
-    <div
-      className={`${isSmall ? "small-" : ""}game-board${
-        isOutOfGuesses ? "--game-over" : ""
-      }`}
-    >
-      <div className={`${isSmall ? "small-" : ""}game-board-info`}>
-        <span className={`${isSmall ? "small-" : ""}game-board-username`}>
-          {isLeading && (
-            <span className={`${isSmall ? "small-" : ""}game-board-crown`}>
-              👑&nbsp;
-            </span>
-          )}
+    <div className={getBoardClassName()}>
+      <div className={getInfoClassName()}>
+        <span className={getUsernameClassName()}>
+          {isLeading && <span className={getCrownClassName()}>👑&nbsp;</span>}
           {username}
         </span>
         {connectionMode === "online-private" && (
@@ -79,21 +131,31 @@ function GameBoard({
           </>
         )}
       </div>
-      {board.map((row, rowIndex) => (
-        <div
-          key={rowIndex}
-          className={`${isSmall ? "small-" : ""}game-board__row`}
-        >
-          {row.map((cell, cellIndex) => (
+      {!isCompressed ? (
+        board.map((row, rowIndex) => (
+          <div key={rowIndex} className={getRowClassName()}>
+            {row.map((cell, cellIndex) => (
+              <div
+                key={cellIndex}
+                className={getCellClassName(board, rowIndex, cellIndex)}
+              >
+                {cell.letter}
+              </div>
+            ))}
+          </div>
+        ))
+      ) : (
+        <div className={getRowClassName()}>
+          {board[lastRowIndex].map((cell, cellIndex) => (
             <div
               key={cellIndex}
-              className={getCellClassName(board, rowIndex, cellIndex)}
+              className={getCellClassName(board, lastRowIndex, cellIndex)}
             >
               {cell.letter}
             </div>
           ))}
         </div>
-      ))}
+      )}
     </div>
   )
 }

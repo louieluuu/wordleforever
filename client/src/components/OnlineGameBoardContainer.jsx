@@ -2,7 +2,6 @@ import React from "react"
 import { useMediaQuery } from "react-responsive"
 
 import GameBoard from "./GameBoard"
-import CompressedGameBoard from "./CompressedGameBoard"
 
 function OnlineGameBoardContainer({
   connectionMode,
@@ -95,7 +94,7 @@ function OnlineGameBoardContainer({
                   />
                 ))
               : otherUserInfo().map((obj) => (
-                  <CompressedGameBoard
+                  <GameBoard
                     key={obj.userId}
                     board={obj.gameBoard}
                     username={obj.username}
@@ -104,6 +103,7 @@ function OnlineGameBoardContainer({
                     connectionMode={connectionMode}
                     isOutOfGuesses={isOutOfGuesses}
                     isLeading={isUserLeading(obj.userId)}
+                    isCompressed={isPhone}
                   />
                 ))}
           </div>
@@ -129,7 +129,7 @@ function OnlineGameBoardContainer({
             ) : (
               <>
                 {userInfo.map((obj) => (
-                  <CompressedGameBoard
+                  <GameBoard
                     key={obj.userId}
                     board={obj.gameBoard}
                     username={obj.username}
@@ -138,6 +138,7 @@ function OnlineGameBoardContainer({
                     connectionMode={connectionMode}
                     isOutOfGuesses={isOutOfGuesses}
                     isLeading={isUserLeading(obj.userId)}
+                    isCompressed={isPhone}
                   />
                 ))}
               </>
