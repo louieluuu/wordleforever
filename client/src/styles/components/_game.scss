@@ -304,6 +304,16 @@ $countdown-timer-font-size: 5.75vw;
     opacity: 60%;
   }
 
+  &--solved {
+    @extend .game-board;
+    opacity: 60%;
+  }
+
+  &--unsolved {
+    @extend .game-board;
+    opacity: 50%;
+  }
+
   &__row {
     @extend .game-board;
     flex-direction: row;
@@ -313,6 +323,7 @@ $countdown-timer-font-size: 5.75vw;
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 
     width: $desktop-cell-size;
     height: $desktop-cell-size;
@@ -336,6 +347,9 @@ $countdown-timer-font-size: 5.75vw;
 
       &.last-guess::before {
         content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
         mix-blend-mode: overlay;
@@ -392,6 +406,7 @@ $countdown-timer-font-size: 5.75vw;
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 
     width: $desktop-small-cell-size;
     height: $desktop-small-cell-size;
@@ -415,6 +430,9 @@ $countdown-timer-font-size: 5.75vw;
 
       &.last-guess::before {
         content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
         mix-blend-mode: overlay;
@@ -468,6 +486,7 @@ $countdown-timer-font-size: 5.75vw;
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 
     font-size: $phone-others-cell-font-size;
     font-weight: 500;
@@ -486,6 +505,9 @@ $countdown-timer-font-size: 5.75vw;
 
       &.last-guess::before {
         content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
         mix-blend-mode: overlay;
