@@ -13,6 +13,7 @@ function GameBoardContainer({
   userInfo,
   isOutOfGuesses,
   isSpectating,
+  isGameOver,
 }) {
   return (
     <>
@@ -24,6 +25,7 @@ function GameBoardContainer({
             activeCell={activeCell}
             connectionMode={connectionMode}
             isOutOfGuesses={isOutOfGuesses}
+            isGameOver={isGameOver}
           />
         </div>
       ) : (
@@ -35,6 +37,7 @@ function GameBoardContainer({
           userInfo={userInfo}
           isOutOfGuesses={isOutOfGuesses}
           isSpectating={isSpectating}
+          isGameOver={isGameOver}
         />
       )}
     </>

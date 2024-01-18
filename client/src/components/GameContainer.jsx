@@ -648,6 +648,7 @@ function GameContainer({
           userInfo={userInfo}
           isOutOfGuesses={isOutOfGuesses}
           isSpectating={isSpectating}
+          isGameOver={isGameOver}
         />
       </div>
 

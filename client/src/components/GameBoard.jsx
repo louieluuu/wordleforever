@@ -13,6 +13,8 @@ function GameBoard({
   isLeading,
   isSmall,
   isCompressed,
+  isUser,
+  isGameOver,
 }) {
   const lastRowIndex = getLastRowIndex(board)
   const isBoardEmpty = checkIsBoardEmpty(board)
@@ -35,6 +37,14 @@ function GameBoard({
     return false
   }
 
+  function isBoardSolved(board) {
+    return board[lastRowIndex].every((cell) => cell.color === "green")
+  }
+
+  function isBoardOutOfGuesses(board) {
+    return lastRowIndex === 5 && !isBoardSolved(board)
+  }
+
   function addPrefix(baseName) {
     if (isSmall) {
       return "small-" + baseName
@@ -48,6 +58,10 @@ function GameBoard({
     let boardClassName = addPrefix("game-board")
     if (isOutOfGuesses) {
       boardClassName += "--game-over"
+    } else if (!isUser && !isGameOver && isBoardSolved(board)) {
+      boardClassName += "--solved"
+    } else if (!isUser && !isGameOver && isBoardOutOfGuesses(board)) {
+      boardClassName += "--unsolved"
     }
 
     return boardClassName

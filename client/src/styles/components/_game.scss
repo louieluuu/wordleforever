@@ -363,6 +363,16 @@ $countdown-timer-font-size: 5.75vw;
     opacity: 60%;
   }
 
+  &--solved {
+    @extend .small-game-board;
+    opacity: 60%;
+  }
+
+  &--unsolved {
+    @extend .small-game-board;
+    opacity: 50%;
+  }
+
   &__row {
     @extend .small-game-board;
     flex-direction: row;
@@ -418,6 +428,14 @@ $countdown-timer-font-size: 5.75vw;
     opacity: 60%;
   }
 
+  &--solved {
+    opacity: 70%;
+  }
+
+  &--unsolved {
+    opacity: 50%;
+  }
+
   &__row {
     @extend .compressed-game-board;
     flex-direction: row;
@@ -429,7 +447,7 @@ $countdown-timer-font-size: 5.75vw;
     align-items: center;
 
     font-size: $phone-others-cell-font-size;
-    font-weight: bold;
+    font-weight: 500;
 
     &--empty {
       @extend .compressed-game-board__cell;
