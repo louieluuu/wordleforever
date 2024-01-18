@@ -38,7 +38,7 @@ html[data-theme="light"] {
   --username-shadow: hsl(278, 37%, 34%);
   --username-shadow-hover: hsl(278, 37%, 44%);
   --header-hover: 65%;
-  --waiting-room-background: url(../assets/waiting_room.jpg);
+  --waiting-room-background: url(../assets/waiting-room-light.jpg);
   --waiting-room-vertical: 10%;
 }
 
@@ -82,7 +82,7 @@ html[data-theme="dark"] {
   --username-shadow: hsl(40, 78%, 29%);
   --username-shadow-hover: hsl(40, 78%, 39%);
   --header-hover: 85%;
-  --waiting-room-background: url(../assets/waiting_room_dark.jpg);
+  --waiting-room-background: url(../assets/waiting-room-dark.jpg);
   --waiting-room-vertical: 30%;
 }
 
