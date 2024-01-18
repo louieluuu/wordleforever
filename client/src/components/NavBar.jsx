@@ -12,10 +12,10 @@ import { ImExit } from "react-icons/im"
 
 import logo from "../assets/logo.svg"
 
-import InfoModal from "./InfoModal"
+import InfoDialog from "./InfoDialog"
 
-function NavBar({ roomId }) {
-  const [showInfoModal, setShowInfoModal] = useState(false)
+function NavBar() {
+  const [showInfoDialog, setShowInfoDialog] = useState(false)
   const [colorTheme, setColorTheme] = useState("")
 
   const [user, loadingUser, errorUser] = useAuthState(auth)
@@ -56,12 +56,12 @@ function NavBar({ roomId }) {
     return colorThemeClassName
   }
 
-  function openInfoModal() {
-    setShowInfoModal(true)
+  function openInfoDialog() {
+    setShowInfoDialog(true)
   }
 
-  function closeInfoModal() {
-    setShowInfoModal(false)
+  function closeInfoDialog() {
+    setShowInfoDialog(false)
   }
 
   function refreshPage() {
@@ -84,7 +84,7 @@ function NavBar({ roomId }) {
           <FaRegCircleQuestion
             className="navbar__info"
             title="Info"
-            onClick={openInfoModal}
+            onClick={openInfoDialog}
           />
           <RiMoonClearFill
             className={getColorThemeClassName()}
@@ -105,7 +105,7 @@ function NavBar({ roomId }) {
             )
           ) : null}
         </div>
-        <InfoModal show={showInfoModal} handleClose={closeInfoModal} />
+        <InfoDialog show={showInfoDialog} handleClose={closeInfoDialog} />
       </header>
     </>
   )
