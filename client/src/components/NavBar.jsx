@@ -60,16 +60,13 @@ function NavBar() {
     setShowInfoDialog(true)
   }
 
-  function closeInfoDialog() {
-    setShowInfoDialog(false)
-  }
-
   function refreshPage() {
     window.location.href = "/"
   }
 
   return (
     <>
+      {showInfoDialog && <InfoDialog show={setShowInfoDialog} />}
       <header className="navbar">
         <div className="navbar__left" onClick={refreshPage}>
           <div className="logo">
@@ -105,7 +102,6 @@ function NavBar() {
             )
           ) : null}
         </div>
-        <InfoDialog show={showInfoDialog} handleClose={closeInfoDialog} />
       </header>
     </>
   )

@@ -1,0 +1,38 @@
+.dialog {
+  // Centering
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  border: none;
+  background-color: $bg-main;
+  color: $color;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.05), 0 0 10px 4px rgba(0, 0, 0, 0.05),
+    0 0 15px 6px rgba(0, 0, 0, 0.05), 0 0 20px 8px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  max-width: 30rem;
+  z-index: 9;
+
+  &__right {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__btn--close {
+    width: 1.4rem;
+    height: 1.4rem;
+
+    cursor: pointer;
+  }
+
+  &__first-time {
+    @extend .dialog;
+    max-width: 25rem;
+  }
+
+  &__info {
+    @extend .dialog;
+  }
+}
