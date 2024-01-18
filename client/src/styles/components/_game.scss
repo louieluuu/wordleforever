@@ -224,13 +224,6 @@ $countdown-timer-font-size: 5.75vw;
 
 // Default styles (desktop for now)
 
-.game-container {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  // gap: 1rem;
-}
-
 .upper-game-container {
   display: flex;
   flex-direction: column;
@@ -256,7 +249,6 @@ $countdown-timer-font-size: 5.75vw;
 .lower-game-container {
   display: flex;
   justify-content: center;
-  align-items: center;
 
   &--spec {
     @extend .lower-game-container;
