@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-inline: 0.3rem;
+  padding-inline: 0.5rem;
 
   border-bottom: 1px solid $border;
 
@@ -25,9 +25,9 @@
 
   &__right {
     display: flex;
-    justify-content: flex-end;
+    // justify-content: flex-end;
+    align-items: center;
     gap: 1rem;
-    padding-inline-end: 0.5rem;
   }
 
   &__info {
@@ -72,11 +72,11 @@
     font-weight: bold;
     font-size: 0.9rem;
 
-    height: 2rem;
-
     border: none;
     border-radius: 0.3rem;
     padding-inline: 1rem;
+
+    height: 2rem;
 
     caret-color: transparent;
 
@@ -104,10 +104,6 @@
     &:active {
       transform: scale(0.9);
     }
-
-    &.dark {
-      transform: rotateY(180deg);
-    }
   }
 }
 
@@ -118,6 +114,7 @@
   &__wordmark {
     font-size: 1.85rem;
     font-family: "Lobster", serif;
+    align-self: center;
   }
 
   &__wordmark--left {
