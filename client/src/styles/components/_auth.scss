@@ -22,9 +22,13 @@
 
     color: $color;
     background-color: $bg-main;
-    border: $btn-copy-border 2px solid;
+    border: 2px solid $btn-copy-border;
 
     padding: 0.4rem;
+
+    &:focus {
+      outline: 2px solid $username;
+    }
   }
 
   &__divider {

@@ -79,6 +79,8 @@
     border-radius: 0.3rem;
     padding-inline: 1rem;
 
+    caret-color: transparent;
+
     &:hover {
       background-color: $username-hover;
       cursor: pointer;

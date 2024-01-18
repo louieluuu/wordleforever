@@ -5,14 +5,13 @@ import { Link } from "react-router-dom"
 import { auth } from "../firebase"
 import { useSendPasswordResetEmail } from "react-firebase-hooks/auth"
 
-function LoginPage() {
+function ResetPasswordPage() {
   const [email, setEmail] = useState("")
   const [finalEmail, setFinalEmail] = useState("")
 
   const [hasReset, setHasReset] = useState(false)
 
-  const [sendPasswordResetEmail, sending, error] =
-    useSendPasswordResetEmail(auth)
+  const [sendPasswordResetEmail, _, error] = useSendPasswordResetEmail(auth)
 
   function handleKeyDown(e) {
     if (e.key === "Enter") {
@@ -48,38 +47,43 @@ function LoginPage() {
   }
 
   return (
-    <div className="auth">
-      <div
+    <>
+      <p
         style={{
           fontSize: "1.75rem",
           fontWeight: "500",
-          paddingBottom: "0.5rem",
+          marginBottom: "0.2rem",
         }}
       >
         Forgot Password?
+      </p>
+      <div style={{ fontSize: "0.9rem" }}>
+        Get a link to reset your password.
       </div>
-      <div className={`auth__error${error ? "" : "--hidden"}`}>
-        {getErrorMessage()}
-      </div>
-      <input
-        className="auth__form"
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        onKeyDown={handleKeyDown}
-      />
-      <button className="menu__btn--auth" onClick={resetPassword}>
-        RESET
-      </button>
-      {hasReset && (
-        <div style={{ maxWidth: "15rem" }}>
-          Email sent to {finalEmail}. Click the link in the email to reset your
-          password.
+      <div className="auth">
+        <div className={`auth__error${error ? "" : "--hidden"}`}>
+          {getErrorMessage()}
         </div>
-      )}
-    </div>
+        <input
+          className="auth__form"
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+        <button className="menu__btn--auth" onClick={resetPassword}>
+          RESET
+        </button>
+        {hasReset && (
+          <div style={{ maxWidth: "15rem" }}>
+            Email sent to {finalEmail}. Click the link in the email to reset
+            your password.
+          </div>
+        )}
+      </div>
+    </>
   )
 }
 
-export default LoginPage
+export default ResetPasswordPage

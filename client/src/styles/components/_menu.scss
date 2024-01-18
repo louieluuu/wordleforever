@@ -20,6 +20,7 @@
     color: white;
     border-radius: 2rem;
     cursor: pointer;
+    caret-color: transparent;
 
     &:active {
       width: 17.5rem;
@@ -160,8 +161,8 @@
     margin-top: 2.5rem;
 
     &:active {
-      transform: scale(0.95);
-      width: 10rem;
+      width: 15rem;
+      filter: brightness(90%);
       transition-timing-function: ease-out;
     }
 

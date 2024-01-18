@@ -17,6 +17,13 @@ function LoginPage() {
 
   const navigate = useNavigate()
 
+  // Redirect to home page once user is logged in.
+  useEffect(() => {
+    if (user) {
+      navigate("/")
+    }
+  }, [user])
+
   function handleKeyDown(e) {
     if (e.key === "Enter") {
       login()
@@ -26,13 +33,6 @@ function LoginPage() {
   function login() {
     signInWithEmailAndPassword(email, password)
   }
-
-  // Redirect to home page once user is logged in.
-  useEffect(() => {
-    if (user) {
-      navigate("/")
-    }
-  }, [user])
 
   // TODO - LOUIE: Wondering if there's a way to reset error back to undefined/null.
   function getErrorMessage() {

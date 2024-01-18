@@ -30,6 +30,7 @@ html[data-theme="light"] {
   --btn-copy-hover: hsl(0, 0%, 95%);
   --btn-neutral-hover: hsl(0, 0%, 90%);
 
+  --error: hsl(0, 100%, 50%);
   --challenge: hsl(12, 90%, 35%);
   --username: hsl(278, 37%, 69%);
   --username-hover: hsl(278, 37%, 74%);
@@ -73,6 +74,7 @@ html[data-theme="dark"] {
   --btn-copy-hover: hsl(0, 0%, 30%);
   --btn-neutral-hover: hsl(0, 0%, 90%);
 
+  --error: hsl(0, 100%, 40%);
   --challenge: hsl(12, 90%, 40%);
   --username: hsl(40, 78%, 53%);
   --username-hover: hsl(40, 78%, 58%);
@@ -118,6 +120,7 @@ $btn-copy-hover: var(--btn-copy-hover);
 $btn-neutral-hover: var(--btn-neutral-hover);
 
 // Miscellaneous
+$error: var(--error);
 $challenge: var(--challenge);
 $username: var(--username);
 $username-hover: var(--username-hover);
