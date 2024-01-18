@@ -9,6 +9,7 @@ import MenuRoutes from "./components/MenuRoutes"
 
 import LoginPage from "./components/LoginPage"
 import RegisterPage from "./components/RegisterPage"
+import ResetPasswordPage from "./components/ResetPasswordPage"
 
 function App() {
   const [connectionMode, setConnectionMode] = useState("offline")
@@ -50,6 +51,8 @@ function App() {
                 }
               />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/forgot" element={<ResetPasswordPage />} />
               <Route
                 path="/game/:roomId"
                 element={

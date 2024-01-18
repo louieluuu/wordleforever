@@ -4,13 +4,17 @@
   align-items: center;
   gap: 1rem;
 
-  margin-top: 3rem;
+  margin-top: 2rem;
 
   font-size: 0.8rem;
 
   &__error {
+    visibility: visible;
     color: red;
-    font-size: 0.8rem;
+
+    &--hidden {
+      visibility: hidden;
+    }
   }
 
   &__form {
@@ -30,7 +34,7 @@
 
     width: 100%;
 
-    margin: 1.5rem;
+    margin: 2rem;
 
     &::before,
     &::after {

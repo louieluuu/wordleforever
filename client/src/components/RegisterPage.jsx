@@ -30,10 +30,6 @@ function RegisterPage() {
           console.log("An error occurred. Please try again.")
       }
     }
-
-    console.log(error.code)
-
-    return errorMessage
   }
 
   return (
