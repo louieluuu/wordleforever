@@ -1,17 +1,28 @@
-import React, { useState, useRef } from "react"
+import React, { useRef } from "react"
 import { Dialog } from "@headlessui/react"
 
-import { IoCloseSharp } from "react-icons/io5"
+import { GrClose } from "react-icons/gr"
+
+// TODO: LOUIE - animate the dialog upon open and close
 
 function InfoDialog({ show }) {
+  const closeButtonRef = useRef(null)
+
   return (
-    <Dialog className="dialog__info" open={true} onClose={() => show(false)}>
+    <Dialog
+      className="dialog"
+      open={true}
+      onClose={() => show(false)}
+      initialFocus={closeButtonRef}
+    >
       <Dialog.Panel>
         <div className="dialog__right">
-          <IoCloseSharp
-            className="dialog__btn--close"
-            onClick={() => show(false)}
-          />
+          <div ref={closeButtonRef}>
+            <GrClose
+              className="dialog__btn--close"
+              onClick={() => show(false)}
+            />
+          </div>
         </div>
 
         <Dialog.Title
@@ -45,7 +56,9 @@ function InfoDialog({ show }) {
           <li style={{ marginBottom: "0.1rem" }}>
             Invite your friends to a private lobby.
           </li>
-          <li>Play vs strangers, and see how high you can streak.</li>
+          <li style={{ marginBottom: "0.1rem" }}>
+            Go solo, and see how high you can streak.
+          </li>
           <li>Statistics, QOL features, and more!</li>
         </ul>
 
@@ -121,7 +134,7 @@ function InfoDialog({ show }) {
           </b>
           &nbsp;is our love letter to&nbsp;
           <a href="https://www.nytimes.com/games/wordle/index.html">
-            Wordle
+            <i>Wordle</i>
           </a>{" "}
           by Josh Wardle. Open source and hosted on&nbsp;
           <a href="https://github.com/louieluuu/wordle-forever">Github</a>

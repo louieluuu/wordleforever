@@ -11,6 +11,10 @@
   top: 50%;
   transform: translate(-50%, -50%);
 
+  // Scrollable on mobile
+  max-height: 100%;
+  overflow-y: auto;
+
   border: none;
   background-color: $bg-main;
   color: $color;
@@ -31,14 +35,5 @@
     height: 1.4rem;
 
     cursor: pointer;
-  }
-
-  &__first-time {
-    @extend .dialog;
-    max-width: 25rem;
-  }
-
-  &__info {
-    @extend .dialog;
   }
 }
