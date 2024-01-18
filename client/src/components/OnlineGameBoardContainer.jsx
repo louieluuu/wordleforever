@@ -45,7 +45,10 @@ function OnlineGameBoardContainer({
   function getOtherBoardsClassName() {
     let otherBoardsClassName = "other-boards"
     if (isMoreThanTwoPlayers()) {
-      otherBoardsClassName += `--grid`
+      otherBoardsClassName += "--grid"
+    }
+    if (isSpectating) {
+      otherBoardsClassName += " spec"
     }
     return otherBoardsClassName
   }
@@ -107,22 +110,39 @@ function OnlineGameBoardContainer({
         </div>
       ) : (
         <div className="boards-container">
-          {userInfo.length > 0 && (
-            <>
-              {userInfo.map((obj) => (
-                <GameBoard
-                  key={obj.userId}
-                  board={obj.gameBoard}
-                  username={obj.username}
-                  points={obj.points}
-                  streak={obj.streak}
-                  connectionMode={connectionMode}
-                  isOutOfGuesses={isOutOfGuesses}
-                  isLeading={isUserLeading(obj.userId)}
-                />
-              ))}
-            </>
-          )}
+          <div className={getOtherBoardsClassName()}>
+            {userInfo.length > 0 && isDesktop ? (
+              <>
+                {userInfo.map((obj) => (
+                  <GameBoard
+                    key={obj.userId}
+                    board={obj.gameBoard}
+                    username={obj.username}
+                    points={obj.points}
+                    streak={obj.streak}
+                    connectionMode={connectionMode}
+                    isOutOfGuesses={isOutOfGuesses}
+                    isLeading={isUserLeading(obj.userId)}
+                  />
+                ))}
+              </>
+            ) : (
+              <>
+                {userInfo.map((obj) => (
+                  <CompressedGameBoard
+                    key={obj.userId}
+                    board={obj.gameBoard}
+                    username={obj.username}
+                    points={obj.points}
+                    streak={obj.streak}
+                    connectionMode={connectionMode}
+                    isOutOfGuesses={isOutOfGuesses}
+                    isLeading={isUserLeading(obj.userId)}
+                  />
+                ))}
+              </>
+            )}
+          </div>
         </div>
       )}
     </>

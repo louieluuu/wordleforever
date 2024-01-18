@@ -617,7 +617,7 @@ function GameContainer({
 
   return (
     <div className="game-container">
-      <div className="upper-game-container">
+      <div className={`upper-game-container${isSpectating ? "--spec" : ""}`}>
         {isCountdownRunning && (
           <CountdownModal
             isCountdownRunning={isCountdownRunning}
@@ -650,8 +650,9 @@ function GameContainer({
           isSpectating={isSpectating}
         />
       </div>
-      <div className="lower-game-container">
-        {!isSpectating ? (
+
+      {!isSpectating ? (
+        <div className="lower-game-container">
           <Keyboard
             handleLetter={handleLetter}
             handleBackspace={handleBackspace}
@@ -666,13 +667,15 @@ function GameContainer({
             isHost={isHost}
             startNewGame={startNewGame}
           />
-        ) : (
+        </div>
+      ) : (
+        <div className="lower-game-container--spec">
           <div className="spectator-message">
             {spectatorMessage}
             <span className="hidden-periods">{hiddenPeriods}</span>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

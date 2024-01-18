@@ -157,6 +157,14 @@ $countdown-timer-font-size: 5.75vw;
         font-size: $phone-user-crown-size;
       }
     }
+
+    &.spec {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      align-items: center;
+      gap: 0;
+    }
   }
 
   .other-boards--grid {
@@ -230,9 +238,30 @@ $countdown-timer-font-size: 5.75vw;
   justify-content: center;
 }
 
+.upper-game-container--spec {
+  display: flex;
+  flex-direction: column;
+  flex: 2;
+  justify-content: center;
+
+  .other-boards {
+    gap: 2rem;
+  }
+
+  .other-boards--grid {
+    align-items: center;
+  }
+}
+
 .lower-game-container {
+  display: flex;
   justify-content: center;
   align-items: center;
+
+  &--spec {
+    @extend .lower-game-container;
+    flex: 1;
+  }
 }
 
 .boards-container {
