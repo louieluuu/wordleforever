@@ -380,7 +380,6 @@ $countdown-timer-font-size: 5.75vw;
     font-size: $desktop-others-cell-font-size;
     font-weight: 500;
     border: $desktop-cell-border $border;
-    padding: $desktop-cell-padding;
 
     &--green {
       @extend .small-game-board__cell;
@@ -408,6 +407,35 @@ $countdown-timer-font-size: 5.75vw;
       color: $color;
       border-color: $active;
     }
+
+    &--green,
+    &--yellow,
+    &--grey {
+      &.last-guess::before {
+        content: "";
+        width: 100%;
+        height: 100%;
+        mix-blend-mode: overlay;
+        animation: flashAnimation 3.5s infinite;
+      }
+    }
+    &.last-guess::before {
+      content: "";
+      width: 100%;
+      height: 100%;
+      animation: flashAnimation 3.5s infinite;
+    }
+  }
+}
+
+@keyframes flashAnimation {
+  0%,
+  100% {
+    background-color: rgba(255, 0, 0, 0.5);
+  }
+  20%,
+  80% {
+    background-color: transparent;
   }
 }
 
@@ -465,6 +493,17 @@ $countdown-timer-font-size: 5.75vw;
       color: white;
       border-color: $wrong;
       background-color: $wrong;
+    }
+    &--green,
+    &--yellow,
+    &--grey {
+      &.last-guess::before {
+        content: "";
+        width: 100%;
+        height: 100%;
+        mix-blend-mode: overlay;
+        animation: flashAnimation 3.5s infinite;
+      }
     }
   }
 }
