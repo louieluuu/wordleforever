@@ -99,7 +99,7 @@ function WaitingRoom({
       socket.off("countdownTick")
       socket.off("roomStarted")
     }
-  }, [])
+  }, [roomId])
 
   // Join room once
   useEffect(() => {
