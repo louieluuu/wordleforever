@@ -68,10 +68,6 @@ function NavBar({ roomId }) {
     window.location.href = "/"
   }
 
-  useLayoutEffect(() => {
-    console.log(roomId)
-  }, [roomId])
-
   return (
     <>
       <header className="navbar">
