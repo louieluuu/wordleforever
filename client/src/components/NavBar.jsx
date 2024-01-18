@@ -10,6 +10,8 @@ import { RiMoonClearFill } from "react-icons/ri"
 import { ImExit } from "react-icons/im"
 // import { FaPowerOff } from "react-icons/fa6"
 
+import Logo from "../assets/logo.svg?react"
+
 import InfoModal from "./InfoModal"
 
 function NavBar() {
@@ -71,6 +73,7 @@ function NavBar() {
       <header className="navbar">
         <div className="navbar__left" onClick={refreshPage}>
           <div className="logo">
+            <Logo />
             <div className="logo__wordmark">
               <strong className="logo__wordmark--left">Wordle&nbsp;</strong>
               <strong className="logo__wordmark--right">Forever</strong>
