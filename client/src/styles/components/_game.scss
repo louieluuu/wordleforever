@@ -70,6 +70,11 @@ $desktop-others-crown-size: 0.7rem;
 $countdown-timer-placement: 35vh;
 $countdown-timer-font-size: 5.75vw;
 
+$desktop-private-room-info-margin-bottom: 1rem;
+
+$phone-private-room-info-width: 96vw;
+$phone-private-room-info-margin-bottom: 0;
+
 @mixin phone-styles-game-board {
   .game-board {
     gap: $phone-user-cell-gap;
@@ -213,6 +218,11 @@ $countdown-timer-font-size: 5.75vw;
   .countdown-timer {
     top: $countdown-timer-placement;
     font-size: $countdown-timer-font-size;
+  }
+
+  .private-room-info {
+    width: $phone-private-room-info-width;
+    margin-bottom: $phone-private-room-info-margin-bottom;
   }
 }
 
@@ -605,12 +615,13 @@ $countdown-timer-font-size: 5.75vw;
   font-size: 1.5rem;
 }
 
-.round-counter {
+.private-room-info {
   display: flex;
-  justify-content: flex-end;
-  margin-inline-end: 0.5rem;
+  justify-content: space-between;
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 500;
+  margin-top: 0.2vh;
+  margin-bottom: $desktop-private-room-info-margin-bottom;
 }
 
 .spectator-message {

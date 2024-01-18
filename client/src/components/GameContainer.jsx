@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import Confetti from "react-confetti"
 import socket from "../socket"
 import useSetRoomId from "../helpers/useSetRoomId"
+import { LuClock12 } from "react-icons/lu"
 
 // Components
 import CountdownModal from "./CountdownModal"
@@ -58,8 +59,11 @@ function GameContainer({
   const [userInfo, setUserInfo] = useState([])
   const [challengeModeGuess, setChallengeModeGuess] = useState(null)
   const [isCountdownRunning, setIsCountdownRunning] = useState(false)
-  const [roundCounter, setRoundCounter] = useState(0)
   const [hasOnlineGameStarted, setHasOnlineGameStarted] = useState(false)
+
+  // Private game states
+  const [roundCounter, setRoundCounter] = useState(0)
+  const [timerIndex, setTimerIndex] = useState(0)
 
   // Spectator states
   const [spectatorMessage, setSpectatorMessage] = useState("")
@@ -260,6 +264,17 @@ function GameContainer({
   ]
 
   const HIDDEN_PERIODS = ["...", "..", ".", ""]
+
+  // Rotate the clock icon every second
+  useEffect(() => {
+    if (hasOnlineGameStarted && !isCountdownRunning) {
+      const cycle = setInterval(() => {
+        setTimerIndex((prevTimerIndex) => (prevTimerIndex + 1) % 4)
+      }, 1000)
+
+      return () => clearInterval(cycle)
+    }
+  }, [isCountdownRunning])
 
   // Helper functions
 
@@ -632,7 +647,18 @@ function GameContainer({
           <Confetti numberOfPieces={200} initialVelocityY={-10} />
         )}
         {connectionMode === "online-private" && roundCounter !== 0 && (
-          <div className="round-counter">Round: {roundCounter}</div>
+          <div className="private-room-info">
+            <span className="timer">
+              <span className="clock">
+                <LuClock12
+                  style={{ transform: `rotate(${timerIndex * 90}deg)` }}
+                />
+                &nbsp;
+              </span>
+              seconds
+            </span>
+            <span className="round-counter">Round: {roundCounter}</span>
+          </div>
         )}
         <AlertModal
           showAlertModal={showAlertModal}
