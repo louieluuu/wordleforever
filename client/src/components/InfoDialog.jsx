@@ -4,10 +4,8 @@ import { Dialog } from "@headlessui/react"
 import { IoCloseSharp } from "react-icons/io5"
 
 function InfoDialog({ show }) {
-  const [isOpen, setIsOpen] = useState(true)
-
   return (
-    <Dialog className="dialog__info" open={isOpen} onClose={() => show(false)}>
+    <Dialog className="dialog__info" open={true} onClose={() => show(false)}>
       <Dialog.Panel>
         <div className="dialog__right">
           <IoCloseSharp

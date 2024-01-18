@@ -52,6 +52,8 @@ a {
   @include phone-styles-game-board;
   @include phone-styles-waiting-room;
   @include phone-styles-welcome-message;
+
+  @include phone-styles-dialog;
 }
 
 @media only screen and (min-width: $breakpoint-sm) {

@@ -1,3 +1,9 @@
+@mixin phone-styles-dialog {
+  .dialog {
+    min-width: 100vw;
+  }
+}
+
 .dialog {
   // Centering
   position: absolute;
