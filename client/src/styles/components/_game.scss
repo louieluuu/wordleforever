@@ -374,6 +374,40 @@ $countdown-timer-font-size: 5.75vw;
       color: $color;
       border-color: $active;
     }
+
+    &--dialog {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      width: 2rem;
+      height: 2rem;
+
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: $color;
+
+      border: 2px solid $border;
+
+      &--green,
+      &--yellow,
+      &--grey {
+        @extend .game-board__cell--dialog;
+        border: none;
+      }
+
+      &--green {
+        background-color: $correct;
+      }
+
+      &--yellow {
+        background-color: $wrong-position;
+      }
+
+      &--grey {
+        background-color: $wrong;
+      }
+    }
   }
 }
 

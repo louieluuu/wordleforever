@@ -21,7 +21,7 @@ function InfoDialog({ show }) {
             marginBottom: "0",
           }}
         >
-          How To Play
+          The Ultimate Multiplayer Wordle experience.
         </Dialog.Title>
         <Dialog.Description
           style={{
@@ -31,32 +31,82 @@ function InfoDialog({ show }) {
             marginTop: "0rem",
           }}
         >
-          Guess the Wordle in 6 tries.
+          Race against the clock.
         </Dialog.Description>
 
         <ul
-          style={{ fontSize: "0.90rem", paddingBottom: 0, paddingLeft: "1rem" }}
+          style={{
+            maxWidth: "20rem",
+            fontSize: "0.90rem",
+            paddingBottom: 0,
+            paddingLeft: "1rem",
+          }}
         >
           <li style={{ marginBottom: "0.1rem" }}>
-            Each guess must be a valid 5-letter word.
+            Invite your friends to a private lobby.
           </li>
-          <li>
-            The color of the tiles will change to show how close<br></br>your
-            guess was to the word.
-          </li>
+          <li>Play vs strangers, and see how high you can streak.</li>
+          <li>Statistics, QOL features, and more!</li>
         </ul>
+
+        <hr style={{ marginBlock: "1.3rem" }} />
+
+        <Dialog.Title
+          style={{
+            fontFamily: "Calistoga",
+            marginTop: "0.5rem",
+            marginBottom: "0",
+          }}
+        >
+          How To Play
+        </Dialog.Title>
+
+        <Dialog.Description
+          style={{
+            fontWeight: "100",
+            fontFamily: "Roboto Slab",
+            fontSize: "1.15rem",
+            marginTop: "0rem",
+          }}
+        >
+          Guess a word, and watch the tiles change color.
+        </Dialog.Description>
 
         <p style={{ fontWeight: "bold" }}>Examples</p>
 
-        <p>
-          <b>W</b>
-          &nbsp;is in the word and in the correct spot.
-        </p>
+        <div className="game-board__row" style={{ gap: "0.2rem" }}>
+          <div className="game-board__cell--dialog--green">S</div>
+          <div className="game-board__cell--dialog">H</div>
+          <div className="game-board__cell--dialog">O</div>
+          <div className="game-board__cell--dialog">R</div>
+          <div className="game-board__cell--dialog">E</div>
+        </div>
 
         <p>
-          <b>I</b>
-          &nbsp;is in the word but in the wrong spot.
+          <b>S</b>
+          &nbsp;is in the word, and in the correct spot.
         </p>
+
+        <div className="game-board__row" style={{ gap: "0.2rem" }}>
+          <div className="game-board__cell--dialog">E</div>
+          <div className="game-board__cell--dialog">E</div>
+          <div className="game-board__cell--dialog--yellow">F</div>
+          <div className="game-board__cell--dialog">J</div>
+          <div className="game-board__cell--dialog">E</div>
+        </div>
+
+        <p>
+          <b>F</b>
+          &nbsp;is in the word, but in the wrong spot.
+        </p>
+
+        <div className="game-board__row" style={{ gap: "0.2rem" }}>
+          <div className="game-board__cell--dialog">V</div>
+          <div className="game-board__cell--dialog">A</div>
+          <div className="game-board__cell--dialog">R</div>
+          <div className="game-board__cell--dialog--grey">U</div>
+          <div className="game-board__cell--dialog">S</div>
+        </div>
 
         <p>
           <b>U</b>
@@ -65,15 +115,20 @@ function InfoDialog({ show }) {
 
         <hr style={{ marginBlock: "1.3rem" }} />
 
-        <p>
+        <p style={{ fontSize: "0.8rem" }}>
           <b>
             <i>Wordle Forever</i>
           </b>
-          &nbsp;is an open source project hosted on&nbsp;
+          &nbsp;is our love letter to&nbsp;
+          <a href="https://www.nytimes.com/games/wordle/index.html">
+            Wordle
+          </a>{" "}
+          by Josh Wardle. Open source and hosted on&nbsp;
           <a href="https://github.com/louieluuu/wordle-forever">Github</a>
           .&nbsp;Your feedback is appreciated. Feel free to reach out via{" "}
-          <a href="mailto:louie_lu@sfu.ca">e-mail</a> with comments,
-          suggestions, or bug reports.
+          <a href="mailto:wordleforever@gmail.com">email</a>. Created by Louie
+          Lu and Thomas Chiu,&nbsp;
+          <span style={{ fontSize: "0.7rem" }}>2023-2024</span>.
         </p>
       </Dialog.Panel>
     </Dialog>
