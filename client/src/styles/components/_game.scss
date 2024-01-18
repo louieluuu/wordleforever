@@ -15,11 +15,6 @@ $desktop-small-cell-size: 2rem;
 $phone-user-cell-size: 13.6vw;
 $phone-offline-cell-size: 15.6vw;
 
-// Padding
-$desktop-cell-padding: 0.5rem;
-
-$phone-cell-padding: 0;
-
 // Border
 $desktop-cell-border: 2px solid;
 
@@ -90,7 +85,6 @@ $countdown-timer-font-size: 5.75vw;
     height: $phone-user-cell-size;
     border: $phone-user-cell-border $border;
     font-size: $phone-user-font-size;
-    padding: $phone-cell-padding;
 
     &--green {
       @extend .game-board__cell;
@@ -224,6 +218,17 @@ $countdown-timer-font-size: 5.75vw;
 
 // Default styles (desktop for now)
 
+@keyframes flashAnimation {
+  0%,
+  100% {
+    background-color: rgba(255, 0, 0, 0.5);
+  }
+  20%,
+  80% {
+    background-color: transparent;
+  }
+}
+
 .upper-game-container {
   display: flex;
   flex-direction: column;
@@ -314,26 +319,39 @@ $countdown-timer-font-size: 5.75vw;
     font-size: $desktop-cell-font-size;
     font-weight: 600;
     border: $desktop-cell-border $border;
-    padding: $desktop-cell-padding;
 
-    &--green {
+    &.last-guess::before {
+      content: "";
+      width: 100%;
+      height: 100%;
+      animation: flashAnimation 3.5s infinite;
+    }
+
+    &--green,
+    &--yellow,
+    &--grey {
       @extend .game-board__cell;
       color: white;
-      border-color: $correct;
+      border: none;
+
+      &.last-guess::before {
+        content: "";
+        width: 100%;
+        height: 100%;
+        mix-blend-mode: overlay;
+        animation: flashAnimation 3.5s infinite;
+      }
+    }
+
+    &--green {
       background-color: $correct;
     }
 
     &--yellow {
-      @extend .game-board__cell;
-      color: white;
-      border-color: $wrong-position;
       background-color: $wrong-position;
     }
 
     &--grey {
-      @extend .game-board__cell;
-      color: white;
-      border-color: $wrong;
       background-color: $wrong;
     }
 
@@ -381,36 +399,20 @@ $countdown-timer-font-size: 5.75vw;
     font-weight: 500;
     border: $desktop-cell-border $border;
 
-    &--green {
-      @extend .small-game-board__cell;
-      color: white;
-      border-color: $correct;
-      background-color: $correct;
-    }
-
-    &--yellow {
-      @extend .small-game-board__cell;
-      color: white;
-      border-color: $wrong-position;
-      background-color: $wrong-position;
-    }
-
-    &--grey {
-      @extend .small-game-board__cell;
-      color: white;
-      border-color: $wrong;
-      background-color: $wrong;
-    }
-
-    &--active {
-      @extend .small-game-board__cell;
-      color: $color;
-      border-color: $active;
+    &.last-guess::before {
+      content: "";
+      width: 100%;
+      height: 100%;
+      animation: flashAnimation 3.5s infinite;
     }
 
     &--green,
     &--yellow,
     &--grey {
+      @extend .small-game-board__cell;
+      color: white;
+      border: none;
+
       &.last-guess::before {
         content: "";
         width: 100%;
@@ -419,23 +421,24 @@ $countdown-timer-font-size: 5.75vw;
         animation: flashAnimation 3.5s infinite;
       }
     }
-    &.last-guess::before {
-      content: "";
-      width: 100%;
-      height: 100%;
-      animation: flashAnimation 3.5s infinite;
-    }
-  }
-}
 
-@keyframes flashAnimation {
-  0%,
-  100% {
-    background-color: rgba(255, 0, 0, 0.5);
-  }
-  20%,
-  80% {
-    background-color: transparent;
+    &--green {
+      background-color: $correct;
+    }
+
+    &--yellow {
+      background-color: $wrong-position;
+    }
+
+    &--grey {
+      background-color: $wrong;
+    }
+
+    &--active {
+      @extend .small-game-board__cell;
+      color: $color;
+      border-color: $active;
+    }
   }
 }
 
@@ -474,29 +477,13 @@ $countdown-timer-font-size: 5.75vw;
       background-color: $border;
     }
 
-    &--green {
-      @extend .compressed-game-board__cell;
-      color: white;
-      border-color: $correct;
-      background-color: $correct;
-    }
-
-    &--yellow {
-      @extend .compressed-game-board__cell;
-      color: white;
-      border-color: $wrong-position;
-      background-color: $wrong-position;
-    }
-
-    &--grey {
-      @extend .compressed-game-board__cell;
-      color: white;
-      border-color: $wrong;
-      background-color: $wrong;
-    }
     &--green,
     &--yellow,
     &--grey {
+      @extend .compressed-game-board__cell;
+      color: white;
+      border: none;
+
       &.last-guess::before {
         content: "";
         width: 100%;
@@ -504,6 +491,18 @@ $countdown-timer-font-size: 5.75vw;
         mix-blend-mode: overlay;
         animation: flashAnimation 3.5s infinite;
       }
+    }
+
+    &--green {
+      background-color: $correct;
+    }
+
+    &--yellow {
+      background-color: $wrong-position;
+    }
+
+    &--grey {
+      background-color: $wrong;
     }
   }
 }
