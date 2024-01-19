@@ -6,6 +6,9 @@ import WORDLE_ANSWERS from "../data/wordleAnswers.js"
 import { setRoomOutOfGame } from "../services/roomService.js"
 import { getUser } from "../services/userService.js"
 
+const PRIVATE_GAME_TIMER = 120
+const PRIVATE_GAME_SOLVED_TIMER = 45
+
 export default class Game {
   constructor() {
     this.connectionMode = null
@@ -37,7 +40,7 @@ export default class Game {
     game.countSolved = 0
     game.countOutOfGuesses = 0
     game.round = prevRound + 1
-    game.timer = 90
+    game.timer = PRIVATE_GAME_TIMER
 
     return game
   }
@@ -102,8 +105,11 @@ export default class Game {
   updatePoints(userId) {
     const userInfo = this.allUserInfo.get(userId)
     if (userInfo) {
-      const newPoints = this.getRoomSize() - this.countSolved
-      userInfo.points += newPoints
+      if (this.countSolved === 0 && this.timer > PRIVATE_GAME_SOLVED_TIMER) {
+        userInfo.points += PRIVATE_GAME_SOLVED_TIMER * 2
+      } else {
+        userInfo.points += this.timer
+      }
     }
   }
 
@@ -136,6 +142,12 @@ export default class Game {
         this.resetStreak(userId)
       }
     })
+  }
+
+  setSolvedTimer() {
+    if (this.timer > PRIVATE_GAME_SOLVED_TIMER) {
+      this.timer = PRIVATE_GAME_SOLVED_TIMER
+    }
   }
 
   getAllUserInfo() {

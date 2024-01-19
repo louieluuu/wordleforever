@@ -96,6 +96,7 @@ async function handleCorrectGuess(
         game.updatePoints(userId)
         game.broadcastPoints(roomId, userId, io)
         if (game.countSolved === 0) {
+          game.setSolvedTimer()
           socket.emit("firstSolve")
         }
       } else if (getRoomConnectionMode(roomId) === "online-public") {
