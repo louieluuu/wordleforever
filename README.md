@@ -1,19 +1,17 @@
-# Wordle Forever
+# [wordle-forever.com](https://www.wordleforever.com)
 
-Wordle Forever is a multiplayer recreation of [Wordle](https://www.nytimes.com/games/wordle/index.html) with a new Challenge Mode and additional QOL features. Built from scratch using React and Socket.IO.
+**_Wordle Forever_** is a multiplayer recreation of [Wordle](https://www.nytimes.com/games/wordle/index.html) with public matchmaking, private lobbies, and various QOL features. Built from scratch using React and Socket.IO. Created by [Louie Lu](https://github.com/louieluuu) and [Thomas Chiu](https://github.com/tomchiu19).
 
-Original Wordle: https://www.nytimes.com/games/wordle/index.html
+**[Play it here!](https://www.wordleforever.com)**
 
-# Current features
+# Features
 
-- **Multiplayer**: Compete against up to 4 other friends (or strangers)!
+- **Multiplayer**: Compete against up to 6 other friends (or strangers)!
+- **User Stats**: Log in and track statistics, like win percentage and average solve time, on your own personal statistics page!
 - **Challenge Mode**: Tired of _STARE_-ing at *CLOUD*s? Get a random starting word every time and stick to the hints!
-- **QOL**: Unlimited words, quick restarts, and a great interface!
+- **QOL**: Unlimited words, quick restarts, a great interface, and more!
 
-## Images used
+# Acknowledgements
 
-https://www.freepik.com/icon/no-wifi_7794544 Icon by Rahul Kaklotar
-
-https://www.freepik.com/icon/multiplayer_2463471#fromView=search&term=friends+gaming&page=1&position=1&track=ais&uuid=51b7c955-945c-41af-a399-f3978d52e341 Icon by Eucalyp
-
-https://www.freepik.com/icon/computer_12662587#fromView=search&term=online&page=1&position=3&track=ais&uuid=c6ae7a92-0d00-4f7f-b269-5ba45d3773e4 Icon by okta
+- [sschandi](https://github.com/sschandi) for their guidance throughout the creation of this project.
+- _Photo of Mountains During Dawn_, [Eberhard Grossgasteiger](https://www.pexels.com/@eberhardgross/)
