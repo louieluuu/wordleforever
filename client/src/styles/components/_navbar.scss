@@ -1,3 +1,37 @@
+$logo-size: 4.5vh;
+$icon-size: 2.5vh;
+$login-size: calc($icon-size * 4 / 3);
+$login-font-size: 1.75vh;
+$login-padding-inline: 3.5vw;
+
+@mixin phone-styles-navbar {
+  .navbar {
+    &__left {
+      width: $logo-size;
+      height: $logo-size;
+    }
+    &__right {
+      gap: 2vw;
+    }
+
+    &__info {
+      width: $icon-size;
+      height: $icon-size;
+    }
+
+    &__color-theme {
+      width: $icon-size;
+      height: $icon-size;
+    }
+
+    &__login {
+      height: $login-size;
+      font-size: $login-font-size;
+      padding-inline: $login-padding-inline;
+    }
+  }
+}
+
 .navbar {
   display: flex;
   justify-content: space-between;

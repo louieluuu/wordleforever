@@ -53,6 +53,7 @@ a {
   @include phone-styles-waiting-room;
   @include phone-styles-welcome-message;
 
+  @include phone-styles-navbar;
   @include phone-styles-dialog;
   @include phone-styles-alert-modal;
 }
