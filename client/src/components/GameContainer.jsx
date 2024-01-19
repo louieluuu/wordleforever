@@ -673,25 +673,20 @@ function GameContainer({
             <span className="round-counter">Round: {roundCounter}</span>
           </div>
         )}
-        <AlertModal
-          showAlertModal={showAlertModal}
-          setShowAlertModal={setShowAlertModal}
-          message={alertMessage}
-          isGameOver={isGameOver}
-          hasSolved={hasSolved}
-          isConfettiRunning={isConfettiRunning}
-          inGame={true}
-        />
         <GameBoardContainer
           connectionMode={connectionMode}
           board={board}
           activeRow={activeRowIndex}
           activeCell={activeCellIndex}
-          username={username}
           userInfo={userInfo}
           isOutOfGuesses={isOutOfGuesses}
           isSpectating={isSpectating}
           isGameOver={isGameOver}
+          showAlertModal={showAlertModal}
+          setShowAlertModal={setShowAlertModal}
+          message={alertMessage}
+          hasSolved={hasSolved}
+          isConfettiRunning={isConfettiRunning}
         />
       </div>
 

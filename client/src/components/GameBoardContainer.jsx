@@ -9,11 +9,15 @@ function GameBoardContainer({
   board,
   activeRow,
   activeCell,
-  username,
   userInfo,
   isOutOfGuesses,
   isSpectating,
   isGameOver,
+  showAlertModal,
+  setShowAlertModal,
+  message,
+  hasSolved,
+  isConfettiRunning,
 }) {
   return (
     <>
@@ -26,6 +30,11 @@ function GameBoardContainer({
             connectionMode={connectionMode}
             isOutOfGuesses={isOutOfGuesses}
             isGameOver={isGameOver}
+            showAlertModal={showAlertModal}
+            setShowAlertModal={setShowAlertModal}
+            message={message}
+            hasSolved={hasSolved}
+            isConfettiRunning={isConfettiRunning}
           />
         </div>
       ) : (
@@ -38,6 +47,11 @@ function GameBoardContainer({
           isOutOfGuesses={isOutOfGuesses}
           isSpectating={isSpectating}
           isGameOver={isGameOver}
+          showAlertModal={showAlertModal}
+          setShowAlertModal={setShowAlertModal}
+          message={message}
+          hasSolved={hasSolved}
+          isConfettiRunning={isConfettiRunning}
         />
       )}
     </>

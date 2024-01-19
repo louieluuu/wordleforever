@@ -12,6 +12,11 @@ function OnlineGameBoardContainer({
   isOutOfGuesses,
   isSpectating,
   isGameOver,
+  showAlertModal,
+  setShowAlertModal,
+  message,
+  hasSolved,
+  isConfettiRunning,
 }) {
   // I'd rather pull the breakpoints from "../styles/_variables.scss", think you can do it with webpack but going to skip it for now
   const breakpointSm = "640px"
@@ -78,6 +83,11 @@ function OnlineGameBoardContainer({
                 isLeading={isUserLeading(userInfo[0].userId)}
                 isUser={true}
                 isGameOver={isGameOver}
+                showAlertModal={showAlertModal}
+                setShowAlertModal={setShowAlertModal}
+                message={message}
+                hasSolved={hasSolved}
+                isConfettiRunning={isConfettiRunning}
               />
             )}
           </div>

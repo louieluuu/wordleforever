@@ -54,6 +54,7 @@ a {
   @include phone-styles-welcome-message;
 
   @include phone-styles-dialog;
+  @include phone-styles-alert-modal;
 }
 
 @media only screen and (min-width: $breakpoint-sm) {

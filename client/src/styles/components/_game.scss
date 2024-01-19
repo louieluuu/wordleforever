@@ -318,6 +318,7 @@ $phone-private-room-clock-font-size: 3vw;
 }
 
 .game-board {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: $desktop-cell-gap;

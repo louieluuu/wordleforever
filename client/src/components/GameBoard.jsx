@@ -1,6 +1,8 @@
 import React from "react"
 import { IoIosFlame } from "react-icons/io"
 
+import AlertModal from "./AlertModal"
+
 function GameBoard({
   board = [],
   username,
@@ -13,8 +15,13 @@ function GameBoard({
   isLeading,
   isSmall,
   isCompressed,
-  isUser,
+  isUser = false,
   isGameOver,
+  showAlertModal,
+  setShowAlertModal,
+  message,
+  hasSolved,
+  isConfettiRunning,
 }) {
   const lastRowIndex = getLastRowIndex(board)
   const isBoardEmpty = checkIsBoardEmpty(board)
@@ -127,6 +134,18 @@ function GameBoard({
 
   return (
     <div className={getBoardClassName()}>
+      {isUser && (
+        <AlertModal
+          showAlertModal={showAlertModal}
+          setShowAlertModal={setShowAlertModal}
+          message={message}
+          isGameOver={isGameOver}
+          hasSolved={hasSolved}
+          isConfettiRunning={isConfettiRunning}
+          inGame={true}
+        />
+      )}
+
       <div className={getInfoClassName()}>
         <span className={getUsernameClassName()}>
           {isLeading && <span className={getCrownClassName()}>👑&nbsp;</span>}

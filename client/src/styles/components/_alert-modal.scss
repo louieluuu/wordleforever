@@ -1,6 +1,21 @@
-.alert-modal {
-  position: fixed;
+@mixin phone-styles-alert-modal {
+  .alert-modal {
+    padding-inline: 4vw;
+    padding-block: 1.5vh;
+    font-size: 4.5vw;
 
+    &__game {
+      @extend .alert-modal;
+      top: -3%;
+      white-space: nowrap;
+    }
+  }
+}
+
+.alert-modal {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 1;
   padding-inline: 1rem;
   padding-block: 0.6rem;
@@ -9,7 +24,7 @@
   color: white;
   border: none;
   border-radius: 0.5rem;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 500;
 
   opacity: 1;
@@ -21,13 +36,10 @@
 
   &__game {
     @extend .alert-modal;
-    top: 8vh;
-    left: 50vw;
-    transform: translateX(-50%);
+    white-space: nowrap;
   }
 
   &__lobby {
     @extend .alert-modal;
-    top: 50vh;
   }
 }
