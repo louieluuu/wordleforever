@@ -75,6 +75,7 @@ function handleCountdownStart(roomId, io) {
       seconds = PUBLIC_ROOM_COUNTDOWN_TIMER
     }
 
+    io.to(roomId).emit("countdownTick", seconds)
     const countdownInterval = setInterval(() => {
       if (!hasCountdownStarted(roomId)) {
         clearInterval(countdownInterval)
