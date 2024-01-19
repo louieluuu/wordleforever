@@ -57,6 +57,9 @@ function Keyboard({
     if (isOutOfGuesses && !isGameOver) {
       return
     }
+    if (isGameOver && key !== "Enter") {
+      return
+    }
     if (connectionMode === "online-private") {
       if (isMatchOver && key === "Enter") {
         await handlePlayAgain()

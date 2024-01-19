@@ -10,9 +10,9 @@ import { getUser } from "../services/userService.js"
 // These are all in seconds
 const PRIVATE_GAME_TIMER = 120
 const PRIVATE_GAME_SOLVED_TIMER = 45
-const ROUND_BREAK_TIME = 5
+const ROUND_BREAK_TIME = 10
 
-const PRIVATE_GAME_ROUND_LIMIT = 3
+const PRIVATE_GAME_ROUND_LIMIT = 10
 
 export default class Game {
   constructor() {
@@ -23,6 +23,7 @@ export default class Game {
     this.countSolved = 0
     this.countOutOfGuesses = 0
     this.round = 0
+    this.reachedRoundLimit = false
     this.timer = 0
     this.timerId = null
   }
@@ -45,6 +46,7 @@ export default class Game {
     game.countSolved = 0
     game.countOutOfGuesses = 0
     game.round = prevRound + 1
+    game.reachedRoundLimit = false
     game.timer = PRIVATE_GAME_TIMER
 
     return game
@@ -217,9 +219,11 @@ export default class Game {
   }
 
   endGame(roomId, io) {
+    setRoomOutOfGame(roomId)
     this.broadcastFinalUserInfo(roomId, io)
     if (this.connectionMode === "online-private") {
       if (this.round >= PRIVATE_GAME_ROUND_LIMIT) {
+        this.reachedRoundLimit = true
         this.broadcastEndOfMatch(roomId, io)
       } else {
         this.startNextRoundAfterBreak(roomId, io)

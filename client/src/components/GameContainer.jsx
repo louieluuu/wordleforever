@@ -300,6 +300,7 @@ function GameContainer({
 
   function resetStates() {
     setIsGameOver(false)
+    setIsMatchOver(false)
     setHasSolved(false)
     setIsOutOfGuesses(false)
     setBoard(

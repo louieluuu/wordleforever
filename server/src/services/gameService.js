@@ -25,9 +25,14 @@ async function initializeGameInfo(roomId) {
   let prevPoints = new Map()
   let prevRound = 0
   if (Games.has(roomId)) {
-    prevPoints = Games.get(roomId).getAllPoints()
-    prevRound = Games.get(roomId).round
-    deleteGame(roomId)
+    const prevGame = Games.get(roomId)
+    if (!prevGame.reachedRoundLimit) {
+      prevPoints = prevGame.getAllPoints()
+      prevRound = prevGame.round
+      deleteGame(roomId)
+    } else {
+      deleteGame(roomId)
+    }
   }
   const game = await Game.createGame(
     getRoomConnectionMode(roomId),
@@ -137,7 +142,6 @@ function isGameOver(roomId) {
   if (game && game instanceof Game) {
     if (getRoomConnectionMode(roomId) === "online-private") {
       if (game.countSolved + game.countOutOfGuesses >= game.getRoomSize()) {
-        setRoomOutOfGame(roomId)
         return true
       }
     } else if (getRoomConnectionMode(roomId) === "online-public") {
