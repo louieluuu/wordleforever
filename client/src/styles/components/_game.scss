@@ -76,6 +76,7 @@ $desktop-private-room-info-margin-bottom: 1rem;
 $desktop-private-room-info-font-size: 1.2rem;
 $desktop-private-room-clock-font-size: 1rem;
 
+$phone-private-room-info-width: 96vw;
 $phone-private-room-info-margin-inline: 2vw;
 $phone-private-room-info-margin-bottom: 0;
 $phone-private-room-info-font-size: 3.5vw;
@@ -227,6 +228,7 @@ $phone-private-room-clock-font-size: 3vw;
   }
 
   .private-room-info {
+    width: $phone-private-room-info-width;
     margin-inline: $phone-private-room-info-margin-inline;
     margin-bottom: $phone-private-room-info-margin-bottom;
     font-size: $phone-private-room-info-font-size;
