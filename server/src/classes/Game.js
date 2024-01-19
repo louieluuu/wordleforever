@@ -2,21 +2,33 @@
 import VALID_WORDS from "../data/validWords.js"
 import WORDLE_ANSWERS from "../data/wordleAnswers.js"
 
+// Services
+import { setRoomOutOfGame } from "../services/roomService.js"
 import { getUser } from "../services/userService.js"
 
 export default class Game {
   constructor() {
+    this.connectionMode = null
     this.solution = null
     this.startingWord = null
     this.allUserInfo = new Map()
     this.countSolved = 0
     this.countOutOfGuesses = 0
     this.round = 0
+    this.timer = 0
+    this.timerId = null
   }
 
-  static async createGame(users, prevPoints, prevRound, isChallengeMode) {
+  static async createGame(
+    connectionMode,
+    users,
+    prevPoints,
+    prevRound,
+    isChallengeMode
+  ) {
     const game = new Game()
 
+    game.connectionMode = connectionMode
     game.solution = game.generateSolution()
     game.startingWord = isChallengeMode
       ? game.generateRandomFirstGuess(game.solution)
@@ -25,6 +37,7 @@ export default class Game {
     game.countSolved = 0
     game.countOutOfGuesses = 0
     game.round = prevRound + 1
+    game.timer = 90
 
     return game
   }
@@ -173,12 +186,33 @@ export default class Game {
       this.getAllUserInfo(),
       this.solution,
       this.startingWord,
-      this.round
+      this.round,
+      this.timer
     )
+    // Start timer for private games
+    if (this.connectionMode === "online-private") {
+      // Wait for the in game countdown to finish
+      setTimeout(() => {
+        this.startTimer(roomId, io)
+      }, 3000)
+    }
+  }
+
+  startTimer(roomId, io) {
+    this.timerId = setInterval(() => {
+      this.timer--
+      io.to(roomId).emit("timerTick", this.timer)
+
+      if (this.timer <= 0) {
+        clearInterval(this.timerId)
+        setRoomOutOfGame(roomId)
+        this.broadcastFinalUserInfo(roomId, io)
+      }
+    }, 1000)
   }
 
   broadcastSpectatorInfo(socket) {
-    socket.emit("spectatorInfo", this.getAllUserInfo(), this.round)
+    socket.emit("spectatorInfo", this.getAllUserInfo(), this.round, this.timer)
   }
 
   /* Commenting this out for spectators to be able to receive the full game boards, not necessarily sure how I feel about always sending this information to client and having them do the processing */
@@ -223,5 +257,10 @@ export default class Game {
     } else {
       console.error("Invalid roomId for broadcasting final user info")
     }
+  }
+
+  cleanupGame() {
+    clearInterval(this.timerId)
+    delete this.timerId
   }
 }

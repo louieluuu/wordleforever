@@ -63,6 +63,7 @@ function GameContainer({
 
   // Private game states
   const [roundCounter, setRoundCounter] = useState(0)
+  const [roundTimer, setRoundTimer] = useState(0)
   const [timerIndex, setTimerIndex] = useState(0)
 
   // Spectator states
@@ -131,7 +132,7 @@ function GameContainer({
   useEffect(() => {
     socket.on(
       "gameStarted",
-      (initialUserInfo, newSolution, newChallengeModeGuess, round) => {
+      (initialUserInfo, newSolution, newChallengeModeGuess, round, timer) => {
         setHasOnlineGameStarted(true)
         resetStates()
         const sortedUserInfo = initialUserInfo.sort((obj) => {
@@ -142,6 +143,7 @@ function GameContainer({
         setChallengeModeGuess(newChallengeModeGuess)
         setIsCountdownRunning(true)
         setRoundCounter(round)
+        setRoundTimer(timer)
       }
     )
 
@@ -153,9 +155,14 @@ function GameContainer({
   // Main useEffect loop for online game logic
   useEffect(() => {
     if (hasOnlineGameStarted) {
-      socket.on("spectatorInfo", (allUserInfo, round) => {
+      socket.on("spectatorInfo", (allUserInfo, round, timer) => {
         setUserInfo(allUserInfo)
         setRoundCounter(round)
+        setRoundTimer(timer)
+      })
+
+      socket.on("timerTick", (timer) => {
+        setRoundTimer(timer)
       })
 
       socket.on("gameBoardsUpdated", (updatedUserId, updatedBoard) => {
@@ -212,6 +219,8 @@ function GameContainer({
       })
 
       return () => {
+        socket.off("spectatorInfo")
+        socket.off("timerTick")
         socket.off("gameBoardsUpdated")
         socket.off("pointsUpdated")
         socket.off("streakUpdated")
@@ -267,14 +276,18 @@ function GameContainer({
 
   // Rotate the clock icon every second
   useEffect(() => {
-    if (hasOnlineGameStarted && !isCountdownRunning) {
-      const cycle = setInterval(() => {
-        setTimerIndex((prevTimerIndex) => (prevTimerIndex + 1) % 4)
-      }, 1000)
+    if (!hasOnlineGameStarted) {
+      setTimerIndex(0)
+    } else {
+      if (!isCountdownRunning) {
+        const cycle = setInterval(() => {
+          setTimerIndex((prevTimerIndex) => (prevTimerIndex + 1) % 4)
+        }, 1000)
 
-      return () => clearInterval(cycle)
+        return () => clearInterval(cycle)
+      }
     }
-  }, [isCountdownRunning])
+  }, [isCountdownRunning, isGameOver])
 
   // Helper functions
 
@@ -655,7 +668,7 @@ function GameContainer({
                 />
                 &nbsp;
               </span>
-              seconds
+              {roundTimer}
             </span>
             <span className="round-counter">Round: {roundCounter}</span>
           </div>

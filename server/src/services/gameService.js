@@ -30,6 +30,7 @@ async function initializeGameInfo(roomId) {
     deleteGame(roomId)
   }
   const game = await Game.createGame(
+    getRoomConnectionMode(roomId),
     getUsersInRoom(roomId),
     prevPoints,
     prevRound,
@@ -43,6 +44,7 @@ function deleteGame(roomId) {
   const game = Games.get(roomId)
   if (game && game instanceof Game) {
     console.log(`Deleting game: ${roomId}`)
+    game.cleanupGame()
     Games.delete(roomId)
   }
 }

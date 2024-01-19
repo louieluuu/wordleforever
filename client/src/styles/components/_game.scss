@@ -70,10 +70,16 @@ $desktop-others-crown-size: 0.7rem;
 $countdown-timer-placement: 35vh;
 $countdown-timer-font-size: 5.75vw;
 
-$desktop-private-room-info-margin-bottom: 1rem;
+$private-room-info-margin-top: 0.2vh;
 
-$phone-private-room-info-width: 96vw;
+$desktop-private-room-info-margin-bottom: 1rem;
+$desktop-private-room-info-font-size: 1.2rem;
+$desktop-private-room-clock-font-size: 1rem;
+
+$phone-private-room-info-margin-inline: 2vw;
 $phone-private-room-info-margin-bottom: 0;
+$phone-private-room-info-font-size: 3.5vw;
+$phone-private-room-clock-font-size: 3vw;
 
 @mixin phone-styles-game-board {
   .game-board {
@@ -221,8 +227,13 @@ $phone-private-room-info-margin-bottom: 0;
   }
 
   .private-room-info {
-    width: $phone-private-room-info-width;
+    margin-inline: $phone-private-room-info-margin-inline;
     margin-bottom: $phone-private-room-info-margin-bottom;
+    font-size: $phone-private-room-info-font-size;
+
+    .clock {
+      font-size: $phone-private-room-clock-font-size;
+    }
   }
 }
 
@@ -618,10 +629,14 @@ $phone-private-room-info-margin-bottom: 0;
 .private-room-info {
   display: flex;
   justify-content: space-between;
-  font-size: 0.8rem;
+  font-size: $desktop-private-room-info-font-size;
   font-weight: 500;
-  margin-top: 0.2vh;
+  margin-top: $private-room-info-margin-top;
   margin-bottom: $desktop-private-room-info-margin-bottom;
+
+  .clock {
+    font-size: $desktop-private-room-clock-font-size;
+  }
 }
 
 .spectator-message {
