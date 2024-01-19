@@ -1,13 +1,18 @@
 // Data
 import VALID_WORDS from "../data/validWords.js"
 import WORDLE_ANSWERS from "../data/wordleAnswers.js"
+import { handleGameStart } from "../services/gameService.js"
 
 // Services
 import { setRoomOutOfGame } from "../services/roomService.js"
 import { getUser } from "../services/userService.js"
 
+// These are all in seconds
 const PRIVATE_GAME_TIMER = 120
 const PRIVATE_GAME_SOLVED_TIMER = 45
+const ROUND_BREAK_TIME = 5
+
+const PRIVATE_GAME_ROUND_LIMIT = 3
 
 export default class Game {
   constructor() {
@@ -211,6 +216,17 @@ export default class Game {
     }
   }
 
+  endGame(roomId, io) {
+    this.broadcastFinalUserInfo(roomId, io)
+    if (this.connectionMode === "online-private") {
+      if (this.round >= PRIVATE_GAME_ROUND_LIMIT) {
+        this.broadcastEndOfMatch(roomId, io)
+      } else {
+        this.startNextRoundAfterBreak(roomId, io)
+      }
+    }
+  }
+
   startTimer(roomId, io) {
     io.to(roomId).emit("timerTick", this.timer)
     this.timerId = setInterval(() => {
@@ -228,6 +244,12 @@ export default class Game {
   resyncTimer(roomId, io) {
     this.cleanupTimer()
     this.startTimer(roomId, io)
+  }
+
+  startNextRoundAfterBreak(roomId, io) {
+    setTimeout(() => {
+      handleGameStart(roomId, io)
+    }, ROUND_BREAK_TIME * 1000)
   }
 
   broadcastSpectatorInfo(socket) {
@@ -275,6 +297,14 @@ export default class Game {
       io.to(roomId).emit("finalUserInfo", this.getAllUserInfo())
     } else {
       console.error("Invalid roomId for broadcasting final user info")
+    }
+  }
+
+  broadcastEndOfMatch(roomId, io) {
+    if (roomId) {
+      io.to(roomId).emit("endOfMatch")
+    } else {
+      console.error("Invalid roomId for broadcasting end of match")
     }
   }
 

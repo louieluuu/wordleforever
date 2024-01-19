@@ -106,7 +106,7 @@ async function handleCorrectGuess(
       game.countSolved += 1
       game.setGameBoard(userId, updatedGameBoard)
       if (isGameOver(roomId)) {
-        game.broadcastFinalUserInfo(roomId, io)
+        game.endGame(roomId, io)
       } else {
         game.broadcastGameBoard(roomId, userId, io)
       }
@@ -127,7 +127,7 @@ async function handleOutOfGuesses(roomId, userId, io) {
     }
     game.countOutOfGuesses += 1
     if (isGameOver(roomId)) {
-      game.broadcastFinalUserInfo(roomId, io)
+      game.endGame(roomId, io)
     }
   }
 }

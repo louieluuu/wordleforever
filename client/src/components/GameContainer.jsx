@@ -61,6 +61,7 @@ function GameContainer({
   const [isKeyboardLocked, setIsKeyboardLocked] = useState(false)
 
   // Private game states
+  const [isMatchOver, setIsMatchOver] = useState(false)
   const [roundCounter, setRoundCounter] = useState(0)
   const [roundTimer, setRoundTimer] = useState(0)
   const [timerIndex, setTimerIndex] = useState(0)
@@ -222,7 +223,7 @@ function GameContainer({
     }
   }, [hasOnlineGameStarted])
 
-  // This can't be in the main useEffect loop, as host transfer needs to happen even when hasOnlineGameStarted is false
+  // These can't be in the main useEffect loop, as they need to happen outside of hasOnlineGameStarted logic (post round in private games)
   useEffect(() => {
     socket.on("newHost", (newHostId) => {
       if (socket.id === newHostId) {
@@ -230,8 +231,13 @@ function GameContainer({
       }
     })
 
+    socket.on("endOfMatch", () => {
+      setIsMatchOver(true)
+    })
+
     return () => {
       socket.off("newHost")
+      socket.off("endOfMatch")
     }
   })
 
@@ -725,6 +731,7 @@ function GameContainer({
             hints={hints}
             isCountdownRunning={isCountdownRunning}
             isGameOver={isGameOver}
+            isMatchOver={isMatchOver}
             hasSolved={hasSolved}
             isOutOfGuesses={isOutOfGuesses}
             isChallengeOn={isChallengeOn}

@@ -14,6 +14,7 @@ function Keyboard({
   hints,
   isCountdownRunning,
   isGameOver,
+  isMatchOver,
   hasSolved,
   isOutOfGuesses,
   isChallengeOn,
@@ -56,9 +57,16 @@ function Keyboard({
     if (isOutOfGuesses && !isGameOver) {
       return
     }
-    if (isGameOver && key === "Enter") {
-      await handlePlayAgain()
-      return
+    if (connectionMode === "online-private") {
+      if (isMatchOver && key === "Enter") {
+        await handlePlayAgain()
+        return
+      }
+    } else {
+      if (isGameOver && key === "Enter") {
+        await handlePlayAgain()
+        return
+      }
     }
 
     if (key.match(/^[a-zA-Z]$/)) {
@@ -161,7 +169,7 @@ function Keyboard({
       </div>
       {isGameOver && (
         <>
-          {(connectionMode !== "online-private" || isHost) && (
+          {(connectionMode !== "online-private" || (isMatchOver && isHost)) && (
             <button className="menu__btn--new-game" onClick={handlePlayAgain}>
               NEW GAME
               <IoReturnDownBackSharp />
