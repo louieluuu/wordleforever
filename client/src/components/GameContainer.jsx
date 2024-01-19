@@ -7,7 +7,6 @@ import { LuClock12 } from "react-icons/lu"
 
 // Components
 import CountdownModal from "./CountdownModal"
-import AlertModal from "./AlertModal"
 import GameBoardContainer from "./GameBoardContainer"
 import Keyboard from "./Keyboard"
 
@@ -17,7 +16,6 @@ import WORDLE_ANSWERS from "../data/wordleAnswers"
 import WIN_MESSAGES from "../data/winMessages"
 
 function GameContainer({
-  username,
   isChallengeOn,
   connectionMode,
   isHost,

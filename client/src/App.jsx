@@ -2,8 +2,6 @@ import { useState } from "react"
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
-import useSetRoomId from "./helpers/useSetRoomId"
-
 // Components
 import NavBar from "./components/NavBar"
 import GameContainer from "./components/GameContainer"
@@ -72,7 +70,6 @@ function App() {
                 path="/game/:roomId"
                 element={
                   <GameContainer
-                    username={username}
                     isChallengeOn={isChallengeOn}
                     connectionMode={connectionMode}
                     isHost={isHost}
@@ -87,7 +84,6 @@ function App() {
                 path="/offline/classic"
                 element={
                   <GameContainer
-                    username={username}
                     isChallengeOn={isChallengeOn}
                     connectionMode={connectionMode}
                     isHost={isHost}
