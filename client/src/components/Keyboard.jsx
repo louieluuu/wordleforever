@@ -20,6 +20,7 @@ function Keyboard({
   connectionMode,
   isHost,
   startNewGame,
+  isKeyboardLocked,
 }) {
   const navigate = useNavigate()
 
@@ -43,6 +44,9 @@ function Keyboard({
 
   async function handleKeyPress(key) {
     // Logic to lock keyboard input depending on certain states
+    if (isKeyboardLocked) {
+      return
+    }
     if (isCountdownRunning) {
       return
     }

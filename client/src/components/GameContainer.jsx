@@ -60,6 +60,7 @@ function GameContainer({
   const [challengeModeGuess, setChallengeModeGuess] = useState(null)
   const [isCountdownRunning, setIsCountdownRunning] = useState(false)
   const [hasOnlineGameStarted, setHasOnlineGameStarted] = useState(false)
+  const [isKeyboardLocked, setIsKeyboardLocked] = useState(false)
 
   // Private game states
   const [roundCounter, setRoundCounter] = useState(0)
@@ -250,6 +251,16 @@ function GameContainer({
       displaySolution()
     }
   }, [isGameOver, hasSolved])
+
+  // Lock the keyboard for 1 second when the game is finished (prevent accidental new game start)
+  useEffect(() => {
+    if (isGameOver) {
+      setIsKeyboardLocked(true)
+      const keyboardTimeout = setTimeout(() => {
+        setIsKeyboardLocked(false)
+      }, 1000)
+    }
+  }, [isGameOver])
 
   // Cycle through trailing periods for spectator message
   useEffect(() => {
@@ -693,6 +704,7 @@ function GameContainer({
             connectionMode={connectionMode}
             isHost={isHost}
             startNewGame={startNewGame}
+            isKeyboardLocked={isKeyboardLocked}
           />
         </div>
       ) : (
