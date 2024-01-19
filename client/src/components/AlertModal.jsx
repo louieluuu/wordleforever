@@ -31,10 +31,27 @@ function AlertModal({
     }
   }, [showAlertModal])
 
+  function getAlertModalClassName() {
+    let alertModalClassName = "alert-modal"
+    if (inGame) {
+      if (isGameOver || hasSolved) {
+        alertModalClassName += "__post-game"
+      } else {
+        alertModalClassName += "__in-game"
+      }
+    } else {
+      alertModalClassName += "__lobby"
+    }
+    if (!showAlertModal) {
+      alertModalClassName += " hide"
+    }
+    return alertModalClassName
+  }
+
   return (
     <>
       <div
-        className={`alert-modal${inGame ? "__game" : "__lobby"}${showAlertModal ? "" : " hide"}`}
+        className={getAlertModalClassName()}
         onTransitionEnd={() => setShowAlertModal(false)}
       >
         {message}
