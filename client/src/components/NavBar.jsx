@@ -14,7 +14,7 @@ import logo from "../assets/logo.svg"
 
 import InfoDialog from "./InfoDialog"
 
-function NavBar() {
+function NavBar({ roomId }) {
   const [showInfoDialog, setShowInfoDialog] = useState(false)
   const [colorTheme, setColorTheme] = useState("")
 
