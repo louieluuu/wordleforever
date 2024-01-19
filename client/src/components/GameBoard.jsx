@@ -165,14 +165,12 @@ function GameBoard({
       ) : (
         <div className={getRowClassName()}>
           {board[lastRowIndex].map((cell, cellIndex) => (
-            <>
-              <div
-                key={cellIndex}
-                className={getCellClassName(board, lastRowIndex, cellIndex)}
-              >
-                {cell.letter}
-              </div>
-            </>
+            <div
+              key={cellIndex}
+              className={getCellClassName(board, lastRowIndex, cellIndex)}
+            >
+              {cell.letter}
+            </div>
           ))}
         </div>
       )}
