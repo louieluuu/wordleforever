@@ -243,12 +243,11 @@ $phone-private-room-clock-font-size: 3vw;
 
 @keyframes flashAnimation {
   0%,
-  100% {
-    background-color: rgba(255, 0, 0, 0.3);
-  }
-  20%,
-  80% {
+  60% {
     background-color: transparent;
+  }
+  30% {
+    background-color: rgba(255, 0, 0, 0.3);
   }
 }
 
