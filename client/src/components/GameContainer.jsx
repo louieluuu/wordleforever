@@ -184,15 +184,7 @@ function GameContainer({
       })
 
       socket.on("pointsUpdated", (updatedUserId, updatedPoints) => {
-        setUserInfo((prevUserInfo) => {
-          const updatedUserInfo = [...prevUserInfo]
-          updatedUserInfo.forEach((obj) => {
-            if (obj.userId === updatedUserId) {
-              obj.points = updatedPoints
-            }
-          })
-          return updatedUserInfo
-        })
+        animatePointUpdate(updatedUserId, updatedPoints)
       })
 
       socket.on("streakUpdated", (updatedUserId, updatedStreak) => {
@@ -628,6 +620,43 @@ function GameContainer({
   function displaySolution() {
     setAlertMessage(solution)
     setShowAlertModal(true)
+  }
+
+  function getPointTimeout(pointDiff) {
+    if (pointDiff > 35) {
+      return 5
+    } else if (pointDiff > 10) {
+      return 20
+    } else if (pointDiff > 3) {
+      return 50
+    } else if (pointDiff > 0) {
+      return 100
+    }
+    return 0
+  }
+
+  function animatePointUpdate(updatedUserId, updatedPoints) {
+    const initialPoints =
+      userInfo.find((obj) => obj.userId === updatedUserId)?.points ?? 0
+    let pointDiff = updatedPoints - initialPoints
+
+    let pointTimeout = setTimeout(function incrementPoints() {
+      if (pointDiff <= 0) {
+        clearTimeout(pointTimeout)
+      } else {
+        setUserInfo((prevUserInfo) => {
+          const updatedUserInfo = [...prevUserInfo]
+          updatedUserInfo.forEach((obj) => {
+            if (obj.userId === updatedUserId) {
+              obj.points = updatedPoints - pointDiff
+            }
+          })
+          return updatedUserInfo
+        })
+        pointDiff--
+        setTimeout(incrementPoints, getPointTimeout(pointDiff))
+      }
+    }, getPointTimeout(pointDiff))
   }
 
   // Could be generalized but no need for this game since the solution will always be 5 letters
