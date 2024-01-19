@@ -242,13 +242,13 @@ function GameContainer({
     }
   }, [isGameOver, hasSolved])
 
-  // Lock the keyboard for 1 second when the game is finished (prevent accidental new game start)
+  // Lock the keyboard for half a second when the game is finished (prevent accidental new game start)
   useEffect(() => {
     if (isGameOver) {
       setIsKeyboardLocked(true)
       const keyboardTimeout = setTimeout(() => {
         setIsKeyboardLocked(false)
-      }, 1000)
+      }, 500)
     }
   }, [isGameOver])
 
