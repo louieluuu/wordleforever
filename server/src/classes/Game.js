@@ -144,9 +144,10 @@ export default class Game {
     })
   }
 
-  setSolvedTimer() {
+  setSolvedTimer(roomId, io) {
     if (this.timer > PRIVATE_GAME_SOLVED_TIMER) {
       this.timer = PRIVATE_GAME_SOLVED_TIMER
+      this.resyncTimer(roomId, io)
     }
   }
 
@@ -211,6 +212,7 @@ export default class Game {
   }
 
   startTimer(roomId, io) {
+    io.to(roomId).emit("timerTick", this.timer)
     this.timerId = setInterval(() => {
       this.timer--
       io.to(roomId).emit("timerTick", this.timer)
@@ -221,6 +223,11 @@ export default class Game {
         this.broadcastFinalUserInfo(roomId, io)
       }
     }, 1000)
+  }
+
+  resyncTimer(roomId, io) {
+    this.cleanupTimer()
+    this.startTimer(roomId, io)
   }
 
   broadcastSpectatorInfo(socket) {
@@ -271,7 +278,7 @@ export default class Game {
     }
   }
 
-  cleanupGame() {
+  cleanupTimer() {
     clearInterval(this.timerId)
     delete this.timerId
   }

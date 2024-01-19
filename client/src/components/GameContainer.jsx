@@ -163,6 +163,7 @@ function GameContainer({
 
       socket.on("timerTick", (timer) => {
         setRoundTimer(timer)
+        setTimerIndex(timer % 4)
       })
 
       socket.on("gameBoardsUpdated", (updatedUserId, updatedBoard) => {
@@ -273,21 +274,6 @@ function GameContainer({
   ]
 
   const HIDDEN_PERIODS = ["...", "..", ".", ""]
-
-  // Rotate the clock icon every second
-  useEffect(() => {
-    if (!hasOnlineGameStarted) {
-      setTimerIndex(0)
-    } else {
-      if (!isCountdownRunning) {
-        const cycle = setInterval(() => {
-          setTimerIndex((prevTimerIndex) => (prevTimerIndex + 1) % 4)
-        }, 1000)
-
-        return () => clearInterval(cycle)
-      }
-    }
-  }, [isCountdownRunning, isGameOver])
 
   // Helper functions
 
@@ -664,7 +650,9 @@ function GameContainer({
             <span className="timer">
               <span className="clock">
                 <LuClock12
-                  style={{ transform: `rotate(${timerIndex * 90}deg)` }}
+                  style={{
+                    transform: `rotate(${360 - timerIndex * 90}deg)`,
+                  }}
                 />
                 &nbsp;
               </span>

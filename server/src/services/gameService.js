@@ -44,7 +44,7 @@ function deleteGame(roomId) {
   const game = Games.get(roomId)
   if (game && game instanceof Game) {
     console.log(`Deleting game: ${roomId}`)
-    game.cleanupGame()
+    game.cleanupTimer()
     Games.delete(roomId)
   }
 }
@@ -96,7 +96,7 @@ async function handleCorrectGuess(
         game.updatePoints(userId)
         game.broadcastPoints(roomId, userId, io)
         if (game.countSolved === 0) {
-          game.setSolvedTimer()
+          game.setSolvedTimer(roomId, io)
           socket.emit("firstSolve")
         }
       } else if (getRoomConnectionMode(roomId) === "online-public") {
