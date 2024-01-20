@@ -6,10 +6,6 @@ $login-padding-inline: 3.5vw;
 
 @mixin phone-styles-navbar {
   .navbar {
-    &__left {
-      width: $logo-size;
-      height: $logo-size;
-    }
     &__right {
       gap: 2vw;
     }
@@ -30,6 +26,10 @@ $login-padding-inline: 3.5vw;
       padding-inline: $login-padding-inline;
     }
   }
+  .logo {
+    width: $logo-size;
+    height: $logo-size;
+  }
 }
 
 .navbar {
@@ -41,10 +41,6 @@ $login-padding-inline: 3.5vw;
   border-bottom: 1px solid $border;
 
   &__left {
-    display: flex;
-    width: 2.75rem;
-    height: 2.75rem;
-    gap: 0.5rem;
     cursor: pointer;
 
     &:hover {
@@ -147,6 +143,8 @@ $login-padding-inline: 3.5vw;
 
 .logo {
   display: flex;
+  width: 2.75rem;
+  height: 2.75rem;
   gap: 0.5rem;
 
   &__wordmark {
