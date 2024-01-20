@@ -1,6 +1,11 @@
-import io from "socket.io-client"
+import { io } from "socket.io-client"
 
-const socket = io("http://localhost:3005")
+const SERVER_URL =
+  process.env.NODE_ENV === "production"
+    ? import.meta.env.VITE_EC2_URL
+    : "http://localhost:3005"
+
+const socket = io(SERVER_URL, {})
 
 socket.on("connect", () => {
   console.log("Connected to server")
