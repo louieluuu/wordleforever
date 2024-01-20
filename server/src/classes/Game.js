@@ -17,9 +17,9 @@ import { getUser } from "../services/userService.js"
 
 const PRIVATE_GAME_TIMER = 120
 const PRIVATE_GAME_SOLVED_TIMER = 45
-const ROUND_BREAK_TIME = 10
+const ROUND_BREAK_TIME = 1
 
-const PRIVATE_GAME_ROUND_LIMIT = 10
+const PRIVATE_GAME_ROUND_LIMIT = 3
 
 export default class Game {
   constructor() {

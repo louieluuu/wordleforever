@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { IoIosFlame } from "react-icons/io"
 
 import AlertModal from "./AlertModal"
@@ -24,6 +24,8 @@ function GameBoard({
   isConfettiRunning,
   winningUser,
 }) {
+  const [displayPoints, setDisplayPoints] = useState(0)
+  const [prevPoints, setPrevPoints] = useState(0)
   const lastRowIndex = getLastRowIndex(board)
   const isBoardEmpty = checkIsBoardEmpty(board)
 
@@ -146,6 +148,37 @@ function GameBoard({
     return streakClassName
   }
 
+  function getPointTimeout(pointDiff) {
+    if (pointDiff > 35) {
+      return 5
+    } else if (pointDiff > 10) {
+      return 20
+    } else if (pointDiff > 3) {
+      return 50
+    } else if (pointDiff > 0) {
+      return 100
+    }
+    return 0
+  }
+
+  useEffect(() => {
+    if (connectionMode === "online-private") {
+      let pointDiff = points - prevPoints
+
+      let pointTimeout = setTimeout(function incrementPoints() {
+        if (pointDiff <= 0) {
+          clearTimeout(pointTimeout)
+        } else {
+          setDisplayPoints((prevDisplayPoints) => prevDisplayPoints + 1)
+          pointDiff--
+          setTimeout(incrementPoints, getPointTimeout(pointDiff))
+        }
+      }, getPointTimeout(pointDiff))
+
+      setPrevPoints(points)
+    }
+  }, [points])
+
   return (
     <div className={getBoardClassName()}>
       {isUser && (
@@ -168,7 +201,7 @@ function GameBoard({
         {connectionMode === "online-private" && (
           <>
             &nbsp;-&nbsp;
-            {points}
+            {displayPoints}
           </>
         )}
         {connectionMode === "online-public" && (
