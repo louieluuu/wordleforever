@@ -41,9 +41,10 @@ function MenuOfflineModes({ setConnectionMode, setRoomId }) {
           VS. WORDLEBOT
         </button>
 
-        <button className="menu__btn--back" onClick={navigateBack}>
-          <HiOutlineArrowUturnLeft />
-        </button>
+        <HiOutlineArrowUturnLeft
+          className="menu__btn--back"
+          onClick={navigateBack}
+        />
       </div>
     </AnimatedPage>
   )
