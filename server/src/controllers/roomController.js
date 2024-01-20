@@ -14,7 +14,7 @@ import {
 import { setUsername, broadcastUserInfo } from "../services/userService.js"
 
 const PRIVATE_ROOM_COUNTDOWN_TIMER = 6
-const PUBLIC_ROOM_COUNTDOWN_TIMER = 6
+const PUBLIC_ROOM_COUNTDOWN_TIMER = 10
 
 function createRoom(connectionMode, isChallengeOn, socket) {
   try {

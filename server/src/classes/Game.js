@@ -17,9 +17,9 @@ import { getUser } from "../services/userService.js"
 
 const PRIVATE_GAME_TIMER = 120
 const PRIVATE_GAME_SOLVED_TIMER = 45
-const ROUND_BREAK_TIME = 1
+const ROUND_BREAK_TIME = 10
 
-const PRIVATE_GAME_ROUND_LIMIT = 3
+const PRIVATE_GAME_ROUND_LIMIT = 10
 
 export default class Game {
   constructor() {
@@ -375,9 +375,7 @@ export default class Game {
       io.to(roomId).emit("timerTick", this.timer)
 
       if (this.timer <= 0) {
-        clearInterval(this.timerId)
-        setRoomOutOfGame(roomId)
-        this.broadcastFinalUserInfo(roomId, io)
+        this.endGame(roomId, io)
       }
     }, 1000)
   }
