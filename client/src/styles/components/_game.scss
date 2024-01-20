@@ -1,10 +1,10 @@
 // Horizontal width of user board should line up with horizontal width of (2 compressed boards + gap)
 // Width of user board:
-// 5x $phone-user-cell-size = 68vw
-// 4x $phone-user-cell-gap = 2vw
-// total width: 70vw
-// Compressed board gap ($phone-others-board-gap): 5vw (horizontally)
-// Width of each compressed board should be 32.5vw (32.5*2 + 5 = 70vw)
+// 5x $phone-user-cell-size = 35dvh
+// 4x $phone-user-cell-gap = 1.2dvh
+// total width: 36dvh
+// Compressed board gap ($phone-others-board-gap): 6dvh (horizontally)
+// Width of each compressed board should be 15dvh (15*2 + 6 = 36dvh)
 
 // Styles for main game boards (the users board)
 
@@ -12,7 +12,7 @@
 $desktop-cell-size: 3rem;
 $desktop-small-cell-size: 2rem;
 
-$phone-user-cell-size: 13.6vw;
+$phone-user-cell-size: 7dvh;
 $phone-offline-cell-size: 15.6vw;
 
 // Border
@@ -23,7 +23,7 @@ $phone-user-cell-border: 0.8vw solid;
 // Cell gap
 $desktop-cell-gap: 0.25rem;
 
-$phone-user-cell-gap: 0.5vw;
+$phone-user-cell-gap: 0.3dvh;
 
 // Font sizes
 $desktop-cell-font-size: 2rem;
@@ -50,24 +50,23 @@ $phone-board-gap: 0.2rem;
 // Common styles
 
 // 1v1 specific styles
-$phone-other-cell-size: 14vw;
+$phone-other-cell-size: 7.2dvh;
 $phone-other-cell-font-size: 8vw;
 $phone-other-info-font-size: 3vw;
 
 // 1vX specific styles
-$phone-others-cell-size: 6.5vw;
+$phone-others-cell-size: 3dvh;
 $phone-others-cell-font-size: 4vw;
 $phone-others-info-font-size: 2.6vw;
 $phone-others-info-max-width: 26vw;
 $phone-others-crown-size: 2.3vw;
 
-$phone-others-board-gap: 0vw 5vw;
-$phone-margin-inline: 15vw;
+$phone-others-board-gap: 0 6dvh;
 
 $desktop-others-crown-size: 0.7rem;
 
 // Miscellaneous styles
-$countdown-timer-placement: 35vh;
+$countdown-timer-placement: 35dvh;
 $countdown-timer-font-size: 5.75vw;
 
 $private-room-info-margin-top: 0.2vh;
@@ -177,12 +176,10 @@ $loser-board-opacity: 50%;
 
   .other-boards--grid {
     flex: 3;
-    display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: none;
     grid-auto-flow: row;
     gap: $phone-others-board-gap;
-    margin-inline: $phone-margin-inline;
   }
 
   .compressed-game-board__cell {
@@ -289,6 +286,7 @@ $loser-board-opacity: 50%;
   display: flex;
   flex-direction: row;
   justify-content: center;
+  align-items: center;
   gap: $desktop-board-gap;
 }
 
@@ -301,8 +299,6 @@ $loser-board-opacity: 50%;
 
 .user-board {
   display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .other-boards {
@@ -316,6 +312,11 @@ $loser-board-opacity: 50%;
   grid-template-rows: repeat(2, 1fr);
   grid-auto-flow: column;
   gap: 1rem;
+}
+
+.other-board-container {
+  display: flex;
+  justify-content: center;
 }
 
 .game-board {

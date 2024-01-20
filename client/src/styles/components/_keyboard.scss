@@ -4,7 +4,7 @@
   }
   .keyboard__cell {
     width: 9vw;
-    height: 6.5vh;
+    height: 7.5dvh;
     font-size: 1rem;
 
     &--large {
@@ -100,13 +100,17 @@
   }
 
   .post-game-buttons {
-    position: absolute;
     display: flex;
-    gap: 1rem;
-    bottom: 5%;
+    align-items: center;
+
+    position: absolute;
+    top: 90%;
     left: 50%;
     transform: translate(-50%, -50%);
-    white-space: nowrap;
+
     z-index: 9;
+    gap: 1rem;
+
+    white-space: nowrap;
   }
 }
