@@ -64,6 +64,7 @@ function GameContainer({
   // Private game states
   const [isMatchOver, setIsMatchOver] = useState(false)
   const [roundCounter, setRoundCounter] = useState(0)
+  const [maxRounds, setMaxRounds] = useState(0)
   const [roundTimer, setRoundTimer] = useState(0)
   const [timerIndex, setTimerIndex] = useState(0)
 
@@ -133,7 +134,14 @@ function GameContainer({
   useEffect(() => {
     socket.on(
       "gameStarted",
-      (initialUserInfo, newSolution, newChallengeModeGuess, round, timer) => {
+      (
+        initialUserInfo,
+        newSolution,
+        newChallengeModeGuess,
+        maxRounds,
+        round,
+        timer
+      ) => {
         setHasOnlineGameStarted(true)
         resetStates()
         const sortedUserInfo = initialUserInfo.sort((obj) => {
@@ -143,6 +151,7 @@ function GameContainer({
         setSolution(newSolution)
         setChallengeModeGuess(newChallengeModeGuess)
         setIsCountdownRunning(true)
+        setMaxRounds(maxRounds)
         setRoundCounter(round)
         setRoundTimer(timer)
       }
@@ -156,8 +165,9 @@ function GameContainer({
   // Main useEffect loop for online game logic
   useEffect(() => {
     if (hasOnlineGameStarted) {
-      socket.on("spectatorInfo", (allUserInfo, round, timer) => {
+      socket.on("spectatorInfo", (allUserInfo, maxRounds, round, timer) => {
         setUserInfo(allUserInfo)
+        setMaxRounds(maxRounds)
         setRoundCounter(round)
         setRoundTimer(timer)
       })
@@ -689,6 +699,9 @@ function GameContainer({
           <CountdownModal
             isCountdownRunning={isCountdownRunning}
             setIsCountdownRunning={setIsCountdownRunning}
+            connectionMode={connectionMode}
+            maxRounds={maxRounds}
+            roundCounter={roundCounter}
           />
         )}
         {isConfettiRunning && (

@@ -8,6 +8,13 @@ import { setRoomOutOfGame } from "../services/roomService.js"
 import { getUser } from "../services/userService.js"
 
 // These are all in seconds
+// Mess around with these for testing, but always return them to the following unless permanently changing:
+// const PRIVATE_GAME_TIMER = 120
+// const PRIVATE_GAME_SOLVED_TIMER = 45
+// const ROUND_BREAK_TIME = 10
+
+// const PRIVATE_GAME_ROUND_LIMIT = 10
+
 const PRIVATE_GAME_TIMER = 120
 const PRIVATE_GAME_SOLVED_TIMER = 45
 const ROUND_BREAK_TIME = 10
@@ -206,6 +213,7 @@ export default class Game {
       this.getAllUserInfo(),
       this.solution,
       this.startingWord,
+      PRIVATE_GAME_ROUND_LIMIT,
       this.round,
       this.timer
     )
@@ -257,7 +265,13 @@ export default class Game {
   }
 
   broadcastSpectatorInfo(socket) {
-    socket.emit("spectatorInfo", this.getAllUserInfo(), this.round, this.timer)
+    socket.emit(
+      "spectatorInfo",
+      this.getAllUserInfo(),
+      PRIVATE_GAME_ROUND_LIMIT,
+      this.round,
+      this.timer
+    )
   }
 
   /* Commenting this out for spectators to be able to receive the full game boards, not necessarily sure how I feel about always sending this information to client and having them do the processing */

@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react"
 
-function CountdownModal({ isCountdownRunning, setIsCountdownRunning }) {
+function CountdownModal({
+  isCountdownRunning,
+  setIsCountdownRunning,
+  connectionMode,
+  maxRounds,
+  roundCounter,
+}) {
   const [seconds, setSeconds] = useState(3)
 
   useEffect(() => {
@@ -25,7 +31,13 @@ function CountdownModal({ isCountdownRunning, setIsCountdownRunning }) {
 
   return (
     <dialog className="countdown-timer" open={isCountdownRunning}>
-      <p>The game will start in... {seconds}</p>
+      {connectionMode === "online-private" ? (
+        <p>
+          Round {roundCounter}/{maxRounds} will start in... {seconds}
+        </p>
+      ) : (
+        <p>The game will start in... {seconds}</p>
+      )}
     </dialog>
   )
 }
