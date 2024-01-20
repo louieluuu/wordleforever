@@ -93,7 +93,7 @@ function GameBoard({
       cellClassName += "--grey"
     }
 
-    if (lastRowIndex === 4 && !isBoardSolved(board) && !isUser) {
+    if (lastRowIndex === 4 && !isBoardSolved(board) && !isUser && !isGameOver) {
       cellClassName += " last-guess"
     }
 
