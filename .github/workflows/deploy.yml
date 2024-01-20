@@ -1,0 +1,69 @@
+name: Build and Deploy to S3 and Cloudfront
+on:
+  push:
+    branches: [main]
+    paths-ignore: [README.md, .gitignore, deploy.yml]
+
+# Set env variables by accessing secrets set in the Github repo.
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+
+  AWS_S3_URL: ${{ secrets.AWS_S3_URL }}
+  AWS_CLOUDFRONT_ID: ${{ secrets.AWS_CLOUDFRONT_ID }}
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./client
+
+    steps:
+      # Brings source code from Github repo into the Ubuntu container.
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile]
+
+      - name: Create env file containing EC2 URL
+        run: |
+          touch .env
+          echo VITE_EC2_URL=${{ secrets.AWS_EC2_URL }} >> .env
+
+      - name: Build project
+        run: pnpm run build
+
+        # Debugging
+      - name: List contents of the current directory
+        run: ls
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{env.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{env.AWS_SECRET_ACCESS_KEY}}
+          aws-region: ${{env.AWS_REGION}}
+
+      - name: Update S3 bucket
+        run: |
+          aws s3 sync --delete dist/ ${{env.AWS_S3_URL}}
+
+      - name: Update Cloudfront cache
+        run: |
+          aws cloudfront create-invalidation \
+          --distribution-id ${{env.AWS_CLOUDFRONT_ID}} \
+          --paths "/*"
