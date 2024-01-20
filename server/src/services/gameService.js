@@ -8,7 +8,6 @@ import {
   getRoomConnectionMode,
   setRoomInProgress,
   setRoomInGame,
-  setRoomOutOfGame,
   roomInLobby,
 } from "./roomService.js"
 import {

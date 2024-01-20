@@ -219,9 +219,9 @@ export default class Game {
   }
 
   endGame(roomId, io) {
-    setRoomOutOfGame(roomId)
     this.broadcastFinalUserInfo(roomId, io)
     if (this.connectionMode === "online-private") {
+      setRoomOutOfGame(roomId)
       if (this.round >= PRIVATE_GAME_ROUND_LIMIT) {
         this.reachedRoundLimit = true
         this.broadcastEndOfMatch(roomId, io)
