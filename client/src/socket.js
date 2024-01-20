@@ -5,7 +5,7 @@ const SERVER_URL =
     ? import.meta.env.VITE_EC2_URL
     : "http://localhost:3005"
 
-const socket = io(SERVER_URL, {})
+const socket = io(SERVER_URL, { transports: ["websocket"] })
 
 socket.on("connect", () => {
   console.log("Connected to server")
