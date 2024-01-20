@@ -168,7 +168,7 @@ function Keyboard({
         <div
           className="keyboard__cell--large--icon"
           key="Backspace"
-          onClick={() => handleKeyboardInput("Backspace")}
+          onClick={() => handleKeyPress("Backspace")}
         >
           <IoBackspaceOutline />
         </div>
