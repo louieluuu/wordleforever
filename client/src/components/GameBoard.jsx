@@ -169,9 +169,6 @@ function GameBoard({
   useEffect(() => {
     if (connectionMode === "online-private") {
       let pointDiff = points - prevPoints
-      console.log("points are", points)
-      console.log("prevpoints are", prevPoints)
-      console.log("pointdiff is", pointDiff)
 
       let pointTimeout = setTimeout(function incrementPoints() {
         if (pointDiff <= 0) {
