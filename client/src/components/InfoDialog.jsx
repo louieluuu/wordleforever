@@ -54,12 +54,12 @@ function InfoDialog({ show }) {
           }}
         >
           <li style={{ marginBottom: "0.1rem" }}>
-            Invite your friends to a private lobby.
+            ... Invite your friends to a private lobby.
           </li>
           <li style={{ marginBottom: "0.1rem" }}>
-            Go solo, and see how high you can streak.
+            ... Go solo, and see how high you can streak.
           </li>
-          <li>Statistics, QOL features, and more!</li>
+          <li>... Statistics, QOL features, and more!</li>
         </ul>
 
         <hr style={{ marginBlock: "1.3rem" }} />
@@ -89,10 +89,10 @@ function InfoDialog({ show }) {
 
         <div className="game-board__row" style={{ gap: "0.2rem" }}>
           <div className="game-board__cell--dialog--green">S</div>
-          <div className="game-board__cell--dialog">H</div>
-          <div className="game-board__cell--dialog">O</div>
-          <div className="game-board__cell--dialog">R</div>
+          <div className="game-board__cell--dialog">L</div>
           <div className="game-board__cell--dialog">E</div>
+          <div className="game-board__cell--dialog">E</div>
+          <div className="game-board__cell--dialog">P</div>
         </div>
 
         <p>
@@ -101,11 +101,11 @@ function InfoDialog({ show }) {
         </p>
 
         <div className="game-board__row" style={{ gap: "0.2rem" }}>
-          <div className="game-board__cell--dialog">E</div>
-          <div className="game-board__cell--dialog">E</div>
+          <div className="game-board__cell--dialog">L</div>
+          <div className="game-board__cell--dialog">O</div>
           <div className="game-board__cell--dialog--yellow">F</div>
-          <div className="game-board__cell--dialog">J</div>
-          <div className="game-board__cell--dialog">E</div>
+          <div className="game-board__cell--dialog">T</div>
+          <div className="game-board__cell--dialog">Y</div>
         </div>
 
         <p>
