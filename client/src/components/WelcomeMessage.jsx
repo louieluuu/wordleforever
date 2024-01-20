@@ -4,14 +4,14 @@ import { HiOutlinePencilSquare } from "react-icons/hi2"
 function WelcomeMessage({ username, setUsername, inputWidth, setInputWidth }) {
   const usernameRef = useRef(null)
   /** Seems a bit hacky but works, uses a hidden span element to measure the width and sets the input box size to that width. Dynamically sizing the input box was tricky */
-  const textWidthRef = useRef(null)
+  // const textWidthRef = useRef(null)
 
-  useLayoutEffect(() => {
-    if (textWidthRef.current) {
-      const textWidth = textWidthRef.current.clientWidth
-      setInputWidth(textWidth + 10)
-    }
-  }, [username, textWidthRef])
+  // useLayoutEffect(() => {
+  //   if (textWidthRef.current) {
+  //     const textWidth = textWidthRef.current.clientWidth
+  //     setInputWidth(textWidth + 10)
+  //   }
+  // }, [username, textWidthRef])
 
   function handleUserNameChange(e) {
     const updatedUsername = e.target.value
@@ -60,12 +60,12 @@ function WelcomeMessage({ username, setUsername, inputWidth, setInputWidth }) {
           onClick={setCaretPosition}
           onMouseDown={setCaretInvisible}
           spellCheck="false"
-          style={{ width: `${inputWidth}px` }}
+          // style={{ width: `${inputWidth}px` }}
         />
-        !
+        {/* !
         <span ref={textWidthRef} className="hidden-span">
           {username}
-        </span>
+        </span> */}
       </div>
       <span
         style={{
