@@ -1,0 +1,86 @@
+@mixin phone-styles-waiting-room {
+  .waiting-room-background {
+    .waiting-room-user-info {
+      gap: 0;
+      font-size: 3.5vw;
+    }
+
+    .waiting-message {
+      font-size: 6.5vw;
+    }
+  }
+}
+
+.waiting-room-background {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-right: auto;
+  margin-left: auto;
+  width: min(95vw, 45rem);
+  flex: 1;
+  bottom: 1vh;
+
+  &::before {
+    content: "";
+    position: absolute;
+    border-radius: 2rem;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background-image: $waiting-room-background;
+    background-size: cover;
+    background-repeat: repeat-x;
+    background-position: 0 $waiting-room-vertical;
+    animation: slide 45s linear infinite;
+  }
+
+  @keyframes slide {
+    to {
+      background-position: -1920px $waiting-room-vertical;
+    }
+  }
+
+  .waiting-room-user-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: "Roboto Slab";
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 1rem;
+    gap: 1rem 5rem;
+    border: 2px dashed hsl(0, 0%, 60%);
+    padding-inline: 5vw;
+    padding-block: 3vh;
+    max-width: 30rem;
+  }
+
+  .waiting-message {
+    display: flex;
+    font-family: "Suwannaphum";
+    font-size: 2.5rem;
+    mix-blend-mode: overlay;
+  }
+
+  .lobby-countdown-timer {
+    position: absolute;
+
+    top: -4.5rem;
+    right: 0.5rem;
+    font-size: 4rem;
+    font-family: "Roboto Slab";
+    align-self: flex-end;
+  }
+
+  .non-host-waiting-message {
+    font-family: "Roboto Slab";
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+}

@@ -1,0 +1,62 @@
+@mixin phone-styles-welcome-message {
+  .welcome-message {
+    margin-block: 1rem;
+  }
+  .welcome-message,
+  .username-form,
+  .hidden-span {
+    font-size: 7.5vh;
+  }
+}
+
+.welcome-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Calistoga";
+  font-size: 3.5rem;
+  line-height: 0.8;
+  margin-block: 2rem;
+  max-width: 100vw;
+}
+
+.username-line {
+  display: flex;
+  flex-direction: row;
+  line-height: 1.28;
+}
+
+.username-form {
+  display: flex;
+  color: $username;
+  background-color: transparent;
+  text-align: center;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: "Lobster";
+  font-size: 3.5rem;
+  text-decoration: underline dotted;
+  text-underline-offset: 0.5rem;
+  max-width: 85vw;
+
+  &:hover {
+    filter: $username-form-hover;
+  }
+
+  &__pencil {
+    font-size: 2rem;
+    stroke-width: 0.11rem;
+    cursor: pointer;
+  }
+}
+
+.hidden-span {
+  position: absolute;
+  visibility: hidden;
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: "Lobster";
+  font-size: 3.5rem;
+  max-width: 85vw;
+}

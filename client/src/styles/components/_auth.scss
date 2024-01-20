@@ -1,0 +1,58 @@
+.auth {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+
+  margin-top: 2rem;
+
+  font-size: 0.8rem;
+
+  &__error {
+    visibility: visible;
+    color: red;
+
+    &--hidden {
+      visibility: hidden;
+    }
+  }
+
+  &__form {
+    width: 15rem;
+
+    color: $color;
+    background-color: $bg-main;
+    border: 2px solid $btn-copy-border;
+
+    padding: 0.4rem;
+
+    &:focus {
+      outline: 2px solid $username;
+    }
+  }
+
+  &__divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+
+    width: 100%;
+
+    margin: 2rem;
+
+    &::before,
+    &::after {
+      content: "";
+      flex: 1;
+      border-bottom: 1px solid $border;
+    }
+
+    &:not(:empty)::before {
+      margin-right: 0.5rem;
+    }
+
+    &:not(:empty)::after {
+      margin-left: 0.5rem;
+    }
+  }
+}

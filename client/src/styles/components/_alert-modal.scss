@@ -1,0 +1,51 @@
+@mixin phone-styles-alert-modal {
+  .alert-modal {
+    padding-inline: 4vw;
+    padding-block: 1.5vh;
+    font-size: 4.5vw;
+
+    &__in-game {
+      @extend .alert-modal;
+      top: -3%;
+      white-space: nowrap;
+    }
+  }
+}
+
+.alert-modal {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  padding-inline: 1rem;
+  padding-block: 0.6rem;
+  background-color: hsl(0, 0%, 10%, 90%);
+
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+
+  opacity: 1;
+
+  &.hide {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+  }
+
+  &__in-game {
+    @extend .alert-modal;
+    white-space: nowrap;
+  }
+
+  &__post-game {
+    @extend .alert-modal;
+    white-space: nowrap;
+    top: 50%;
+  }
+
+  &__lobby {
+    @extend .alert-modal;
+  }
+}

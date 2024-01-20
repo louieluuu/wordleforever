@@ -1,0 +1,90 @@
+// Current progress
+// Design has been focused for desktop users (not completely finished though)
+// Will be working on both base phone design alongside finishing desktop design, and desktop design will temporary encompass all other designs (large phones, tablets, laptops)
+
+@import "variables";
+@import "./components/navbar";
+@import "./components/auth";
+@import "./components/dialog";
+@import "./components/page-content";
+@import "./components/menu";
+@import "./components/welcome-message";
+@import "./components/waiting-room";
+@import "./components/game";
+@import "./components/keyboard";
+@import "./components/alert-modal";
+@import "./components/streak";
+
+* {
+  box-sizing: border-box;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: $bg-main;
+  color: $color;
+}
+
+a {
+  color: hsl(197, 100%, 40%);
+  text-decoration: none;
+}
+
+:root {
+  font-family: "Roboto", sans-serif;
+}
+
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+// Temporary breakpoints
+
+@media only screen and (max-width: $breakpoint-sm) {
+  @include phone-styles-keyboard;
+  @include phone-styles-game-board;
+  @include phone-styles-waiting-room;
+  @include phone-styles-welcome-message;
+
+  @include phone-styles-navbar;
+  @include phone-styles-dialog;
+  @include phone-styles-alert-modal;
+}
+
+@media only screen and (min-width: $breakpoint-sm) {
+  // @include desktop-styles;
+}
+
+// This is what I want the eventual breakpoints to look like, will be extended as each responsive design is done, until then thresholds will be merged
+
+// // Design for most phones (priority: 1)
+// @media only screen and (max-width: $breakpoint-sm) {
+//   //@include phone-styles
+// }
+
+// // Design for large phones - uncommon (priority: 5)
+// @media only screen and (min-width: $breakpoint-sm) and (max-width: $breakpoint-md) {
+//   //@include lg-phone-styles
+// }
+
+// // Design for tablets - (priority: 3)
+// @media only screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg) {
+//   //@include tablet-styles
+// }
+
+// // Design for laptops - (priority: 4)
+// @media only screen and (min-width: $breakpoint-lg) and (max-width: $breakpoint-xl) {
+//   //@include laptop-styles
+// }
+
+// // Design for desktops - (priority: 2)
+// @media only screen and (min-width: $breakpoint-xl) {
+//   //@include desktop-styles
+// }
