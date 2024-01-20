@@ -87,13 +87,7 @@ function handleWrongGuess(roomId, userId, updatedGameBoard, io) {
   }
 }
 
-async function handleCorrectGuess(
-  roomId,
-  userId,
-  updatedGameBoard,
-  socket,
-  io
-) {
+async function handleCorrectGuess(roomId, userId, updatedGameBoard, io) {
   try {
     const game = Games.get(roomId)
     if (game && game instanceof Game) {
@@ -102,7 +96,7 @@ async function handleCorrectGuess(
         game.broadcastPoints(roomId, userId, io)
         if (game.countSolved === 0) {
           game.setSolvedTimer(roomId, io)
-          socket.emit("firstSolve")
+          game.broadcastFirstSolve(roomId, userId, io)
         }
       } else if (getRoomConnectionMode(roomId) === "online-public") {
         game.updateStreaks(userId)

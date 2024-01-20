@@ -296,6 +296,14 @@ export default class Game {
     }
   }
 
+  broadcastFirstSolve(roomId, userId, io) {
+    if (roomId) {
+      io.to(roomId).emit("firstSolve", userId)
+    } else {
+      console.error("Invalid roomId for broadcasting first solve")
+    }
+  }
+
   broadcastFinalUserInfo(roomId, io) {
     if (roomId) {
       io.to(roomId).emit("finalUserInfo", this.getAllUserInfo())

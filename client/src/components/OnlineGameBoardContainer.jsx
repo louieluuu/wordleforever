@@ -17,6 +17,7 @@ function OnlineGameBoardContainer({
   message,
   hasSolved,
   isConfettiRunning,
+  winningUserId,
 }) {
   // I'd rather pull the breakpoints from "../styles/_variables.scss", think you can do it with webpack but going to skip it for now
   const breakpointSm = "640px"
@@ -88,6 +89,7 @@ function OnlineGameBoardContainer({
                 message={message}
                 hasSolved={hasSolved}
                 isConfettiRunning={isConfettiRunning}
+                winningUser={userInfo[0].userId === winningUserId}
               />
             )}
           </div>
@@ -105,6 +107,7 @@ function OnlineGameBoardContainer({
                     isLeading={isUserLeading(obj.userId)}
                     isSmall={isMoreThanTwoPlayers()}
                     isGameOver={isGameOver}
+                    winningUser={obj.userId === winningUserId}
                   />
                 ))
               : otherUserInfo().map((obj) => (
@@ -119,6 +122,7 @@ function OnlineGameBoardContainer({
                     isLeading={isUserLeading(obj.userId)}
                     isCompressed={isPhone}
                     isGameOver={isGameOver}
+                    winningUser={obj.userId === winningUserId}
                   />
                 ))}
           </div>
@@ -139,6 +143,7 @@ function OnlineGameBoardContainer({
                     isOutOfGuesses={isOutOfGuesses}
                     isLeading={isUserLeading(obj.userId)}
                     isGameOver={isGameOver}
+                    winningUser={obj.userId === winningUserId}
                   />
                 ))}
               </>
@@ -156,6 +161,7 @@ function OnlineGameBoardContainer({
                     isLeading={isUserLeading(obj.userId)}
                     isCompressed={isPhone}
                     isGameOver={isGameOver}
+                    winningUser={obj.userId === winningUserId}
                   />
                 ))}
               </>

@@ -22,6 +22,7 @@ function GameBoard({
   message,
   hasSolved,
   isConfettiRunning,
+  winningUser,
 }) {
   const lastRowIndex = getLastRowIndex(board)
   const isBoardEmpty = checkIsBoardEmpty(board)
@@ -63,12 +64,16 @@ function GameBoard({
 
   function getBoardClassName() {
     let boardClassName = addPrefix("game-board")
-    if (isOutOfGuesses) {
-      boardClassName += "--game-over"
-    } else if (!isUser && !isGameOver && isBoardSolved(board)) {
-      boardClassName += "--solved"
-    } else if (!isUser && !isGameOver && isBoardOutOfGuesses(board)) {
-      boardClassName += "--unsolved"
+    if (connectionMode === "online-public") {
+      if (isOutOfGuesses) {
+        boardClassName += "--game-over"
+      }
+    } else if (connectionMode === "online-private") {
+      if (!isUser && !isGameOver && isBoardSolved(board)) {
+        boardClassName += "--solved"
+      } else if (!isUser && !isGameOver && isBoardOutOfGuesses(board)) {
+        boardClassName += "--unsolved"
+      }
     }
 
     return boardClassName
@@ -79,21 +84,30 @@ function GameBoard({
 
     if (isBoardEmpty && isCompressed) {
       cellClassName += "--empty"
-    }
-
-    if (board[row][cellIndex].color === "") {
-      if (row === activeRow && cellIndex < activeCell) {
-        cellClassName += "--active"
+    } else {
+      if (board[row][cellIndex].color === "") {
+        if (row === activeRow && cellIndex < activeCell) {
+          cellClassName += "--active"
+        }
+      } else if (board[row][cellIndex].color === "green") {
+        cellClassName += "--green"
+      } else if (board[row][cellIndex].color === "yellow") {
+        cellClassName += "--yellow"
+      } else if (board[row][cellIndex].color === "grey") {
+        cellClassName += "--grey"
       }
-    } else if (board[row][cellIndex].color === "green") {
-      cellClassName += "--green"
-    } else if (board[row][cellIndex].color === "yellow") {
-      cellClassName += "--yellow"
-    } else if (board[row][cellIndex].color === "grey") {
-      cellClassName += "--grey"
     }
 
-    if (lastRowIndex === 4 && !isBoardSolved(board) && !isUser && !isGameOver) {
+    if (isGameOver && winningUser) {
+      cellClassName += " winner"
+    } else if (isGameOver && !winningUser) {
+      cellClassName += " loser"
+    } else if (
+      lastRowIndex === 4 &&
+      !isBoardSolved(board) &&
+      !isUser &&
+      !isGameOver
+    ) {
       cellClassName += " last-guess"
     }
 

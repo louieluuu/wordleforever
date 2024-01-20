@@ -18,6 +18,7 @@ function GameBoardContainer({
   message,
   hasSolved,
   isConfettiRunning,
+  winningUserId,
 }) {
   return (
     <>
@@ -52,6 +53,7 @@ function GameBoardContainer({
           message={message}
           hasSolved={hasSolved}
           isConfettiRunning={isConfettiRunning}
+          winningUserId={winningUserId}
         />
       )}
     </>

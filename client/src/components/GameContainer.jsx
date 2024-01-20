@@ -59,6 +59,7 @@ function GameContainer({
   const [isCountdownRunning, setIsCountdownRunning] = useState(false)
   const [hasOnlineGameStarted, setHasOnlineGameStarted] = useState(false)
   const [isKeyboardLocked, setIsKeyboardLocked] = useState(false)
+  const [winningUserId, setWinningUserId] = useState("")
 
   // Private game states
   const [isMatchOver, setIsMatchOver] = useState(false)
@@ -198,8 +199,11 @@ function GameContainer({
         })
       })
 
-      socket.on("firstSolve", () => {
-        showWinAnimations()
+      socket.on("firstSolve", (firstSolveUserId) => {
+        setWinningUserId(firstSolveUserId)
+        if (socket.id === firstSolveUserId) {
+          showWinAnimations()
+        }
       })
 
       socket.on("finalUserInfo", (finalUserInfo) => {
@@ -720,6 +724,7 @@ function GameContainer({
           message={alertMessage}
           hasSolved={hasSolved}
           isConfettiRunning={isConfettiRunning}
+          winningUserId={winningUserId}
         />
       </div>
 

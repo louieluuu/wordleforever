@@ -82,6 +82,8 @@ $phone-private-room-info-margin-bottom: 0;
 $phone-private-room-info-font-size: 3.5vw;
 $phone-private-room-clock-font-size: 3vw;
 
+$loser-board-opacity: 50%;
+
 @mixin phone-styles-game-board {
   .game-board {
     gap: $phone-user-cell-gap;
@@ -354,6 +356,14 @@ $phone-private-room-clock-font-size: 3vw;
     font-weight: 600;
     border: $desktop-cell-border $border;
 
+    &.winner {
+      opacity: 100%;
+    }
+
+    &.loser {
+      opacity: $loser-board-opacity;
+    }
+
     &.last-guess::before {
       content: "";
       width: 100%;
@@ -471,6 +481,14 @@ $phone-private-room-clock-font-size: 3vw;
     font-weight: 500;
     border: $desktop-cell-border $border;
 
+    &.winner {
+      opacity: 100%;
+    }
+
+    &.loser {
+      opacity: $loser-board-opacity;
+    }
+
     &.last-guess::before {
       content: "";
       width: 100%;
@@ -551,6 +569,14 @@ $phone-private-room-clock-font-size: 3vw;
     &--empty {
       @extend .compressed-game-board__cell;
       background-color: $border;
+    }
+
+    &.winner {
+      opacity: 100%;
+    }
+
+    &.loser {
+      opacity: $loser-board-opacity;
     }
 
     &--green,
