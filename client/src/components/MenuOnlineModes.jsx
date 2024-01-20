@@ -47,12 +47,15 @@ function MenuOnlineModes({
         </button>
 
         <button className="menu__btn--offline" onClick={selectPrivateGame}>
-          <span style={{ lineHeight: "0" }}>PLAY WITH FRIENDS</span>
+          <span>PLAY WITH FRIENDS</span>
         </button>
 
-        <button className="menu__btn--back" onClick={navigateBack}>
-          <HiOutlineArrowUturnLeft strokeWidth={"2px"} />
-        </button>
+        <div className="menu__btn--back">
+          <HiOutlineArrowUturnLeft
+            className="menu__btn--back--icon"
+            onClick={navigateBack}
+          />
+        </div>
       </div>
     </AnimatedPage>
   )

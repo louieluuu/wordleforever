@@ -108,7 +108,7 @@
   &__btn--back {
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: center;
 
     background-color: $btn-neutral;
     border: 2px solid hsl(0, 0%, 50%);
@@ -116,10 +116,8 @@
     border-radius: 1rem;
     cursor: pointer;
 
-    font-size: 1.5rem;
     width: 3rem;
     height: 3rem;
-    color: black;
 
     &:active {
       background-color: hsl(0, 0%, 40%);
@@ -129,6 +127,11 @@
       background-color: $btn-neutral-hover;
       transition-duration: 0.1s;
       transition-timing-function: ease-in;
+    }
+
+    &--icon {
+      width: 1.5rem;
+      height: 1.5rem;
     }
   }
 
