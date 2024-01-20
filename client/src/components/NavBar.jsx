@@ -103,8 +103,8 @@ function NavBar({ roomId }) {
                 onClick={logout}
               />
             ) : (
-              <Link reloadDocument to="/login">
-                <button className="navbar__login">Sign in</button>
+              <Link className="navbar__login" reloadDocument to="/login">
+                Sign In
               </Link>
             )
           ) : null}

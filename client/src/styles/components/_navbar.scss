@@ -99,6 +99,10 @@ $login-padding-inline: 3.5vw;
   }
 
   &__login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     color: white;
     background-color: $username;
 

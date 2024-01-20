@@ -176,9 +176,7 @@ function Keyboard({
       {isGameOver && (
         <div className="post-game-buttons">
           {isMatchOver && !showPostGameDialog && (
-            <button onClick={() => setShowPostGameDialog(true)}>
-              <TfiArrowCircleUp />
-            </button>
+            <TfiArrowCircleUp onClick={() => setShowPostGameDialog(true)} />
           )}
           {(connectionMode !== "online-private" || (isMatchOver && isHost)) && (
             <button className="menu__btn--new-game" onClick={handlePlayAgain}>
