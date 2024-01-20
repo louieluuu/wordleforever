@@ -30,6 +30,7 @@ function GameBoardContainer({
             activeCell={activeCell}
             connectionMode={connectionMode}
             isOutOfGuesses={isOutOfGuesses}
+            isUser={true}
             isGameOver={isGameOver}
             showAlertModal={showAlertModal}
             setShowAlertModal={setShowAlertModal}
