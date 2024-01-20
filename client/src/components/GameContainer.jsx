@@ -69,6 +69,7 @@ function GameContainer({
   const [roundTimer, setRoundTimer] = useState(0)
   const [timerIndex, setTimerIndex] = useState(0)
   const [showPostGameDialog, setShowPostGameDialog] = useState(false)
+  const [showScoreboard, setShowScoreboard] = useState(true)
 
   // Spectator states
   const [spectatorMessage, setSpectatorMessage] = useState("")
@@ -771,7 +772,10 @@ function GameContainer({
           {showPostGameDialog && (
             <PostGameDialog
               setShowPostGameDialog={setShowPostGameDialog}
+              showScoreboard={showScoreboard}
+              setShowScoreboard={setShowScoreboard}
               userInfo={userInfo}
+              maxRounds={maxRounds}
             />
           )}
           <Keyboard
