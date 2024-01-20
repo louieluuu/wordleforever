@@ -219,12 +219,60 @@ function GameContainer({
         })
       })
 
-      socket.on("firstSolve", (firstSolveUserId) => {
+      socket.on("firstSolve", (firstSolveUserId, roundsWon) => {
         setWinningUserId(firstSolveUserId)
         if (socket.id === firstSolveUserId) {
           showWinAnimations()
         }
+        setUserInfo((prevUserInfo) => {
+          const updatedUserInfo = [...prevUserInfo]
+          updatedUserInfo.forEach((obj) => {
+            if (obj.userId === firstSolveUserId) {
+              obj.roundsWon = roundsWon
+            }
+          })
+          return updatedUserInfo
+        })
       })
+
+      socket.on("totalGuessesUpdated", (updatedUserId, updatedTotalGuesses) => {
+        setUserInfo((prevUserInfo) => {
+          const updatedUserInfo = [...prevUserInfo]
+          updatedUserInfo.forEach((obj) => {
+            if (obj.userId === updatedUserId) {
+              obj.totalGuesses = updatedTotalGuesses
+            }
+          })
+          return updatedUserInfo
+        })
+      })
+
+      socket.on("roundsSolvedUpdated", (updatedUserId, updatedRoundsSolved) => {
+        setUserInfo((prevUserInfo) => {
+          const updatedUserInfo = [...prevUserInfo]
+          updatedUserInfo.forEach((obj) => {
+            if (obj.userId === updatedUserId) {
+              obj.totalGuesses = updatedRoundsSolved
+            }
+          })
+          return updatedUserInfo
+        })
+      })
+
+      socket.on(
+        "totalTimeInRoundsSolvedUpdated",
+        (updatedUserId, updatedTotalTimeInRoundsSolved) => {
+          setUserInfo((prevUserInfo) => {
+            const updatedUserInfo = [...prevUserInfo]
+            updatedUserInfo.forEach((obj) => {
+              if (obj.userId === updatedUserId) {
+                obj.totalTimeInRoundsSolved = updatedTotalTimeInRoundsSolved
+              }
+            })
+            return updatedUserInfo
+          })
+        }
+      )
 
       socket.on("finalUserInfo", (finalUserInfo) => {
         const sortedUserInfo = finalUserInfo.sort((obj) => {
@@ -242,6 +290,9 @@ function GameContainer({
         socket.off("pointsUpdated")
         socket.off("streakUpdated")
         socket.off("firstSolve")
+        socket.off("totalGuessesUpdated")
+        socket.off("roundsSolvedUpdated")
+        socket.off("totalTimeInRoundsSolvedUpdated")
         socket.off("finalUserInfo")
       }
     }

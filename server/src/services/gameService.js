@@ -23,11 +23,19 @@ async function initializeGameInfo(roomId) {
   // Should only be set for subsequent games in private games, games should be deleted upon room deletion
   let prevPoints = new Map()
   let prevRound = 0
+  let prevRoundsWon = new Map()
+  let prevRoundsSolved = new Map()
+  let prevTotalGuesses = new Map()
+  let prevTotalTimeInRoundsSolved = new Map()
   if (Games.has(roomId)) {
     const prevGame = Games.get(roomId)
     if (!prevGame.reachedRoundLimit) {
       prevPoints = prevGame.getAllPoints()
       prevRound = prevGame.round
+      prevRoundsWon = prevGame.getAllRoundsWon()
+      prevRoundsSolved = prevGame.getAllRoundsSolved()
+      prevTotalGuesses = prevGame.getAllTotalGuesses()
+      prevTotalTimeInRoundsSolved = prevGame.getAllTotalTimeInRoundsSolved()
       deleteGame(roomId)
     } else {
       deleteGame(roomId)
@@ -38,6 +46,10 @@ async function initializeGameInfo(roomId) {
     getUsersInRoom(roomId),
     prevPoints,
     prevRound,
+    prevRoundsWon,
+    prevRoundsSolved,
+    prevTotalGuesses,
+    prevTotalTimeInRoundsSolved,
     isRoomChallengeMode(roomId)
   )
   Games.set(roomId, game)
@@ -83,6 +95,8 @@ function handleWrongGuess(roomId, userId, updatedGameBoard, io) {
   if (game && game instanceof Game) {
     game.setGameBoard(userId, updatedGameBoard)
     game.broadcastGameBoard(roomId, userId, io)
+    game.incrementTotalGuesses(userId)
+    game.broadcastTotalGuesses(roomId, userId, io)
   }
 }
 
@@ -91,8 +105,18 @@ async function handleCorrectGuess(roomId, userId, updatedGameBoard, io) {
     const game = Games.get(roomId)
     if (game && game instanceof Game) {
       if (getRoomConnectionMode(roomId) === "online-private") {
+        // Points
         game.updatePoints(userId)
         game.broadcastPoints(roomId, userId, io)
+        // Total guesses
+        game.incrementTotalGuesses(userId)
+        game.broadcastTotalGuesses(roomId, userId, io)
+        // Rounds solved
+        game.incrementRoundsSolved(userId)
+        game.broadcastRoundsSolved(roomId, userId, io)
+        // Total time in rounds solved
+        game.incrementTotalTimeInRoundsSolved(userId)
+        game.broadcastTotalTimeInRoundsSolved(roomId, userId, io)
         if (game.countSolved === 0) {
           game.setSolvedTimer(roomId, io)
           game.broadcastFirstSolve(roomId, userId, io)

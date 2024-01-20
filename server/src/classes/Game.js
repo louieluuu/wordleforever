@@ -33,6 +33,8 @@ export default class Game {
     this.reachedRoundLimit = false
     this.timer = 0
     this.timerId = null
+    this.elapsedTime = 0
+    this.elapsedTimerId = null
   }
 
   static async createGame(
@@ -40,6 +42,10 @@ export default class Game {
     users,
     prevPoints,
     prevRound,
+    prevRoundsWon,
+    prevRoundsSolved,
+    prevTotalGuesses,
+    prevTotalTimeInRoundsSolved,
     isChallengeMode
   ) {
     const game = new Game()
@@ -49,7 +55,14 @@ export default class Game {
     game.startingWord = isChallengeMode
       ? game.generateRandomFirstGuess(game.solution)
       : null
-    game.allUserInfo = await game.initializeAllUserInfo(users, prevPoints)
+    game.allUserInfo = await game.initializeAllUserInfo(
+      users,
+      prevPoints,
+      prevRoundsWon,
+      prevRoundsSolved,
+      prevTotalGuesses,
+      prevTotalTimeInRoundsSolved
+    )
     game.countSolved = 0
     game.countOutOfGuesses = 0
     game.round = prevRound + 1
@@ -59,7 +72,14 @@ export default class Game {
     return game
   }
 
-  async initializeAllUserInfo(users, prevPoints) {
+  async initializeAllUserInfo(
+    users,
+    prevPoints,
+    prevRoundsWon,
+    prevRoundsSolved,
+    prevTotalGuesses,
+    prevTotalTimeInRoundsSolved
+  ) {
     const allUserInfoMap = new Map()
 
     await Promise.all(
@@ -73,6 +93,11 @@ export default class Game {
               .map(() => new Array(5).fill({ letter: "", color: "" })),
             streak: user.currStreak,
             points: prevPoints.get(userId) || 0,
+            roundsWon: prevRoundsWon.get(userId) || 0,
+            roundsSolved: prevRoundsSolved.get(userId) || 0,
+            totalGuesses: prevTotalGuesses.get(userId) || 0,
+            totalTimeInRoundsSolved:
+              prevTotalTimeInRoundsSolved.get(userId) || 0,
           })
         }
       })
@@ -97,6 +122,101 @@ export default class Game {
     const userInfo = this.allUserInfo.get(userId)
     if (userInfo) {
       userInfo.gameBoard = gameBoard
+    }
+  }
+
+  getRoundsWon(userId) {
+    const userInfo = this.allUserInfo.get(userId)
+    if (userInfo) {
+      return userInfo.roundsWon
+    }
+  }
+
+  getAllRoundsWon() {
+    const allRoundsWonMapping = new Map()
+    this.allUserInfo.forEach((userInfo, userId) => {
+      allRoundsWonMapping.set(userId, userInfo.roundsWon)
+    })
+
+    return allRoundsWonMapping
+  }
+
+  incrementRoundsWon(userId) {
+    const userInfo = this.allUserInfo.get(userId)
+    if (userInfo) {
+      userInfo.roundsWon += 1
+    }
+  }
+
+  getRoundsSolved(userId) {
+    const userInfo = this.allUserInfo.get(userId)
+    if (userInfo) {
+      return userInfo.roundsSolved
+    }
+  }
+
+  getAllRoundsSolved() {
+    const allRoundsSolvedMapping = new Map()
+    this.allUserInfo.forEach((userInfo, userId) => {
+      allRoundsSolvedMapping.set(userId, userInfo.roundsSolved)
+    })
+
+    return allRoundsSolvedMapping
+  }
+
+  incrementRoundsSolved(userId) {
+    const userInfo = this.allUserInfo.get(userId)
+    if (userInfo) {
+      userInfo.roundsSolved += 1
+    }
+  }
+
+  getTotalGuesses(userId) {
+    const userInfo = this.allUserInfo.get(userId)
+    if (userInfo) {
+      return userInfo.totalGuesses
+    }
+  }
+
+  getAllTotalGuesses() {
+    const allTotalGuessesMapping = new Map()
+    this.allUserInfo.forEach((userInfo, userId) => {
+      allTotalGuessesMapping.set(userId, userInfo.totalGuesses)
+    })
+
+    return allTotalGuessesMapping
+  }
+
+  incrementTotalGuesses(userId) {
+    const userInfo = this.allUserInfo.get(userId)
+    if (userInfo) {
+      userInfo.totalGuesses += 1
+    }
+  }
+
+  getTotalTimeInRoundsSolved(userId) {
+    const userInfo = this.allUserInfo.get(userId)
+    if (userInfo) {
+      return userInfo.totalTimeInRoundsSolved
+    }
+  }
+
+  getAllTotalTimeInRoundsSolved() {
+    const allTotalTimeInRoundsSolvedMapping = new Map()
+    this.allUserInfo.forEach((userInfo, userId) => {
+      allTotalTimeInRoundsSolvedMapping.set(
+        userId,
+        userInfo.totalTimeInRoundsSolved
+      )
+    })
+
+    return allTotalTimeInRoundsSolvedMapping
+  }
+
+  incrementTotalTimeInRoundsSolved(userId) {
+    const userInfo = this.allUserInfo.get(userId)
+    if (userInfo) {
+      userInfo.totalTimeInRoundsSolved += this.elapsedTime
     }
   }
 
@@ -222,11 +342,14 @@ export default class Game {
       // Wait for the in game countdown to finish
       setTimeout(() => {
         this.startTimer(roomId, io)
+        this.startElapsedTime()
       }, 3000)
     }
   }
 
   endGame(roomId, io) {
+    clearInterval(this.timerId)
+    clearInterval(this.elapsedTimerId)
     this.broadcastFinalUserInfo(roomId, io)
     if (this.connectionMode === "online-private") {
       setRoomOutOfGame(roomId)
@@ -237,6 +360,12 @@ export default class Game {
         this.startNextRoundAfterBreak(roomId, io)
       }
     }
+  }
+
+  startElapsedTime() {
+    this.elapsedTimerId = setInterval(() => {
+      this.elapsedTime++
+    }, 1000)
   }
 
   startTimer(roomId, io) {
@@ -310,9 +439,46 @@ export default class Game {
     }
   }
 
+  broadcastRoundsSolved(roomId, userId, io) {
+    if (roomId) {
+      io.to(roomId).emit(
+        "roundsSolvedUpdated",
+        userId,
+        this.getRoundsSolved(userId)
+      )
+    } else {
+      console.error("Invalid roomId for broadcasting rounds solved")
+    }
+  }
+
+  broadcastTotalGuesses(roomId, userId, io) {
+    if (roomId) {
+      io.to(roomId).emit(
+        "totalGuessesUpdated",
+        userId,
+        this.getTotalGuesses(userId)
+      )
+    } else {
+      console.error("Invalid roomId for broadcasting total guesses")
+    }
+  }
+
+  broadcastTotalTimeInRoundsSolved(roomId, userId, io) {
+    if (roomId) {
+      io.to(roomId).emit(
+        "totalTimeInRoundsSolvedUpdated",
+        userId,
+        this.getTotalTimeInRoundsSolved(userId)
+      )
+    } else {
+      console.error("Invalid roomId for broadcasting time to solve")
+    }
+  }
+
   broadcastFirstSolve(roomId, userId, io) {
     if (roomId) {
-      io.to(roomId).emit("firstSolve", userId)
+      this.incrementRoundsWon(userId)
+      io.to(roomId).emit("firstSolve", userId, this.getRoundsWon(userId))
     } else {
       console.error("Invalid roomId for broadcasting first solve")
     }
