@@ -1,7 +1,7 @@
 import React, { useRef } from "react"
 import { Dialog } from "@headlessui/react"
 
-import { GrClose } from "react-icons/gr"
+import { TfiClose } from "react-icons/tfi"
 
 // TODO: LOUIE - animate the dialog upon open and close
 
@@ -18,7 +18,7 @@ function InfoDialog({ show }) {
       <Dialog.Panel>
         <div className="dialog__right">
           <div ref={closeButtonRef}>
-            <GrClose
+            <TfiClose
               className="dialog__btn--close"
               onClick={() => show(false)}
             />
