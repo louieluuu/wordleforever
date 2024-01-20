@@ -98,4 +98,15 @@
       }
     }
   }
+
+  .post-game-buttons {
+    position: absolute;
+    display: flex;
+    gap: 1rem;
+    bottom: 5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    z-index: 9;
+  }
 }

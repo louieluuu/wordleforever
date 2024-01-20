@@ -161,15 +161,29 @@ function GameBoard({
     return 0
   }
 
+  // This whole useEffect scares me, don't really understand it but it kind of works? It bugs out a lot but a lot of safeguards were put in to ensure no incorrect information will be displayed
+  // Ex: sometimes when the game ends, I think this component mounts again? The loop is running with the boards final points but with a prevPoints of 0, which should only get reset to 0 when the component mounts
+  // Shouldn't break anything due to the conditional in the setDisplayPoints
+  // Functionality elsewhere doesn't rely on this anyways, points is stored separately
+  // The safeguards are to guard from displaying the wrong information, which hopefully this does
   useEffect(() => {
     if (connectionMode === "online-private") {
       let pointDiff = points - prevPoints
+      console.log("points are", points)
+      console.log("prevpoints are", prevPoints)
+      console.log("pointdiff is", pointDiff)
 
       let pointTimeout = setTimeout(function incrementPoints() {
         if (pointDiff <= 0) {
           clearTimeout(pointTimeout)
         } else {
-          setDisplayPoints((prevDisplayPoints) => prevDisplayPoints + 1)
+          setDisplayPoints((prevDisplayPoints) => {
+            if (prevDisplayPoints < points) {
+              return prevDisplayPoints + 1
+            } else {
+              return prevDisplayPoints
+            }
+          })
           pointDiff--
           setTimeout(incrementPoints, getPointTimeout(pointDiff))
         }

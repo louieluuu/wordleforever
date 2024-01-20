@@ -14,6 +14,7 @@ import Keyboard from "./Keyboard"
 import VALID_WORDS from "../data/validWords"
 import WORDLE_ANSWERS from "../data/wordleAnswers"
 import WIN_MESSAGES from "../data/winMessages"
+import PostGameDialog from "./PostGameDialog"
 
 function GameContainer({
   isChallengeOn,
@@ -67,6 +68,7 @@ function GameContainer({
   const [maxRounds, setMaxRounds] = useState(0)
   const [roundTimer, setRoundTimer] = useState(0)
   const [timerIndex, setTimerIndex] = useState(0)
+  const [showPostGameDialog, setShowPostGameDialog] = useState(false)
 
   // Spectator states
   const [spectatorMessage, setSpectatorMessage] = useState("")
@@ -255,6 +257,7 @@ function GameContainer({
 
     socket.on("endOfMatch", () => {
       setIsMatchOver(true)
+      setShowPostGameDialog(true)
     })
 
     return () => {
@@ -714,6 +717,12 @@ function GameContainer({
 
       {!isSpectating ? (
         <div className="lower-game-container">
+          {showPostGameDialog && (
+            <PostGameDialog
+              setShowPostGameDialog={setShowPostGameDialog}
+              userInfo={userInfo}
+            />
+          )}
           <Keyboard
             handleLetter={handleLetter}
             handleBackspace={handleBackspace}
@@ -729,6 +738,8 @@ function GameContainer({
             isHost={isHost}
             startNewGame={startNewGame}
             isKeyboardLocked={isKeyboardLocked}
+            showPostGameDialog={showPostGameDialog}
+            setShowPostGameDialog={setShowPostGameDialog}
           />
         </div>
       ) : (

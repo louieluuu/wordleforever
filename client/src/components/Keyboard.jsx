@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 
 import { IoBackspaceOutline } from "react-icons/io5"
 import { IoReturnDownBackSharp } from "react-icons/io5"
+import { TfiArrowCircleUp } from "react-icons/tfi"
 
 // Helpers
 import { handleStartPublicGame } from "../helpers/socketHelpers"
@@ -22,6 +23,8 @@ function Keyboard({
   isHost,
   startNewGame,
   isKeyboardLocked,
+  showPostGameDialog,
+  setShowPostGameDialog,
 }) {
   const navigate = useNavigate()
 
@@ -171,14 +174,19 @@ function Keyboard({
         </div>
       </div>
       {isGameOver && (
-        <>
+        <div className="post-game-buttons">
+          {isMatchOver && !showPostGameDialog && (
+            <button onClick={() => setShowPostGameDialog(true)}>
+              <TfiArrowCircleUp />
+            </button>
+          )}
           {(connectionMode !== "online-private" || (isMatchOver && isHost)) && (
             <button className="menu__btn--new-game" onClick={handlePlayAgain}>
               NEW GAME
               <IoReturnDownBackSharp />
             </button>
           )}
-        </>
+        </div>
       )}
     </div>
   )
