@@ -120,6 +120,10 @@
     width: 3rem;
     height: 3rem;
 
+    // &:active {
+    //   background-color: hsl(0, 0%, 40%);
+    // }
+
     &:hover {
       background-color: $btn-neutral-hover;
       transition-duration: 0.1s;
@@ -127,6 +131,7 @@
     }
 
     &--icon {
+      background-color: none;
       width: 1.5rem;
       height: 1.5rem;
     }
