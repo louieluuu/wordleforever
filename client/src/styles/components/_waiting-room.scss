@@ -6,7 +6,7 @@
     }
 
     .waiting-message {
-      font-size: 6.5vw;
+      font-size: 5vw;
     }
   }
 }
@@ -21,7 +21,7 @@
   margin-left: auto;
   width: min(95vw, 45rem);
   flex: 1;
-  bottom: 1vh;
+  bottom: 1dvh;
 
   &::before {
     content: "";
@@ -57,7 +57,7 @@
     gap: 1rem 5rem;
     border: 2px dashed hsl(0, 0%, 60%);
     padding-inline: 5vw;
-    padding-block: 3vh;
+    padding-block: 3.5dvh;
     max-width: 30rem;
   }
 

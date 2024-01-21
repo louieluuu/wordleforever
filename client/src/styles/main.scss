@@ -50,6 +50,7 @@ a {
   @include phone-styles-welcome-message;
 
   @include phone-styles-navbar;
+  @include phone-styles-menu;
   @include phone-styles-dialog;
   @include phone-styles-alert-modal;
 }

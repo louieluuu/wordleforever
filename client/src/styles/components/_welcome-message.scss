@@ -1,11 +1,18 @@
 @mixin phone-styles-welcome-message {
   .welcome-message {
-    margin-block: 1rem;
+    margin-block: 2dvh;
+    line-height: 0.6;
   }
   .welcome-message,
   .username-form,
   .hidden-span {
-    font-size: 7.5vh;
+    font-size: 11vw;
+  }
+  .username-form {
+    text-underline-offset: 0.75dvh;
+  }
+  .username-form__pencil {
+    font-size: 6vw;
   }
 }
 

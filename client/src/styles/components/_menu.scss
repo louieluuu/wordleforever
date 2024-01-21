@@ -1,3 +1,13 @@
+@mixin phone-styles-menu {
+  .menu {
+    &__btn--start-game {
+      font-size: 2.2dvh;
+      width: 18dvh;
+      height: 4.5dvh;
+    }
+  }
+}
+
 .menu {
   display: flex;
   flex-direction: column;
