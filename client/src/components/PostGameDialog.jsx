@@ -142,7 +142,6 @@ function PostGameDialog({
             {orderedUsers.length > 3 && (
               <div style={flexColumn}>
                 <br></br>
-
                 {orderedUsers.slice(3).map((user, userIndex) => (
                   <div key={userIndex}>
                     {`${userIndex + 4}.`} {user.username}&nbsp;-&nbsp;
@@ -166,7 +165,7 @@ function PostGameDialog({
                 justifyContent: "center",
               }}
             >
-              Stats
+              Statistics
             </Dialog.Title>
             <hr style={{ marginBlock: "1.3rem" }} />
             <p
@@ -175,12 +174,9 @@ function PostGameDialog({
                 display: "flex",
                 justifyContent: "center",
               }}
-            >
-              Players
-            </p>
+            ></p>
             <div
               style={{
-                fontWeight: "bold",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
@@ -191,7 +187,7 @@ function PostGameDialog({
                 <table>
                   <thead>
                     <tr>
-                      <th>Users</th>
+                      <th>User</th>
                       <th>Points</th>
                       <th>Won</th>
                       <th>Solved</th>
