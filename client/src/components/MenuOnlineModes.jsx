@@ -50,11 +50,8 @@ function MenuOnlineModes({
           <span>PLAY WITH FRIENDS</span>
         </button>
 
-        <div className="menu__btn--back">
-          <HiOutlineArrowUturnLeft
-            className="menu__btn--back--icon"
-            onClick={navigateBack}
-          />
+        <div className="menu__btn--back" onClick={navigateBack}>
+          <HiOutlineArrowUturnLeft className="menu__btn--back--icon" />
         </div>
       </div>
     </AnimatedPage>
