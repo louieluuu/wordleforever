@@ -15,6 +15,8 @@
   max-height: 100%;
   overflow-y: auto;
 
+  min-width: 25rem;
+
   border: none;
   background-color: $bg-main-dark;
   color: $color;
@@ -38,4 +40,11 @@
 
     cursor: pointer;
   }
+}
+
+.dialog--stats {
+  @extend .dialog;
+
+  display: flex;
+  flex-direction: column;
 }

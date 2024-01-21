@@ -2,7 +2,10 @@ import React, { useRef } from "react"
 
 import { Dialog } from "@headlessui/react"
 
-import { GrClose } from "react-icons/gr"
+import { TfiClose } from "react-icons/tfi"
+import { MdOutlineDoubleArrow } from "react-icons/md"
+
+// TODO: please fix this complete abomination from top to bottom. god has abandoned us.
 
 function PostGameDialog({
   setShowPostGameDialog,
@@ -11,6 +14,28 @@ function PostGameDialog({
   userInfo,
   maxRounds,
 }) {
+  const flexStart = {
+    display: "flex",
+    justifyContent: "flex-start",
+  }
+
+  const flexCenter = {
+    display: "flex",
+    justifyContent: "center",
+  }
+
+  const flexEnd = {
+    display: "flex",
+    justifyContent: "flex-end",
+  }
+
+  const flexColumn = {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  }
+
+  // TODO: hanging variables?
   const closeButtonRef = useRef(null)
   const orderedUsers = orderUserInfo()
 
@@ -23,13 +48,14 @@ function PostGameDialog({
   }
 
   function orderUserInfo() {
-    const sortedUsers = userInfo.sort((a, b) => b.points - a.points)
+    const copyUserInfo = [...userInfo]
+    const sortedUsers = copyUserInfo.sort((a, b) => b.points - a.points)
     return sortedUsers || []
   }
 
   return (
     <Dialog
-      className="dialog"
+      className="dialog--stats"
       open={true}
       onClose={handleSetShowPostGameDialog}
       initialFocus={closeButtonRef}
@@ -37,7 +63,7 @@ function PostGameDialog({
       <Dialog.Panel>
         <div className="dialog__right">
           <div ref={closeButtonRef}>
-            <GrClose
+            <TfiClose
               className="dialog__btn--close"
               onClick={handleSetShowPostGameDialog}
             />
@@ -55,43 +81,82 @@ function PostGameDialog({
                 justifyContent: "center",
               }}
             >
-              Scoreboard
+              Results
             </Dialog.Title>
 
             <hr style={{ marginBlock: "1.3rem" }} />
 
-            <p
-              style={{
-                fontWeight: "bold",
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              Players
-            </p>
+            {/* 1st place */}
+            <div style={{ ...flexCenter, fontSize: "3rem" }}>👑</div>
+            <div style={{ ...flexCenter, fontSize: "2rem" }}>
+              <b>1.&nbsp;</b> {orderedUsers[0].username}
+            </div>
+            <div style={{ ...flexCenter, fontSize: "1.5rem", opacity: "70%" }}>
+              {orderedUsers[0].points} pts
+            </div>
 
+            <br></br>
+
+            {/* 2nd and 3rd place */}
             <div
               style={{
-                fontWeight: "bold",
                 display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
+                fontSize: "1.3rem",
+                justifyContent: "space-around",
               }}
-              className="scoreboard-users"
             >
-              {orderedUsers.map((user, userIndex) => (
-                <div key={userIndex} className="scoreboard-user">
-                  {user.username}&nbsp;-&nbsp;
-                  {user.points}
+              {/* 2nd place */}
+              <div
+                style={{
+                  ...flexStart,
+                  flexDirection: "column",
+                  alignItems: "center",
+                  flex: 1,
+                }}
+              >
+                <b>2.&nbsp;</b> {orderedUsers[1].username}
+                <div style={{ opacity: "50%" }}>
+                  {orderedUsers[1].points} pts
                 </div>
-              ))}
+              </div>
+
+              {/* 3rd place */}
+              <div
+                style={{
+                  ...flexStart,
+                  flexDirection: "column",
+                  alignItems: "center",
+                  flex: 1,
+                }}
+              >
+                <b>3.&nbsp;</b>
+                {orderedUsers[1].username}
+                <div style={{ opacity: "50%" }}>
+                  {orderedUsers[1].points} pts
+                </div>
+              </div>
             </div>
+
+            <br></br>
+
+            {orderedUsers.length > 3 && (
+              <div style={flexColumn}>
+                <br></br>
+
+                {orderedUsers.slice(3).map((user, userIndex) => (
+                  <div key={userIndex}>
+                    {`${userIndex + 4}.`} {user.username}&nbsp;-&nbsp;
+                    {user.points}
+                  </div>
+                ))}
+                <br></br>
+              </div>
+            )}
 
             <hr style={{ marginBlock: "1.3rem" }} />
           </>
         ) : (
           <>
-            {" "}
             <Dialog.Title
               style={{
                 fontFamily: "Calistoga",
@@ -165,7 +230,16 @@ function PostGameDialog({
           </>
         )}
 
-        <button className="dialog-switch-page" onClick={switchPage} />
+        <div style={{ ...flexCenter, fontSize: "2rem" }}>
+          {showScoreboard ? (
+            <MdOutlineDoubleArrow onClick={switchPage} />
+          ) : (
+            <MdOutlineDoubleArrow
+              style={{ transform: "scaleX(-1)" }}
+              onClick={switchPage}
+            />
+          )}
+        </div>
       </Dialog.Panel>
     </Dialog>
   )
