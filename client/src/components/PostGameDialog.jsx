@@ -130,9 +130,9 @@ function PostGameDialog({
                 }}
               >
                 <b>3.&nbsp;</b>
-                {orderedUsers[1].username}
+                {orderedUsers[2].username}
                 <div style={{ opacity: "50%" }}>
-                  {orderedUsers[1].points} pts
+                  {orderedUsers[2].points} pts
                 </div>
               </div>
             </div>
