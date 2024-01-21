@@ -72,7 +72,6 @@ function OnlineGameBoardContainer({
           <div className="user-board">
             {userInfo.length > 0 && (
               <GameBoard
-                key={userInfo[0].userId}
                 board={board}
                 activeRow={activeRow}
                 activeCell={activeCell}

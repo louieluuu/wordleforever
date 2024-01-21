@@ -31,6 +31,7 @@ function GameContainer({
   const [hasSolved, setHasSolved] = useState(false)
   const [isOutOfGuesses, setIsOutOfGuesses] = useState(false)
   const [isGameOver, setIsGameOver] = useState(false)
+  const [numberOfPieces, setNumberOfPieces] = useState(0)
   const [isConfettiRunning, setIsConfettiRunning] = useState(false)
 
   // Gameplay states
@@ -114,8 +115,9 @@ function GameContainer({
 
   // Confetti timer
   useEffect(() => {
+    setNumberOfPieces(200)
     const confettiTimer = setTimeout(() => {
-      setIsConfettiRunning(false)
+      setNumberOfPieces(0)
     }, 5000)
 
     return () => {
@@ -731,7 +733,7 @@ function GameContainer({
           />
         )}
         {isConfettiRunning && (
-          <Confetti numberOfPieces={200} initialVelocityY={-10} />
+          <Confetti numberOfPieces={numberOfPieces} initialVelocityY={-10} />
         )}
         {connectionMode === "online-private" && roundCounter !== 0 && (
           <div className="private-room-info">
