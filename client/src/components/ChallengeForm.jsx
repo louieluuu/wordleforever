@@ -29,17 +29,20 @@ function ChallengeForm({ isChallengeOn, setIsChallengeOn }) {
           checked={isChallengeOn}
           onChange={handleClick}
         />
-        &nbsp;Challenge Mode&nbsp;
+        <span className="challenge__element">&nbsp;Challenge Mode&nbsp;</span>
         <a
           data-tooltip-id="challenge-tooltip"
           style={{ verticalAlign: "middle" }}
         >
-          <FaQuestionCircle color="hsl(0,0%,50%)" />
+          <FaQuestionCircle
+            className="challenge__question-circle"
+            color="hsl(0,0%,50%)"
+          />
         </a>
         <Tooltip id="challenge-tooltip" className="challenge__tooltip">
           <ul
             style={{
-              fontSize: "0.85rem",
+              fontSize: "0.95rem",
               paddingLeft: "1rem",
               margin: "0.7rem",
               fontFamily: "Roboto",

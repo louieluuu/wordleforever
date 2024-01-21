@@ -1,9 +1,29 @@
 @mixin phone-styles-menu {
   .menu {
+    gap: 4dvh;
+    &__btn {
+      width: 60vw;
+      height: 20vw;
+      font-size: 6vw;
+    }
     &__btn--start-game {
       font-size: 2.2dvh;
       width: 18dvh;
       height: 4.5dvh;
+    }
+  }
+
+  .challenge {
+    &__checkbox {
+      width: 4vw;
+      height: 4vw;
+    }
+    &__element {
+      font-size: 4vw;
+    }
+    &__question-circle {
+      width: 4vw;
+      height: 4vw;
     }
   }
 }
@@ -188,6 +208,9 @@
 }
 
 .challenge {
+  &__element {
+    font-size: 1rem;
+  }
   &__checkbox {
     accent-color: $challenge;
 
