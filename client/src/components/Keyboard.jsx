@@ -132,7 +132,7 @@ function Keyboard({
           <button
             key={index}
             className={getCellClassName(letter)}
-            onClick={() => handleKeyPress(letter)}
+            onTouchStart={() => handleKeyPress(letter)}
           >
             {letter}
           </button>
@@ -143,7 +143,7 @@ function Keyboard({
           <button
             key={index}
             className={getCellClassName(letter)}
-            onClick={() => handleKeyPress(letter)}
+            onTouchStart={() => handleKeyPress(letter)}
           >
             {letter}
           </button>
@@ -152,7 +152,7 @@ function Keyboard({
       <div className="keyboard__row">
         <div
           className="keyboard__cell--large"
-          onClick={() => handleKeyPress("Enter")}
+          onTouchStart={() => handleKeyPress("Enter")}
         >
           ENTER
         </div>
@@ -160,7 +160,7 @@ function Keyboard({
           <button
             key={index}
             className={getCellClassName(letter)}
-            onClick={() => handleKeyPress(letter)}
+            onTouchStart={() => handleKeyPress(letter)}
           >
             {letter}
           </button>
@@ -168,7 +168,7 @@ function Keyboard({
         <div
           className="keyboard__cell--large--icon"
           key="Backspace"
-          onClick={() => handleKeyPress("Backspace")}
+          onTouchStart={() => handleKeyPress("Backspace")}
         >
           <IoBackspaceOutline />
         </div>
