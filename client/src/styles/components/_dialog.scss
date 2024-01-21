@@ -1,4 +1,8 @@
 @mixin phone-styles-dialog {
+  th,
+  td {
+    font-size: 4.5vw;
+  }
   .dialog {
     min-width: 100vw;
   }
