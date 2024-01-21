@@ -7,6 +7,7 @@ import { TfiArrowCircleUp } from "react-icons/tfi"
 
 // Helpers
 import { handleStartPublicGame } from "../helpers/socketHelpers"
+import { MdKeyboardDoubleArrowUp } from "react-icons/md"
 
 function Keyboard({
   handleLetter,
@@ -176,7 +177,12 @@ function Keyboard({
       {isGameOver && (
         <div className="post-game-buttons">
           {isMatchOver && !showPostGameDialog && (
-            <TfiArrowCircleUp onClick={() => setShowPostGameDialog(true)} />
+            <div
+              className="show-scoreboard-btn"
+              onClick={() => setShowPostGameDialog(true)}
+            >
+              <MdKeyboardDoubleArrowUp />
+            </div>
           )}
           {(connectionMode !== "online-private" || (isMatchOver && isHost)) && (
             <button className="menu__btn--new-game" onClick={handlePlayAgain}>
