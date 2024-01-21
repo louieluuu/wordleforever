@@ -1,13 +1,13 @@
-$logo-size: 4.5vh;
-$icon-size: 2.5vh;
-$login-size: calc($icon-size * 4 / 3);
-$login-font-size: 1.75vh;
+$logo-size: 4.5dvh;
+$icon-size: 3.25dvh;
+$login-size: 3.5dvh;
+$login-font-size: 1.75dvh;
 $login-padding-inline: 3.5vw;
 
 @mixin phone-styles-navbar {
   .navbar {
     &__right {
-      gap: 2vw;
+      gap: 4vw;
     }
 
     &__info {
