@@ -95,9 +95,8 @@ function OnlineGameBoardContainer({
           <div className={getOtherBoardsClassName()}>
             {isDesktop
               ? otherUserInfo().map((obj) => (
-                  <div className="other-board-container">
+                  <div key={obj.userId} className="other-board-container">
                     <GameBoard
-                      key={obj.userId}
                       board={obj.gameBoard}
                       username={obj.username}
                       points={obj.points}
@@ -112,9 +111,8 @@ function OnlineGameBoardContainer({
                   </div>
                 ))
               : otherUserInfo().map((obj) => (
-                  <div className="other-board-container">
+                  <div key={obj.userId} className="other-board-container">
                     <GameBoard
-                      key={obj.userId}
                       board={obj.gameBoard}
                       username={obj.username}
                       points={obj.points}
