@@ -19,5 +19,6 @@
 
 # Pictures
 
-![Nujabes](../assets/nujabes.jpg?raw=true){:width="300"}
-![Video](../assets/test1.mov)
+<img src="../assets/nujabes.jpg" width="500" alt="Test" />
+
+<!-- ![Nujabes](../assets/nujabes.jpg?raw=true) -->
