@@ -372,7 +372,7 @@ function GameContainer({
     } else if (connectionMode === "offline") {
       resetStates()
       const newSolution = generateSolution()
-      setSolution(newSolution)
+      setSolution("MIRTH")
     }
     console.log("Starting game with", connectionMode, isChallengeOn)
   }
