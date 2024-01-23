@@ -20,4 +20,4 @@
 # Pictures
 
 ![Nujabes](../assets/nujabes.jpg?raw=true)
-![Video](../assets/test1.mp4)
+![Video](../assets/gifTest.gif)
