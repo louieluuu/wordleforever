@@ -15,3 +15,7 @@
 
 - Many thanks to [sschandi](https://github.com/sschandi) for their guidance throughout the creation of this project.
 - _Photo of Mountains During Dawn_, [Eberhard Grossgasteiger](https://www.pexels.com/@eberhardgross/)
+
+# Pictures
+
+![Nujabes](../assets/nujabes.jpg)
