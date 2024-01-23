@@ -139,6 +139,7 @@ function PostGameDialog({
 
             <br></br>
 
+            {/* 4th place and below */}
             {orderedUsers.length > 3 && (
               <div style={flexColumn}>
                 <br></br>
@@ -184,7 +185,7 @@ function PostGameDialog({
               className="scoreboard-users"
             >
               <div className="table-container">
-                <table>
+                <table border="1" frame="void" rules="all">
                   <thead>
                     <tr>
                       <th>User</th>
