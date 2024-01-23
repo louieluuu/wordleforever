@@ -20,6 +20,6 @@
 # Pictures
 
 <img src="../assets/nujabes.jpg" width="500" alt="Test" />
-<img src="../assets/mario.png" width="479" alt="Test2" />
+<img src="../assets/mario.png" width="550" alt="Test2" />
 
 <!-- ![Nujabes](../assets/nujabes.jpg?raw=true) -->
