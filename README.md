@@ -19,7 +19,9 @@
 
 # Pictures
 
-<img src="../assets/nujabes.jpg" width="500" alt="Test" />
-<img src="../assets/mario.png" width="200" alt="Test2" />
+<p float="left">
+    <img src="../assets/nujabes.jpg" width="500" alt="Test" />
+    <img src="../assets/mario.png" width="200" alt="Test2" />
+</p>
 
 <!-- ![Nujabes](../assets/nujabes.jpg?raw=true) -->
