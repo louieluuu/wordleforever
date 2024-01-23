@@ -746,7 +746,7 @@ function GameContainer({
                 />
                 &nbsp;
               </span>
-              {roundTimer}
+              17
             </span>
             <span className="round-counter">Round: {roundCounter}</span>
           </div>
