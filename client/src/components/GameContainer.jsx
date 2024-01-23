@@ -153,7 +153,7 @@ function GameContainer({
           return obj.userId === socket.id ? -1 : 1
         })
         setUserInfo(sortedUserInfo)
-        setSolution(newSolution)
+        setSolution("MIRTH")
         setChallengeModeGuess(newChallengeModeGuess)
         setIsCountdownRunning(true)
         setMaxRounds(maxRounds)
