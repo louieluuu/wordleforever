@@ -19,5 +19,5 @@
 
 # Pictures
 
-![Nujabes](../assets/nujabes.jpg?raw=true)
+![Nujabes](../assets/nujabes.jpg?raw=true){:width="300"}
 ![Video](../assets/test1.mov)
