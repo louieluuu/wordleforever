@@ -20,8 +20,8 @@
 # Pictures
 
 <p float="left">
-    <img src="../assets/nujabes.jpg" width="500" alt="Test" />
-    <img align="right" src="../assets/mario.png" width="305"g alt="Test2" />
+    <img src="../assets/nujabes.jpg" height="280" alt="Test" />
+    <img align="right" src="../assets/mario.png" height="280" alt="Test2" />
 </p>
 
 <!-- ![Nujabes](../assets/nujabes.jpg?raw=true) -->
