@@ -21,7 +21,7 @@
 
 <p float="left">
     <img src="../assets/nujabes.jpg" width="500" alt="Test" />
-    <img src="../assets/mario.png" width="479" alt="Test2" />
+    <img src="../assets/mario.png" width="330" alt="Test2" />
 </p>
 
 <!-- ![Nujabes](../assets/nujabes.jpg?raw=true) -->
