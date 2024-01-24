@@ -15,8 +15,8 @@
 
 # Acknowledgements
 
-- Many thanks to [sschandi](https://github.com/sschandi) for his front-end guidance throughout the creation of this project,
-- and thanks to Jeff for his coaching in-game and out.
+- [sschandi](https://github.com/sschandi) for his front-end guidance throughout the creation of this project
+- Jeff for his coaching in-game and out.
 - _Photo of Mountains During Dawn_, [Eberhard Grossgasteiger](https://www.pexels.com/@eberhardgross/)
 
 # Pictures
