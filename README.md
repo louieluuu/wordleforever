@@ -1,9 +1,6 @@
 # [wordleforever.com](https://www.wordleforever.com)
 
-<p float="left">
-    <img width="580" alt="Web" src="../assets/web.png"  />
-    <img align="right" height="396" alt="Mobile" src="../assets/mobile.png" />
-</p>
+<img src="../assets/intro.png" alt="Intro" />
 
 **_Wordle Forever_** is the definitive multiplayer recreation of [Wordle](https://www.nytimes.com/games/wordle/index.html) with public matchmaking, private lobbies, and various QOL features. Built from scratch using React and Socket.IO. Created by [Louie Lu](https://github.com/louieluuu) and [Thomas Chiu](https://github.com/tomchiu19).
 
