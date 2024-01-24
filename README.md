@@ -19,6 +19,6 @@
 - Jeff for his coaching, in-game and out.
 - _Photo of Mountains During Dawn_, [Eberhard Grossgasteiger](https://www.pexels.com/@eberhardgross/)
 
-# See you there!
+# Hope to see you there!
 
 <img src="../assets/challengeMode.gif" alt="challengeMode.gif" />
