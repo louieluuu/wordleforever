@@ -1,7 +1,7 @@
 # [wordleforever.com](https://www.wordleforever.com)
 
 <p float="left">
-    <img width="606" alt="Web" src="../assets/web.png"  />
+    <img width="580" alt="Web" src="../assets/web.png"  />
     <img align="right" height="396" alt="Mobile" src="../assets/mobile.png" />
 </p>
 
