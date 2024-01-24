@@ -153,7 +153,7 @@ function GameContainer({
           return obj.userId === socket.id ? -1 : 1
         })
         setUserInfo(sortedUserInfo)
-        setSolution("MIRTH")
+        setSolution(newSolution)
         setChallengeModeGuess(newChallengeModeGuess)
         setIsCountdownRunning(true)
         setMaxRounds(maxRounds)
@@ -372,7 +372,7 @@ function GameContainer({
     } else if (connectionMode === "offline") {
       resetStates()
       const newSolution = generateSolution()
-      setSolution("MIRTH")
+      setSolution(newSolution)
     }
     console.log("Starting game with", connectionMode, isChallengeOn)
   }
@@ -746,7 +746,7 @@ function GameContainer({
                 />
                 &nbsp;
               </span>
-              17
+              {roundTimer}
             </span>
             <span className="round-counter">Round: {roundCounter}</span>
           </div>
