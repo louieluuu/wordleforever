@@ -1,6 +1,6 @@
 # [wordleforever.com](https://www.wordleforever.com)
 
-<img src="../assets/intro.png" alt="Intro" />
+<img src="../assets/intro.png" alt="intro.png" />
 
 **_Wordle Forever_** is the definitive multiplayer recreation of [Wordle](https://www.nytimes.com/games/wordle/index.html) with public matchmaking, private lobbies, and various QOL features. Built from scratch using React and Socket.IO. Created by [Louie Lu](https://github.com/louieluuu) and [Thomas Chiu](https://github.com/tomchiu19).
 
@@ -19,11 +19,6 @@
 - Jeff for his coaching, in-game and out.
 - _Photo of Mountains During Dawn_, [Eberhard Grossgasteiger](https://www.pexels.com/@eberhardgross/)
 
-# Pictures
+# See you there!
 
-<!-- <p float="left">
-    <img src="../assets/nujabes.jpg" height="280" alt="Test" />
-    <img align="right" src="../assets/mario.png" height="280" alt="Test2" />
-</p> -->
-
-<!-- ![Nujabes](../assets/nujabes.jpg?raw=true) -->
+<img src="../assets/challengeMode.gif" alt="challengeMode.gif" />
