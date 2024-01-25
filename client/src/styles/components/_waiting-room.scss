@@ -33,15 +33,14 @@
     bottom: 0;
     z-index: -1;
     background-image: $waiting-room-background;
-    background-size: cover;
     background-repeat: repeat-x;
-    background-position: 0 $waiting-room-vertical;
+    background-position: 0px 20%;
     animation: slide 45s linear infinite;
   }
 
   @keyframes slide {
     to {
-      background-position: -1920px $waiting-room-vertical;
+      background-position: -1920px 20%;
     }
   }
 

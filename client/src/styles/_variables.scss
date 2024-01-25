@@ -40,7 +40,6 @@ html[data-theme="light"] {
   --username-shadow-hover: hsl(278, 37%, 44%);
   --header-hover: 65%;
   --waiting-room-background: url(../assets/waiting-room-light.jpg);
-  --waiting-room-vertical: 10%;
 }
 
 html,
@@ -85,7 +84,6 @@ html[data-theme="dark"] {
   --username-shadow-hover: hsl(40, 78%, 39%);
   --header-hover: 85%;
   --waiting-room-background: url(../assets/waiting-room-dark.jpg);
-  --waiting-room-vertical: 30%;
 }
 
 // Main colors
@@ -132,7 +130,6 @@ $username-shadow: var(--username-shadow);
 $username-shadow-hover: var(--username-shadow-hover);
 $header-hover: var(--header-hover);
 $waiting-room-background: var(--waiting-room-background);
-$waiting-room-vertical: var(--waiting-room-vertical);
 
 // Breakpoints
 $breakpoint-sm: 640px;
