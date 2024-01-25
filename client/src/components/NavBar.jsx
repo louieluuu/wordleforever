@@ -69,10 +69,6 @@ function NavBar({ roomId }) {
     window.location.href = "/"
   }
 
-  function handleTouchEnd(e) {
-    e.preventDefault()
-  }
-
   return (
     <>
       {showInfoDialog && <InfoDialog show={setShowInfoDialog} />}
@@ -92,8 +88,6 @@ function NavBar({ roomId }) {
           <FaRegCircleQuestion
             className="navbar__info"
             title="Info"
-            onTouchStart={openInfoDialog}
-            onTouchEnd={handleTouchEnd}
             onClick={openInfoDialog}
           />
           <RiMoonClearFill

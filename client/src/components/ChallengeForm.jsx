@@ -9,6 +9,7 @@ const formStyle = {
   alignItems: "center",
   fontFamily: "Roboto Slab",
   paddingBottom: "0.5rem",
+  outline: "none",
 }
 
 function ChallengeForm({ isChallengeOn, setIsChallengeOn }) {
@@ -29,7 +30,7 @@ function ChallengeForm({ isChallengeOn, setIsChallengeOn }) {
           checked={isChallengeOn}
           onChange={handleClick}
         />
-        <span className="challenge__element">&nbsp;Challenge Mode&nbsp;</span>
+        &nbsp;Challenge Mode&nbsp;
         <a
           data-tooltip-id="challenge-tooltip"
           style={{ verticalAlign: "middle" }}
