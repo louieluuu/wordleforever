@@ -748,7 +748,9 @@ function GameContainer({
               </span>
               {roundTimer}
             </span>
-            <span className="round-counter">Round: {roundCounter}</span>
+            <span className="round-counter">
+              Round: {roundCounter}/{maxRounds}
+            </span>
           </div>
         )}
         <GameBoardContainer

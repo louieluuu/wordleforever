@@ -4,7 +4,6 @@ function CountdownModal({
   isCountdownRunning,
   setIsCountdownRunning,
   connectionMode,
-  maxRounds,
   roundCounter,
 }) {
   const [seconds, setSeconds] = useState(3)
@@ -33,7 +32,7 @@ function CountdownModal({
     <dialog className="countdown-timer" open={isCountdownRunning}>
       {connectionMode === "online-private" ? (
         <p>
-          Round {roundCounter}/{maxRounds} will start in... {seconds}
+          Round {roundCounter} will start in... {seconds}
         </p>
       ) : (
         <p>The game will start in... {seconds}</p>
