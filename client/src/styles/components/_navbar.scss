@@ -64,7 +64,6 @@ $login-padding-inline: 3.5vw;
     width: 1.5rem;
     height: 1.5rem;
     cursor: pointer;
-    background: transparent;
 
     &:hover {
       opacity: $header-hover;
@@ -73,6 +72,7 @@ $login-padding-inline: 3.5vw;
 
     &:active {
       transform: scale(0.9);
+      background: transparent;
     }
   }
 
