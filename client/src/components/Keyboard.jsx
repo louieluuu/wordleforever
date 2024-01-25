@@ -50,7 +50,6 @@ function Keyboard({
   // Explanation: https://stackoverflow.com/questions/45612379/react-onclick-and-ontouchstart-fired-simultaneously
   // e.preventDefault() prevents the onClick event from firing after onTouchStart.
   function handleTouchEnd(e) {
-    console.log("touchend")
     e.preventDefault()
   }
 
