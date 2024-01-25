@@ -211,9 +211,12 @@
 
 .challenge {
   &__label {
+    -webkit-tap-highlight-color: transparent;
+
     &:focus {
       outline: none;
       background: transparent;
+      -webkit-tap-highlight-color: transparent;
     }
   }
 

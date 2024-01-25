@@ -31,6 +31,7 @@ function ChallengeForm({ isChallengeOn, setIsChallengeOn }) {
         />
         &nbsp;Challenge Mode&nbsp;
       </label>
+
       <a
         data-tooltip-id="challenge-tooltip"
         style={{ verticalAlign: "middle" }}
