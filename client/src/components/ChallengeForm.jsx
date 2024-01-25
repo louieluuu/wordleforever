@@ -3,6 +3,7 @@ import React from "react"
 import { FaQuestionCircle } from "react-icons/fa"
 import { Tooltip } from "react-tooltip"
 
+// TODO Might as well put this in scss since the challenge color's already there...
 const formStyle = {
   display: "flex",
   justifyContent: "center",
@@ -21,41 +22,43 @@ function ChallengeForm({ isChallengeOn, setIsChallengeOn }) {
   }
 
   return (
-    <form className="challenge__label" style={formStyle}>
-      <label className="challenge__label">
-        <input
-          type="checkbox"
-          className="challenge__checkbox"
-          checked={isChallengeOn}
-          onChange={handleClick}
-        />
-        &nbsp;Challenge Mode&nbsp;
-      </label>
+    <div style={formStyle}>
+      <form className="challenge__label">
+        <label className="challenge__label">
+          <input
+            type="checkbox"
+            className="challenge__checkbox"
+            checked={isChallengeOn}
+            onChange={handleClick}
+          />
+          &nbsp;Challenge Mode&nbsp;
+        </label>
 
-      <a
-        data-tooltip-id="challenge-tooltip"
-        style={{ verticalAlign: "middle" }}
-      >
-        <FaQuestionCircle
-          className="challenge__question-circle"
-          color="hsl(0,0%,50%)"
-        />
-      </a>
-      <Tooltip id="challenge-tooltip" className="challenge__tooltip">
-        <ul
-          style={{
-            fontSize: "0.95rem",
-            paddingLeft: "1rem",
-            margin: "0.7rem",
-            fontFamily: "Roboto",
-          }}
+        <a
+          data-tooltip-id="challenge-tooltip"
+          style={{ verticalAlign: "middle" }}
         >
-          <li>random starting word</li>
-          <li>must use previous hints</li>
-          <li>will only match vs others with same mode</li>
-        </ul>
-      </Tooltip>
-    </form>
+          <FaQuestionCircle
+            className="challenge__question-circle"
+            color="hsl(0,0%,50%)"
+          />
+        </a>
+        <Tooltip id="challenge-tooltip" className="challenge__tooltip">
+          <ul
+            style={{
+              fontSize: "0.95rem",
+              paddingLeft: "1rem",
+              margin: "0.7rem",
+              fontFamily: "Roboto",
+            }}
+          >
+            <li>random starting word</li>
+            <li>must use previous hints</li>
+            <li>will only match vs others with same mode</li>
+          </ul>
+        </Tooltip>
+      </form>
+    </div>
   )
 }
 
