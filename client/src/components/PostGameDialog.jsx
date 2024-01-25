@@ -120,21 +120,25 @@ function PostGameDialog({
                 </div>
               </div>
 
-              {/* 3rd place */}
-              <div
-                style={{
-                  ...flexStart,
-                  flexDirection: "column",
-                  alignItems: "center",
-                  flex: 1,
-                }}
-              >
-                <b>3.&nbsp;</b>
-                {orderedUsers[2].username}
-                <div style={{ opacity: "50%" }}>
-                  {orderedUsers[2].points} pts
-                </div>
-              </div>
+              {orderedUsers.length > 2 && (
+                <>
+                  {/* 3rd place */}
+                  <div
+                    style={{
+                      ...flexStart,
+                      flexDirection: "column",
+                      alignItems: "center",
+                      flex: 1,
+                    }}
+                  >
+                    <b>3.&nbsp;</b>
+                    {orderedUsers[2].username}
+                    <div style={{ opacity: "50%" }}>
+                      {orderedUsers[2].points} pts
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             <br></br>
@@ -152,7 +156,6 @@ function PostGameDialog({
                 <br></br>
               </div>
             )}
-
             <hr style={{ marginBlock: "1.3rem" }} />
           </>
         ) : (
