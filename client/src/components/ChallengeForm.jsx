@@ -22,7 +22,7 @@ function ChallengeForm({ isChallengeOn, setIsChallengeOn }) {
 
   return (
     <form style={formStyle}>
-      <label style={{ outline: "none" }}>
+      <label className="challenge__label">
         <input
           type="checkbox"
           className="challenge__checkbox"
@@ -39,21 +39,22 @@ function ChallengeForm({ isChallengeOn, setIsChallengeOn }) {
             color="hsl(0,0%,50%)"
           />
         </a>
-        <Tooltip id="challenge-tooltip" className="challenge__tooltip">
-          <ul
-            style={{
-              fontSize: "0.95rem",
-              paddingLeft: "1rem",
-              margin: "0.7rem",
-              fontFamily: "Roboto",
-            }}
-          >
-            <li>random starting word</li>
-            <li>must use previous hints</li>
-            <li>will only match vs others with same mode</li>
-          </ul>
-        </Tooltip>
       </label>
+
+      <Tooltip id="challenge-tooltip" className="challenge__tooltip">
+        <ul
+          style={{
+            fontSize: "0.95rem",
+            paddingLeft: "1rem",
+            margin: "0.7rem",
+            fontFamily: "Roboto",
+          }}
+        >
+          <li>random starting word</li>
+          <li>must use previous hints</li>
+          <li>will only match vs others with same mode</li>
+        </ul>
+      </Tooltip>
     </form>
   )
 }

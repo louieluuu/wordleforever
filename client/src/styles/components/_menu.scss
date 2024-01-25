@@ -210,6 +210,12 @@
 }
 
 .challenge {
+  &__label {
+    &:focus {
+      outline: none;
+    }
+  }
+
   &__checkbox {
     accent-color: $challenge;
 
