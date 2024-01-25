@@ -32,10 +32,11 @@
     right: 0;
     bottom: 0;
     z-index: -1;
-    background-image: $waiting-room-background;
+    background-image: url(../assets/waiting-room-background.jpg);
     background-repeat: repeat-x;
     background-position: 0px 20%;
     animation: slide 45s linear infinite;
+    filter: $waiting-room-background-filter;
   }
 
   @keyframes slide {
