@@ -9,7 +9,6 @@ const formStyle = {
   alignItems: "center",
   fontFamily: "Roboto Slab",
   paddingBottom: "0.5rem",
-  outline: "none",
 }
 
 function ChallengeForm({ isChallengeOn, setIsChallengeOn }) {
@@ -23,7 +22,7 @@ function ChallengeForm({ isChallengeOn, setIsChallengeOn }) {
 
   return (
     <form style={formStyle}>
-      <label>
+      <label style={{ outline: "none" }}>
         <input
           type="checkbox"
           className="challenge__checkbox"
