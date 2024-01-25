@@ -47,6 +47,13 @@ function Keyboard({
     }
   }, [handleKeyPress])
 
+  // Explanation: https://stackoverflow.com/questions/45612379/react-onclick-and-ontouchstart-fired-simultaneously
+  // e.preventDefault() prevents the onClick event from firing after onTouchStart.
+  function handleTouchEnd(e) {
+    console.log("touchend")
+    e.preventDefault()
+  }
+
   async function handleKeyPress(key) {
     // Logic to lock keyboard input depending on certain states
     if (isKeyboardLocked) {
@@ -134,6 +141,8 @@ function Keyboard({
             key={index}
             className={getCellClassName(letter)}
             onTouchStart={() => handleKeyPress(letter)}
+            onTouchEnd={handleTouchEnd}
+            onClick={() => handleKeyPress(letter)}
           >
             {letter}
           </button>
@@ -145,6 +154,8 @@ function Keyboard({
             key={index}
             className={getCellClassName(letter)}
             onTouchStart={() => handleKeyPress(letter)}
+            onTouchEnd={handleTouchEnd}
+            onClick={() => handleKeyPress(letter)}
           >
             {letter}
           </button>
@@ -154,6 +165,8 @@ function Keyboard({
         <div
           className="keyboard__cell--large"
           onTouchStart={() => handleKeyPress("Enter")}
+          onTouchEnd={handleTouchEnd}
+          onClick={() => handleKeyPress("Enter")}
         >
           ENTER
         </div>
@@ -162,6 +175,8 @@ function Keyboard({
             key={index}
             className={getCellClassName(letter)}
             onTouchStart={() => handleKeyPress(letter)}
+            onTouchEnd={handleTouchEnd}
+            onClick={() => handleKeyPress(letter)}
           >
             {letter}
           </button>
@@ -170,6 +185,8 @@ function Keyboard({
           className="keyboard__cell--large--icon"
           key="Backspace"
           onTouchStart={() => handleKeyPress("Backspace")}
+          onTouchEnd={handleTouchEnd}
+          onClick={() => handleKeyPress("Backspace")}
         >
           <IoBackspaceOutline />
         </div>
