@@ -12,10 +12,12 @@ const Rooms = new Map()
 const MAX_ROOM_SIZE = 7
 
 function initializeRoom(connectionMode, isChallengeOn, userId) {
-  let roomId = uuidv4()
+  let uuid = uuidv4()
+  let roomId = uuid.substring(0, 8)
   // Non-colliding rooms
   while (Rooms.has(roomId)) {
-    roomId = uuidv4()
+    uuid = uuidv4()
+    roomId = uuid.substring(0, 8)
   }
   const room = new Room(connectionMode, isChallengeOn, userId)
   Rooms.set(roomId, room)
