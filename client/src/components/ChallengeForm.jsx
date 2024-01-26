@@ -24,16 +24,17 @@ function ChallengeForm({ isChallengeOn, setIsChallengeOn }) {
   return (
     <div style={formStyle}>
       <form className="challenge__label">
-        <label className="challenge__label">
+        <label for="activate_challenge_mode" className="challenge__label">
           <input
+            id="activate_challenge_mode"
             type="checkbox"
             className="challenge__checkbox"
             checked={isChallengeOn}
             onChange={handleClick}
           />
-          &nbsp;Challenge Mode&nbsp;
+          &nbsp;Challenge Mo
         </label>
-
+        de&nbsp;
         <a
           data-tooltip-id="challenge-tooltip"
           style={{ verticalAlign: "middle" }}
