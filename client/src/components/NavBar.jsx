@@ -6,7 +6,7 @@ import { useMediaQuery } from "react-responsive"
 import { auth } from "../firebase"
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth"
 
-import { FaRegCircleQuestion } from "react-icons/fa6"
+import { BsInfoCircle } from "react-icons/bs"
 import { RiMoonClearFill } from "react-icons/ri"
 import { ImExit } from "react-icons/im"
 // import { FaPowerOff } from "react-icons/fa6"
@@ -85,7 +85,7 @@ function NavBar({ roomId }) {
           </div>
         </div>
         <div className="navbar__right">
-          <FaRegCircleQuestion
+          <BsInfoCircle
             className="navbar__info"
             title="Info"
             onClick={openInfoDialog}

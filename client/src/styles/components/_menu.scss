@@ -19,11 +19,10 @@
       height: 4vw;
     }
     &__element {
-      font-size: 4vw;
+      font-size: 4vw; // TODO: not used?
     }
     &__question-circle {
-      width: 4vw;
-      height: 4vw;
+      font-size: 7vw;
     }
   }
 }

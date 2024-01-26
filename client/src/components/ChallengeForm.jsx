@@ -1,5 +1,6 @@
 import React from "react"
 
+import { BsFillQuestionCircleFill } from "react-icons/bs"
 import { FaQuestionCircle } from "react-icons/fa"
 import { Tooltip } from "react-tooltip"
 
