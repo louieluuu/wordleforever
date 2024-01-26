@@ -24,7 +24,7 @@ function ChallengeForm({ isChallengeOn, setIsChallengeOn }) {
   return (
     <div style={formStyle}>
       <form className="challenge__label">
-        <label for="activate_challenge_mode" className="challenge__label">
+        <label htmlFor="activate_challenge_mode" className="challenge__label">
           <input
             id="activate_challenge_mode"
             type="checkbox"
