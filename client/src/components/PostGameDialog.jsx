@@ -213,9 +213,9 @@ function PostGameDialog({
                             : "/"}
                         </td>
                         <td>
-                          {user.totalTimeInRoundsSolved > 0
+                          {user.roundsSolved > 0
                             ? (
-                                user.totalTimeInRoundsSolved / maxRounds
+                                user.totalTimeInRoundsSolved / user.roundsSolved
                               ).toFixed(2)
                             : "/"}
                         </td>
