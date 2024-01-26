@@ -18,11 +18,13 @@
       width: 4vw;
       height: 4vw;
     }
-    &__element {
-      font-size: 4vw; // TODO: not used?
-    }
+
     &__question-circle {
       font-size: 7vw;
+    }
+
+    &__tooltip--list {
+      margin: 3vw;
     }
   }
 }
@@ -32,6 +34,8 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+
+  overflow-x: hidden;
 
   &__btn {
     display: flex;
@@ -215,9 +219,15 @@
 
   &__checkbox {
     accent-color: $challenge;
+    font-size: 0.9rem;
 
     &:hover {
       accent-color: hsl(12, 90%, 50%);
     }
+  }
+
+  &__tooltip--list {
+    margin-inline: 1rem;
+    margin-block: 0.5rem;
   }
 }
