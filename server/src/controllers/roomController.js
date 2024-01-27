@@ -13,6 +13,10 @@ import {
 } from "../services/roomService.js"
 import { setUsername, broadcastUserInfo } from "../services/userService.js"
 
+// Default values
+// const PRIVATE_ROOM_COUNTDOWN_TIMER = 6
+// const PUBLIC_ROOM_COUNTDOWN_TIMER = 10
+
 const PRIVATE_ROOM_COUNTDOWN_TIMER = 6
 const PUBLIC_ROOM_COUNTDOWN_TIMER = 10
 

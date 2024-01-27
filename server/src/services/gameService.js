@@ -9,6 +9,8 @@ import {
   setRoomInProgress,
   setRoomInGame,
   roomInLobby,
+  areAllUsersLoaded,
+  loadUser,
 } from "./roomService.js"
 import {
   handleUserStreakUpdates,
@@ -65,18 +67,23 @@ function deleteGame(roomId) {
   }
 }
 
-async function handleGameStart(roomId, io) {
+async function handleGameStart(roomId, io, userId) {
   try {
-    if (roomId && roomInLobby(roomId)) {
-      setRoomInProgress(roomId)
-      setRoomInGame(roomId)
-      await initializeGameInfo(roomId)
-      const game = Games.get(roomId)
-      if (game && game instanceof Game) {
-        game.startGame(roomId, io)
+    if (userId) {
+      loadUser(userId, roomId)
+    }
+    if (areAllUsersLoaded(roomId)) {
+      if (roomId && roomInLobby(roomId)) {
+        setRoomInProgress(roomId)
+        setRoomInGame(roomId)
+        await initializeGameInfo(roomId)
+        const game = Games.get(roomId)
+        if (game && game instanceof Game) {
+          game.startGame(roomId, io)
+        }
+      } else {
+        console.error("Invalid roomId for starting game")
       }
-    } else {
-      console.error("Invalid roomId for starting game")
     }
   } catch (error) {
     console.error("Error starting game:", error)

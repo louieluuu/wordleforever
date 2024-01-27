@@ -148,6 +148,25 @@ function resetCountdown(roomId) {
   }
 }
 
+function loadUser(userId, roomId) {
+  const room = Rooms.get(roomId)
+  if (room && room instanceof Room && !room.loadedUsers.includes(userId)) {
+    room.loadedUsers.push(userId)
+  }
+}
+
+function areAllUsersLoaded(roomId) {
+  const room = Rooms.get(roomId)
+  if (
+    room &&
+    room instanceof Room &&
+    room.loadedUsers.length >= room.users.length
+  ) {
+    return true
+  }
+  return false
+}
+
 async function addUserToRoom(userId, roomId) {
   try {
     const user = await getUser(userId)
@@ -218,6 +237,8 @@ export {
   hasCountdownStarted,
   setCountdownStarted,
   resetCountdown,
+  loadUser,
+  areAllUsersLoaded,
   addUserToRoom,
   removeUserFromRoom,
   getUsersInRoom,

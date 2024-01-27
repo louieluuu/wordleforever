@@ -387,7 +387,7 @@ export default class Game {
 
   startNextRoundAfterBreak(roomId, io) {
     setTimeout(() => {
-      handleGameStart(roomId, io)
+      handleGameStart(roomId, io, "")
     }, ROUND_BREAK_TIME * 1000)
   }
 

@@ -75,7 +75,7 @@ io.on("connection", (socket) => {
   // Interact with GameContainer component
   socket.on(
     "startOnlineGame",
-    async (roomId) => await handleGameStart(roomId, io)
+    async (roomId) => await handleGameStart(roomId, io, socket.id)
   )
   // General game flow
   socket.on("wrongGuess", (roomId, updatedGameBoard) =>
