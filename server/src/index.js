@@ -81,7 +81,7 @@ io.on("connection", (socket) => {
   socket.on(
     "correctGuess",
     async (roomId, updatedGameBoard) =>
-      await handleCorrectGuess(roomId, socket.id, updatedGameBoard, io)
+      await handleCorrectGuess(roomId, socket.id, updatedGameBoard, socket, io)
   )
   socket.on("outOfGuesses", (roomId) =>
     handleOutOfGuesses(roomId, socket.id, io)

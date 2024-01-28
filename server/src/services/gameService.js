@@ -111,7 +111,13 @@ function handleWrongGuess(roomId, userId, updatedGameBoard, io) {
   }
 }
 
-async function handleCorrectGuess(roomId, userId, updatedGameBoard, io) {
+async function handleCorrectGuess(
+  roomId,
+  userId,
+  updatedGameBoard,
+  socket,
+  io
+) {
   try {
     const game = Games.get(roomId)
     if (game && game instanceof Game) {
@@ -138,6 +144,7 @@ async function handleCorrectGuess(roomId, userId, updatedGameBoard, io) {
       }
       game.countSolved += 1
       game.setGameBoard(userId, updatedGameBoard)
+      game.broadcastSolvedAudio(roomId, socket)
       if (isGameOver(roomId)) {
         game.endGame(roomId, io)
       } else {
