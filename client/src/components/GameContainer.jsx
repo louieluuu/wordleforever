@@ -80,6 +80,9 @@ function GameContainer({
   // Audio
   const wrongGuess = new Audio("/src/assets/guess-wrong.mp3")
   const firstCorrectGuess = new Audio("/src/assets/guess-first-correct.mp3")
+  const opponentCorrectGuess = new Audio(
+    "/src/assets/guess-opponent-correct.mp3"
+  )
 
   // useEffect hooks
 
@@ -242,6 +245,11 @@ function GameContainer({
         })
       })
 
+      // TODO: placement, where? (matching server)
+      socket.on("solvedAudio", () => {
+        playAudio(opponentCorrectGuess)
+      })
+
       socket.on("totalGuessesUpdated", (updatedUserId, updatedTotalGuesses) => {
         setUserInfo((prevUserInfo) => {
           const updatedUserInfo = [...prevUserInfo]
@@ -297,6 +305,7 @@ function GameContainer({
         socket.off("pointsUpdated")
         socket.off("streakUpdated")
         socket.off("firstSolve")
+        socket.off("solvedAudio")
         socket.off("totalGuessesUpdated")
         socket.off("roundsSolvedUpdated")
         socket.off("totalTimeInRoundsSolvedUpdated")
