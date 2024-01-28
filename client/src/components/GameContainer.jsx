@@ -77,6 +77,12 @@ function GameContainer({
   const [hiddenPeriods, setHiddenPeriods] = useState("")
   const [messageIndex, setMessageIndex] = useState(0)
 
+  // Audio
+  const audioGuessWrong = new Audio("/src/assets/guess-wrong.mp3")
+  const audioGuessCorrectFirst = new Audio(
+    "/src/assets/guess-correct-first.mp3"
+  )
+
   // useEffect hooks
 
   // Run once when the component mounts
@@ -522,6 +528,7 @@ function GameContainer({
         showWinAnimations()
       }
     } else {
+      audioGuessWrong.play()
       if (
         typeof connectionMode === "string" &&
         connectionMode.includes("online")
@@ -699,6 +706,7 @@ function GameContainer({
     setAlertMessage(winMessage)
     setShowAlertModal(true)
     setIsConfettiRunning(true)
+    audioGuessCorrectFirst.play()
   }
 
   function displaySolution() {
@@ -718,6 +726,10 @@ function GameContainer({
       default:
         return "th"
     }
+  }
+
+  function playAudio() {
+    audioWrongGuess.play()
   }
 
   return (
