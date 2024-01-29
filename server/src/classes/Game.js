@@ -4,7 +4,10 @@ import WORDLE_ANSWERS from "../data/wordleAnswers.js"
 import { handleGameStart } from "../services/gameService.js"
 
 // Services
-import { setRoomOutOfGame } from "../services/roomService.js"
+import {
+  getRoomConnectionMode,
+  setRoomOutOfGame,
+} from "../services/roomService.js"
 import { getUser } from "../services/userService.js"
 
 // These are all in seconds

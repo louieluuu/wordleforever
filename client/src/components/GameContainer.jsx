@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useParams } from "react-router-dom"
 import Confetti from "react-confetti"
 import socket from "../socket"
@@ -78,11 +78,14 @@ function GameContainer({
   const [messageIndex, setMessageIndex] = useState(0)
 
   // Audio
-  const wrongGuess = new Audio("/src/assets/guess-wrong.mp3")
-  const firstCorrectGuess = new Audio("/src/assets/guess-first-correct.mp3")
-  const opponentCorrectGuess = new Audio(
-    "/src/assets/guess-opponent-correct.mp3"
-  )
+  // TODO: useMemo?
+  const guessDefault = "/src/assets/guess-default.mp3"
+  const guessGameOver = "/src/assets/guess-game-over.mp3"
+  const guessWinner = "/src/assets/guess-winner.mp3"
+  const guessOpponentSolvedPublic =
+    "/src/assets/guess-opponent-solve-public.mp3"
+  const guessOpponentSolvedPrivate =
+    "/src/assets/guess-opponent-solve-private.mp3"
 
   // useEffect hooks
 
@@ -232,7 +235,7 @@ function GameContainer({
       socket.on("firstSolve", (firstSolveUserId, roundsWon) => {
         setWinningUserId(firstSolveUserId)
         if (socket.id === firstSolveUserId) {
-          showWinAnimations()
+          handleWin()
         }
         setUserInfo((prevUserInfo) => {
           const updatedUserInfo = [...prevUserInfo]
@@ -245,9 +248,14 @@ function GameContainer({
         })
       })
 
-      // TODO: placement, where? (matching server)
       socket.on("solvedAudio", () => {
-        playAudio(opponentCorrectGuess)
+        let audioPath
+        if (connectionMode === "online-public") {
+          audioPath = guessOpponentSolvedPublic
+        } else if (connectionMode === "online-private") {
+          audioPath = guessOpponentSolvedPrivate
+        }
+        playAudio(audioPath)
       })
 
       socket.on("totalGuessesUpdated", (updatedUserId, updatedTotalGuesses) => {
@@ -527,15 +535,14 @@ function GameContainer({
           typeof connectionMode === "string" &&
           connectionMode === "online-public"
         ) {
-          showWinAnimations()
+          handleWin()
         }
       }
       if (connectionMode === "offline") {
         setIsGameOver(true)
-        showWinAnimations()
+        handleWin()
       }
     } else {
-      playAudio(wrongGuess)
       if (
         typeof connectionMode === "string" &&
         connectionMode.includes("online")
@@ -548,6 +555,7 @@ function GameContainer({
       setActiveCellIndex(0)
       if (nextRow >= board.length) {
         setIsOutOfGuesses(true)
+        playAudio(guessGameOver)
         if (connectionMode === "offline") {
           setIsGameOver(true)
         } else if (connectionMode === "online-public") {
@@ -556,6 +564,8 @@ function GameContainer({
         } else if (connectionMode === "online-private") {
           socket.emit("outOfGuesses", roomId)
         }
+      } else {
+        playAudio(guessDefault)
       }
     }
   }
@@ -707,16 +717,17 @@ function GameContainer({
     }
   }
 
-  function showWinAnimations() {
+  function handleWin() {
     const winMessage =
       WIN_MESSAGES[Math.floor(Math.random() * WIN_MESSAGES.length)]
     setAlertMessage(winMessage)
     setShowAlertModal(true)
     setIsConfettiRunning(true)
-    playAudio(firstCorrectGuess)
+    playAudio(guessWinner)
   }
 
-  function playAudio(audioObject) {
+  function playAudio(audioPath) {
+    const audioObject = new Audio(audioPath)
     audioObject.play()
   }
 

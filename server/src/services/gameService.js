@@ -142,9 +142,9 @@ async function handleCorrectGuess(
         game.updateStreaks(userId)
         await handleUserStreakUpdates(userId, roomId)
       }
+      game.broadcastSolvedAudio(roomId, socket)
       game.countSolved += 1
       game.setGameBoard(userId, updatedGameBoard)
-      game.broadcastSolvedAudio(roomId, socket)
       if (isGameOver(roomId)) {
         game.endGame(roomId, io)
       } else {
