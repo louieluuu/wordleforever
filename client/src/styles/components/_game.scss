@@ -128,9 +128,7 @@ $loser-board-opacity: 50%;
   }
 
   .boards-container {
-    display: flex;
     flex-direction: column;
-    flex: 1;
     gap: $phone-board-gap;
   }
 
@@ -174,8 +172,12 @@ $loser-board-opacity: 50%;
     }
   }
 
-  .other-boards--grid {
+  .other-boards-container {
+    display: flex;
     flex: 3;
+  }
+
+  .other-boards--grid {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: none;
     grid-auto-flow: row;
@@ -284,6 +286,7 @@ $loser-board-opacity: 50%;
 
 .boards-container {
   display: flex;
+  flex: 1;
   flex-direction: row;
   justify-content: center;
   align-items: center;

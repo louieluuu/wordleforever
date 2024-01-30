@@ -92,40 +92,42 @@ function OnlineGameBoardContainer({
               />
             )}
           </div>
-          <div className={getOtherBoardsClassName()}>
-            {isDesktop
-              ? otherUserInfo().map((obj) => (
-                  <div key={obj.userId} className="other-board-container">
-                    <GameBoard
-                      board={obj.gameBoard}
-                      username={obj.username}
-                      points={obj.points}
-                      streak={obj.streak}
-                      connectionMode={connectionMode}
-                      isOutOfGuesses={isOutOfGuesses}
-                      isLeading={isUserLeading(obj.userId)}
-                      isSmall={isMoreThanTwoPlayers()}
-                      isGameOver={isGameOver}
-                      winningUser={obj.userId === winningUserId}
-                    />
-                  </div>
-                ))
-              : otherUserInfo().map((obj) => (
-                  <div key={obj.userId} className="other-board-container">
-                    <GameBoard
-                      board={obj.gameBoard}
-                      username={obj.username}
-                      points={obj.points}
-                      streak={obj.streak}
-                      connectionMode={connectionMode}
-                      isOutOfGuesses={isOutOfGuesses}
-                      isLeading={isUserLeading(obj.userId)}
-                      isCompressed={isPhone}
-                      isGameOver={isGameOver}
-                      winningUser={obj.userId === winningUserId}
-                    />
-                  </div>
-                ))}
+          <div className="other-boards-container">
+            <div className={getOtherBoardsClassName()}>
+              {isDesktop
+                ? otherUserInfo().map((obj) => (
+                    <div key={obj.userId} className="other-board-container">
+                      <GameBoard
+                        board={obj.gameBoard}
+                        username={obj.username}
+                        points={obj.points}
+                        streak={obj.streak}
+                        connectionMode={connectionMode}
+                        isOutOfGuesses={isOutOfGuesses}
+                        isLeading={isUserLeading(obj.userId)}
+                        isSmall={isMoreThanTwoPlayers()}
+                        isGameOver={isGameOver}
+                        winningUser={obj.userId === winningUserId}
+                      />
+                    </div>
+                  ))
+                : otherUserInfo().map((obj) => (
+                    <div key={obj.userId} className="other-board-container">
+                      <GameBoard
+                        board={obj.gameBoard}
+                        username={obj.username}
+                        points={obj.points}
+                        streak={obj.streak}
+                        connectionMode={connectionMode}
+                        isOutOfGuesses={isOutOfGuesses}
+                        isLeading={isUserLeading(obj.userId)}
+                        isCompressed={isPhone}
+                        isGameOver={isGameOver}
+                        winningUser={obj.userId === winningUserId}
+                      />
+                    </div>
+                  ))}
+            </div>
           </div>
         </div>
       ) : (
