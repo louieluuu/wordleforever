@@ -21,7 +21,7 @@ import {
   initializeUserInfo,
 } from "./services/userService.js"
 import {
-  handleGameStart,
+  handleLoadUser,
   handleWrongGuess,
   handleCorrectGuess,
   handleOutOfGuesses,
@@ -73,10 +73,7 @@ io.on("connection", (socket) => {
   socket.on("stopCountdown", (roomId) => handleCountdownStop(roomId, io))
 
   // Interact with GameContainer component
-  socket.on(
-    "startOnlineGame",
-    async (roomId) => await handleGameStart(roomId, io, socket.id)
-  )
+  socket.on("loadUser", (roomId) => handleLoadUser(roomId, socket.id, io))
   // General game flow
   socket.on("wrongGuess", (roomId, updatedGameBoard) =>
     handleWrongGuess(roomId, socket.id, updatedGameBoard, io)

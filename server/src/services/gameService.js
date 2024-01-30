@@ -67,26 +67,30 @@ function deleteGame(roomId) {
   }
 }
 
-async function handleGameStart(roomId, io, userId) {
+async function handleGameStart(roomId, io) {
   try {
-    if (userId) {
-      loadUser(userId, roomId)
-    }
-    if (areAllUsersLoaded(roomId)) {
-      if (roomId && roomInLobby(roomId)) {
-        setRoomInProgress(roomId)
-        setRoomInGame(roomId)
-        await initializeGameInfo(roomId)
-        const game = Games.get(roomId)
-        if (game && game instanceof Game) {
-          game.startGame(roomId, io)
-        }
-      } else {
-        console.error("Invalid roomId for starting game")
+    if (roomId && roomInLobby(roomId)) {
+      setRoomInProgress(roomId)
+      setRoomInGame(roomId)
+      await initializeGameInfo(roomId)
+      const game = Games.get(roomId)
+      if (game && game instanceof Game) {
+        game.startGame(roomId, io)
       }
+    } else {
+      console.error("Invalid roomId for starting game")
     }
   } catch (error) {
     console.error("Error starting game:", error)
+  }
+}
+
+function handleLoadUser(roomId, userId, io) {
+  if (userId) {
+    loadUser(userId, roomId)
+  }
+  if (areAllUsersLoaded(roomId)) {
+    handleGameStart(roomId, io)
   }
 }
 
@@ -183,6 +187,7 @@ function isGameOver(roomId) {
 export {
   deleteGame,
   handleGameStart,
+  handleLoadUser,
   handleWrongGuess,
   handleCorrectGuess,
   handleOutOfGuesses,

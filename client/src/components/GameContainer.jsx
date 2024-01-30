@@ -368,7 +368,7 @@ function GameContainer({
       typeof connectionMode === "string" &&
       connectionMode.includes("online")
     ) {
-      socket.emit("startOnlineGame", roomId)
+      socket.emit("loadUser", roomId)
     } else if (connectionMode === "offline") {
       resetStates()
       const newSolution = generateSolution()
