@@ -485,10 +485,9 @@ export default class Game {
     }
   }
 
-  // TODO: placement, where?
   broadcastSolvedAudio(roomId, socket) {
     if (roomId) {
-      socket.to(roomId).emit("solvedAudio")
+      socket.to(roomId).emit("opponentSolvedAudio")
     } else {
       console.error("Invalid roomId for broadcasting solve audio")
     }
