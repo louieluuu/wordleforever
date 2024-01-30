@@ -9,12 +9,12 @@ import { LuClock12 } from "react-icons/lu"
 import CountdownModal from "./CountdownModal"
 import GameBoardContainer from "./GameBoardContainer"
 import Keyboard from "./Keyboard"
+import PostGameDialog from "./PostGameDialog"
 
 // Data
 import VALID_WORDS from "../data/validWords"
 import WORDLE_ANSWERS from "../data/wordleAnswers"
 import WIN_MESSAGES from "../data/winMessages"
-import PostGameDialog from "./PostGameDialog"
 
 function GameContainer({
   isChallengeOn,
@@ -86,6 +86,8 @@ function GameContainer({
     "/src/assets/guess-opponent-solve-public.mp3"
   const guessOpponentSolvedPrivate =
     "/src/assets/guess-opponent-solve-private.mp3"
+
+  // let audioGuessDefault = new Audio("/src/assets/guess-default.mp3")
 
   // useEffect hooks
 
@@ -248,7 +250,7 @@ function GameContainer({
         })
       })
 
-      socket.on("solvedAudio", () => {
+      socket.on("opponentSolvedAudio", () => {
         let audioPath
         if (connectionMode === "online-public") {
           audioPath = guessOpponentSolvedPublic
@@ -537,6 +539,14 @@ function GameContainer({
         ) {
           handleWin()
         }
+        if (
+          typeof connectionMode === "string" &&
+          connectionMode === "online-private"
+        ) {
+          if (winningUserId && socket.id !== winningUserId) {
+            playAudio(guessGameOver)
+          }
+        }
       }
       if (connectionMode === "offline") {
         setIsGameOver(true)
@@ -727,8 +737,8 @@ function GameContainer({
   }
 
   function playAudio(audioPath) {
-    const audioObject = new Audio(audioPath)
-    audioObject.play()
+    // const audioObject = new Audio(audioPath)
+    // audioObject.play()
   }
 
   function displaySolution() {
