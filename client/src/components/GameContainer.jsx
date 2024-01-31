@@ -16,6 +16,17 @@ import VALID_WORDS from "../data/validWords"
 import WORDLE_ANSWERS from "../data/wordleAnswers"
 import WIN_MESSAGES from "../data/winMessages"
 
+// Audio
+import audioGuess0 from "/src/assets/audio/guess-0.mp3"
+import audioGuess1 from "/src/assets/audio/guess-1.mp3"
+import audioGuess2 from "/src/assets/audio/guess-0.mp3"
+import audioGuess3 from "/src/assets/audio/guess-0.mp3"
+import audioGuess4 from "/src/assets/audio/guess-0.mp3"
+import audioWin from "../assets/audio/win.mp3"
+import audioGameOver from "../assets/audio/game-over.mp3"
+import audioSolve from "../assets/audio/solve.mp3"
+import audioOpponentSolve from "../assets/audio/opponent-solve.mp3"
+
 function GameContainer({
   isChallengeOn,
   connectionMode,
@@ -82,8 +93,8 @@ function GameContainer({
   // TODO first audio guess is delayed, rest is ok. can we preload?
   let audioGuesses = useMemo(
     () => [
-      new Audio("/src/assets/audio/guess-0.mp3"),
-      new Audio("/src/assets/audio/guess-1.mp3"),
+      new Audio(audioGuess0),
+      new Audio(audioGuess1),
       new Audio("/src/assets/audio/guess-2.mp3"),
       new Audio("/src/assets/audio/guess-3.mp3"),
       new Audio("/src/assets/audio/guess-4.mp3"),
@@ -94,7 +105,7 @@ function GameContainer({
   let audioWin = new Audio("/src/assets/audio/win.mp3")
   let audioGameOver = new Audio("/src/assets/audio/game-over.mp3")
   let audioSolve = new Audio("/src/assets/audio/solve.mp3")
-  let audioOpponentSolve = new Audio("/src/assets/audio/opponent-solve.mp3")
+  // let audioOpponentSolve = new Audio(audioOpponentSolve)
 
   // useEffect hooks
 
