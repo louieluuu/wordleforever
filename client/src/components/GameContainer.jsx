@@ -17,7 +17,7 @@ import WORDLE_ANSWERS from "../data/wordleAnswers"
 import WIN_MESSAGES from "../data/winMessages"
 
 // Audio
-import gameOverAudio from "../assets/audio/game-over.opus"
+import gameOverAudio from "../assets/audio/game-over.flac"
 import guess0Audio from "../assets/audio/guess-0.opus"
 import guess1Audio from "../assets/audio/guess-1.opus"
 import guess2Audio from "../assets/audio/guess-2.opus"
