@@ -78,16 +78,23 @@ function GameContainer({
   const [messageIndex, setMessageIndex] = useState(0)
 
   // Audio
-  // TODO: useMemo?
-  const guessDefault = "/src/assets/guess-default.mp3"
-  const guessGameOver = "/src/assets/guess-game-over.mp3"
-  const guessWinner = "/src/assets/guess-winner.mp3"
-  const guessOpponentSolvedPublic =
-    "/src/assets/guess-opponent-solve-public.mp3"
-  const guessOpponentSolvedPrivate =
-    "/src/assets/guess-opponent-solve-private.mp3"
+  // Memoizes the audio objects so they don't get re-created on every re-render.
+  // TODO first audio guess is delayed, rest is ok. can we preload?
+  let audioGuesses = useMemo(
+    () => [
+      new Audio("/src/assets/audio/guess-0.mp3"),
+      new Audio("/src/assets/audio/guess-1.mp3"),
+      new Audio("/src/assets/audio/guess-2.mp3"),
+      new Audio("/src/assets/audio/guess-3.mp3"),
+      new Audio("/src/assets/audio/guess-4.mp3"),
+    ],
+    []
+  )
 
-  // let audioGuessDefault = new Audio("/src/assets/guess-default.mp3")
+  let audioWin = new Audio("/src/assets/audio/win.mp3")
+  let audioGameOver = new Audio("/src/assets/audio/game-over.mp3")
+  let audioSolve = new Audio("/src/assets/audio/solve.mp3")
+  let audioOpponentSolve = new Audio("/src/assets/audio/opponent-solve.mp3")
 
   // useEffect hooks
 
@@ -251,13 +258,13 @@ function GameContainer({
       })
 
       socket.on("opponentSolvedAudio", () => {
-        let audioPath
+        let audioObject
         if (connectionMode === "online-public") {
-          audioPath = guessOpponentSolvedPublic
+          audioObject = audioGameOver
         } else if (connectionMode === "online-private") {
-          audioPath = guessOpponentSolvedPrivate
+          audioObject = audioOpponentSolve
         }
-        playAudio(audioPath)
+        playAudio(audioObject)
       })
 
       socket.on("totalGuessesUpdated", (updatedUserId, updatedTotalGuesses) => {
@@ -544,7 +551,7 @@ function GameContainer({
           connectionMode === "online-private"
         ) {
           if (winningUserId && socket.id !== winningUserId) {
-            playAudio(guessGameOver)
+            playAudio(audioSolve)
           }
         }
       }
@@ -565,7 +572,7 @@ function GameContainer({
       setActiveCellIndex(0)
       if (nextRow >= board.length) {
         setIsOutOfGuesses(true)
-        playAudio(guessGameOver)
+        playAudio(audioGameOver)
         if (connectionMode === "offline") {
           setIsGameOver(true)
         } else if (connectionMode === "online-public") {
@@ -575,7 +582,7 @@ function GameContainer({
           socket.emit("outOfGuesses", roomId)
         }
       } else {
-        playAudio(guessDefault)
+        playAudio(audioGuesses[activeRowIndex]) // TODO code review
       }
     }
   }
@@ -733,12 +740,11 @@ function GameContainer({
     setAlertMessage(winMessage)
     setShowAlertModal(true)
     setIsConfettiRunning(true)
-    playAudio(guessWinner)
+    playAudio(audioWin)
   }
 
-  function playAudio(audioPath) {
-    // const audioObject = new Audio(audioPath)
-    // audioObject.play()
+  function playAudio(audioObject) {
+    audioObject.play()
   }
 
   function displaySolution() {
