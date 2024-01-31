@@ -48,6 +48,7 @@ function GameContainer({
   isSpectating,
   setIsSpectating,
   setRoomId,
+  isPhoneLayout,
 }) {
   useSetRoomId(setRoomId)
 
@@ -859,6 +860,7 @@ function GameContainer({
           hasSolved={hasSolved}
           isConfettiRunning={isConfettiRunning}
           winningUserId={winningUserId}
+          isPhoneLayout={isPhoneLayout}
         />
       </div>
 

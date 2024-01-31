@@ -19,6 +19,7 @@ function GameBoardContainer({
   hasSolved,
   isConfettiRunning,
   winningUserId,
+  isPhoneLayout,
 }) {
   return (
     <>
@@ -55,6 +56,7 @@ function GameBoardContainer({
           hasSolved={hasSolved}
           isConfettiRunning={isConfettiRunning}
           winningUserId={winningUserId}
+          isPhoneLayout={isPhoneLayout}
         />
       )}
     </>

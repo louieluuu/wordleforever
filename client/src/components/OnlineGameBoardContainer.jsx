@@ -1,5 +1,4 @@
 import React from "react"
-import { useMediaQuery } from "react-responsive"
 
 import GameBoard from "./GameBoard"
 
@@ -18,11 +17,8 @@ function OnlineGameBoardContainer({
   hasSolved,
   isConfettiRunning,
   winningUserId,
+  isPhoneLayout,
 }) {
-  // I'd rather pull the breakpoints from "../styles/_variables.scss", think you can do it with webpack but going to skip it for now
-  const breakpointSm = "640px"
-  const isPhone = useMediaQuery({ maxWidth: breakpointSm })
-  const isDesktop = useMediaQuery({ minWidth: breakpointSm })
   function otherUserInfo() {
     return userInfo.slice(1) || []
   }
@@ -94,7 +90,7 @@ function OnlineGameBoardContainer({
           </div>
           <div className="other-boards-container">
             <div className={getOtherBoardsClassName()}>
-              {isDesktop
+              {isPhoneLayout
                 ? otherUserInfo().map((obj) => (
                     <div key={obj.userId} className="other-board-container">
                       <GameBoard
@@ -105,7 +101,7 @@ function OnlineGameBoardContainer({
                         connectionMode={connectionMode}
                         isOutOfGuesses={isOutOfGuesses}
                         isLeading={isUserLeading(obj.userId)}
-                        isSmall={isMoreThanTwoPlayers()}
+                        isCompressed={isPhoneLayout}
                         isGameOver={isGameOver}
                         winningUser={obj.userId === winningUserId}
                       />
@@ -121,7 +117,7 @@ function OnlineGameBoardContainer({
                         connectionMode={connectionMode}
                         isOutOfGuesses={isOutOfGuesses}
                         isLeading={isUserLeading(obj.userId)}
-                        isCompressed={isPhone}
+                        isSmall={isMoreThanTwoPlayers()}
                         isGameOver={isGameOver}
                         winningUser={obj.userId === winningUserId}
                       />
@@ -133,7 +129,7 @@ function OnlineGameBoardContainer({
       ) : (
         <div className="boards-container">
           <div className={getOtherBoardsClassName()}>
-            {userInfo.length > 0 && isDesktop ? (
+            {userInfo.length > 0 && isPhoneLayout ? (
               <>
                 {userInfo.map((obj) => (
                   <GameBoard
@@ -145,6 +141,7 @@ function OnlineGameBoardContainer({
                     connectionMode={connectionMode}
                     isOutOfGuesses={isOutOfGuesses}
                     isLeading={isUserLeading(obj.userId)}
+                    isCompressed={isPhoneLayout}
                     isGameOver={isGameOver}
                     winningUser={obj.userId === winningUserId}
                   />
@@ -162,7 +159,7 @@ function OnlineGameBoardContainer({
                     connectionMode={connectionMode}
                     isOutOfGuesses={isOutOfGuesses}
                     isLeading={isUserLeading(obj.userId)}
-                    isCompressed={isPhone}
+                    isSmall={isMoreThanTwoPlayers()}
                     isGameOver={isGameOver}
                     winningUser={obj.userId === winningUserId}
                   />

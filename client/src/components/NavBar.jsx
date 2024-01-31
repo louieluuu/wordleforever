@@ -1,7 +1,6 @@
 import React, { useState, useLayoutEffect } from "react"
 
 import { Link } from "react-router-dom"
-import { useMediaQuery } from "react-responsive"
 
 import { auth } from "../firebase"
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth"
@@ -15,11 +14,7 @@ import logo from "../assets/logo.svg"
 
 import InfoDialog from "./InfoDialog"
 
-function NavBar({ roomId }) {
-  // I'd rather pull the breakpoints from "../styles/_variables.scss", think you can do it with webpack but going to skip it for now
-  const breakpointSm = "640px"
-  const isPhone = useMediaQuery({ maxWidth: breakpointSm })
-
+function NavBar({ roomId, isPhoneLayout }) {
   const [showInfoDialog, setShowInfoDialog] = useState(false)
   const [colorTheme, setColorTheme] = useState("")
 
@@ -76,7 +71,7 @@ function NavBar({ roomId }) {
         <div className="navbar__left" onClick={refreshPage}>
           <div className="logo">
             <img src={logo} alt="Logo" />
-            {!isPhone && (
+            {!isPhoneLayout && (
               <div className="logo__wordmark">
                 <strong className="logo__wordmark--left">Wordle&nbsp;</strong>
                 <strong className="logo__wordmark--right">Forever</strong>

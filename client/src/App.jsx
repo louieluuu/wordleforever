@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useMediaQuery } from "react-responsive"
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
@@ -12,6 +13,10 @@ import RegisterPage from "./components/RegisterPage"
 import ResetPasswordPage from "./components/ResetPasswordPage"
 
 function App() {
+  // I'd rather pull the breakpoints from "../styles/_variables.scss", think you can do it with webpack but going to skip it for now
+  const breakpointSm = "640px"
+  const isPhoneLayout = useMediaQuery({ maxWidth: breakpointSm })
+
   const [connectionMode, setConnectionMode] = useState("offline")
   // localStorage stores items as strings, so we use JSON.parse to convert it back to its original type.
   const [isChallengeOn, setIsChallengeOn] = useState(
@@ -31,7 +36,7 @@ function App() {
     <>
       <Router>
         <div className="full-page">
-          <NavBar roomId={roomId} />
+          <NavBar roomId={roomId} isPhoneLayout={isPhoneLayout} />
           <div className="page-content">
             <Routes>
               <Route
@@ -77,6 +82,7 @@ function App() {
                     isSpectating={isSpectating}
                     setIsSpectating={setIsSpectating}
                     setRoomId={setRoomId}
+                    isPhoneLayout={isPhoneLayout}
                   />
                 }
               />
@@ -90,6 +96,7 @@ function App() {
                     setIsHost={setIsHost}
                     setIsSpectating={setIsSpectating}
                     setRoomId={setRoomId}
+                    isPhoneLayout={isPhoneLayout}
                   />
                 }
               />
