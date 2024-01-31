@@ -17,15 +17,15 @@ import WORDLE_ANSWERS from "../data/wordleAnswers"
 import WIN_MESSAGES from "../data/winMessages"
 
 // Audio
-import audioGuess0 from "../assets/audio/guess-0.mp3"
-import audioGuess1 from "../assets/audio/guess-1.mp3"
-import audioGuess2 from "/src/assets/audio/guess-2.mp3"
-import audioGuess3 from "/src/assets/audio/guess-3.mp3"
-import audioGuess4 from "/src/assets/audio/guess-4.mp3"
-import audioWin from "../assets/audio/win.mp3"
-import audioGameOver from "../assets/audio/game-over.mp3"
-import audioSolve from "../assets/audio/solve.mp3"
-import audioOpponentSolve from "../assets/audio/opponent-solve.mp3"
+import gameOverMp3 from "../assets/audio/game-over.mp3"
+import guess0Mp3 from "../assets/audio/guess-0.mp3"
+import guess1Mp3 from "../assets/audio/guess-1.mp3"
+import guess2Mp3 from "../assets/audio/guess-2.mp3"
+import guess3Mp3 from "../assets/audio/guess-3.mp3"
+import guess4Mp3 from "../assets/audio/guess-4.mp3"
+import opponentSolveMp3 from "../assets/audio/opponent-solve.mp3"
+import solveMp3 from "../assets/audio/solve.mp3"
+import winMp3 from "../assets/audio/win.mp3"
 
 function GameContainer({
   isChallengeOn,
@@ -93,19 +93,19 @@ function GameContainer({
   // TODO first audio guess is delayed, rest is ok. can we preload?
   let audioGuesses = useMemo(
     () => [
-      new Audio(audioGuess0),
-      new Audio(audioGuess1),
-      new Audio("/src/assets/audio/guess-2.mp3"),
-      new Audio("/src/assets/audio/guess-3.mp3"),
-      new Audio("/src/assets/audio/guess-4.mp3"),
+      new Audio(guess0Mp3),
+      new Audio(guess1Mp3),
+      new Audio(guess2Mp3),
+      new Audio(guess3Mp3),
+      new Audio(guess4Mp3),
     ],
     []
   )
 
-  let audioWin = new Audio("/src/assets/audio/win.mp3")
-  let audioGameOver = new Audio("/src/assets/audio/game-over.mp3")
-  let audioSolve = new Audio("/src/assets/audio/solve.mp3")
-  // let audioOpponentSolve = new Audio(audioOpponentSolve)
+  let audioWin = new Audio(winMp3)
+  let audioGameOver = new Audio(gameOverMp3)
+  let audioSolve = new Audio(solveMp3)
+  let audioOpponentSolve = new Audio(opponentSolveMp3)
 
   // useEffect hooks
 
