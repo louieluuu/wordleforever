@@ -17,15 +17,28 @@ import WORDLE_ANSWERS from "../data/wordleAnswers"
 import WIN_MESSAGES from "../data/winMessages"
 
 // Audio
-import gameOverAudio from "../assets/audio/game-over.m4a"
-import guess0Audio from "../assets/audio/guess-0.opus"
-import guess1Audio from "../assets/audio/guess-1.opus"
-import guess2Audio from "../assets/audio/guess-2.opus"
-import guess3Audio from "../assets/audio/guess-3.opus"
-import guess4Audio from "../assets/audio/guess-4.opus"
-import opponentSolveAudio from "../assets/audio/opponent-solve.opus"
-import solveAudio from "../assets/audio/solve.opus"
-import winAudio from "../assets/audio/win.flac"
+// import gameOverAudio from "../assets/audio/game-over.m4a"
+// import guess0Audio from "../assets/audio/guess-0.opus"
+// import guess1Audio from "../assets/audio/guess-1.opus"
+// import guess2Audio from "../assets/audio/guess-2.opus"
+// import guess3Audio from "../assets/audio/guess-3.opus"
+// import guess4Audio from "../assets/audio/guess-4.opus"
+// import opponentSolveAudio from "../assets/audio/opponent-solve.opus"
+// import solveAudio from "../assets/audio/solve.opus"
+// import winAudio from "../assets/audio/win.flac"
+
+import gameOverAudio from "/src/assets/audio/game-over.m4a"
+import guess0Audio from "/src/assets/audio/guess-0.opus"
+import guess1Audio from "/src/assets/audio/guess-1.opus"
+import guess2Audio from "/src/assets/audio/guess-2.opus"
+import guess3Audio from "/src/assets/audio/guess-3.opus"
+import guess4Audio from "/src/assets/audio/guess-4.opus"
+import opponentSolveAudio from "/src/assets/audio/opponent-solve.opus"
+import solveAudio from "/src/assets/audio/solve.opus"
+import winAudio from "/src/assets/audio/win.flac"
+
+// TODO
+const audioContext = new (window.AudioContext || window.webkitAudioContext)()
 
 function GameContainer({
   isChallengeOn,
@@ -90,30 +103,31 @@ function GameContainer({
 
   // Audio
   // Memoizes the audio objects so they don't get re-created on every re-render.
-  // TODO first audio guess is delayed, rest is ok. can we preload?
   const audioGuesses = useMemo(
-    () => [
-      new Audio(guess0Audio),
-      new Audio(guess1Audio),
-      new Audio(guess2Audio),
-      new Audio(guess3Audio),
-      new Audio(guess4Audio),
-    ],
+    () =>
+      Promise.all([
+        loadAudio(guess0Audio),
+        loadAudio(guess1Audio),
+        loadAudio(guess2Audio),
+        loadAudio(guess3Audio),
+        loadAudio(guess4Audio),
+      ]),
     []
   )
 
-  let audioWin = new Audio(winAudio)
-  let audioGameOver = new Audio(gameOverAudio)
-  let audioSolve = new Audio(solveAudio)
-  let audioOpponentSolve = new Audio(opponentSolveAudio)
+  let audioWin = loadAudio(winAudio)
+  let audioGameOver = loadAudio(gameOverAudio)
+  let audioSolve = loadAudio(solveAudio)
+  let audioOpponentSolve = loadAudio(opponentSolveAudio)
 
   // useEffect hooks
 
-  // Preload audio upon mount to minimize delays
-  useEffect(() => {
-    audioGuesses.forEach((audioObject) => audioObject.load())
-    console.log("Audio preloaded")
-  }, [])
+  // TODO
+  // // Preload audio upon mount to minimize delays
+  // useEffect(() => {
+  //   audioGuesses.forEach((audioObject) => audioObject.load())
+  //   console.log("Audio preloaded")
+  // }, [])
 
   // Run once when the component mounts
   useEffect(() => {
@@ -760,8 +774,22 @@ function GameContainer({
     playAudio(audioWin)
   }
 
-  function playAudio(audioObject) {
-    audioObject.play()
+  // function playAudio(audioObject) {
+  //   audioObject.play()
+  // }
+
+  function loadAudio(url) {
+    return fetch(url)
+      .then((response) => response.arrayBuffer())
+      .then((arrayBuffer) => new AudioContext().decodeAudioData(arrayBuffer))
+  }
+
+  const playAudio = async (audioBufferPromise) => {
+    const audioBuffer = await audioBufferPromise
+    const source = audioContext.createBufferSource()
+    source.buffer = audioBuffer
+    source.connect(audioContext.destination)
+    source.start()
   }
 
   function displaySolution() {
