@@ -91,7 +91,7 @@ function GameContainer({
   // Audio
   // Memoizes the audio objects so they don't get re-created on every re-render.
   // TODO first audio guess is delayed, rest is ok. can we preload?
-  let audioGuesses = useMemo(
+  const audioGuesses = useMemo(
     () => [
       new Audio(guess0Audio),
       new Audio(guess1Audio),
@@ -108,6 +108,11 @@ function GameContainer({
   let audioOpponentSolve = new Audio(opponentSolveAudio)
 
   // useEffect hooks
+
+  // Preload audio upon mount to minimize delays
+  useEffect(() => {
+    audioGuesses.forEach((audioObject) => audioObject.load())
+  }, [])
 
   // Run once when the component mounts
   useEffect(() => {
