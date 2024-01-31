@@ -20,8 +20,10 @@ import WIN_MESSAGES from "../data/winMessages"
 import { Howl, Howler } from "howler"
 
 const sound = new Howl({
-  src: ["/src/assets/audio/guess-0.webm"],
+  src: [guess0Audio],
 })
+
+import guess0Audio from "../assets/audio/guess-0.webm"
 
 // import gameOverAudio from "../assets/audio/game-over.webm"
 // import guess0Audio from "../assets/audio/guess-0.webm"
