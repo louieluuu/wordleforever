@@ -25,7 +25,7 @@ import guess3Audio from "../assets/audio/guess-3.opus"
 import guess4Audio from "../assets/audio/guess-4.opus"
 import opponentSolveAudio from "../assets/audio/opponent-solve.opus"
 import solveAudio from "../assets/audio/solve.opus"
-import winAudio from "../assets/audio/win.opus"
+import winAudio from "../assets/audio/win.flac"
 
 function GameContainer({
   isChallengeOn,
