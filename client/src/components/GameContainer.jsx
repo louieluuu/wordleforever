@@ -112,6 +112,7 @@ function GameContainer({
   // Preload audio upon mount to minimize delays
   useEffect(() => {
     audioGuesses.forEach((audioObject) => audioObject.load())
+    console.log("Audio preloaded")
   }, [])
 
   // Run once when the component mounts
