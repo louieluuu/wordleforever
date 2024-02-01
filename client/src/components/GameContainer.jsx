@@ -39,6 +39,7 @@ import opponentSolveMp3 from "../assets/audio/mp3/opponent-solve.mp3"
 import solveMp3 from "../assets/audio/mp3/solve.mp3"
 import winMp3 from "../assets/audio/mp3/win.mp3"
 
+// TODO: Placement of these?
 const audioGuesses = [
   new Howl({ src: [guess0Webm, guess0Mp3] }),
   new Howl({ src: [guess1Webm, guess1Mp3] }),
