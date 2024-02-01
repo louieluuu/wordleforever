@@ -9,6 +9,7 @@ import CountdownModal from "./CountdownModal"
 import GameBoardContainer from "./GameBoardContainer"
 import Keyboard from "./Keyboard"
 import PostGameDialog from "./PostGameDialog"
+import PrivateRoomInfo from "./PrivateRoomInfo"
 
 // Data
 import VALID_WORDS from "../data/validWords"
