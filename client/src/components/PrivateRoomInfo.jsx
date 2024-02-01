@@ -33,7 +33,11 @@ function PrivateRoomInfo({
           <span className="round-counter">
             Round: {roundCounter}/{maxRounds}
           </span>
-          <span className="timer">
+          <span
+            className={`timer${
+              roundTimer <= 15 && roundTimer > 0 ? "-low" : ""
+            }`}
+          >
             <span className="clock" style={{ verticalAlign: "middle" }}>
               <LuClock12
                 style={{

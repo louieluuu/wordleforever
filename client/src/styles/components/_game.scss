@@ -254,6 +254,17 @@ $loser-board-opacity: 50%;
   }
 }
 
+@keyframes lowTimerFlash {
+  0% {
+    transform: scale(1.1);
+    color: red;
+  }
+  100% {
+    transform: scale(1);
+    color: inherit;
+  }
+}
+
 .upper-game-container {
   display: flex;
   flex-direction: column;
@@ -673,6 +684,10 @@ $loser-board-opacity: 50%;
   font-size: $desktop-private-room-info-font-size;
   font-weight: 500;
   margin: 0.5rem;
+
+  .timer-low {
+    animation: lowTimerFlash 1s infinite;
+  }
 
   .clock {
     font-size: $desktop-private-room-clock-font-size;
