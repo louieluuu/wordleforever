@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import Confetti from "react-confetti"
 import socket from "../socket"
@@ -17,34 +17,42 @@ import WORDLE_ANSWERS from "../data/wordleAnswers"
 import WIN_MESSAGES from "../data/winMessages"
 
 // Audio
-import { Howl, Howler } from "howler"
+import { Howl } from "howler"
 
-const sound = new Howl({
-  src: [guess0Audio, guess0Mp3],
-})
+import gameOverWebm from "../assets/audio/webm/game-over.webm"
+import guess0Webm from "../assets/audio/webm/guess-0.webm"
+import guess1Webm from "../assets/audio/webm/guess-1.webm"
+import guess2Webm from "../assets/audio/webm/guess-2.webm"
+import guess3Webm from "../assets/audio/webm/guess-3.webm"
+import guess4Webm from "../assets/audio/webm/guess-4.webm"
+import opponentSolveWebm from "../assets/audio/webm/opponent-solve.webm"
+import solveWebm from "../assets/audio/webm/solve.webm"
+import winWebm from "../assets/audio/webm/win.webm"
 
-import guess0Audio from "../assets/audio/webm/guess-0.webm"
+import gameOverMp3 from "../assets/audio/mp3/game-over.mp3"
 import guess0Mp3 from "../assets/audio/mp3/guess-0.mp3"
+import guess1Mp3 from "../assets/audio/mp3/guess-1.mp3"
+import guess2Mp3 from "../assets/audio/mp3/guess-2.mp3"
+import guess3Mp3 from "../assets/audio/mp3/guess-3.mp3"
+import guess4Mp3 from "../assets/audio/mp3/guess-4.mp3"
+import opponentSolveMp3 from "../assets/audio/mp3/opponent-solve.mp3"
+import solveMp3 from "../assets/audio/mp3/solve.mp3"
+import winMp3 from "../assets/audio/mp3/win.mp3"
 
-// import gameOverAudio from "../assets/audio/game-over.webm"
-// import guess0Audio from "../assets/audio/guess-0.webm"
-// import guess1Audio from "../assets/audio/guess-1.webm"
-// import guess2Audio from "../assets/audio/guess-2.webm"
-// import guess3Audio from "../assets/audio/guess-3.webm"
-// import guess4Audio from "../assets/audio/guess-4.webm"
-// import opponentSolveAudio from "../assets/audio/opponent-solve.webm"
-// import solveAudio from "../assets/audio/solve.webm"
-// import winAudio from "../assets/audio/win.webm"
+const audioGuesses = [
+  new Howl({ src: [guess0Webm, guess0Mp3] }),
+  new Howl({ src: [guess1Webm, guess1Mp3] }),
+  new Howl({ src: [guess2Webm, guess2Mp3] }),
+  new Howl({ src: [guess3Webm, guess3Mp3] }),
+  new Howl({ src: [guess4Webm, guess4Mp3] }),
+]
 
-// import gameOverAudio from "/src/assets/audio/game-over.m4a"
-// import guess0Audio from "/src/assets/audio/guess-0.opus"
-// import guess1Audio from "/src/assets/audio/guess-1.opus"
-// import guess2Audio from "/src/assets/audio/guess-2.opus"
-// import guess3Audio from "/src/assets/audio/guess-3.opus"
-// import guess4Audio from "/src/assets/audio/guess-4.opus"
-// import opponentSolveAudio from "/src/assets/audio/opponent-solve.opus"
-// import solveAudio from "/src/assets/audio/solve.opus"
-// import winAudio from "/src/assets/audio/win.flac"
+const audioGameOver = new Howl({ src: [gameOverWebm, gameOverMp3] })
+const audioOpponentSolve = new Howl({
+  src: [opponentSolveWebm, opponentSolveMp3],
+})
+const audioSolve = new Howl({ src: [solveWebm, solveMp3] })
+const audioWin = new Howl({ src: [winWebm, winMp3] })
 
 function GameContainer({
   isChallengeOn,
@@ -107,25 +115,6 @@ function GameContainer({
   const [spectatorMessage, setSpectatorMessage] = useState("")
   const [hiddenPeriods, setHiddenPeriods] = useState("")
   const [messageIndex, setMessageIndex] = useState(0)
-
-  // TODO
-  // // Audio
-  // // Memoizes the audio objects so they don't get re-created on every re-render.
-  // const audioGuesses = useMemo(
-  //   () => [
-  //     new Audio(guess0Audio),
-  //     new Audio(guess1Audio),
-  //     new Audio(guess2Audio),
-  //     new Audio(guess3Audio),
-  //     new Audio(guess4Audio),
-  //   ],
-  //   []
-  // )
-
-  // let audioWin = new Audio(winAudio)
-  // let audioGameOver = new Audio(gameOverAudio)
-  // let audioSolve = new Audio(solveAudio)
-  // let audioOpponentSolve = new Audio(opponentSolveAudio)
 
   // useEffect hooks
 
@@ -289,13 +278,13 @@ function GameContainer({
       })
 
       socket.on("opponentSolvedAudio", () => {
-        let audioObject
+        let audio
         if (connectionMode === "online-public") {
-          audioObject = audioGameOver
+          audio = audioGameOver
         } else if (connectionMode === "online-private") {
-          audioObject = audioOpponentSolve
+          audio = audioOpponentSolve
         }
-        playAudio(audioObject)
+        playAudio(audio)
       })
 
       socket.on("totalGuessesUpdated", (updatedUserId, updatedTotalGuesses) => {
@@ -613,9 +602,7 @@ function GameContainer({
           socket.emit("outOfGuesses", roomId)
         }
       } else {
-        // TODO
-        // playAudio(audioGuesses[activeRowIndex])
-        sound.play()
+        playAudio(audioGuesses[activeRowIndex])
       }
     }
   }
@@ -776,9 +763,9 @@ function GameContainer({
     playAudio(audioWin)
   }
 
-  // function playAudio(audioObject) {
-  //   audioObject.play()
-  // }
+  function playAudio(howlObject) {
+    howlObject.play()
+  }
 
   function displaySolution() {
     setAlertMessage(solution)
