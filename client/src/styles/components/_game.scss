@@ -677,6 +677,10 @@ $loser-board-opacity: 50%;
   .clock {
     font-size: $desktop-private-room-clock-font-size;
   }
+
+  .hidden-digits {
+    visibility: hidden;
+  }
 }
 
 .spectator-message {
