@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom"
 import Confetti from "react-confetti"
 import socket from "../socket"
 import useSetRoomId from "../helpers/useSetRoomId"
-import { LuClock12 } from "react-icons/lu"
 
 // Components
 import CountdownModal from "./CountdownModal"
@@ -814,24 +813,6 @@ function GameContainer({
         {isConfettiRunning && (
           <Confetti numberOfPieces={numberOfPieces} initialVelocityY={-10} />
         )}
-        {connectionMode === "online-private" && roundCounter !== 0 && (
-          <div className="private-room-info">
-            <span className="timer">
-              <span className="clock">
-                <LuClock12
-                  style={{
-                    transform: `rotate(${360 - timerIndex * 90}deg)`,
-                  }}
-                />
-                &nbsp;
-              </span>
-              {roundTimer}
-            </span>
-            <span className="round-counter">
-              Round: {roundCounter}/{maxRounds}
-            </span>
-          </div>
-        )}
         <GameBoardContainer
           connectionMode={connectionMode}
           board={board}
@@ -848,6 +829,13 @@ function GameContainer({
           isConfettiRunning={isConfettiRunning}
           winningUserId={winningUserId}
           isPhoneLayout={isPhoneLayout}
+        />
+        <PrivateRoomInfo
+          connectionMode={connectionMode}
+          roundCounter={roundCounter}
+          timerIndex={timerIndex}
+          roundTimer={roundTimer}
+          maxRounds={maxRounds}
         />
       </div>
 

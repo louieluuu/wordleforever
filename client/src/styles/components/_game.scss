@@ -69,15 +69,16 @@ $desktop-others-crown-size: 0.7rem;
 $countdown-timer-placement: 35dvh;
 $countdown-timer-font-size: 5.75vw;
 
-$private-room-info-margin-top: 0.2vh;
+$private-room-info-margin-top: 0vh;
 
 $desktop-private-room-info-margin-bottom: 1rem;
 $desktop-private-room-info-font-size: 1.2rem;
 $desktop-private-room-clock-font-size: 1rem;
 
-$phone-private-room-info-width: 96vw;
+$phone-private-room-info-width: 45vw;
 $phone-private-room-info-margin-inline: 2vw;
 $phone-private-room-info-margin-bottom: 0;
+$phone-private-room-info-margin-top: 1dvh;
 $phone-private-room-info-font-size: 3.5vw;
 $phone-private-room-clock-font-size: 3vw;
 
@@ -231,6 +232,7 @@ $loser-board-opacity: 50%;
   .private-room-info {
     width: $phone-private-room-info-width;
     margin-inline: $phone-private-room-info-margin-inline;
+    margin-top: $phone-private-room-info-margin-top;
     margin-bottom: $phone-private-room-info-margin-bottom;
     font-size: $phone-private-room-info-font-size;
 
@@ -257,6 +259,7 @@ $loser-board-opacity: 50%;
   flex-direction: column;
   flex: 1;
   justify-content: center;
+  align-items: center;
 }
 
 .upper-game-container--spec {
@@ -660,11 +663,16 @@ $loser-board-opacity: 50%;
 
 .private-room-info {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  width: 13rem;
+  border: 1px solid $color;
+  border-radius: 0.3rem;
+  background-color: $border;
   font-size: $desktop-private-room-info-font-size;
   font-weight: 500;
-  margin-top: $private-room-info-margin-top;
-  margin-bottom: $desktop-private-room-info-margin-bottom;
+  margin: 0.5rem;
 
   .clock {
     font-size: $desktop-private-room-clock-font-size;
