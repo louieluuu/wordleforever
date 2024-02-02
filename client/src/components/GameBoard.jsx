@@ -170,24 +170,25 @@ function GameBoard({
     if (connectionMode === "online-private") {
       if (points === 0) {
         setDisplayPoints(0)
-      }
-      let pointDiff = points - prevPoints
+      } else {
+        let pointDiff = points - prevPoints
 
-      let pointTimeout = setTimeout(function incrementPoints() {
-        if (pointDiff <= 0) {
-          clearTimeout(pointTimeout)
-        } else {
-          setDisplayPoints((prevDisplayPoints) => {
-            if (prevDisplayPoints < points) {
-              return prevDisplayPoints + 1
-            } else {
-              return prevDisplayPoints
-            }
-          })
-          pointDiff--
-          setTimeout(incrementPoints, getPointTimeout(pointDiff))
-        }
-      }, getPointTimeout(pointDiff))
+        let pointTimeout = setTimeout(function incrementPoints() {
+          if (pointDiff <= 0) {
+            clearTimeout(pointTimeout)
+          } else {
+            setDisplayPoints((prevDisplayPoints) => {
+              if (prevDisplayPoints < points) {
+                return prevDisplayPoints + 1
+              } else {
+                return prevDisplayPoints
+              }
+            })
+            pointDiff--
+            setTimeout(incrementPoints, getPointTimeout(pointDiff))
+          }
+        }, getPointTimeout(pointDiff))
+      }
 
       setPrevPoints(points)
     }
