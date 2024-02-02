@@ -168,6 +168,9 @@ function GameBoard({
   // The safeguards are to guard from displaying the wrong information, which hopefully this does
   useEffect(() => {
     if (connectionMode === "online-private") {
+      if (points === 0) {
+        setDisplayPoints(0)
+      }
       let pointDiff = points - prevPoints
 
       let pointTimeout = setTimeout(function incrementPoints() {
