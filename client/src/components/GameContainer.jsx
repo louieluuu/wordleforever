@@ -445,6 +445,8 @@ function GameContainer({
     setShowAlertModal(false)
     setIsConfettiRunning(false)
     setIsSpectating(false)
+    setShowPostGameDialog(false)
+    setShowScoreboard(true)
   }
 
   function handleLetter(e) {
