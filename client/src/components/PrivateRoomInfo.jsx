@@ -9,6 +9,7 @@ function PrivateRoomInfo({
   roundTimer,
   maxRounds,
   isGameOver,
+  hasSolved,
 }) {
   const [prevTimer, setPrevTimer] = useState(0)
   const [timerDiff, setTimerDiff] = useState(0)
@@ -22,13 +23,16 @@ function PrivateRoomInfo({
     let timerClassName = "timer"
     if (roundTimer <= 15 && !isGameOver) {
       timerClassName += "--low"
-    } else if (timerDiff > 30) {
-      timerClassName += "--big-drop"
-    } else if (timerDiff > 20) {
-      timerClassName += "--medium-drop"
-    } else if (timerDiff > 10) {
-      timerClassName += "--small-drop"
+    } else if (!hasSolved) {
+      if (timerDiff > 30) {
+        timerClassName += "--big-drop"
+      } else if (timerDiff > 20) {
+        timerClassName += "--medium-drop"
+      } else if (timerDiff > 10) {
+        timerClassName += "--small-drop"
+      }
     }
+
     return timerClassName
   }
 
