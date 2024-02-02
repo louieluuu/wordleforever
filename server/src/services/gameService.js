@@ -135,7 +135,6 @@ async function handleCorrectGuess(
         game.incrementTotalTimeInRoundsSolved(userId)
         game.broadcastTotalTimeInRoundsSolved(roomId, userId, io)
         if (game.countSolved === 0) {
-          game.setSolvedTimer(roomId, io)
           game.broadcastFirstSolve(roomId, userId, io)
         }
       } else if (getRoomConnectionMode(roomId) === "online-public") {
@@ -149,6 +148,10 @@ async function handleCorrectGuess(
         game.endGame(roomId, io)
       } else {
         game.broadcastGameBoard(roomId, userId, io)
+        // Pretty hacky, maybe a better way to do this. This needs to be separate from game.broadcastFirstSolve above, as that needs to be emitted regardless of if the game is over or not, we only want to set the timer when the game isn't over. But the game over logic depends on game.countSolved being incremented first, and this needs to come after the game over logic, thus this is "technically" checking for first solve logic, but we need to check for a game.countSolved of 1 instead of 0
+        if (game.countSolved === 1) {
+          game.setSolvedTimer(roomId, io)
+        }
       }
     }
   } catch (error) {
