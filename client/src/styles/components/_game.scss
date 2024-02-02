@@ -23,7 +23,7 @@ $phone-user-cell-border: 0.8vw solid;
 // Cell gap
 $desktop-cell-gap: 0.25rem;
 
-$phone-user-cell-gap: 0.3dvh;
+$phone-user-cell-gap: 0.25dvh;
 
 // Font sizes
 $desktop-cell-font-size: 2rem;
@@ -57,30 +57,51 @@ $phone-other-info-font-size: 3vw;
 // 1vX specific styles
 $phone-others-cell-size: 3dvh;
 $phone-others-cell-font-size: 4vw;
-$phone-others-info-font-size: 2.6vw;
-$phone-others-info-max-width: 26vw;
-$phone-others-crown-size: 2.3vw;
+$phone-others-info-font-size: 1.5dvh;
+$phone-others-info-max-width: 15dvh;
+$phone-others-crown-size: 1.1dvh;
 
 $phone-others-board-gap: 0 6dvh;
 
 $desktop-others-crown-size: 0.7rem;
 
-// Miscellaneous styles
+// Countdown timer
 $countdown-timer-placement: 35dvh;
 $countdown-timer-font-size: 5.75vw;
 
+// Private room info (round counter and timer)
+
 $private-room-info-margin-top: 0vh;
 
+$desktop-private-room-info-width: 18rem;
+$desktop-private-room-info-height: 1.5rem;
 $desktop-private-room-info-margin-bottom: 1rem;
+$desktop-private-room-info-padding-inline: 0.5rem;
+
 $desktop-private-room-info-font-size: 1.2rem;
 $desktop-private-room-clock-font-size: 1rem;
 
-$phone-private-room-info-width: 45vw;
+$phone-private-room-info-width: 50vw;
+$phone-private-room-info-height: 3.5dvh;
 $phone-private-room-info-margin-inline: 2vw;
 $phone-private-room-info-margin-bottom: 0;
 $phone-private-room-info-margin-top: 1dvh;
+$phone-private-room-info-padding-inline: 1.5dvh;
+
 $phone-private-room-info-font-size: 3.5vw;
-$phone-private-room-clock-font-size: 3vw;
+$phone-private-room-clock-font-size: 2.4vw;
+
+// Jiggle animations
+$desktop-big-jiggle-font-size: 3rem;
+$desktop-medium-jiggle-font-size: 2.5rem;
+$desktop-small-jiggle-font-size: 2rem;
+$phone-big-jiggle-font-size: 10vw;
+$phone-medium-jiggle-font-size: 8vw;
+$phone-small-jiggle-font-size: 6vw;
+
+$big-jiggle-tilt: 18deg;
+$medium-jiggle-tilt: 13deg;
+$small-jiggle-tilt: 8deg;
 
 $loser-board-opacity: 50%;
 
@@ -231,13 +252,27 @@ $loser-board-opacity: 50%;
 
   .private-room-info {
     width: $phone-private-room-info-width;
+    height: $phone-private-room-info-height;
     margin-inline: $phone-private-room-info-margin-inline;
     margin-top: $phone-private-room-info-margin-top;
     margin-bottom: $phone-private-room-info-margin-bottom;
     font-size: $phone-private-room-info-font-size;
+    padding-inline: $phone-private-room-info-padding-inline;
 
     .clock {
       font-size: $phone-private-room-clock-font-size;
+    }
+
+    .timer--big-drop {
+      animation: phone-big-jiggle 0.7s ease-in-out;
+    }
+
+    .timer--medium-drop {
+      animation: phone-medium-jiggle 0.7s ease-in-out;
+    }
+
+    .timer--small-drop {
+      animation: phone-small-jiggle 0.7s ease-in-out;
     }
   }
 }
@@ -256,7 +291,7 @@ $loser-board-opacity: 50%;
 
 @keyframes lowTimerFlash {
   0% {
-    transform: scale(1.1);
+    transform: scale(1.2);
     color: red;
   }
   100% {
@@ -267,60 +302,192 @@ $loser-board-opacity: 50%;
 
 @keyframes big-jiggle {
   0% {
-    transform: rotate(0deg);
     color: red;
+    font-size: $desktop-big-jiggle-font-size;
+    font-weight: 600;
   }
-  25% {
-    transform: rotate(-15deg);
+
+  7.142%,
+  21.428%,
+  35.714%,
+  50%,
+  64.286%,
+  78.572%,
+  92.858% {
+    transform: rotate(-$big-jiggle-tilt);
+    font-weight: 600;
+    font-size: $desktop-big-jiggle-font-size;
   }
-  50% {
-    transform: rotate(15deg);
-  }
-  75% {
-    transform: rotate(-15deg);
+  14.285%,
+  28.571%,
+  42.857%,
+  57.143%,
+  71.429%,
+  85.715% {
+    color: red;
+    transform: rotate($big-jiggle-tilt);
   }
   100% {
-    transform: rotate(0deg);
+    color: inherit;
+  }
+}
+
+@keyframes phone-big-jiggle {
+  0% {
+    color: red;
+    font-size: $phone-big-jiggle-font-size;
+    font-weight: 600;
+  }
+
+  7.142%,
+  21.428%,
+  35.714%,
+  50%,
+  64.286%,
+  78.572%,
+  92.858% {
+    transform: rotate(-$big-jiggle-tilt);
+    font-weight: 600;
+    font-size: $phone-big-jiggle-font-size;
+  }
+  14.285%,
+  28.571%,
+  42.857%,
+  57.143%,
+  71.429%,
+  85.715% {
+    color: red;
+    transform: rotate($big-jiggle-tilt);
+  }
+  100% {
     color: inherit;
   }
 }
 
 @keyframes medium-jiggle {
   0% {
-    transform: rotate(0deg);
     color: red;
+    font-size: $desktop-medium-jiggle-font-size;
+    font-weight: 600;
   }
-  25% {
-    transform: rotate(-10deg);
+
+  7.142%,
+  21.428%,
+  35.714%,
+  50%,
+  64.286%,
+  78.572%,
+  92.858% {
+    transform: rotate(-$medium-jiggle-tilt);
+    font-weight: 600;
+    font-size: $desktop-medium-jiggle-font-size;
   }
-  50% {
-    transform: rotate(10deg);
-  }
-  75% {
-    transform: rotate(-10deg);
+  14.285%,
+  28.571%,
+  42.857%,
+  57.143%,
+  71.429%,
+  85.715% {
+    color: red;
+    transform: rotate($medium-jiggle-tilt);
   }
   100% {
-    transform: rotate(0deg);
+    color: inherit;
+  }
+}
+
+@keyframes phone-medium-jiggle {
+  0% {
+    color: red;
+    font-size: $phone-medium-jiggle-font-size;
+    font-weight: 600;
+  }
+
+  7.142%,
+  21.428%,
+  35.714%,
+  50%,
+  64.286%,
+  78.572%,
+  92.858% {
+    transform: rotate(-$medium-jiggle-tilt);
+    font-weight: 600;
+    font-size: $phone-medium-jiggle-font-size;
+  }
+  14.285%,
+  28.571%,
+  42.857%,
+  57.143%,
+  71.429%,
+  85.715% {
+    color: red;
+    transform: rotate($medium-jiggle-tilt);
+  }
+  100% {
     color: inherit;
   }
 }
 
 @keyframes small-jiggle {
   0% {
-    transform: rotate(0deg);
     color: red;
+    font-size: $desktop-small-jiggle-font-size;
+    font-weight: 600;
   }
-  25% {
-    transform: rotate(-5deg);
+
+  7.142%,
+  21.428%,
+  35.714%,
+  50%,
+  64.286%,
+  78.572%,
+  92.858% {
+    transform: rotate(-$small-jiggle-tilt);
+    font-weight: 600;
+    font-size: $desktop-small-jiggle-font-size;
   }
-  50% {
-    transform: rotate(5deg);
-  }
-  75% {
-    transform: rotate(-5deg);
+  14.285%,
+  28.571%,
+  42.857%,
+  57.143%,
+  71.429%,
+  85.715% {
+    color: red;
+    transform: rotate($small-jiggle-tilt);
   }
   100% {
-    transform: rotate(0deg);
+    color: inherit;
+  }
+}
+
+@keyframes phone-small-jiggle {
+  0% {
+    color: red;
+    font-size: $phone-small-jiggle-font-size;
+    font-weight: 600;
+  }
+
+  7.142%,
+  21.428%,
+  35.714%,
+  50%,
+  64.286%,
+  78.572%,
+  92.858% {
+    transform: rotate(-$small-jiggle-tilt);
+    font-weight: 600;
+    font-size: $phone-small-jiggle-font-size;
+  }
+  14.285%,
+  28.571%,
+  42.857%,
+  57.143%,
+  71.429%,
+  85.715% {
+    color: red;
+    transform: rotate($small-jiggle-tilt);
+  }
+  100% {
     color: inherit;
   }
 }
@@ -734,39 +901,38 @@ $loser-board-opacity: 50%;
 
 .private-room-info {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: space-between;
+  padding-inline: $desktop-private-room-info-padding-inline;
   gap: 1rem;
-  width: 13rem;
+  width: $desktop-private-room-info-width;
+  height: $desktop-private-room-info-height;
   border: 1px solid $color;
   border-radius: 0.3rem;
   background-color: $private-room-info;
   font-size: $desktop-private-room-info-font-size;
   font-weight: 500;
   margin: 0.5rem;
+  overflow: visible;
 
   .timer--low {
     animation: lowTimerFlash 1s infinite;
   }
 
   .timer--big-drop {
-    animation: big-jiggle 1s ease-in-out;
+    animation: big-jiggle 0.7s ease-in-out;
   }
 
   .timer--medium-drop {
-    animation: medium-jiggle 1s ease-in-out;
+    animation: medium-jiggle 0.7s ease-in-out;
   }
 
   .timer--small-drop {
-    animation: small-jiggle 1s ease-in-out;
+    animation: small-jiggle 0.7s ease-in-out;
   }
 
   .clock {
     font-size: $desktop-private-room-clock-font-size;
-  }
-
-  .hidden-digits {
-    visibility: hidden;
   }
 }
 
