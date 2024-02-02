@@ -825,6 +825,7 @@ function GameContainer({
           timerIndex={timerIndex}
           roundTimer={roundTimer}
           maxRounds={maxRounds}
+          isGameOver={isGameOver}
         />
       </div>
 

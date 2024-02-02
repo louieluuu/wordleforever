@@ -265,6 +265,66 @@ $loser-board-opacity: 50%;
   }
 }
 
+@keyframes big-jiggle {
+  0% {
+    transform: rotate(0deg);
+    color: red;
+  }
+  25% {
+    transform: rotate(-15deg);
+  }
+  50% {
+    transform: rotate(15deg);
+  }
+  75% {
+    transform: rotate(-15deg);
+  }
+  100% {
+    transform: rotate(0deg);
+    color: inherit;
+  }
+}
+
+@keyframes medium-jiggle {
+  0% {
+    transform: rotate(0deg);
+    color: red;
+  }
+  25% {
+    transform: rotate(-10deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+  75% {
+    transform: rotate(-10deg);
+  }
+  100% {
+    transform: rotate(0deg);
+    color: inherit;
+  }
+}
+
+@keyframes small-jiggle {
+  0% {
+    transform: rotate(0deg);
+    color: red;
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+  75% {
+    transform: rotate(-5deg);
+  }
+  100% {
+    transform: rotate(0deg);
+    color: inherit;
+  }
+}
+
 .upper-game-container {
   display: flex;
   flex-direction: column;
@@ -685,8 +745,20 @@ $loser-board-opacity: 50%;
   font-weight: 500;
   margin: 0.5rem;
 
-  .timer-low {
+  .timer--low {
     animation: lowTimerFlash 1s infinite;
+  }
+
+  .timer--big-drop {
+    animation: big-jiggle 1s ease-in-out;
+  }
+
+  .timer--medium-drop {
+    animation: medium-jiggle 1s ease-in-out;
+  }
+
+  .timer--small-drop {
+    animation: small-jiggle 1s ease-in-out;
   }
 
   .clock {

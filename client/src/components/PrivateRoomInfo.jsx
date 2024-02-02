@@ -8,8 +8,11 @@ function PrivateRoomInfo({
   timerIndex,
   roundTimer,
   maxRounds,
+  isGameOver,
 }) {
   const [hiddenDigits, setHiddenDigits] = useState("")
+  const [prevTimer, setPrevTimer] = useState(0)
+  const [timerDiff, setTimerDiff] = useState(0)
 
   // Assuming that the round timer should always be styled for a 3 digit starting value
   useEffect(() => {
@@ -25,7 +28,25 @@ function PrivateRoomInfo({
     else if (roundTimer > 100) {
       setHiddenDigits("")
     }
+
+    setTimerDiff(prevTimer - roundTimer)
+    setPrevTimer(roundTimer)
   }, [roundTimer])
+
+  function getTimerClassName() {
+    let timerClassName = "timer"
+    if (roundTimer <= 15 && !isGameOver) {
+      timerClassName += "--low"
+    } else if (timerDiff > 30) {
+      timerClassName += "--big-drop"
+    } else if (timerDiff > 20) {
+      timerClassName += "--medium-drop"
+    } else if (timerDiff > 10) {
+      timerClassName += "--small-drop"
+    }
+    return timerClassName
+  }
+
   return (
     <>
       {connectionMode === "online-private" && roundCounter !== 0 && (
@@ -33,11 +54,7 @@ function PrivateRoomInfo({
           <span className="round-counter">
             Round: {roundCounter}/{maxRounds}
           </span>
-          <span
-            className={`timer${
-              roundTimer <= 15 && roundTimer > 0 ? "-low" : ""
-            }`}
-          >
+          <span className={getTimerClassName()}>
             <span className="clock" style={{ verticalAlign: "middle" }}>
               <LuClock12
                 style={{
