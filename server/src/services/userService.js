@@ -44,7 +44,13 @@ async function getAllUserInfoInRoom(roomId) {
   try {
     const room = getRoom(roomId)
     if (room instanceof Room) {
-      const allUserInfo = User.find({ userId: { $in: room.users } }).lean()
+      const allUserInfo = []
+      for (const userId of room.users) {
+        const user = await getUser(userId)
+        if (user) {
+          allUserInfo.push(user)
+        }
+      }
       return allUserInfo
     }
   } catch (error) {
