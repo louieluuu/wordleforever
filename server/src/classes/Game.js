@@ -85,26 +85,23 @@ export default class Game {
   ) {
     const allUserInfoMap = new Map()
 
-    await Promise.all(
-      users.map(async (userId) => {
-        const user = await getUser(userId)
-        if (user) {
-          allUserInfoMap.set(userId, {
-            username: user.username,
-            gameBoard: new Array(6)
-              .fill()
-              .map(() => new Array(5).fill({ letter: "", color: "" })),
-            streak: user.currStreak,
-            points: prevPoints.get(userId) || 0,
-            roundsWon: prevRoundsWon.get(userId) || 0,
-            roundsSolved: prevRoundsSolved.get(userId) || 0,
-            totalGuesses: prevTotalGuesses.get(userId) || 0,
-            totalTimeInRoundsSolved:
-              prevTotalTimeInRoundsSolved.get(userId) || 0,
-          })
-        }
-      })
-    )
+    for (const userId of users) {
+      const user = await getUser(userId)
+      if (user) {
+        allUserInfoMap.set(userId, {
+          username: user.username,
+          gameBoard: new Array(6)
+            .fill()
+            .map(() => new Array(5).fill({ letter: "", color: "" })),
+          streak: user.currStreak,
+          points: prevPoints.get(userId) || 0,
+          roundsWon: prevRoundsWon.get(userId) || 0,
+          roundsSolved: prevRoundsSolved.get(userId) || 0,
+          totalGuesses: prevTotalGuesses.get(userId) || 0,
+          totalTimeInRoundsSolved: prevTotalTimeInRoundsSolved.get(userId) || 0,
+        })
+      }
+    }
 
     return allUserInfoMap
   }
