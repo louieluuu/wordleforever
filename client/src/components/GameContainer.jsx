@@ -346,16 +346,7 @@ function GameContainer({
           return obj.userId === socket.id ? -1 : 1
         })
 
-        // Used to sort the users by points.
-        // To be passed in for rendering the PostGameDialog leaderboard.
-        const sortedByPoints = finalUserInfo.sort((a, b) => b.points - a.points)
-
-        if (socket.id === sortedByPoints[0].userId) {
-          playAudio(audioWinMatch)
-        }
-
         setUserInfo(sortedUserInfo)
-        setUserInfoSortedByPoints(sortedByPoints)
         setIsGameOver(true)
         setHasOnlineGameStarted(false)
       })
@@ -384,7 +375,16 @@ function GameContainer({
       }
     })
 
-    socket.on("endOfMatch", () => {
+    socket.on("endOfMatch", (finalUserInfo) => {
+      // Used to sort the users by points.
+      // To be passed in for rendering the PostGameDialog leaderboard.
+      const sortedByPoints = finalUserInfo.sort((a, b) => b.points - a.points)
+
+      if (socket.id === sortedByPoints[0].userId) {
+        playAudio(audioWinMatch)
+      }
+
+      setUserInfoSortedByPoints(sortedByPoints)
       setIsMatchOver(true)
       setShowPostGameDialog(true)
     })
@@ -393,7 +393,7 @@ function GameContainer({
       socket.off("newHost")
       socket.off("endOfMatch")
     }
-  }) // LOUIE: missing dep?
+  }, []) // LOUIE: missing dep?
 
   // Display solution as an alert
   useEffect(() => {
