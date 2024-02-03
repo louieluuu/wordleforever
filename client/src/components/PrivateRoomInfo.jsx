@@ -24,12 +24,12 @@ function PrivateRoomInfo({
   const [timerDiff, setTimerDiff] = useState(0)
 
   useEffect(() => {
-    setTimerDiff(prevTimer - roundTimer)
-    setPrevTimer(roundTimer)
-
     if (roundTimer !== 0 && roundTimer <= 15 && !isGameOver) {
       playAudio(audioTimerLow)
     }
+
+    setTimerDiff(prevTimer - roundTimer)
+    setPrevTimer(roundTimer)
   }, [roundTimer])
 
   function getTimerClassName() {
