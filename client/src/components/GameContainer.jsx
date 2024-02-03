@@ -757,6 +757,10 @@ function GameContainer({
     }
   }
 
+  function playAudio(howlObject) {
+    howlObject.play()
+  }
+
   function handleWin() {
     const winMessage =
       WIN_MESSAGES[Math.floor(Math.random() * WIN_MESSAGES.length)]
@@ -764,10 +768,6 @@ function GameContainer({
     setShowAlertModal(true)
     setIsConfettiRunning(true)
     playAudio(audioWin)
-  }
-
-  function playAudio(howlObject) {
-    howlObject.play()
   }
 
   function displaySolution() {
@@ -860,6 +860,7 @@ function GameContainer({
             isKeyboardLocked={isKeyboardLocked}
             showPostGameDialog={showPostGameDialog}
             setShowPostGameDialog={setShowPostGameDialog}
+            playAudio={playAudio}
           />
         </div>
       ) : (

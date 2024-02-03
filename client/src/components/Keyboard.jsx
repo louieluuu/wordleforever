@@ -3,11 +3,18 @@ import { useNavigate } from "react-router-dom"
 
 import { IoBackspaceOutline } from "react-icons/io5"
 import { IoReturnDownBackSharp } from "react-icons/io5"
-import { TfiArrowCircleUp } from "react-icons/tfi"
+import { MdKeyboardDoubleArrowUp } from "react-icons/md"
 
 // Helpers
 import { handleStartPublicGame } from "../helpers/socketHelpers"
-import { MdKeyboardDoubleArrowUp } from "react-icons/md"
+
+// Audio
+import { Howl } from "howler"
+
+import keyPressWbm from "../assets/audio/webm/key-press.webm"
+import keyPressMp3 from "../assets/audio/mp3/key-press.mp3"
+
+const audioKeyPress = new Howl({ src: [keyPressWbm, keyPressMp3] })
 
 function Keyboard({
   handleLetter,
@@ -26,6 +33,7 @@ function Keyboard({
   isKeyboardLocked,
   showPostGameDialog,
   setShowPostGameDialog,
+  playAudio,
 }) {
   const navigate = useNavigate()
 
@@ -46,6 +54,11 @@ function Keyboard({
       window.removeEventListener("keydown", onKeyPress)
     }
   }, [handleKeyPress])
+
+  function handleTouchStart(letter) {
+    playAudio(audioKeyPress)
+    handleKeyPress(letter)
+  }
 
   // Explanation: https://stackoverflow.com/questions/45612379/react-onclick-and-ontouchstart-fired-simultaneously
   // e.preventDefault() prevents the onClick event from firing after onTouchStart.
@@ -139,7 +152,7 @@ function Keyboard({
           <button
             key={index}
             className={getCellClassName(letter)}
-            onTouchStart={() => handleKeyPress(letter)}
+            onTouchStart={() => handleTouchStart(letter)}
             onTouchEnd={handleTouchEnd}
             onClick={() => handleKeyPress(letter)}
           >
@@ -152,7 +165,7 @@ function Keyboard({
           <button
             key={index}
             className={getCellClassName(letter)}
-            onTouchStart={() => handleKeyPress(letter)}
+            onTouchStart={() => handleTouchStart(letter)}
             onTouchEnd={handleTouchEnd}
             onClick={() => handleKeyPress(letter)}
           >
@@ -163,7 +176,7 @@ function Keyboard({
       <div className="keyboard__row">
         <div
           className="keyboard__cell--large"
-          onTouchStart={() => handleKeyPress("Enter")}
+          onTouchStart={() => handleTouchStart("Enter")}
           onTouchEnd={handleTouchEnd}
           onClick={() => handleKeyPress("Enter")}
         >
@@ -173,7 +186,7 @@ function Keyboard({
           <button
             key={index}
             className={getCellClassName(letter)}
-            onTouchStart={() => handleKeyPress(letter)}
+            onTouchStart={() => handleTouchStart(letter)}
             onTouchEnd={handleTouchEnd}
             onClick={() => handleKeyPress(letter)}
           >
@@ -183,7 +196,7 @@ function Keyboard({
         <div
           className="keyboard__cell--large--icon"
           key="Backspace"
-          onTouchStart={() => handleKeyPress("Backspace")}
+          onTouchStart={() => handleTouchStart("Backspace")}
           onTouchEnd={handleTouchEnd}
           onClick={() => handleKeyPress("Backspace")}
         >
