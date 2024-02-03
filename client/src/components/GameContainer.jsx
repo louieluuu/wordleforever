@@ -346,9 +346,13 @@ function GameContainer({
           return obj.userId === socket.id ? -1 : 1
         })
 
-        // Used to determine the winner of a private room.
-        // For displaying on the post game dialog.
+        // Used to sort the users by points.
+        // To be passed in for rendering the PostGameDialog leaderboard.
         const sortedByPoints = finalUserInfo.sort((a, b) => b.points - a.points)
+
+        if (socket.id === sortedByPoints[0].userId) {
+          playAudio(audioWinMatch)
+        }
 
         setUserInfo(sortedUserInfo)
         setUserInfoSortedByPoints(sortedByPoints)
