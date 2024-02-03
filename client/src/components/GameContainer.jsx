@@ -335,16 +335,8 @@ function GameContainer({
       )
 
       socket.on("finalUserInfo", (finalUserInfo) => {
-        if (connectionMode === "online-public") {
-          if (!isOutOfGuesses) {
-            playAudio(audioGameOver)
-          }
-        }
-
-        if (connectionMode === "online-private") {
-          if (!isOutOfGuesses || !hasSolved) {
-            playAudio(audioGameOver)
-          }
+        if (!isOutOfGuesses && !hasSolved) {
+          playAudio(audioGameOver)
         }
 
         const sortedUserInfo = finalUserInfo.sort((obj) => {
