@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
 import dotenv from "dotenv"
 
+// import.meta.env doesn't work in Node.js
 dotenv.config()
 
 const MONGO_DB_USER = process.env.MONGO_DB_USER
