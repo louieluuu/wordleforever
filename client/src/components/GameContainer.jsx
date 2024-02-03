@@ -28,6 +28,7 @@ import guess4Webm from "../assets/audio/webm/guess-4.webm"
 import guessInvalidWebm from "../assets/audio/webm/guess-invalid.webm"
 import opponentSolveWebm from "../assets/audio/webm/opponent-solve.webm"
 import solveWebm from "../assets/audio/webm/solve.webm"
+import timerLowWebm from "../assets/audio/webm/timer-low.webm"
 import winMatchWebm from "../assets/audio/webm/win-match.webm"
 import winRoundWebm from "../assets/audio/webm/win-round.webm"
 
@@ -40,6 +41,7 @@ import guess4Mp3 from "../assets/audio/mp3/guess-4.mp3"
 import guessInvalidMp3 from "../assets/audio/mp3/guess-invalid.mp3"
 import opponentSolveMp3 from "../assets/audio/mp3/opponent-solve.mp3"
 import solveMp3 from "../assets/audio/mp3/solve.mp3"
+import timerLowMp3 from "../assets/audio/mp3/timer-low.mp3"
 import winMatchMp3 from "../assets/audio/mp3/win-match.mp3"
 import winRoundMp3 from "../assets/audio/mp3/win-round.mp3"
 
@@ -58,6 +60,7 @@ const audioOpponentSolve = new Howl({
   src: [opponentSolveWebm, opponentSolveMp3],
 })
 const audioSolve = new Howl({ src: [solveWebm, solveMp3] })
+const audioTimerLow = new Howl({ src: [timerLowWebm, timerLowMp3] })
 const audioWinMatch = new Howl({ src: [winMatchWebm, winMatchMp3] })
 const audioWinRound = new Howl({ src: [winRoundWebm, winRoundMp3] })
 
@@ -224,6 +227,10 @@ function GameContainer({
       })
 
       socket.on("timerTick", (timer) => {
+        if (timer !== 0 && timer <= 15) {
+          playAudio(audioTimerLow)
+        }
+
         setRoundTimer(timer)
         setTimerIndex(timer % 4)
       })
@@ -287,6 +294,10 @@ function GameContainer({
       socket.on("opponentSolvedAudio", () => {
         let audio
         if (connectionMode === "online-public") {
+          // Already played the game over sound once; no need to play it again.
+          if (isOutOfGuesses) {
+            return
+          }
           audio = audioGameOver
         } else if (connectionMode === "online-private") {
           audio = audioOpponentSolve
@@ -356,7 +367,7 @@ function GameContainer({
         socket.off("finalUserInfo")
       }
     }
-  }, [hasOnlineGameStarted])
+  }, [hasOnlineGameStarted, isOutOfGuesses]) // LOUIE: added dep
 
   // These can't be in the main useEffect loop, as they need to happen outside of hasOnlineGameStarted logic (post round in private games)
   useEffect(() => {
@@ -375,7 +386,7 @@ function GameContainer({
       socket.off("newHost")
       socket.off("endOfMatch")
     }
-  })
+  }) // LOUIE: missing dep?
 
   // Display solution as an alert
   useEffect(() => {
