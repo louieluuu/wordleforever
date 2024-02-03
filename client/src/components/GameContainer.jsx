@@ -343,7 +343,7 @@ function GameContainer({
         socket.off("pointsUpdated")
         socket.off("streakUpdated")
         socket.off("firstSolve")
-        socket.off("solvedAudio")
+        socket.off("opponentSolvedAudio")
         socket.off("totalGuessesUpdated")
         socket.off("roundsSolvedUpdated")
         socket.off("totalTimeInRoundsSolvedUpdated")
