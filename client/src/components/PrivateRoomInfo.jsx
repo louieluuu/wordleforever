@@ -2,6 +2,15 @@ import React, { useState, useEffect } from "react"
 
 import { LuClock12 } from "react-icons/lu"
 
+// Audio
+import timerJiggleWebm from "../assets/audio/webm/timer-jiggle.webm"
+import timerJiggleMp3 from "../assets/audio/mp3/timer-jiggle.mp3"
+
+const audioTimerJiggle = new Howl({
+  src: [timerJiggleWebm, timerJiggleMp3],
+  volume: 0.75,
+})
+
 function PrivateRoomInfo({
   connectionMode,
   roundCounter,
@@ -10,14 +19,20 @@ function PrivateRoomInfo({
   maxRounds,
   isGameOver,
   hasSolved,
+  playAudio,
 }) {
   const [prevTimer, setPrevTimer] = useState(0)
   const [timerDiff, setTimerDiff] = useState(0)
 
   useEffect(() => {
-    setTimerDiff(prevTimer - roundTimer)
+    const newTimerDiff = prevTimer - roundTimer
+    if (!hasSolved && newTimerDiff > 10) {
+      playAudio(audioTimerJiggle)
+    }
+
+    setTimerDiff(newTimerDiff)
     setPrevTimer(roundTimer)
-  }, [roundTimer])
+  }, [roundTimer, hasSolved])
 
   function getTimerClassName() {
     let timerClassName = "timer"

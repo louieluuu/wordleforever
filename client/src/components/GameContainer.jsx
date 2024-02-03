@@ -844,6 +844,7 @@ function GameContainer({
           maxRounds={maxRounds}
           isGameOver={isGameOver}
           hasSolved={hasSolved}
+          playAudio={playAudio}
         />
       </div>
 
