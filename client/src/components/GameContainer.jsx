@@ -227,12 +227,12 @@ function GameContainer({
       })
 
       socket.on("timerTick", (timer) => {
+        setRoundTimer(timer)
+        setTimerIndex(timer % 4)
+
         if (timer !== 0 && timer <= 15) {
           playAudio(audioTimerLow)
         }
-
-        setRoundTimer(timer)
-        setTimerIndex(timer % 4)
       })
 
       socket.on("gameBoardsUpdated", (updatedUserId, updatedBoard) => {
