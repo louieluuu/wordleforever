@@ -2,6 +2,14 @@ import React, { useState, useEffect } from "react"
 
 import { LuClock12 } from "react-icons/lu"
 
+// Audio
+import { Howl } from "howler"
+
+import timerLowWebm from "../assets/audio/webm/timer-low.webm"
+import timerLowMp3 from "../assets/audio/mp3/timer-low.mp3"
+
+const audioTimerLow = new Howl({ src: [timerLowWebm, timerLowMp3] })
+
 function PrivateRoomInfo({
   connectionMode,
   roundCounter,
@@ -10,6 +18,7 @@ function PrivateRoomInfo({
   maxRounds,
   isGameOver,
   hasSolved,
+  playAudio,
 }) {
   const [prevTimer, setPrevTimer] = useState(0)
   const [timerDiff, setTimerDiff] = useState(0)
@@ -17,6 +26,10 @@ function PrivateRoomInfo({
   useEffect(() => {
     setTimerDiff(prevTimer - roundTimer)
     setPrevTimer(roundTimer)
+
+    if (roundTimer !== 0 && roundTimer <= 15 && !isGameOver) {
+      playAudio(audioTimerLow)
+    }
   }, [roundTimer])
 
   function getTimerClassName() {
