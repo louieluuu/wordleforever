@@ -292,17 +292,7 @@ function GameContainer({
       })
 
       socket.on("opponentSolvedAudio", () => {
-        let audio
-        if (connectionMode === "online-public") {
-          // Already played the game over sound once; no need to play it again.
-          if (isOutOfGuesses) {
-            return
-          }
-          audio = audioGameOver
-        } else if (connectionMode === "online-private") {
-          audio = audioOpponentSolve
-        }
-        playAudio(audio)
+        playAudio(audioOpponentSolve)
       })
 
       socket.on("totalGuessesUpdated", (updatedUserId, updatedTotalGuesses) => {
@@ -345,6 +335,18 @@ function GameContainer({
       )
 
       socket.on("finalUserInfo", (finalUserInfo) => {
+        if (connectionMode === "online-public") {
+          if (!isOutOfGuesses) {
+            playAudio(audioGameOver)
+          }
+        }
+
+        if (connectionMode === "online-private") {
+          if (!isOutOfGuesses || !hasSolved) {
+            playAudio(audioGameOver)
+          }
+        }
+
         const sortedUserInfo = finalUserInfo.sort((obj) => {
           return obj.userId === socket.id ? -1 : 1
         })
@@ -367,7 +369,7 @@ function GameContainer({
         socket.off("finalUserInfo")
       }
     }
-  }, [hasOnlineGameStarted, isOutOfGuesses]) // LOUIE: added dep
+  }, [hasOnlineGameStarted, isOutOfGuesses, hasSolved]) // LOUIE: added dep
 
   // These can't be in the main useEffect loop, as they need to happen outside of hasOnlineGameStarted logic (post round in private games)
   useEffect(() => {
@@ -850,7 +852,6 @@ function GameContainer({
           maxRounds={maxRounds}
           isGameOver={isGameOver}
           hasSolved={hasSolved}
-          playAudio={playAudio}
         />
       </div>
 
