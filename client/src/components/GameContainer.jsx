@@ -814,6 +814,7 @@ function GameContainer({
             connectionMode={connectionMode}
             maxRounds={maxRounds}
             roundCounter={roundCounter}
+            playAudio={playAudio}
           />
         )}
         {isConfettiRunning && (

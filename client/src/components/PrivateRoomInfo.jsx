@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react"
 import { LuClock12 } from "react-icons/lu"
 
 // Audio
+import { Howl } from "howler"
+
 import timerJiggleWebm from "../assets/audio/webm/timer-jiggle.webm"
 import timerJiggleMp3 from "../assets/audio/mp3/timer-jiggle.mp3"
 
