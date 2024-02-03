@@ -106,6 +106,7 @@ function GameContainer({
   // Online states
   const { roomId } = useParams()
   const [userInfo, setUserInfo] = useState([])
+  const [userInfoSortedByPoints, setUserInfoSortedByPoints] = useState([])
   const [challengeModeGuess, setChallengeModeGuess] = useState(null)
   const [isCountdownRunning, setIsCountdownRunning] = useState(false)
   const [hasOnlineGameStarted, setHasOnlineGameStarted] = useState(false)
@@ -339,10 +340,18 @@ function GameContainer({
           playAudio(audioGameOver)
         }
 
+        // Used to sort the users so the client's board always shows first.
+        // For displaying on the game boards.
         const sortedUserInfo = finalUserInfo.sort((obj) => {
           return obj.userId === socket.id ? -1 : 1
         })
+
+        // Used to determine the winner of a private room.
+        // For displaying on the post game dialog.
+        const sortedByPoints = finalUserInfo.sort((a, b) => b.points - a.points)
+
         setUserInfo(sortedUserInfo)
+        setUserInfoSortedByPoints(sortedByPoints)
         setIsGameOver(true)
         setHasOnlineGameStarted(false)
       })
@@ -856,7 +865,7 @@ function GameContainer({
               setShowPostGameDialog={setShowPostGameDialog}
               showScoreboard={showScoreboard}
               setShowScoreboard={setShowScoreboard}
-              userInfo={userInfo}
+              userInfoSortedByPoints={userInfoSortedByPoints}
               maxRounds={maxRounds}
             />
           )}

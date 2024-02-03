@@ -11,7 +11,7 @@ function PostGameDialog({
   setShowPostGameDialog,
   showScoreboard,
   setShowScoreboard,
-  userInfo,
+  userInfoSortedByPoints,
   maxRounds,
 }) {
   const flexStart = {
@@ -37,7 +37,6 @@ function PostGameDialog({
 
   // TODO: hanging variables?
   const closeButtonRef = useRef(null)
-  const orderedUsers = orderUserInfo()
 
   function handleSetShowPostGameDialog() {
     setShowPostGameDialog(false)
@@ -45,12 +44,6 @@ function PostGameDialog({
 
   function switchPage() {
     setShowScoreboard((prevState) => !prevState)
-  }
-
-  function orderUserInfo() {
-    const copyUserInfo = [...userInfo]
-    const sortedUsers = copyUserInfo.sort((a, b) => b.points - a.points)
-    return sortedUsers || []
   }
 
   return (
@@ -89,10 +82,10 @@ function PostGameDialog({
             {/* 1st place */}
             <div style={{ ...flexCenter, fontSize: "3rem" }}>👑</div>
             <div style={{ ...flexCenter, fontSize: "2rem" }}>
-              <b>1.&nbsp;</b> {orderedUsers[0].username}
+              <b>1.&nbsp;</b> {userInfoSortedByPoints[0].username}
             </div>
             <div style={{ ...flexCenter, fontSize: "1.5rem", opacity: "70%" }}>
-              {orderedUsers[0].points} pts
+              {userInfoSortedByPoints[0].points} pts
             </div>
 
             <br></br>
@@ -114,13 +107,13 @@ function PostGameDialog({
                   flex: 1,
                 }}
               >
-                <b>2.&nbsp;</b> {orderedUsers[1].username}
+                <b>2.&nbsp;</b> {userInfoSortedByPoints[1].username}
                 <div style={{ opacity: "50%" }}>
-                  {orderedUsers[1].points} pts
+                  {userInfoSortedByPoints[1].points} pts
                 </div>
               </div>
 
-              {orderedUsers.length > 2 && (
+              {userInfoSortedByPoints.length > 2 && (
                 <>
                   {/* 3rd place */}
                   <div
@@ -132,9 +125,9 @@ function PostGameDialog({
                     }}
                   >
                     <b>3.&nbsp;</b>
-                    {orderedUsers[2].username}
+                    {userInfoSortedByPoints[2].username}
                     <div style={{ opacity: "50%" }}>
-                      {orderedUsers[2].points} pts
+                      {userInfoSortedByPoints[2].points} pts
                     </div>
                   </div>
                 </>
@@ -144,10 +137,10 @@ function PostGameDialog({
             <br></br>
 
             {/* 4th place and below */}
-            {orderedUsers.length > 3 && (
+            {userInfoSortedByPoints.length > 3 && (
               <div style={flexColumn}>
                 <br></br>
-                {orderedUsers.slice(3).map((user, userIndex) => (
+                {userInfoSortedByPoints.slice(3).map((user, userIndex) => (
                   <div key={userIndex}>
                     {`${userIndex + 4}.`} {user.username}&nbsp;-&nbsp;
                     {user.points}
@@ -201,7 +194,7 @@ function PostGameDialog({
                     </tr>
                   </thead>
                   <tbody>
-                    {orderedUsers.map((user, userIndex) => (
+                    {userInfoSortedByPoints.map((user, userIndex) => (
                       <tr key={userIndex}>
                         <td>{user.username}</td>
                         <td>{user.points}</td>
