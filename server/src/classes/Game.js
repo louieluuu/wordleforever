@@ -22,7 +22,7 @@ const PRIVATE_GAME_TIMER = 120
 const PRIVATE_GAME_SOLVED_TIMER = 45
 const ROUND_BREAK_TIME = 7.5
 
-const PRIVATE_GAME_ROUND_LIMIT = 1
+const PRIVATE_GAME_ROUND_LIMIT = 10
 
 export default class Game {
   constructor() {
