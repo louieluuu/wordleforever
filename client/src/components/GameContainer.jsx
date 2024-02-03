@@ -25,9 +25,11 @@ import guess1Webm from "../assets/audio/webm/guess-1.webm"
 import guess2Webm from "../assets/audio/webm/guess-2.webm"
 import guess3Webm from "../assets/audio/webm/guess-3.webm"
 import guess4Webm from "../assets/audio/webm/guess-4.webm"
+import guessInvalidWebm from "../assets/audio/webm/guess-invalid.webm"
 import opponentSolveWebm from "../assets/audio/webm/opponent-solve.webm"
 import solveWebm from "../assets/audio/webm/solve.webm"
-import winWebm from "../assets/audio/webm/win.webm"
+import winMatchWebm from "../assets/audio/webm/win-match.webm"
+import winRoundWebm from "../assets/audio/webm/win-round.webm"
 
 import gameOverMp3 from "../assets/audio/mp3/game-over.mp3"
 import guess0Mp3 from "../assets/audio/mp3/guess-0.mp3"
@@ -35,9 +37,11 @@ import guess1Mp3 from "../assets/audio/mp3/guess-1.mp3"
 import guess2Mp3 from "../assets/audio/mp3/guess-2.mp3"
 import guess3Mp3 from "../assets/audio/mp3/guess-3.mp3"
 import guess4Mp3 from "../assets/audio/mp3/guess-4.mp3"
+import guessInvalidMp3 from "../assets/audio/mp3/guess-invalid.mp3"
 import opponentSolveMp3 from "../assets/audio/mp3/opponent-solve.mp3"
 import solveMp3 from "../assets/audio/mp3/solve.mp3"
-import winMp3 from "../assets/audio/mp3/win.mp3"
+import winMatchMp3 from "../assets/audio/mp3/win-match.mp3"
+import winRoundMp3 from "../assets/audio/mp3/win-round.mp3"
 
 // TODO: Placement of these?
 const audioGuesses = [
@@ -48,12 +52,14 @@ const audioGuesses = [
   new Howl({ src: [guess4Webm, guess4Mp3] }),
 ]
 
+const audioGuessInvalid = new Howl({ src: [guessInvalidWebm, guessInvalidMp3] })
 const audioGameOver = new Howl({ src: [gameOverWebm, gameOverMp3] })
 const audioOpponentSolve = new Howl({
   src: [opponentSolveWebm, opponentSolveMp3],
 })
 const audioSolve = new Howl({ src: [solveWebm, solveMp3] })
-const audioWin = new Howl({ src: [winWebm, winMp3] })
+const audioWinMatch = new Howl({ src: [winMatchWebm, winMatchMp3] })
+const audioWinRound = new Howl({ src: [winRoundWebm, winRoundMp3] })
 
 function GameContainer({
   isChallengeOn,
@@ -512,15 +518,18 @@ function GameContainer({
 
   function validateUserGuess(guess) {
     if (guess.length < 5) {
+      playAudio(audioGuessInvalid)
       setAlertMessage("Not enough letters")
       setShowAlertModal(true)
       return false
     } else if (!VALID_WORDS.includes(guess.toLowerCase())) {
+      playAudio(audioGuessInvalid)
       setAlertMessage("Not in word list")
       setShowAlertModal(true)
       return false
     } else if (isChallengeOn && !usesPreviousHints(guess).isValid) {
       if (usesPreviousHints(guess).failCondition.color === "green") {
+        playAudio(audioGuessInvalid)
         const index = usesPreviousHints(guess).failCondition.index
         const letter = usesPreviousHints(guess).failCondition.letter
         setAlertMessage(
@@ -530,6 +539,7 @@ function GameContainer({
         return false
       } else {
         const letter = usesPreviousHints(guess).failCondition.letter
+        playAudio(audioGuessInvalid)
         setAlertMessage(`'${letter}' must be included in the solution`)
         setShowAlertModal(true)
         return false
@@ -767,7 +777,7 @@ function GameContainer({
     setAlertMessage(winMessage)
     setShowAlertModal(true)
     setIsConfettiRunning(true)
-    playAudio(audioWin)
+    playAudio(audioWinRound)
   }
 
   function displaySolution() {
