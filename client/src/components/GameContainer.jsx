@@ -375,10 +375,11 @@ function GameContainer({
       }
     })
 
-    socket.on("endOfMatch", (finalUserInfo) => {
+    socket.on("endOfMatch", () => {
       // Used to sort the users by points.
       // To be passed in for rendering the PostGameDialog leaderboard.
-      const sortedByPoints = finalUserInfo.sort((a, b) => b.points - a.points)
+      const copyUserInfo = [...userInfo]
+      const sortedByPoints = copyUserInfo.sort((a, b) => b.points - a.points)
 
       if (socket.id === sortedByPoints[0].userId) {
         playAudio(audioWinMatch)
@@ -393,7 +394,7 @@ function GameContainer({
       socket.off("newHost")
       socket.off("endOfMatch")
     }
-  }, []) // LOUIE: missing dep?
+  }, [userInfo])
 
   // Display solution as an alert
   useEffect(() => {
