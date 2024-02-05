@@ -176,7 +176,7 @@ function Keyboard({
       <div className="keyboard__row">
         <div
           className="keyboard__cell--large"
-          onTouchStart={() => handleTouchStart("Enter")}
+          onTouchStart={() => handleKeyPress("Enter")}
           onTouchEnd={handleTouchEnd}
           onClick={() => handleKeyPress("Enter")}
         >
