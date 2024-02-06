@@ -14,7 +14,10 @@ import { Howl } from "howler"
 import keyPressWbm from "../assets/audio/webm/key-press.webm"
 import keyPressMp3 from "../assets/audio/mp3/key-press.mp3"
 
-const audioKeyPress = new Howl({ src: [keyPressWbm, keyPressMp3] })
+const audioKeyPress = new Howl({
+  src: [keyPressWbm, keyPressMp3],
+  volume: 0.1,
+})
 
 function Keyboard({
   handleLetter,
