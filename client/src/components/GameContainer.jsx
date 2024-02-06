@@ -472,6 +472,7 @@ function GameContainer({
     setIsSpectating(false)
     setShowPostGameDialog(false)
     setShowScoreboard(true)
+    setWinningUserId("")
   }
 
   function handleLetter(e) {

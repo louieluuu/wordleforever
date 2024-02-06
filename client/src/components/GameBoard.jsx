@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { IoIosFlame } from "react-icons/io"
+import star from "../assets/star.svg"
 
 import AlertModal from "./AlertModal"
 
@@ -230,31 +231,41 @@ function GameBoard({
           </>
         )}
       </div>
-      {!isCompressed ? (
-        board.map((row, rowIndex) => (
-          <div key={rowIndex} className={getRowClassName()}>
-            {row.map((cell, cellIndex) => (
+      <div className="board">
+        {!isCompressed ? (
+          board.map((row, rowIndex) => (
+            <div key={rowIndex} className={getRowClassName()}>
+              {row.map((cell, cellIndex) => (
+                <div
+                  key={cellIndex}
+                  className={getCellClassName(board, rowIndex, cellIndex)}
+                >
+                  {cell.letter}
+                </div>
+              ))}
+            </div>
+          ))
+        ) : (
+          <div className={getRowClassName()}>
+            {board[lastRowIndex].map((cell, cellIndex) => (
               <div
                 key={cellIndex}
-                className={getCellClassName(board, rowIndex, cellIndex)}
+                className={getCellClassName(board, lastRowIndex, cellIndex)}
               >
                 {cell.letter}
               </div>
             ))}
           </div>
-        ))
-      ) : (
-        <div className={getRowClassName()}>
-          {board[lastRowIndex].map((cell, cellIndex) => (
-            <div
-              key={cellIndex}
-              className={getCellClassName(board, lastRowIndex, cellIndex)}
-            >
-              {cell.letter}
+        )}
+        {connectionMode === "online-private" &&
+          !isUser &&
+          winningUser &&
+          !isGameOver && (
+            <div className="winner-star">
+              <img src={star} alt="Star" />
             </div>
-          ))}
-        </div>
-      )}
+          )}
+      </div>
     </div>
   )
 }
