@@ -125,13 +125,6 @@ export default class Game {
     }
   }
 
-  getRoundsWon(userId) {
-    const userInfo = this.allUserInfo.get(userId)
-    if (userInfo) {
-      return userInfo.roundsWon
-    }
-  }
-
   getAllRoundsWon() {
     const allRoundsWonMapping = new Map()
     this.allUserInfo.forEach((userInfo, userId) => {
@@ -145,13 +138,6 @@ export default class Game {
     const userInfo = this.allUserInfo.get(userId)
     if (userInfo) {
       userInfo.roundsWon += 1
-    }
-  }
-
-  getRoundsSolved(userId) {
-    const userInfo = this.allUserInfo.get(userId)
-    if (userInfo) {
-      return userInfo.roundsSolved
     }
   }
 
@@ -171,13 +157,6 @@ export default class Game {
     }
   }
 
-  getTotalGuesses(userId) {
-    const userInfo = this.allUserInfo.get(userId)
-    if (userInfo) {
-      return userInfo.totalGuesses
-    }
-  }
-
   getAllTotalGuesses() {
     const allTotalGuessesMapping = new Map()
     this.allUserInfo.forEach((userInfo, userId) => {
@@ -191,13 +170,6 @@ export default class Game {
     const userInfo = this.allUserInfo.get(userId)
     if (userInfo) {
       userInfo.totalGuesses += 1
-    }
-  }
-
-  getTotalTimeInRoundsSolved(userId) {
-    const userInfo = this.allUserInfo.get(userId)
-    if (userInfo) {
-      return userInfo.totalTimeInRoundsSolved
     }
   }
 
@@ -437,46 +409,10 @@ export default class Game {
     }
   }
 
-  broadcastRoundsSolved(roomId, userId, io) {
-    if (roomId) {
-      io.to(roomId).emit(
-        "roundsSolvedUpdated",
-        userId,
-        this.getRoundsSolved(userId)
-      )
-    } else {
-      console.error("Invalid roomId for broadcasting rounds solved")
-    }
-  }
-
-  broadcastTotalGuesses(roomId, userId, io) {
-    if (roomId) {
-      io.to(roomId).emit(
-        "totalGuessesUpdated",
-        userId,
-        this.getTotalGuesses(userId)
-      )
-    } else {
-      console.error("Invalid roomId for broadcasting total guesses")
-    }
-  }
-
-  broadcastTotalTimeInRoundsSolved(roomId, userId, io) {
-    if (roomId) {
-      io.to(roomId).emit(
-        "totalTimeInRoundsSolvedUpdated",
-        userId,
-        this.getTotalTimeInRoundsSolved(userId)
-      )
-    } else {
-      console.error("Invalid roomId for broadcasting time to solve")
-    }
-  }
-
   broadcastFirstSolve(roomId, userId, io) {
     if (roomId) {
       this.incrementRoundsWon(userId)
-      io.to(roomId).emit("firstSolve", userId, this.getRoundsWon(userId))
+      io.to(roomId).emit("firstSolve", userId)
     } else {
       console.error("Invalid roomId for broadcasting first solve")
     }

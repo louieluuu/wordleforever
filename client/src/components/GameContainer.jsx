@@ -276,64 +276,16 @@ function GameContainer({
         })
       })
 
-      socket.on("firstSolve", (firstSolveUserId, roundsWon) => {
+      socket.on("firstSolve", (firstSolveUserId) => {
         setWinningUserId(firstSolveUserId)
         if (socket.id === firstSolveUserId) {
           handleWin()
         }
-        setUserInfo((prevUserInfo) => {
-          const updatedUserInfo = [...prevUserInfo]
-          updatedUserInfo.forEach((obj) => {
-            if (obj.userId === firstSolveUserId) {
-              obj.roundsWon = roundsWon
-            }
-          })
-          return updatedUserInfo
-        })
       })
 
       socket.on("opponentSolvedAudio", () => {
         playAudio(audioOpponentSolve)
       })
-
-      socket.on("totalGuessesUpdated", (updatedUserId, updatedTotalGuesses) => {
-        setUserInfo((prevUserInfo) => {
-          const updatedUserInfo = [...prevUserInfo]
-          updatedUserInfo.forEach((obj) => {
-            if (obj.userId === updatedUserId) {
-              obj.totalGuesses = updatedTotalGuesses
-            }
-          })
-          return updatedUserInfo
-        })
-      })
-
-      socket.on("roundsSolvedUpdated", (updatedUserId, updatedRoundsSolved) => {
-        setUserInfo((prevUserInfo) => {
-          const updatedUserInfo = [...prevUserInfo]
-          updatedUserInfo.forEach((obj) => {
-            if (obj.userId === updatedUserId) {
-              obj.totalGuesses = updatedRoundsSolved
-            }
-          })
-          return updatedUserInfo
-        })
-      })
-
-      socket.on(
-        "totalTimeInRoundsSolvedUpdated",
-        (updatedUserId, updatedTotalTimeInRoundsSolved) => {
-          setUserInfo((prevUserInfo) => {
-            const updatedUserInfo = [...prevUserInfo]
-            updatedUserInfo.forEach((obj) => {
-              if (obj.userId === updatedUserId) {
-                obj.totalTimeInRoundsSolved = updatedTotalTimeInRoundsSolved
-              }
-            })
-            return updatedUserInfo
-          })
-        }
-      )
 
       socket.on("finalUserInfo", (finalUserInfo) => {
         if (!isOutOfGuesses && !hasSolved) {
@@ -359,9 +311,6 @@ function GameContainer({
         socket.off("streakUpdated")
         socket.off("firstSolve")
         socket.off("opponentSolvedAudio")
-        socket.off("totalGuessesUpdated")
-        socket.off("roundsSolvedUpdated")
-        socket.off("totalTimeInRoundsSolvedUpdated")
         socket.off("finalUserInfo")
       }
     }

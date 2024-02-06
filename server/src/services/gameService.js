@@ -107,7 +107,6 @@ function handleWrongGuess(roomId, userId, updatedGameBoard, io) {
     game.setGameBoard(userId, updatedGameBoard)
     game.broadcastGameBoard(roomId, userId, io)
     game.incrementTotalGuesses(userId)
-    game.broadcastTotalGuesses(roomId, userId, io)
   }
 }
 
@@ -127,13 +126,10 @@ async function handleCorrectGuess(
         game.broadcastPoints(roomId, userId, io)
         // Total guesses
         game.incrementTotalGuesses(userId)
-        game.broadcastTotalGuesses(roomId, userId, io)
         // Rounds solved
         game.incrementRoundsSolved(userId)
-        game.broadcastRoundsSolved(roomId, userId, io)
         // Total time in rounds solved
         game.incrementTotalTimeInRoundsSolved(userId)
-        game.broadcastTotalTimeInRoundsSolved(roomId, userId, io)
         if (game.countSolved === 0) {
           game.broadcastFirstSolve(roomId, userId, io)
         }
