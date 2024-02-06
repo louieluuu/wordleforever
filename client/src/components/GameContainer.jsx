@@ -376,6 +376,17 @@ function GameContainer({
     })
 
     socket.on("endOfMatch", () => {
+      setIsMatchOver(true)
+    })
+
+    return () => {
+      socket.off("newHost")
+      socket.off("endOfMatch")
+    }
+  }, [])
+
+  useEffect(() => {
+    if (isGameOver && isMatchOver) {
       // Used to sort the users by points.
       // To be passed in for rendering the PostGameDialog leaderboard.
       const copyUserInfo = [...userInfo]
@@ -386,15 +397,9 @@ function GameContainer({
       }
 
       setUserInfoSortedByPoints(sortedByPoints)
-      setIsMatchOver(true)
       setShowPostGameDialog(true)
-    })
-
-    return () => {
-      socket.off("newHost")
-      socket.off("endOfMatch")
     }
-  }, [userInfo])
+  }, [isGameOver, isMatchOver])
 
   // Display solution as an alert
   useEffect(() => {
