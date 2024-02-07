@@ -10,7 +10,7 @@ const SERVER_URL =
 const socket = io(SERVER_URL, { transports: ["websocket"] })
 
 socket.on("connect", () => {
-  console.log(`Connected to server with ID: ${socket.id}.`)
+  console.log(`Connected to server with socket ID: ${socket.id}.`)
 
   // Using the native Firebase method instead of the react-firebase-hook.
   // Hooks can only be used in function components, which would require

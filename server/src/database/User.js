@@ -11,8 +11,11 @@ import { mongoose } from "./db.js"
 // ID, max streak, curr streak, total games, total wins, total guesses, total time in games won, points
 
 const UserSchema = new mongoose.Schema({
+  _id: String,
+
   userId: String,
-  username: String,
+  displayName: String,
+
   currStreak: { type: Number, default: 0 },
   maxStreak: { type: Number, default: 0 },
   totalGames: { type: Number, default: 0 },
