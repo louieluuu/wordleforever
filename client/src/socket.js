@@ -10,7 +10,7 @@ const SERVER_URL =
 const socket = io(SERVER_URL, { transports: ["websocket"] })
 
 socket.on("connect", () => {
-  console.log(`Connected to server with socket ID: ${socket.id}.`)
+  console.log(`Connected to server with socketId: ${socket.id}`)
 
   socket.randomId = 123
 
@@ -23,7 +23,7 @@ socket.on("connect", () => {
     if (userId) {
       console.log(`Auth successful with userId: ${userId}`)
     } else {
-      console.log("No auth.")
+      console.log("No auth")
     }
 
     socket.emit("newConnection", userId)
@@ -31,7 +31,7 @@ socket.on("connect", () => {
 })
 
 socket.on("disconnect", () => {
-  console.log("Disconnected from server.")
+  console.log("Disconnected from server")
 })
 
 export default socket

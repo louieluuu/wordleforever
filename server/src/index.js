@@ -15,10 +15,11 @@ import {
 
 // Services
 import {
+  handleNewConnection,
+  createNewUser,
   handleUsernameUpdate,
   handleUserDisconnect,
   handleLeaveRoom,
-  createNewUser,
 } from "./services/userService.js"
 import {
   handleLoadUser,
@@ -44,12 +45,9 @@ const io = new Server(server, {
 })
 
 io.on("connection", (socket) => {
-  console.log(`A user connected: ${socket.id}`)
+  console.log(`A user connected with socketId: ${socket.id}`)
 
-  socket.on("newConnection", (userId) => {
-    // Attaching custom property "userId" to socket.
-    socket.userId = userId
-  })
+  socket.on("newConnection", (userId) => handleNewConnection(userId, socket))
 
   socket.on("createNewUser", (userId) => createNewUser(userId))
 

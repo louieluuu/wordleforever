@@ -3,6 +3,7 @@ import User from "../database/User.js"
 
 // Classes
 import Room from "../classes/Room.js"
+import Guest from "../classes/Guest.js"
 
 // Services
 import {
@@ -16,6 +17,27 @@ import {
   isUserHostInRoom,
   generateNewHostInRoom,
 } from "./roomService.js"
+
+const Guests = new Map()
+
+function createNewGuest(socketId) {
+  const newGuest = new Guest(socketId)
+  Guests.set(socketId, newGuest)
+
+  console.log(`New guest created with socketId: ${socketId}`)
+}
+
+function handleNewConnection(userId, socket) {
+  // Attaching custom property "userId" to socket.
+  // It is either the Firebase Auth id string, or null if not a user.
+  // Following this function, we will call socket.userId in lieu of
+  // passing around the actual userId variable from the client side.
+  socket.userId = userId
+
+  if (!socket.userId) {
+    createNewGuest(socket.id)
+  }
+}
 
 async function createNewUser(userId) {
   try {
@@ -132,9 +154,10 @@ async function broadcastUserInfo(roomId, io) {
 }
 
 async function handleUserDisconnect(socket, io) {
-  console.log(`User ${socket.id} disconnected`)
+  console.log(`A user disconnected with socketId: ${socket.id}`)
   handleLeaveRoom(socket, io)
-  deleteUser(socket.id)
+  Guests.delete(socket.id)
+  console.log(`Guest ${socket.id} removed from Guests map`)
 }
 
 async function handleLeaveRoom(socket, io) {
@@ -156,6 +179,8 @@ async function handleLeaveRoom(socket, io) {
 }
 
 export {
+  handleNewConnection,
+  createNewGuest,
   createNewUser,
   getUser,
   getAllUserInfoInRoom,
