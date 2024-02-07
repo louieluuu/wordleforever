@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"
+import socket from "../socket"
 
 import { useNavigate } from "react-router-dom"
 import useSetRoomId from "../helpers/useSetRoomId"
@@ -19,6 +20,8 @@ function RegisterPage({ setRoomId }) {
   // Redirect to home page once user is logged in.
   useEffect(() => {
     if (user) {
+      const userId = user.user.uid
+      socket.emit("createNewUser", userId)
       navigate("/")
     }
   }, [user])

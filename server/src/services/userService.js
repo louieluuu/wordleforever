@@ -17,11 +17,13 @@ import {
   generateNewHostInRoom,
 } from "./roomService.js"
 
-async function initializeUserInfo(userId) {
+async function createNewUser(userId) {
   try {
-    const user = new User({ userId })
-    await user.save()
-    return user
+    const existingUser = await User.findById(userId).lean()
+    if (!existingUser) {
+      const newUser = new User({ _id: userId, userId })
+      await newUser.save()
+    }
   } catch (error) {
     console.error(
       `Error initializing user info in the database: ${error.message}`
@@ -154,7 +156,7 @@ async function handleLeaveRoom(socket, io) {
 }
 
 export {
-  initializeUserInfo,
+  createNewUser,
   getUser,
   getAllUserInfoInRoom,
   setUsername,

@@ -18,7 +18,7 @@ import {
   handleUsernameUpdate,
   handleUserDisconnect,
   handleLeaveRoom,
-  initializeUserInfo,
+  createNewUser,
 } from "./services/userService.js"
 import {
   handleLoadUser,
@@ -45,7 +45,8 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   console.log(`A user connected: ${socket.id}`)
-  initializeUserInfo(socket.id)
+
+  socket.on("createNewUser", (userId) => createNewUser(userId))
 
   // Interact with WaitingRoom component
   // Find match
