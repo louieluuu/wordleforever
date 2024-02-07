@@ -11,11 +11,11 @@ import { handleStartPublicGame } from "../helpers/socketHelpers"
 // Audio
 import { Howl } from "howler"
 
-import keyPressWbm from "../assets/audio/webm/key-press.webm"
+import keyPressWebm from "../assets/audio/webm/key-press.webm"
 import keyPressMp3 from "../assets/audio/mp3/key-press.mp3"
 
 const audioKeyPress = new Howl({
-  src: [keyPressWbm, keyPressMp3],
+  src: [keyPressWebm, keyPressMp3],
   volume: 0.1,
 })
 
