@@ -12,8 +12,6 @@ const socket = io(SERVER_URL, { transports: ["websocket"] })
 socket.on("connect", () => {
   console.log(`Connected to server with socketId: ${socket.id}`)
 
-  socket.randomId = 123
-
   // Using the native Firebase method instead of the react-firebase-hook.
   // Hooks can only be used in function components, which would require
   // turning socket.js into an empty-render Socket component.
