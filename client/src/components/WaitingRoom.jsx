@@ -110,6 +110,7 @@ function WaitingRoom({
     }
   }, [joinRoom])
 
+  // TODO: Don't like this placement here, I think it should belong with nicknameform.
   // Keep displayName up to date
   useEffect(() => {
     socket.emit("updateDisplayName", roomId, displayName)

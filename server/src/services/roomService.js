@@ -67,7 +67,14 @@ function isUserHostInRoom(roomId, userId) {
 function generateNewHostInRoom(roomId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room && room.userInfo.size > 0) {
+    console.log(
+      `room.userInfo after host left: ${JSON.stringify([
+        ...room.userInfo.entries(),
+      ])}`
+    )
+
     const firstUserId = room.userInfo.keys().next().value
+    console.log(`New host: ${firstUserId}`)
     room.hostUserId = firstUserId
     return room.hostUserId
   }
@@ -169,8 +176,12 @@ function areAllUsersLoaded(roomId) {
 }
 
 function addUserToRoom(socket, displayName, roomId) {
-  // Attaching custom roomId property to socket.
+  // TODO
+  // Attaching custom properties to socket.
+  // Handles the case where users join by pasting a link,
+  // but feels awfully hacky.
   socket.join(roomId)
+  socket.userId = socket.userId || socket.id
   socket.roomId = roomId
 
   const userObject = { displayName: displayName, currStreak: 0 } // TODO actual streak mia

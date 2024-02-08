@@ -25,6 +25,8 @@ function handleNewConnection(userId, socket) {
   // Following this function, we will call socket.userId in lieu of
   // passing around the actual userId variable from the client side.
   socket.userId = userId || socket.id
+
+  console.log(`From handleNewConnection: ${socket.userId}`)
 }
 
 async function createNewUser(userId) {
