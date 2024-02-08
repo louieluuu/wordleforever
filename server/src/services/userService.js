@@ -55,8 +55,16 @@ async function createNewUser(userId) {
 }
 
 async function getUser(userId) {
+  if (Guests.has(userId)) {
+    const guest = Guests.get(userId)
+    return guest
+  }
+
   try {
-    const user = await User.findOne({ userId }).lean()
+    const user = await User.findById(userId).lean()
+    if (!user) {
+      console.error(`No guest or user found with userId: ${userId}`)
+    }
     return user
   } catch (error) {
     console.error(`Error getting user info from the database: ${error.message}`)
@@ -65,29 +73,25 @@ async function getUser(userId) {
 }
 
 async function getAllUserInfoInRoom(roomId) {
+  const userIds = getUsersInRoom(roomId)
+
   try {
-    const room = getRoom(roomId)
-    if (room instanceof Room) {
+    if (userIds) {
       const allUserInfo = []
-      for (const userId of room.users) {
+
+      for (const userId of userIds) {
         const user = await getUser(userId)
         if (user) {
           allUserInfo.push(user)
         }
       }
+
+      console.log(`allUserInfo: ${JSON.stringify(allUserInfo)}`)
+
       return allUserInfo
     }
   } catch (error) {
     console.error(`Error getting user info from room: ${error.message}`)
-    throw error
-  }
-}
-
-async function deleteUser(userId) {
-  try {
-    await User.deleteOne({ userId })
-  } catch (error) {
-    console.error(`Error deleting user from the database: ${error.message}`)
     throw error
   }
 }

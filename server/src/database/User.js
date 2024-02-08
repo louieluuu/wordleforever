@@ -11,6 +11,10 @@ import { mongoose } from "./db.js"
 // ID, max streak, curr streak, total games, total wins, total guesses, total time in games won, points
 
 const UserSchema = new mongoose.Schema({
+  // Special property that is automatically indexed by MongoDB,
+  // resulting in faster queries by using findById().
+  // During user creation, _id is set to the Firebase user's (unique) uid.
+  // By specifying the type as String, we can use the Firebase uid directly.
   _id: String,
 
   userId: String,

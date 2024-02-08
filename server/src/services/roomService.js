@@ -196,6 +196,7 @@ function getUsersInRoom(roomId) {
   if (room && room instanceof Room) {
     return room.users
   }
+  return [] // LOUIE: are we missing error checks
 }
 
 function isUserInRoom(roomId, userId) {
