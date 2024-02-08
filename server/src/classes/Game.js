@@ -89,7 +89,7 @@ export default class Game {
       const user = await getUser(userId)
       if (user) {
         allUserInfoMap.set(userId, {
-          username: user.username,
+          displayName: user.displayName,
           gameBoard: new Array(6)
             .fill()
             .map(() => new Array(5).fill({ letter: "", color: "" })),

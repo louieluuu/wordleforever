@@ -82,7 +82,7 @@ function PostGameDialog({
             {/* 1st place */}
             <div style={{ ...flexCenter, fontSize: "3rem" }}>👑</div>
             <div style={{ ...flexCenter, fontSize: "2rem" }}>
-              <b>1.&nbsp;</b> {userInfoSortedByPoints[0].username}
+              <b>1.&nbsp;</b> {userInfoSortedByPoints[0].displayName}
             </div>
             <div style={{ ...flexCenter, fontSize: "1.5rem", opacity: "70%" }}>
               {userInfoSortedByPoints[0].points} pts
@@ -107,7 +107,7 @@ function PostGameDialog({
                   flex: 1,
                 }}
               >
-                <b>2.&nbsp;</b> {userInfoSortedByPoints[1].username}
+                <b>2.&nbsp;</b> {userInfoSortedByPoints[1].displayName}
                 <div style={{ opacity: "50%" }}>
                   {userInfoSortedByPoints[1].points} pts
                 </div>
@@ -125,7 +125,7 @@ function PostGameDialog({
                     }}
                   >
                     <b>3.&nbsp;</b>
-                    {userInfoSortedByPoints[2].username}
+                    {userInfoSortedByPoints[2].displayName}
                     <div style={{ opacity: "50%" }}>
                       {userInfoSortedByPoints[2].points} pts
                     </div>
@@ -142,7 +142,7 @@ function PostGameDialog({
                 <br></br>
                 {userInfoSortedByPoints.slice(3).map((user, userIndex) => (
                   <div key={userIndex}>
-                    {`${userIndex + 4}.`} {user.username}&nbsp;-&nbsp;
+                    {`${userIndex + 4}.`} {user.displayName}&nbsp;-&nbsp;
                     {user.points}
                   </div>
                 ))}
@@ -196,7 +196,7 @@ function PostGameDialog({
                   <tbody>
                     {userInfoSortedByPoints.map((user, userIndex) => (
                       <tr key={userIndex}>
-                        <td>{user.username}</td>
+                        <td>{user.displayName}</td>
                         <td>{user.points}</td>
                         <td>{user.roundsWon}</td>
                         <td>{user.roundsSolved}</td>

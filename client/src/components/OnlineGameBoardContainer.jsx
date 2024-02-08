@@ -71,7 +71,7 @@ function OnlineGameBoardContainer({
                 board={board}
                 activeRow={activeRow}
                 activeCell={activeCell}
-                username={userInfo[0].username}
+                displayName={userInfo[0].displayName}
                 points={userInfo[0].points}
                 streak={userInfo[0].streak}
                 connectionMode={connectionMode}
@@ -95,7 +95,7 @@ function OnlineGameBoardContainer({
                     <div key={obj.userId} className="other-board-container">
                       <GameBoard
                         board={obj.gameBoard}
-                        username={obj.username}
+                        displayName={obj.displayName}
                         points={obj.points}
                         streak={obj.streak}
                         connectionMode={connectionMode}
@@ -111,7 +111,7 @@ function OnlineGameBoardContainer({
                     <div key={obj.userId} className="other-board-container">
                       <GameBoard
                         board={obj.gameBoard}
-                        username={obj.username}
+                        displayName={obj.displayName}
                         points={obj.points}
                         streak={obj.streak}
                         connectionMode={connectionMode}
@@ -135,7 +135,7 @@ function OnlineGameBoardContainer({
                   <GameBoard
                     key={obj.userId}
                     board={obj.gameBoard}
-                    username={obj.username}
+                    displayName={obj.displayName}
                     points={obj.points}
                     streak={obj.streak}
                     connectionMode={connectionMode}
@@ -153,7 +153,7 @@ function OnlineGameBoardContainer({
                   <GameBoard
                     key={obj.userId}
                     board={obj.gameBoard}
-                    username={obj.username}
+                    displayName={obj.displayName}
                     points={obj.points}
                     streak={obj.streak}
                     connectionMode={connectionMode}

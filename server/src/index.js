@@ -17,7 +17,7 @@ import {
 import {
   handleNewConnection,
   createNewUser,
-  handleUsernameUpdate,
+  handleDisplayNameUpdate,
   handleUserDisconnect,
   handleLeaveRoom,
 } from "./services/userService.js"
@@ -64,11 +64,9 @@ io.on("connection", (socket) => {
   socket.on("joinRoom", (roomId, displayName) =>
     joinRoom(roomId, displayName, io, socket)
   )
-  // Username update
-  socket.on(
-    "updateUsername",
-    async (roomId, username) =>
-      await handleUsernameUpdate(roomId, socket.id, username, io)
+  // DisplayName update
+  socket.on("updateDisplayName", (roomId, displayName) =>
+    handleDisplayNameUpdate(roomId, socket.id, displayName, io)
   )
   // Start countdown before starting the game -> navigate to game room
   socket.on("startCountdown", (roomId) => handleCountdownStart(roomId, io))

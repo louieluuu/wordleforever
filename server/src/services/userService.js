@@ -61,19 +61,19 @@ async function createNewUser(userId) {
 //   }
 // }
 
-function setUsername(userId, username) {
+function setDisplayName(userId, displayName) {
   // try {
-  //   await User.updateOne({ userId }, { $set: { username } })
+  //   await User.updateOne({ userId }, { $set: { displayName } })
   // } catch (error) {
-  //   console.error(`Error setting username in the database: ${error.message}`)
+  //   console.error(`Error setting displayName in the database: ${error.message}`)
   //   throw error
   // }
 }
 
-// Already need to be in the room to keep username up to date with changes
-async function handleUsernameUpdate(roomId, userId, username, io) {
+// Already need to be in the room to keep displayName up to date with changes
+async function handleDisplayNameUpdate(roomId, userId, displayName, io) {
   if (roomInLobby(roomId) && isUserInRoom(roomId, userId)) {
-    await setUsername(userId, username)
+    await setDisplayName(userId, displayName)
     broadcastRoomUserInfo(roomId, io)
   }
 }
@@ -141,8 +141,8 @@ export {
   handleNewConnection,
   createNewUser,
   // getUser,
-  setUsername,
-  handleUsernameUpdate,
+  setDisplayName,
+  handleDisplayNameUpdate,
   handleUserStreakUpdates,
   handleUserStreakReset,
   handleUserDisconnect,

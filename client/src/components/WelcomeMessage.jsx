@@ -1,8 +1,13 @@
 import React, { useRef, useLayoutEffect } from "react"
 import { HiOutlinePencilSquare } from "react-icons/hi2"
 
-function WelcomeMessage({ username, setUsername, inputWidth, setInputWidth }) {
-  const usernameRef = useRef(null)
+function WelcomeMessage({
+  displayName,
+  setDisplayName,
+  inputWidth,
+  setInputWidth,
+}) {
+  const displayNameRef = useRef(null)
   /** Seems a bit hacky but works, uses a hidden span element to measure the width and sets the input box size to that width. Dynamically sizing the input box was tricky */
   // const textWidthRef = useRef(null)
 
@@ -11,38 +16,38 @@ function WelcomeMessage({ username, setUsername, inputWidth, setInputWidth }) {
   //     const textWidth = textWidthRef.current.clientWidth
   //     setInputWidth(textWidth + 10)
   //   }
-  // }, [username, textWidthRef])
+  // }, [displayName, textWidthRef])
 
-  function handleUserNameChange(e) {
-    const updatedUsername = e.target.value
+  function handleDisplayNameChange(e) {
+    const updatedDisplayName = e.target.value
 
     // Check if the input is empty or contains only spaces
-    if (e.type === "blur" && updatedUsername === "") {
-      setUsername("Wordler")
+    if (e.type === "blur" && updatedDisplayName === "") {
+      setDisplayName("Wordler")
     } else {
       // Enforce a length limit
-      if (updatedUsername.length > 20) {
+      if (updatedDisplayName.length > 20) {
         return
       }
-      setUsername(updatedUsername)
-      localStorage.setItem("username", updatedUsername)
+      setDisplayName(updatedDisplayName)
+      localStorage.setItem("displayName", updatedDisplayName)
     }
   }
 
   function setCaretInvisible() {
-    usernameRef.current.style.caretColor = "transparent"
+    displayNameRef.current.style.caretColor = "transparent"
   }
 
   function setCaretPosition() {
     // This hsl works pretty well for both light and dark mode.
-    usernameRef.current.style.caretColor = "hsl(50, 50%, 40%)"
-    const length = usernameRef.current.value.length
-    usernameRef.current.setSelectionRange(length, length)
+    displayNameRef.current.style.caretColor = "hsl(50, 50%, 40%)"
+    const length = displayNameRef.current.value.length
+    displayNameRef.current.setSelectionRange(length, length)
   }
 
-  function focusUsernameForm() {
-    if (usernameRef.current) {
-      usernameRef.current.focus()
+  function focusDisplayNameForm() {
+    if (displayNameRef.current) {
+      displayNameRef.current.focus()
     }
   }
 
@@ -51,12 +56,12 @@ function WelcomeMessage({ username, setUsername, inputWidth, setInputWidth }) {
       Hey there,
       <div className="username-line">
         <input
-          ref={usernameRef}
+          ref={displayNameRef}
           className="username-form"
           type="text"
-          value={username}
-          onChange={handleUserNameChange}
-          onBlur={handleUserNameChange}
+          value={displayName}
+          onChange={handleDisplayNameChange}
+          onBlur={handleDisplayNameChange}
           onClick={setCaretPosition}
           onMouseDown={setCaretInvisible}
           spellCheck="false"
@@ -64,7 +69,7 @@ function WelcomeMessage({ username, setUsername, inputWidth, setInputWidth }) {
         />
         {/* !
         <span ref={textWidthRef} className="hidden-span">
-          {username}
+          {displayName}
         </span> */}
       </div>
       <span
@@ -75,7 +80,7 @@ function WelcomeMessage({ username, setUsername, inputWidth, setInputWidth }) {
       >
         <HiOutlinePencilSquare
           className="username-form__pencil"
-          onClick={focusUsernameForm}
+          onClick={focusDisplayNameForm}
         />
       </span>
     </div>

@@ -6,7 +6,7 @@ import AlertModal from "./AlertModal"
 
 function GameBoard({
   board = [],
-  username,
+  displayName,
   activeRow,
   activeCell,
   points,
@@ -212,7 +212,7 @@ function GameBoard({
       <div className={getInfoClassName()}>
         <span className={getUsernameClassName()}>
           {isLeading && <span className={getCrownClassName()}>👑&nbsp;</span>}
-          {username}
+          {displayName}
         </span>
         {connectionMode === "online-private" && (
           <>

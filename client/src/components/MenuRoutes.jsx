@@ -11,8 +11,8 @@ import WaitingRoom from "./WaitingRoom"
 import ChallengeForm from "./ChallengeForm"
 
 function MenuRoutes({
-  username,
-  setUsername,
+  displayName,
+  setDisplayName,
   inputWidth,
   setInputWidth,
   isChallengeOn,
@@ -28,8 +28,8 @@ function MenuRoutes({
   return (
     <>
       <WelcomeMessage
-        username={username}
-        setUsername={setUsername}
+        displayName={displayName}
+        setDisplayName={setDisplayName}
         inputWidth={inputWidth}
         setInputWidth={setInputWidth}
       />
@@ -66,7 +66,7 @@ function MenuRoutes({
             path="/room/:roomId"
             element={
               <WaitingRoom
-                username={username}
+                displayName={displayName}
                 connectionMode={connectionMode}
                 setConnectionMode={setConnectionMode}
                 setIsChallengeOn={setIsChallengeOn}

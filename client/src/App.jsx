@@ -23,8 +23,8 @@ function App() {
     JSON.parse(localStorage.getItem("isChallengeOn")) || false
   )
 
-  const [username, setUsername] = useState(
-    localStorage.getItem("username") || "Wordler"
+  const [displayName, setDisplayName] = useState(
+    localStorage.getItem("displayName") || "Wordler"
   )
   const [isHost, setIsHost] = useState(false)
   const [isSpectating, setIsSpectating] = useState(false)
@@ -43,8 +43,8 @@ function App() {
                 path="/*"
                 element={
                   <MenuRoutes
-                    username={username}
-                    setUsername={setUsername}
+                    displayName={displayName}
+                    setDisplayName={setDisplayName}
                     inputWidth={inputWidth}
                     setInputWidth={setInputWidth}
                     isChallengeOn={isChallengeOn}
