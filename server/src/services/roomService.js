@@ -173,7 +173,7 @@ function addUserToRoom(socket, displayName, roomId) {
   socket.join(roomId)
   socket.roomId = roomId
 
-  const userObject = { displayName: displayName, streak: 0 } // TODO actual streak mia
+  const userObject = { displayName: displayName, currStreak: 0 } // TODO actual streak mia
 
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
@@ -229,7 +229,7 @@ function broadcastRoomUserInfo(roomId, io) {
     ([userId, userObj]) => ({
       userId: userId,
       displayName: userObj.displayName,
-      streak: userObj.streak,
+      currStreak: userObj.currStreak,
     })
   )
   io.to(roomId).emit("roomUserInfoUpdated", roomUserInfoArray)
