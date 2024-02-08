@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid"
 import Room from "../classes/Room.js"
 
 // Services
-import { getUser } from "./userService.js"
+import {} from "./userService.js"
 import { deleteGame } from "./gameService.js"
 
 const Rooms = new Map()
@@ -167,20 +167,16 @@ function areAllUsersLoaded(roomId) {
   return false
 }
 
-async function addUserToRoom(userId, roomId) {
-  try {
-    const user = await getUser(userId)
-    if (!user) {
-      throw new Error(`User with ID ${userId} not found`)
-    } else {
-      const room = Rooms.get(roomId)
-      if (room && room instanceof Room) {
-        room.users.push(userId)
-      }
-    }
-  } catch (error) {
-    console.error(`Error adding user to room: ${error.message}`)
-    throw error
+function addUserToRoom(socket, displayName, roomId) {
+  // Attaching custom roomId property to socket.
+  socket.join(roomId)
+  socket.roomId = roomId
+
+  const userObject = { displayName: displayName, streak: 0 } // TODO actual streak mia
+
+  const room = Rooms.get(roomId)
+  if (room && room instanceof Room) {
+    room.userInfo.set(socket.userId, userObject)
   }
 }
 
@@ -191,12 +187,12 @@ function removeUserFromRoom(userId, roomId) {
   }
 }
 
-function getUsersInRoom(roomId) {
+function getRoomUserInfo(roomId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
-    return room.users
+    return room.userInfo
   }
-  return [] // LOUIE: are we missing error checks
+  return []
 }
 
 function isUserInRoom(roomId, userId) {
@@ -218,6 +214,27 @@ function findMatchingRoom(isChallengeOn) {
     }
   })
   return matchingRoomId
+}
+
+function broadcastRoomUserInfo(roomId, io) {
+  // TODO this error checking is annoying
+  let roomUserInfo
+  const room = Rooms.get(roomId)
+  if (room && room instanceof Room) {
+    roomUserInfo = room.userInfo
+  } else {
+    roomUserInfo = new Map() // empty map
+  }
+
+  const roomUserInfoArray = Array.from(
+    roomUserInfo.entries(),
+    ([userId, userObj]) => ({
+      userId: userId,
+      displayName: userObj.displayName,
+      streak: userObj.streak,
+    })
+  )
+  io.to(roomId).emit("roomUserInfoUpdated", roomUserInfoArray)
 }
 
 export {
@@ -242,7 +259,8 @@ export {
   areAllUsersLoaded,
   addUserToRoom,
   removeUserFromRoom,
-  getUsersInRoom,
+  getRoomUserInfo,
   isUserInRoom,
   findMatchingRoom,
+  broadcastRoomUserInfo,
 }

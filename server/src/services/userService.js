@@ -10,7 +10,6 @@ import {
   getRoom,
   roomInLobby,
   isUserInRoom,
-  getUsersInRoom,
   deleteRoom,
   removeUserFromRoom,
   isRoomEmpty,
@@ -20,10 +19,10 @@ import {
 
 function handleNewConnection(userId, socket) {
   // Attaching custom property "userId" to socket.
-  // It is either the Firebase Auth id string, or null if not auth.
+  // It is either the Firebase Auth id, or the socket's own id if not auth.
   // Following this function, we will call socket.userId in lieu of
   // passing around the actual userId variable from the client side.
-  socket.userId = userId
+  socket.userId = userId || socket.id
 }
 
 async function createNewUser(userId) {
@@ -38,64 +37,44 @@ async function createNewUser(userId) {
     )
     throw error
   }
+
+  // TODO: Not sure if we need this, but it is explicit.
+  // socket.userId = userId
 }
 
-async function getUser(userId) {
-  if (Guests.has(userId)) {
-    const guest = Guests.get(userId)
-    return guest
-  }
+// TODO: We might need this later for retrieving Stats Info, but not right now.
+// async function getUser(userId) {
+//   if (Guests.has(userId)) {
+//     const guest = Guests.get(userId)
+//     return guest
+//   }
 
-  try {
-    const user = await User.findById(userId).lean()
-    if (!user) {
-      console.error(`No guest or user found with userId: ${userId}`)
-    }
-    return user
-  } catch (error) {
-    console.error(`Error getting user info from the database: ${error.message}`)
-    throw error
-  }
-}
+//   try {
+//     const user = await User.findById(userId).lean()
+//     if (!user) {
+//       console.error(`No guest or user found with userId: ${userId}`)
+//     }
+//     return user
+//   } catch (error) {
+//     console.error(`Error getting user info from the database: ${error.message}`)
+//     throw error
+//   }
+// }
 
-async function getAllUserInfoInRoom(roomId) {
-  const userIds = getUsersInRoom(roomId)
-
-  try {
-    if (userIds) {
-      const allUserInfo = []
-
-      for (const userId of userIds) {
-        const user = await getUser(userId)
-        if (user) {
-          allUserInfo.push(user)
-        }
-      }
-
-      console.log(`allUserInfo: ${JSON.stringify(allUserInfo)}`)
-
-      return allUserInfo
-    }
-  } catch (error) {
-    console.error(`Error getting user info from room: ${error.message}`)
-    throw error
-  }
-}
-
-async function setUsername(userId, username) {
-  try {
-    await User.updateOne({ userId }, { $set: { username } })
-  } catch (error) {
-    console.error(`Error setting username in the database: ${error.message}`)
-    throw error
-  }
+function setUsername(userId, username) {
+  // try {
+  //   await User.updateOne({ userId }, { $set: { username } })
+  // } catch (error) {
+  //   console.error(`Error setting username in the database: ${error.message}`)
+  //   throw error
+  // }
 }
 
 // Already need to be in the room to keep username up to date with changes
 async function handleUsernameUpdate(roomId, userId, username, io) {
   if (roomInLobby(roomId) && isUserInRoom(roomId, userId)) {
     await setUsername(userId, username)
-    broadcastUserInfo(roomId, io)
+    broadcastRoomUserInfo(roomId, io)
   }
 }
 
@@ -135,19 +114,9 @@ async function handleUserStreakReset(userId) {
   }
 }
 
-async function broadcastUserInfo(roomId, io) {
-  if (roomId) {
-    io.to(roomId).emit("userInfoUpdated", await getAllUserInfoInRoom(roomId))
-  } else {
-    console.error("Invalid roomId for broadcasting user info")
-  }
-}
-
 async function handleUserDisconnect(socket, io) {
   console.log(`A user disconnected with socketId: ${socket.id}`)
   handleLeaveRoom(socket, io)
-  Guests.delete(socket.id)
-  console.log(`Guest ${socket.id} removed from Guests map`)
 }
 
 async function handleLeaveRoom(socket, io) {
@@ -165,19 +134,17 @@ async function handleLeaveRoom(socket, io) {
       }
     }
   }
-  broadcastUserInfo(roomId, io)
+  broadcastRoomUserInfo(roomId, io)
 }
 
 export {
   handleNewConnection,
   createNewUser,
-  getUser,
-  getAllUserInfoInRoom,
+  // getUser,
   setUsername,
   handleUsernameUpdate,
   handleUserStreakUpdates,
   handleUserStreakReset,
-  broadcastUserInfo,
   handleUserDisconnect,
   handleLeaveRoom,
 }

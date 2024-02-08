@@ -3,7 +3,8 @@ export default class Room {
     this.connectionMode = connectionMode
     this.isChallengeOn = isChallengeOn
     this.hostUserId = userId
-    this.users = []
+
+    this.userInfo = new Map()
     this.loadedUsers = []
 
     // inGame switches between true and false in private rooms on each game completion

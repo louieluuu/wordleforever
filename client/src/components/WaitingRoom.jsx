@@ -9,7 +9,7 @@ import LobbyCountdownModal from "./LobbyCountdownModal"
 import AlertModal from "./AlertModal"
 
 function WaitingRoom({
-  username,
+  displayName,
   connectionMode,
   setConnectionMode,
   setIsChallengeOn,
@@ -58,7 +58,7 @@ function WaitingRoom({
       navigate(`/game/${roomId}`)
     })
 
-    socket.on("failedToJoinRoom", () => {
+    socket.on("roomFull", () => {
       // TODO: display some sort of error message for the user
       navigate("/")
     })
@@ -67,7 +67,7 @@ function WaitingRoom({
       startCountdown()
     })
 
-    socket.on("userInfoUpdated", (updatedUserInfo) => {
+    socket.on("roomUserInfoUpdated", (updatedUserInfo) => {
       setUserInfo(updatedUserInfo)
     })
 
@@ -92,7 +92,7 @@ function WaitingRoom({
     return () => {
       socket.off("connect")
       socket.off("roomJoined")
-      socket.off("failedToJoinRoom")
+      socket.off("roomFull")
       socket.off("matchFound")
       socket.off("userInfoUpdated")
       socket.off("countdownStarted")
@@ -104,14 +104,14 @@ function WaitingRoom({
   // Join room once
   useEffect(() => {
     if (joinRoom) {
-      socket.emit("joinRoom", roomId, username)
+      socket.emit("joinRoom", roomId, displayName)
     }
   }, [joinRoom])
 
-  // Keep username up to date
+  // Keep displayName up to date
   useEffect(() => {
-    socket.emit("updateUsername", roomId, username)
-  }, [username])
+    socket.emit("updateDisplayName", roomId, displayName)
+  }, [displayName])
 
   // Keep track of number of users in room
   // Start countdown in public game when at least 2 users, stop countdown for both private/public when less than 2 users
@@ -182,6 +182,7 @@ function WaitingRoom({
     navigate("/online")
   }
 
+  // TODO: what is this for? (Thomas' relic)
   function getUsernamesClassName() {
     let usernamesClassName = "waiting-room-user-info"
     if (userInfo && userInfo.length > 0) {
@@ -230,7 +231,7 @@ function WaitingRoom({
       <div className="waiting-room-user-info">
         {userInfo.map((user) => (
           <div key={user.userId}>
-            {user.username}
+            {user.displayName}
             {connectionMode === "online-public" && user.currStreak !== 0 && (
               <span> &nbsp;&nbsp;{user.currStreak}🔥 </span>
             )}

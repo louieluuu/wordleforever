@@ -63,7 +63,8 @@ io.on("connection", (socket) => {
   // Join room
   socket.on(
     "joinRoom",
-    async (roomId, username) => await joinRoom(roomId, username, io, socket)
+    async (roomId, displayName) =>
+      await joinRoom(roomId, displayName, io, socket)
   )
   // Username update
   socket.on(

@@ -10,8 +10,8 @@ import {
   setCountdownStarted,
   findMatchingRoom,
   isRoomChallengeMode,
+  broadcastRoomUserInfo,
 } from "../services/roomService.js"
-import { setUsername, broadcastUserInfo } from "../services/userService.js"
 
 // Default values
 // const PRIVATE_ROOM_COUNTDOWN_TIMER = 6
@@ -22,7 +22,7 @@ const PUBLIC_ROOM_COUNTDOWN_TIMER = 10
 
 function createRoom(connectionMode, isChallengeOn, socket) {
   try {
-    const roomId = initializeRoom(connectionMode, isChallengeOn, socket.id)
+    const roomId = initializeRoom(connectionMode, isChallengeOn, socket.userId)
     console.log(`Creating room: ${roomId}`)
     socket.emit("roomCreated", roomId)
   } catch (error) {
@@ -33,15 +33,13 @@ function createRoom(connectionMode, isChallengeOn, socket) {
 
 // Contains logic to join room in progress, which only applies to private games
 // Don't need extra logic for public games though because the matchmaking functions account for this
-async function joinRoom(roomId, username, io, socket) {
+async function joinRoom(roomId, displayName, io, socket) {
   try {
     if (!isRoomFull(roomId)) {
       console.log(`${socket.id} joining room: ${roomId}`)
-      socket.join(roomId)
-      socket.roomId = roomId
-      await addUserToRoom(socket.id, roomId)
-      await setUsername(socket.id, username)
-      await broadcastUserInfo(roomId, io)
+      addUserToRoom(socket, displayName, roomId)
+      broadcastRoomUserInfo(roomId, io)
+
       if (!isRoomInProgress(roomId)) {
         socket.emit(
           "roomJoined",
@@ -57,7 +55,7 @@ async function joinRoom(roomId, username, io, socket) {
       }
     } else {
       console.log(`${socket.id} failed to join room: ${roomId}`)
-      socket.emit("failedToJoinRoom")
+      socket.emit("roomFull")
     }
   } catch (error) {
     console.error(`Error joining room: ${error.message}`)
