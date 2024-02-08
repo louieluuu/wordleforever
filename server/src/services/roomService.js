@@ -6,6 +6,7 @@ import Room from "../classes/Room.js"
 // Services
 import {} from "./userService.js"
 import { deleteGame } from "./gameService.js"
+import { get } from "mongoose"
 
 const Rooms = new Map()
 
@@ -192,7 +193,7 @@ function getRoomUserInfo(roomId) {
   if (room && room instanceof Room) {
     return room.userInfo
   }
-  return []
+  return new Map() // empty map
 }
 
 function isUserInRoom(roomId, userId) {
@@ -217,17 +218,10 @@ function findMatchingRoom(isChallengeOn) {
 }
 
 function broadcastRoomUserInfo(roomId, io) {
-  // TODO this error checking is annoying
-  let roomUserInfo
-  const room = Rooms.get(roomId)
-  if (room && room instanceof Room) {
-    roomUserInfo = room.userInfo
-  } else {
-    roomUserInfo = new Map() // empty map
-  }
+  const roomUserInfoMap = getRoomUserInfo(roomId)
 
   const roomUserInfoArray = Array.from(
-    roomUserInfo.entries(),
+    roomUserInfoMap.entries(),
     ([userId, userObj]) => ({
       userId: userId,
       displayName: userObj.displayName,

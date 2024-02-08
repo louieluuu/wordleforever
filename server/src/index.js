@@ -66,7 +66,7 @@ io.on("connection", (socket) => {
   )
   // DisplayName update
   socket.on("updateDisplayName", (roomId, displayName) =>
-    handleDisplayNameUpdate(roomId, socket.id, displayName, io)
+    handleDisplayNameUpdate(roomId, socket.userId, displayName, io)
   )
   // Start countdown before starting the game -> navigate to game room
   socket.on("startCountdown", (roomId) => handleCountdownStart(roomId, io))

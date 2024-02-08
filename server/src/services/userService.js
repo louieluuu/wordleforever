@@ -8,6 +8,7 @@ import Guest from "../classes/Guest.js"
 // Services
 import {
   getRoom,
+  getRoomUserInfo,
   roomInLobby,
   isUserInRoom,
   deleteRoom,
@@ -15,6 +16,7 @@ import {
   isRoomEmpty,
   isUserHostInRoom,
   generateNewHostInRoom,
+  broadcastRoomUserInfo,
 } from "./roomService.js"
 
 function handleNewConnection(userId, socket) {
@@ -61,19 +63,19 @@ async function createNewUser(userId) {
 //   }
 // }
 
-function setDisplayName(userId, displayName) {
-  // try {
-  //   await User.updateOne({ userId }, { $set: { displayName } })
-  // } catch (error) {
-  //   console.error(`Error setting displayName in the database: ${error.message}`)
-  //   throw error
-  // }
+function setDisplayName(roomId, userId, displayName) {
+  const roomUserInfo = getRoomUserInfo(roomId)
+  const previousValue = roomUserInfo.get(userId)
+
+  if (roomUserInfo) {
+    roomUserInfo.set(userId, { ...previousValue, displayName: displayName })
+  }
 }
 
 // Already need to be in the room to keep displayName up to date with changes
-async function handleDisplayNameUpdate(roomId, userId, displayName, io) {
+function handleDisplayNameUpdate(roomId, userId, displayName, io) {
   if (roomInLobby(roomId) && isUserInRoom(roomId, userId)) {
-    await setDisplayName(userId, displayName)
+    setDisplayName(roomId, userId, displayName)
     broadcastRoomUserInfo(roomId, io)
   }
 }
