@@ -117,20 +117,21 @@ async function handleUserStreakReset(userId) {
 }
 
 async function handleUserDisconnect(socket, io) {
-  console.log(`A user disconnected with socketId: ${socket.id}`)
+  console.log(`A user disconnected with userId: ${socket.userId}`)
   handleLeaveRoom(socket, io)
 }
 
 async function handleLeaveRoom(socket, io) {
   const roomId = socket.roomId
   if (roomId) {
-    console.log(`Removing user ${socket.id} from ${roomId}`)
+    console.log(`Removing user ${socket.userId} from ${roomId}`)
     socket.roomId = null
-    removeUserFromRoom(socket.id, roomId)
+    removeUserFromRoom(socket.userId, roomId)
     if (isRoomEmpty(roomId)) {
       deleteRoom(roomId)
     } else {
-      if (isUserHostInRoom(roomId, socket.id)) {
+      // TODO Isn't this logic flipped?
+      if (isUserHostInRoom(roomId, socket.userId)) {
         const newHostId = generateNewHostInRoom(roomId)
         io.to(roomId).emit("newHost", newHostId)
       }
