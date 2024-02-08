@@ -8,7 +8,6 @@ import {
   getRoomConnectionMode,
   setRoomOutOfGame,
 } from "../services/roomService.js"
-import { getUser } from "../services/userService.js"
 
 // These are all in seconds
 // Mess around with these for testing, but always return them to the following unless permanently changing:

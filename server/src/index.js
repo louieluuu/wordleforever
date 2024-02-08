@@ -74,7 +74,7 @@ io.on("connection", (socket) => {
   socket.on("stopCountdown", (roomId) => handleCountdownStop(roomId, io))
 
   // Interact with GameContainer component
-  socket.on("loadUser", (roomId) => handleLoadUser(roomId, socket.id, io))
+  socket.on("loadUser", (roomId) => handleLoadUser(roomId, socket.userId, io))
   // General game flow
   socket.on("wrongGuess", (roomId, updatedGameBoard) =>
     handleWrongGuess(roomId, socket.id, updatedGameBoard, io)

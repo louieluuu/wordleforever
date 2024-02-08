@@ -6,7 +6,6 @@ import Room from "../classes/Room.js"
 // Services
 import {} from "./userService.js"
 import { deleteGame } from "./gameService.js"
-import { get } from "mongoose"
 
 const Rooms = new Map()
 
@@ -67,8 +66,9 @@ function isUserHostInRoom(roomId, userId) {
 
 function generateNewHostInRoom(roomId) {
   const room = Rooms.get(roomId)
-  if (room && room instanceof Room && room.users.length > 0) {
-    room.hostUserId = room.users[0]
+  if (room && room instanceof Room && room.userInfo.size > 0) {
+    const firstUserId = room.userInfo.keys().next().value
+    room.hostUserId = firstUserId
     return room.hostUserId
   }
   return null
@@ -77,7 +77,7 @@ function generateNewHostInRoom(roomId) {
 function isRoomEmpty(roomId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
-    return room.users.length === 0
+    return room.userInfo.size === 0
   }
   return true
 }
@@ -122,7 +122,7 @@ function setRoomInProgress(roomId) {
 function isRoomFull(roomId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
-    return room.users.length >= MAX_ROOM_SIZE
+    return room.userInfo.size >= MAX_ROOM_SIZE
   }
   return false
 }
@@ -161,7 +161,7 @@ function areAllUsersLoaded(roomId) {
   if (
     room &&
     room instanceof Room &&
-    room.loadedUsers.length >= room.users.length
+    room.loadedUsers.length >= room.userInfo.size
   ) {
     return true
   }
@@ -184,7 +184,7 @@ function addUserToRoom(socket, displayName, roomId) {
 function removeUserFromRoom(userId, roomId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
-    room.users = room.users.filter((user) => user !== userId)
+    room.userInfo.delete(userId)
   }
 }
 
@@ -200,7 +200,7 @@ function getRoomUserInfo(roomId) {
 function isUserInRoom(roomId, userId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
-    return room.users.includes(userId)
+    return room.userInfo.has(userId)
   }
 }
 

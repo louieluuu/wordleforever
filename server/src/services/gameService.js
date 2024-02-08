@@ -4,7 +4,6 @@ import Game from "../classes/Game.js"
 // Services
 import {
   isRoomChallengeMode,
-  getUsersInRoom,
   getRoomConnectionMode,
   setRoomInProgress,
   setRoomInGame,
