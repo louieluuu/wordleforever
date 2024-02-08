@@ -14,7 +14,7 @@ import {
   deleteRoom,
   removeUserFromRoom,
   isRoomEmpty,
-  isUserHostInRoom,
+  isHostLeaving,
   generateNewHostInRoom,
   broadcastRoomUserInfo,
 } from "./roomService.js"
@@ -132,8 +132,7 @@ async function handleLeaveRoom(socket, io) {
     if (isRoomEmpty(roomId)) {
       deleteRoom(roomId)
     } else {
-      // TODO Isn't this logic flipped?
-      if (isUserHostInRoom(roomId, socket.userId)) {
+      if (isHostLeaving(roomId, socket.userId)) {
         const newHostId = generateNewHostInRoom(roomId)
         io.to(roomId).emit("newHost", newHostId)
       }

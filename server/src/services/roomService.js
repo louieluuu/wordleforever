@@ -54,7 +54,7 @@ function isRoomChallengeMode(roomId) {
   return false
 }
 
-function isUserHostInRoom(roomId, userId) {
+function isHostLeaving(roomId, userId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
     if (userId === room.hostUserId) {
@@ -67,14 +67,7 @@ function isUserHostInRoom(roomId, userId) {
 function generateNewHostInRoom(roomId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room && room.userInfo.size > 0) {
-    console.log(
-      `room.userInfo after host left: ${JSON.stringify([
-        ...room.userInfo.entries(),
-      ])}`
-    )
-
     const firstUserId = room.userInfo.keys().next().value
-    console.log(`New host: ${firstUserId}`)
     room.hostUserId = firstUserId
     return room.hostUserId
   }
@@ -252,7 +245,7 @@ export {
   deleteRoom,
   getRoomConnectionMode,
   isRoomChallengeMode,
-  isUserHostInRoom,
+  isHostLeaving,
   generateNewHostInRoom,
   isRoomEmpty,
   setRoomInGame,

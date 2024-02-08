@@ -69,8 +69,6 @@ function WaitingRoom({
 
     socket.on("roomUserInfoUpdated", (updatedUserInfo) => {
       setUserInfo(updatedUserInfo)
-      console.log("updatedUserInfo", updatedUserInfo)
-      console.log("userInfo", userInfo)
     })
 
     socket.on("newHost", (newHostId) => {
