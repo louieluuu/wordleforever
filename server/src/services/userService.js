@@ -18,33 +18,19 @@ import {
   generateNewHostInRoom,
 } from "./roomService.js"
 
-const Guests = new Map()
-
-function createNewGuest(socketId) {
-  const newGuest = new Guest(socketId)
-  Guests.set(socketId, newGuest)
-
-  console.log(`New guest created with socketId: ${socketId}`)
-}
-
 function handleNewConnection(userId, socket) {
   // Attaching custom property "userId" to socket.
-  // It is either the Firebase Auth id string, or null if not a user.
+  // It is either the Firebase Auth id string, or null if not auth.
   // Following this function, we will call socket.userId in lieu of
   // passing around the actual userId variable from the client side.
   socket.userId = userId
-
-  if (!socket.userId) {
-    createNewGuest(socket.id)
-  }
 }
 
 async function createNewUser(userId) {
   try {
     const existingUser = await User.findById(userId).lean()
     if (!existingUser) {
-      const newUser = new User({ _id: userId, userId })
-      await newUser.save()
+      await User.create({ _id: userId, userId: userId })
     }
   } catch (error) {
     console.error(
@@ -184,7 +170,6 @@ async function handleLeaveRoom(socket, io) {
 
 export {
   handleNewConnection,
-  createNewGuest,
   createNewUser,
   getUser,
   getAllUserInfoInRoom,

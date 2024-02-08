@@ -207,7 +207,7 @@ function isUserInRoom(roomId, userId) {
 }
 
 function findMatchingRoom(isChallengeOn) {
-  let matchingRoomId
+  const matchingRoomId = null
   Rooms.forEach((room, roomId) => {
     if (
       room.connectionMode === "online-public" &&

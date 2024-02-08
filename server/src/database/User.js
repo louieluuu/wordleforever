@@ -14,11 +14,11 @@ const UserSchema = new mongoose.Schema({
   // Special property that is automatically indexed by MongoDB,
   // resulting in faster queries by using findById().
   // During user creation, _id is set to the Firebase user's (unique) uid.
-  // By specifying the type as String, we can use the Firebase uid directly.
+  // MongoDB normally expects a specific hex string type for _id.
+  // But by specifying the type as String, we can bypass this restriction and use the Firebase uid directly.
   _id: String,
 
   userId: String,
-  displayName: String,
 
   currStreak: { type: Number, default: 0 },
   maxStreak: { type: Number, default: 0 },
