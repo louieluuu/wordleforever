@@ -61,10 +61,8 @@ io.on("connection", (socket) => {
     createRoom(connectionMode, isChallengeOn, socket)
   )
   // Join room
-  socket.on(
-    "joinRoom",
-    async (roomId, displayName) =>
-      await joinRoom(roomId, displayName, io, socket)
+  socket.on("joinRoom", (roomId, displayName) =>
+    joinRoom(roomId, displayName, io, socket)
   )
   // Username update
   socket.on(
