@@ -205,16 +205,19 @@ function isUserInRoom(roomId, userId) {
 }
 
 function findMatchingRoom(isChallengeOn) {
-  let matchingRoomId
-  Rooms.forEach((room, roomId) => {
+  let matchingRoomId = null
+
+  for (let [roomId, roomObj] of Rooms.entries()) {
     if (
-      room.connectionMode === "online-public" &&
-      room.isChallengeOn === isChallengeOn &&
-      !room.inGame
+      roomObj.connectionMode === "online-public" &&
+      roomObj.isChallengeOn === isChallengeOn &&
+      !roomObj.inGame
     ) {
       matchingRoomId = roomId
+      break
     }
-  })
+  }
+
   return matchingRoomId
 }
 
