@@ -188,6 +188,7 @@ function removeUserFromRoom(userId, roomId) {
   }
 }
 
+// TODO: Consider a getRoomUserInfoArray function so the ugly .entries() syntax etc is not repeated
 function getRoomUserInfo(roomId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
