@@ -161,7 +161,7 @@ async function handleOutOfGuesses(roomId, userId, io) {
   if (game && game instanceof Game) {
     if (getRoomConnectionMode(roomId) === "online-public") {
       game.resetStreak(userId)
-      await handleUserStreakReset(userId, roomId)
+      await handleUserStreakReset(userId, roomId) // TODO streak
       game.broadcastStreak(roomId, userId, io)
     }
     game.countOutOfGuesses += 1
