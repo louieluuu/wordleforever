@@ -65,8 +65,8 @@ io.on("connection", (socket) => {
     joinRoom(roomId, displayName, io, socket)
   )
   // DisplayName update
-  socket.on("updateDisplayName", (roomId, displayName) =>
-    handleDisplayNameUpdate(roomId, socket.userId, displayName, io)
+  socket.on("updateDisplayName", (roomId, updatedDisplayName) =>
+    handleDisplayNameUpdate(roomId, socket.userId, updatedDisplayName, io)
   )
   // Start countdown before starting the game -> navigate to game room
   socket.on("startCountdown", (roomId) => handleCountdownStart(roomId, io))
@@ -77,15 +77,15 @@ io.on("connection", (socket) => {
   socket.on("loadUser", (roomId) => handleLoadUser(roomId, socket.userId, io))
   // General game flow
   socket.on("wrongGuess", (roomId, updatedGameBoard) =>
-    handleWrongGuess(roomId, socket.id, updatedGameBoard, io)
+    handleWrongGuess(roomId, socket.userId, updatedGameBoard, io)
   )
   socket.on(
     "correctGuess",
     async (roomId, updatedGameBoard) =>
-      await handleCorrectGuess(roomId, socket.id, updatedGameBoard, socket, io)
+      await handleCorrectGuess(roomId, socket.id, updatedGameBoard, socket, io) // TODO don't need both socket.id and socket
   )
   socket.on("outOfGuesses", (roomId) =>
-    handleOutOfGuesses(roomId, socket.id, io)
+    handleOutOfGuesses(roomId, socket.userId, io)
   )
   socket.on("gameJoinedInProgress", (roomId) =>
     handleGameJoinedInProgress(roomId, socket)

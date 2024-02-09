@@ -75,9 +75,9 @@ function setDisplayName(roomId, userId, displayName) {
 }
 
 // Already need to be in the room to keep displayName up to date with changes
-function handleDisplayNameUpdate(roomId, userId, displayName, io) {
+function handleDisplayNameUpdate(roomId, userId, updatedDisplayName, io) {
   if (roomInLobby(roomId) && isUserInRoom(roomId, userId)) {
-    setDisplayName(roomId, userId, displayName)
+    setDisplayName(roomId, userId, updatedDisplayName)
     broadcastRoomUserInfo(roomId, io)
   }
 }
