@@ -28,7 +28,7 @@ export default class Game {
     this.connectionMode = null
     this.solution = null
     this.startingWord = null
-    this.allUserInfo = new Map()
+    this.gameUserInfo = new Map()
     this.countSolved = 0
     this.countOutOfGuesses = 0
     this.round = 0
@@ -41,7 +41,7 @@ export default class Game {
 
   static async createGame(
     connectionMode,
-    users,
+    userInfo,
     prevPoints,
     prevRound,
     prevRoundsWon,
@@ -57,8 +57,8 @@ export default class Game {
     game.startingWord = isChallengeMode
       ? game.generateRandomFirstGuess(game.solution)
       : null
-    game.allUserInfo = await game.initializeAllUserInfo(
-      users,
+    game.gameUserInfo = game.initializeGameUserInfo(
+      userInfo,
       prevPoints,
       prevRoundsWon,
       prevRoundsSolved,
@@ -74,43 +74,40 @@ export default class Game {
     return game
   }
 
-  async initializeAllUserInfo(
-    users,
+  async initializeGameUserInfo(
+    userInfo,
     prevPoints,
     prevRoundsWon,
     prevRoundsSolved,
     prevTotalGuesses,
     prevTotalTimeInRoundsSolved
   ) {
-    const allUserInfoMap = new Map()
+    const gameUserInfoMap = new Map()
 
-    for (const userId of users) {
-      const user = await getUser(userId)
-      if (user) {
-        allUserInfoMap.set(userId, {
-          displayName: user.displayName,
-          gameBoard: new Array(6)
-            .fill()
-            .map(() => new Array(5).fill({ letter: "", color: "" })),
-          streak: user.currStreak,
-          points: prevPoints.get(userId) || 0,
-          roundsWon: prevRoundsWon.get(userId) || 0,
-          roundsSolved: prevRoundsSolved.get(userId) || 0,
-          totalGuesses: prevTotalGuesses.get(userId) || 0,
-          totalTimeInRoundsSolved: prevTotalTimeInRoundsSolved.get(userId) || 0,
-        })
-      }
-    }
+    userInfo.forEach((user, userId) => {
+      gameUserInfoMap.set(userId, {
+        displayName: user.displayName,
+        gameBoard: new Array(6)
+          .fill()
+          .map(() => new Array(5).fill({ letter: "", color: "" })),
+        streak: user.currStreak,
+        points: prevPoints.get(userId) || 0,
+        roundsWon: prevRoundsWon.get(userId) || 0,
+        roundsSolved: prevRoundsSolved.get(userId) || 0,
+        totalGuesses: prevTotalGuesses.get(userId) || 0,
+        totalTimeInRoundsSolved: prevTotalTimeInRoundsSolved.get(userId) || 0,
+      })
+    })
 
-    return allUserInfoMap
+    return gameUserInfoMap
   }
 
   getRoomSize() {
-    return this.allUserInfo.size
+    return this.gameUserInfo.size
   }
 
   getGameBoard(userId) {
-    const userInfo = this.allUserInfo.get(userId)
+    const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
       return userInfo.gameBoard
     }
@@ -118,7 +115,7 @@ export default class Game {
   }
 
   setGameBoard(userId, gameBoard) {
-    const userInfo = this.allUserInfo.get(userId)
+    const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
       userInfo.gameBoard = gameBoard
     }
@@ -126,7 +123,7 @@ export default class Game {
 
   getAllRoundsWon() {
     const allRoundsWonMapping = new Map()
-    this.allUserInfo.forEach((userInfo, userId) => {
+    this.gameUserInfo.forEach((userInfo, userId) => {
       allRoundsWonMapping.set(userId, userInfo.roundsWon)
     })
 
@@ -134,7 +131,7 @@ export default class Game {
   }
 
   incrementRoundsWon(userId) {
-    const userInfo = this.allUserInfo.get(userId)
+    const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
       userInfo.roundsWon += 1
     }
@@ -142,7 +139,7 @@ export default class Game {
 
   getAllRoundsSolved() {
     const allRoundsSolvedMapping = new Map()
-    this.allUserInfo.forEach((userInfo, userId) => {
+    this.gameUserInfo.forEach((userInfo, userId) => {
       allRoundsSolvedMapping.set(userId, userInfo.roundsSolved)
     })
 
@@ -150,7 +147,7 @@ export default class Game {
   }
 
   incrementRoundsSolved(userId) {
-    const userInfo = this.allUserInfo.get(userId)
+    const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
       userInfo.roundsSolved += 1
     }
@@ -158,7 +155,7 @@ export default class Game {
 
   getAllTotalGuesses() {
     const allTotalGuessesMapping = new Map()
-    this.allUserInfo.forEach((userInfo, userId) => {
+    this.gameUserInfo.forEach((userInfo, userId) => {
       allTotalGuessesMapping.set(userId, userInfo.totalGuesses)
     })
 
@@ -166,7 +163,7 @@ export default class Game {
   }
 
   incrementTotalGuesses(userId) {
-    const userInfo = this.allUserInfo.get(userId)
+    const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
       userInfo.totalGuesses += 1
     }
@@ -174,7 +171,7 @@ export default class Game {
 
   getAllTotalTimeInRoundsSolved() {
     const allTotalTimeInRoundsSolvedMapping = new Map()
-    this.allUserInfo.forEach((userInfo, userId) => {
+    this.gameUserInfo.forEach((userInfo, userId) => {
       allTotalTimeInRoundsSolvedMapping.set(
         userId,
         userInfo.totalTimeInRoundsSolved
@@ -185,14 +182,14 @@ export default class Game {
   }
 
   incrementTotalTimeInRoundsSolved(userId) {
-    const userInfo = this.allUserInfo.get(userId)
+    const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
       userInfo.totalTimeInRoundsSolved += this.elapsedTime
     }
   }
 
   getPoints(userId) {
-    const userInfo = this.allUserInfo.get(userId)
+    const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
       return userInfo.points
     }
@@ -200,7 +197,7 @@ export default class Game {
 
   getAllPoints() {
     const pointsMapping = new Map()
-    this.allUserInfo.forEach((userInfo, userId) => {
+    this.gameUserInfo.forEach((userInfo, userId) => {
       pointsMapping.set(userId, userInfo.points)
     })
 
@@ -208,7 +205,7 @@ export default class Game {
   }
 
   updatePoints(userId) {
-    const userInfo = this.allUserInfo.get(userId)
+    const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
       if (this.countSolved === 0 && this.timer > PRIVATE_GAME_SOLVED_TIMER) {
         userInfo.points += PRIVATE_GAME_SOLVED_TIMER * 2
@@ -219,28 +216,28 @@ export default class Game {
   }
 
   getStreak(userId) {
-    const userInfo = this.allUserInfo.get(userId)
+    const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
       return userInfo.streak
     }
   }
 
   incrementStreak(userId) {
-    const userInfo = this.allUserInfo.get(userId)
+    const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
       userInfo.streak += 1
     }
   }
 
   resetStreak(userId) {
-    const userInfo = this.allUserInfo.get(userId)
+    const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
       userInfo.streak = 0
     }
   }
 
   updateStreaks(winnerUserId) {
-    this.allUserInfo.forEach((userInfo, userId) => {
+    this.gameUserInfo.forEach((userInfo, userId) => {
       if (userId === winnerUserId) {
         this.incrementStreak(userId)
       } else {
@@ -256,8 +253,8 @@ export default class Game {
     }
   }
 
-  getAllUserInfo() {
-    return Array.from(this.allUserInfo.entries()).map(([userId, userInfo]) => {
+  getGameUserInfo() {
+    return Array.from(this.gameUserInfo.entries()).map(([userId, userInfo]) => {
       const userInfoEntry = { userId }
 
       for (const [key, value] of Object.entries(userInfo)) {
@@ -301,7 +298,7 @@ export default class Game {
   startGame(roomId, io) {
     io.to(roomId).emit(
       "gameStarted",
-      this.getAllUserInfo(),
+      this.getGameUserInfo(),
       this.solution,
       this.startingWord,
       PRIVATE_GAME_ROUND_LIMIT,
@@ -365,7 +362,7 @@ export default class Game {
   broadcastSpectatorInfo(socket) {
     socket.emit(
       "spectatorInfo",
-      this.getAllUserInfo(),
+      this.getGameUserInfo(),
       PRIVATE_GAME_ROUND_LIMIT,
       this.round,
       this.timer
@@ -427,7 +424,7 @@ export default class Game {
 
   broadcastFinalUserInfo(roomId, io) {
     if (roomId) {
-      io.to(roomId).emit("finalUserInfo", this.getAllUserInfo())
+      io.to(roomId).emit("finalUserInfo", this.getGameUserInfo())
     } else {
       console.error("Invalid roomId for broadcasting final user info")
     }

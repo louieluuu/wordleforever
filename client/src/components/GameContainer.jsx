@@ -220,8 +220,8 @@ function GameContainer({
   // Main useEffect loop for online game logic
   useEffect(() => {
     if (hasOnlineGameStarted) {
-      socket.on("spectatorInfo", (allUserInfo, maxRounds, round, timer) => {
-        setUserInfo(allUserInfo)
+      socket.on("spectatorInfo", (gameUserInfo, maxRounds, round, timer) => {
+        setUserInfo(gameUserInfo)
         setMaxRounds(maxRounds)
         setRoundCounter(round)
         setRoundTimer(timer)

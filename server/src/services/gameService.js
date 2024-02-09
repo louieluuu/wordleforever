@@ -3,6 +3,7 @@ import Game from "../classes/Game.js"
 
 // Services
 import {
+  getRoomUserInfo,
   isRoomChallengeMode,
   getRoomConnectionMode,
   setRoomInProgress,
@@ -44,7 +45,7 @@ async function initializeGameInfo(roomId) {
   }
   const game = await Game.createGame(
     getRoomConnectionMode(roomId),
-    getUsersInRoom(roomId),
+    getRoomUserInfo(roomId),
     prevPoints,
     prevRound,
     prevRoundsWon,
