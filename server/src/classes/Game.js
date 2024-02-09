@@ -253,6 +253,7 @@ export default class Game {
     }
   }
 
+  // TODO: getGameUserInfoArray? just to be clear it's for socket transmission
   getGameUserInfo() {
     return Array.from(this.gameUserInfo.entries()).map(([userId, userInfo]) => {
       const userInfoEntry = { userId }
