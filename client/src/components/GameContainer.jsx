@@ -278,6 +278,10 @@ function GameContainer({
 
       socket.on("firstSolve", (firstSolveUserId) => {
         setWinningUserId(firstSolveUserId)
+
+        // TODO anywhere that says "socket.id" must be audited,
+        // because it should actually be userId - which is
+        // either Firebase's auth userId or socket.id.
         if (socket.id === firstSolveUserId) {
           handleWin()
         }

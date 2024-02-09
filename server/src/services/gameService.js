@@ -110,6 +110,7 @@ function handleWrongGuess(roomId, userId, updatedGameBoard, io) {
   }
 }
 
+// TODO one of the rare functions that actually require async
 async function handleCorrectGuess(
   roomId,
   userId,
@@ -118,29 +119,28 @@ async function handleCorrectGuess(
   io
 ) {
   try {
+    const roomConnectionMode = getRoomConnectionMode(roomId)
     const game = Games.get(roomId)
-    if (game && game instanceof Game) {
-      if (getRoomConnectionMode(roomId) === "online-private") {
-        // Points
-        game.updatePoints(userId)
-        game.broadcastPoints(roomId, userId, io)
-        // Total guesses
-        game.incrementTotalGuesses(userId)
-        // Rounds solved
-        game.incrementRoundsSolved(userId)
-        // Total time in rounds solved
-        game.incrementTotalTimeInRoundsSolved(userId)
+
+    if (roomConnectionMode && game && game instanceof Game) {
+      if (roomConnectionMode === "online-private") {
         if (game.countSolved === 0) {
           game.broadcastFirstSolve(roomId, userId, io)
         }
-      } else if (getRoomConnectionMode(roomId) === "online-public") {
+        game.updatePoints(userId)
+        game.broadcastPoints(roomId, userId, io)
+        game.incrementTotalGuesses(userId)
+        game.incrementRoundsSolved(userId)
+        game.incrementTotalTimeInRoundsSolved(userId)
+      } else if (roomConnectionMode === "online-public") {
         game.updateStreaks(userId)
-        await handleUserStreakUpdates(userId, roomId)
+        await handleUserStreakUpdates(userId, roomId) // TODO
       }
-      game.broadcastSolvedAudio(roomId, socket)
+
       game.countSolved += 1
+      game.broadcastSolvedAudio(roomId, socket)
       game.setGameBoard(userId, updatedGameBoard)
-      if (isGameOver(roomId)) {
+      if (isGameOver(roomId, roomConnectionMode)) {
         game.endGame(roomId, io)
       } else {
         game.broadcastGameBoard(roomId, userId, io)
@@ -171,14 +171,14 @@ async function handleOutOfGuesses(roomId, userId, io) {
   }
 }
 
-function isGameOver(roomId) {
+function isGameOver(roomId, roomConnectionMode) {
   const game = Games.get(roomId)
   if (game && game instanceof Game) {
-    if (getRoomConnectionMode(roomId) === "online-private") {
+    if (roomConnectionMode === "online-private") {
       if (game.countSolved + game.countOutOfGuesses >= game.getRoomSize()) {
         return true
       }
-    } else if (getRoomConnectionMode(roomId) === "online-public") {
+    } else if (roomConnectionMode === "online-public") {
       if (
         game.countSolved > 0 ||
         game.countOutOfGuesses >= game.getRoomSize()

@@ -82,7 +82,13 @@ io.on("connection", (socket) => {
   socket.on(
     "correctGuess",
     async (roomId, updatedGameBoard) =>
-      await handleCorrectGuess(roomId, socket.id, updatedGameBoard, socket, io) // TODO don't need both socket.id and socket
+      await handleCorrectGuess(
+        roomId,
+        socket.userId,
+        updatedGameBoard,
+        socket,
+        io
+      )
   )
   socket.on("outOfGuesses", (roomId) =>
     handleOutOfGuesses(roomId, socket.userId, io)

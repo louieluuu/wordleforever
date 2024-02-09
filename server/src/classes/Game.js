@@ -237,7 +237,7 @@ export default class Game {
   }
 
   updateStreaks(winnerUserId) {
-    this.gameUserInfo.forEach((userInfo, userId) => {
+    this.gameUserInfo.forEach((_, userId) => {
       if (userId === winnerUserId) {
         this.incrementStreak(userId)
       } else {
