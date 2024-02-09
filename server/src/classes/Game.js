@@ -39,9 +39,9 @@ export default class Game {
     this.elapsedTimerId = null
   }
 
-  static async createGame(
+  static createGame(
     connectionMode,
-    userInfo,
+    roomUserInfo,
     prevPoints,
     prevRound,
     prevRoundsWon,
@@ -58,7 +58,7 @@ export default class Game {
       ? game.generateRandomFirstGuess(game.solution)
       : null
     game.gameUserInfo = game.initializeGameUserInfo(
-      userInfo,
+      roomUserInfo,
       prevPoints,
       prevRoundsWon,
       prevRoundsSolved,
@@ -74,8 +74,8 @@ export default class Game {
     return game
   }
 
-  async initializeGameUserInfo(
-    userInfo,
+  initializeGameUserInfo(
+    roomUserInfo,
     prevPoints,
     prevRoundsWon,
     prevRoundsSolved,
@@ -84,7 +84,7 @@ export default class Game {
   ) {
     const gameUserInfoMap = new Map()
 
-    userInfo.forEach((user, userId) => {
+    roomUserInfo.forEach((user, userId) => {
       gameUserInfoMap.set(userId, {
         displayName: user.displayName,
         gameBoard: new Array(6)

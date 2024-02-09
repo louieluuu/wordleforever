@@ -21,7 +21,7 @@ const Games = new Map()
 
 // For now games will be indexed by roomId and deleted when the room is deleted
 // Possible new feature: store game info in DB for match history, in which case they'll need a new gameId
-async function initializeGameInfo(roomId) {
+function initializeGameInfo(roomId) {
   // Should only be set for subsequent games in private games, games should be deleted upon room deletion
   let prevPoints = new Map()
   let prevRound = 0
@@ -43,7 +43,7 @@ async function initializeGameInfo(roomId) {
       deleteGame(roomId)
     }
   }
-  const game = await Game.createGame(
+  const game = Game.createGame(
     getRoomConnectionMode(roomId),
     getRoomUserInfo(roomId),
     prevPoints,
@@ -67,12 +67,12 @@ function deleteGame(roomId) {
   }
 }
 
-async function handleGameStart(roomId, io) {
+function handleGameStart(roomId, io) {
   try {
     if (roomId && roomInLobby(roomId)) {
       setRoomInProgress(roomId)
       setRoomInGame(roomId)
-      await initializeGameInfo(roomId)
+      initializeGameInfo(roomId)
       const game = Games.get(roomId)
       if (game && game instanceof Game) {
         game.startGame(roomId, io)
