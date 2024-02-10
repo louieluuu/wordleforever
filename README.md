@@ -15,22 +15,22 @@
 
 # Acknowledgements
 
-#### **Friends**
-
+### **Friends**
 - [sschandi](https://github.com/sschandi) for his front-end guidance throughout the creation of this project.
 - Jeff for his coaching, in-game and out.
 
-#### **Assets**
+### **Assets**
 
-Images:  
+#### Images:  
 - _Photo of Mountains During Dawn_ by [Eberhard Grossgasteiger](https://www.pexels.com/@eberhardgross/)
 
-Sounds:  
+#### Sounds: 
+Original:    
 - _https://freesound.org/people/lyd4tuna/sounds/453264/_ by lyd4tuna
 - _https://freesound.org/people/jordanielmills/sounds/640365/_ by jordanielmills
 - _https://freesound.org/people/smokinghotdog/sounds/584237/_ by smokinghotdog
 
-Modified:  
+Modified:
 - _https://freesound.org/people/Bertrof/sounds/131658/_ by Bertrof
 - _https://freesound.org/people/joelle.oh.world/sounds/642728/_ by joelle.oh.world
 - _https://freesound.org/people/zanox/sounds/233645/_ by zanox
