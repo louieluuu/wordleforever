@@ -12,10 +12,7 @@ import {
   areAllUsersLoaded,
   loadUser,
 } from "./roomService.js"
-import {
-  handleUserStreakUpdates,
-  handleUserStreakReset,
-} from "./userService.js"
+import { dbBatchUpdateUsers } from "./userService.js" // TODO idk if this belongs in here or in Game.js
 
 const Games = new Map()
 
@@ -55,6 +52,14 @@ function initializeGameInfo(roomId) {
     isRoomChallengeMode(roomId)
   )
   Games.set(roomId, game)
+}
+
+function getUserIdsInGame(roomId) {
+  const game = Games.get(roomId)
+  if (game && game instanceof Game) {
+    return game.getUserIds()
+  }
+  return []
 }
 
 // Maybe eventually store games in a DB instead for match history info, for now they are deleted upon completion
@@ -110,14 +115,8 @@ function handleWrongGuess(roomId, userId, updatedGameBoard, io) {
   }
 }
 
-// TODO one of the rare functions that actually require async
-async function handleCorrectGuess(
-  roomId,
-  userId,
-  updatedGameBoard,
-  socket,
-  io
-) {
+// TODO not sure if async yet (endGame)
+function handleCorrectGuess(roomId, userId, updatedGameBoard, socket, io) {
   try {
     const roomConnectionMode = getRoomConnectionMode(roomId)
     const game = Games.get(roomId)
@@ -134,9 +133,11 @@ async function handleCorrectGuess(
         game.incrementTotalSolveTime(userId)
       } else if (roomConnectionMode === "online-public") {
         game.updateStreaks(userId)
-        await handleUserStreakUpdates(userId, roomId) // TODO
       }
-
+      // Guarantee only one winner.
+      if (game.winnerId === null) {
+        game.winnerId = userId
+      }
       game.countSolved += 1
       game.broadcastSolvedAudio(roomId, socket)
       game.setGameBoard(userId, updatedGameBoard)
@@ -191,6 +192,7 @@ function isGameOver(roomId, roomConnectionMode) {
 }
 
 export {
+  getUserIdsInGame,
   deleteGame,
   handleGameStart,
   handleLoadUser,

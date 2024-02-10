@@ -171,7 +171,7 @@ function areAllUsersLoaded(roomId) {
 function addUserToRoom(socket, displayName, roomId) {
   // TODO
   // Attaching custom properties to socket.
-  // Handles the case where users join by pasting a link,
+  // Handles the bug case where users join by pasting a link,
   // but feels awfully hacky.
   socket.join(roomId)
   socket.userId = socket.userId || socket.id
@@ -192,13 +192,39 @@ function removeUserFromRoom(userId, roomId) {
   }
 }
 
-// TODO: Consider a getRoomUserInfoArray function so the ugly .entries() syntax etc is not repeated
+// TODO: Don't think this is necessary anymore. I need the ids in game
+// instead of the room, so spectators don't get updated in the db by accident.
+// function getUserIdsInRoom(roomId) {
+//   const room = Rooms.get(roomId)
+//   if (room && room instanceof Room) {
+//     return [...room.userInfo.keys()]
+//   }
+//   return []
+// }
+
 function getRoomUserInfo(roomId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
     return room.userInfo
   }
   return new Map() // empty map
+}
+
+function getRoomUserInfoAsArray(roomId) {
+  let roomUserInfoArray
+  const roomUserInfoMap = getRoomUserInfo(roomId)
+
+  if (roomUserInfoMap) {
+    roomUserInfoArray = Array.from(
+      roomUserInfoMap.entries(),
+      ([userId, userObj]) => ({
+        userId: userId,
+        displayName: userObj.displayName,
+        currStreak: userObj.currStreak,
+      })
+    )
+  }
+  return roomUserInfoArray
 }
 
 function isUserInRoom(roomId, userId) {
@@ -226,17 +252,10 @@ function findMatchingRoom(isChallengeOn) {
 }
 
 function broadcastRoomUserInfo(roomId, io) {
-  const roomUserInfoMap = getRoomUserInfo(roomId)
-
-  const roomUserInfoArray = Array.from(
-    roomUserInfoMap.entries(),
-    ([userId, userObj]) => ({
-      userId: userId,
-      displayName: userObj.displayName,
-      currStreak: userObj.currStreak,
-    })
-  )
-  io.to(roomId).emit("roomUserInfoUpdated", roomUserInfoArray)
+  const roomUserInfoArray = getRoomUserInfoAsArray(roomId)
+  if (roomUserInfoArray) {
+    io.to(roomId).emit("roomUserInfoUpdated", roomUserInfoArray)
+  }
 }
 
 export {
@@ -261,6 +280,7 @@ export {
   areAllUsersLoaded,
   addUserToRoom,
   removeUserFromRoom,
+  // getUserIdsInRoom,
   getRoomUserInfo,
   isUserInRoom,
   findMatchingRoom,

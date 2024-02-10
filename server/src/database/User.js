@@ -19,8 +19,14 @@ const UserSchema = new mongoose.Schema({
   _id: String,
 
   userId: String,
-  currStreak: { type: Number, default: 0 },
-  maxStreak: { type: Number, default: 0 },
+  currStreak: {
+    normal: { type: Number, default: 0 },
+    challenge: { type: Number, default: 0 },
+  },
+  maxStreak: {
+    normal: { type: Number, default: 0 },
+    challenge: { type: Number, default: 0 },
+  },
   totalGames: {
     public: {
       normal: { type: Number, default: 0 },

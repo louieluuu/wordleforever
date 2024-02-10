@@ -29,6 +29,7 @@ export default class Game {
     this.solution = null
     this.startingWord = null
     this.gameUserInfo = new Map()
+    this.winnerId = null
     this.countSolved = 0
     this.countOutOfGuesses = 0
     this.round = 0
@@ -100,6 +101,10 @@ export default class Game {
     })
 
     return gameUserInfoMap
+  }
+
+  getUserIds() {
+    return Array.from(this.gameUserInfo.keys())
   }
 
   getRoomSize() {
@@ -322,6 +327,7 @@ export default class Game {
       if (this.round >= PRIVATE_GAME_ROUND_LIMIT) {
         this.reachedRoundLimit = true
         this.broadcastEndOfMatch(roomId, io)
+        // TODO batch update db
       } else {
         this.startNextRoundAfterBreak(roomId, io)
       }
