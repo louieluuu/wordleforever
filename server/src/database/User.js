@@ -53,12 +53,12 @@ const UserSchema = new mongoose.Schema({
   },
   guessDistribution: {
     public: {
-      normal: [Number],
-      challenge: [Number],
+      normal: { type: [Number], default: [0, 0, 0, 0, 0, 0] },
+      challenge: { type: [Number], default: [0, 0, 0, 0, 0, 0] },
     },
     private: {
-      normal: [Number],
-      challenge: [Number],
+      normal: { type: [Number], default: [0, 0, 0, 0, 0, 0] },
+      challenge: { type: [Number], default: [0, 0, 0, 0, 0, 0] },
     },
   },
 })
