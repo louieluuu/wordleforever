@@ -19,13 +19,48 @@ const UserSchema = new mongoose.Schema({
   _id: String,
 
   userId: String,
-
   currStreak: { type: Number, default: 0 },
   maxStreak: { type: Number, default: 0 },
-  totalGames: { type: Number, default: 0 },
-  totalWins: { type: Number, default: 0 },
-  totalGuesses: { type: Number, default: 0 },
-  totalSolveTime: { type: Number, default: 0 },
+  totalGames: {
+    public: {
+      normal: { type: Number, default: 0 },
+      challenge: { type: Number, default: 0 },
+    },
+    private: {
+      normal: { type: Number, default: 0 },
+      challenge: { type: Number, default: 0 },
+    },
+  },
+  totalWins: {
+    public: {
+      normal: { type: Number, default: 0 },
+      challenge: { type: Number, default: 0 },
+    },
+    private: {
+      normal: { type: Number, default: 0 },
+      challenge: { type: Number, default: 0 },
+    },
+  },
+  totalSolveTime: {
+    public: {
+      normal: { type: Number, default: 0 },
+      challenge: { type: Number, default: 0 },
+    },
+    private: {
+      normal: { type: Number, default: 0 },
+      challenge: { type: Number, default: 0 },
+    },
+  },
+  guessDistribution: {
+    public: {
+      normal: [Number],
+      challenge: [Number],
+    },
+    private: {
+      normal: [Number],
+      challenge: [Number],
+    },
+  },
 })
 
 export default mongoose.model("User", UserSchema)
