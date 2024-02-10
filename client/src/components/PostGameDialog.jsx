@@ -207,9 +207,9 @@ function PostGameDialog({
                         </td>
                         <td>
                           {user.roundsSolved > 0
-                            ? (
-                                user.totalTimeInRoundsSolved / user.roundsSolved
-                              ).toFixed(2)
+                            ? (user.totalSolveTime / user.roundsSolved).toFixed(
+                                2
+                              )
                             : "/"}
                         </td>
                         {/* Add more cells for additional properties */}

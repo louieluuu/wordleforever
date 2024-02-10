@@ -47,7 +47,7 @@ export default class Game {
     prevRoundsWon,
     prevRoundsSolved,
     prevTotalGuesses,
-    prevTotalTimeInRoundsSolved,
+    prevTotalSolveTime,
     isChallengeMode
   ) {
     const game = new Game()
@@ -63,7 +63,7 @@ export default class Game {
       prevRoundsWon,
       prevRoundsSolved,
       prevTotalGuesses,
-      prevTotalTimeInRoundsSolved
+      prevTotalSolveTime
     )
     game.countSolved = 0
     game.countOutOfGuesses = 0
@@ -80,7 +80,7 @@ export default class Game {
     prevRoundsWon,
     prevRoundsSolved,
     prevTotalGuesses,
-    prevTotalTimeInRoundsSolved
+    prevTotalSolveTime
   ) {
     const gameUserInfoMap = new Map()
 
@@ -95,7 +95,7 @@ export default class Game {
         roundsWon: prevRoundsWon.get(userId) || 0,
         roundsSolved: prevRoundsSolved.get(userId) || 0,
         totalGuesses: prevTotalGuesses.get(userId) || 0,
-        totalTimeInRoundsSolved: prevTotalTimeInRoundsSolved.get(userId) || 0,
+        totalSolveTime: prevTotalSolveTime.get(userId) || 0,
       })
     })
 
@@ -169,22 +169,19 @@ export default class Game {
     }
   }
 
-  getAllTotalTimeInRoundsSolved() {
-    const allTotalTimeInRoundsSolvedMapping = new Map()
+  getAllTotalSolveTime() {
+    const allTotalSolveTimeMapping = new Map()
     this.gameUserInfo.forEach((userInfo, userId) => {
-      allTotalTimeInRoundsSolvedMapping.set(
-        userId,
-        userInfo.totalTimeInRoundsSolved
-      )
+      allTotalSolveTimeMapping.set(userId, userInfo.totalSolveTime)
     })
 
-    return allTotalTimeInRoundsSolvedMapping
+    return allTotalSolveTimeMapping
   }
 
-  incrementTotalTimeInRoundsSolved(userId) {
+  incrementTotalSolveTime(userId) {
     const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
-      userInfo.totalTimeInRoundsSolved += this.elapsedTime
+      userInfo.totalSolveTime += this.elapsedTime
     }
   }
 

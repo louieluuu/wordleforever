@@ -28,7 +28,7 @@ function initializeGameInfo(roomId) {
   let prevRoundsWon = new Map()
   let prevRoundsSolved = new Map()
   let prevTotalGuesses = new Map()
-  let prevTotalTimeInRoundsSolved = new Map()
+  let prevTotalSolveTime = new Map()
   if (Games.has(roomId)) {
     const prevGame = Games.get(roomId)
     if (!prevGame.reachedRoundLimit) {
@@ -37,7 +37,7 @@ function initializeGameInfo(roomId) {
       prevRoundsWon = prevGame.getAllRoundsWon()
       prevRoundsSolved = prevGame.getAllRoundsSolved()
       prevTotalGuesses = prevGame.getAllTotalGuesses()
-      prevTotalTimeInRoundsSolved = prevGame.getAllTotalTimeInRoundsSolved()
+      prevTotalSolveTime = prevGame.getAllTotalSolveTime()
       deleteGame(roomId)
     } else {
       deleteGame(roomId)
@@ -51,7 +51,7 @@ function initializeGameInfo(roomId) {
     prevRoundsWon,
     prevRoundsSolved,
     prevTotalGuesses,
-    prevTotalTimeInRoundsSolved,
+    prevTotalSolveTime,
     isRoomChallengeMode(roomId)
   )
   Games.set(roomId, game)
@@ -131,7 +131,7 @@ async function handleCorrectGuess(
         game.broadcastPoints(roomId, userId, io)
         game.incrementTotalGuesses(userId)
         game.incrementRoundsSolved(userId)
-        game.incrementTotalTimeInRoundsSolved(userId)
+        game.incrementTotalSolveTime(userId)
       } else if (roomConnectionMode === "online-public") {
         game.updateStreaks(userId)
         await handleUserStreakUpdates(userId, roomId) // TODO

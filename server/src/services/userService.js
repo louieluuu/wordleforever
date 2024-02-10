@@ -20,56 +20,56 @@ import {
 } from "./roomService.js"
 
 function handleNewConnection(userId, socket) {
-  // Attaching custom property "userId" to socket.
-  // It is either the Firebase Auth id, or the socket's own id if not auth.
-  // Following this function, we will call socket.userId in lieu of
-  // passing around the actual userId variable from the client side.
+  // Attaching custom peroperties "isUser" and "userId" to socket.
+  // userId (passed in from Firebase) is null if the user isn't registered.
+  socket.isUser = userId ? true : false
+
+  // socket.userId will be set and used in lieu of passing around
+  // the userId param constantly from client to server.
+  // It encompasses both Auth and Guest users, so it can be
+  // thought of as the "server id".
   socket.userId = userId || socket.id
 
   console.log(`From handleNewConnection: ${socket.userId}`)
 }
 
 async function createNewUser(userId) {
-  try {
-    const existingUser = await User.findById(userId).lean()
-    if (!existingUser) {
-      await User.create({ _id: userId, userId: userId })
+  if (userId) {
+    try {
+      const existingUser = await User.findById(userId).lean()
+      if (!existingUser) {
+        await User.create({ _id: userId, userId: userId })
+      }
+    } catch (error) {
+      console.error(
+        `Error initializing user info in the database: ${error.message}`
+      )
+      throw error
     }
-  } catch (error) {
-    console.error(
-      `Error initializing user info in the database: ${error.message}`
-    )
-    throw error
-  }
 
-  // TODO: Not sure if we need this, but it is explicit.
-  // socket.userId = userId
+    // TODO: Not sure if we need this, but it is explicit.
+    // socket.userId = userId
+  }
 }
 
-// TODO: We might need this later for retrieving Stats Info, but not right now.
-// async function getUser(userId) {
-//   if (Guests.has(userId)) {
-//     const guest = Guests.get(userId)
-//     return guest
-//   }
-
-//   try {
-//     const user = await User.findById(userId).lean()
-//     if (!user) {
-//       console.error(`No guest or user found with userId: ${userId}`)
-//     }
-//     return user
-//   } catch (error) {
-//     console.error(`Error getting user info from the database: ${error.message}`)
-//     throw error
-//   }
-// }
+// This only runs for registered users, so no additional checks are needed.
+async function getUserStats(userId) {
+  try {
+    const user = await User.findById(userId).lean()
+    if (!user) {
+      console.error(`No guest or user found with userId: ${userId}`)
+    }
+    return user
+  } catch (error) {
+    console.error(`Error getting user info from the database: ${error.message}`)
+    throw error
+  }
+}
 
 function setDisplayName(roomId, userId, displayName) {
   const roomUserInfo = getRoomUserInfo(roomId)
-  const previousValue = roomUserInfo.get(userId)
-
   if (roomUserInfo) {
+    const previousValue = roomUserInfo.get(userId)
     roomUserInfo.set(userId, { ...previousValue, displayName: displayName })
   }
 }

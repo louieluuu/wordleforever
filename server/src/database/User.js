@@ -25,7 +25,7 @@ const UserSchema = new mongoose.Schema({
   totalGames: { type: Number, default: 0 },
   totalWins: { type: Number, default: 0 },
   totalGuesses: { type: Number, default: 0 },
-  totalTimeInGamesWon: { type: Number, default: 0 },
+  totalSolveTime: { type: Number, default: 0 },
 })
 
 export default mongoose.model("User", UserSchema)
