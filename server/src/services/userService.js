@@ -37,12 +37,12 @@ function handleNewConnection(userId, socket) {
   console.log(`From handleNewConnection: ${socket.userId}`)
 }
 
-async function createNewUser(userId) {
-  if (userId) {
+async function createNewUser(userId, username) {
+  if (userId && username) {
     try {
       const existingUser = await User.findById(userId).lean()
       if (!existingUser) {
-        await User.create({ _id: userId, username: "Guest" })
+        await User.create({ _id: userId, username: username })
       }
     } catch (error) {
       console.error(
@@ -51,8 +51,7 @@ async function createNewUser(userId) {
       throw error
     }
 
-    // TODO: Not sure if we actually need this due to page refreshes on client-side,
-    // but it is explicit.
+    // TODO: Not sure if we actually need this due to page refreshes on client-side, but it is explicit.
     socket.userId = userId
   }
 }
