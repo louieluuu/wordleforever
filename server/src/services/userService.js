@@ -20,18 +20,18 @@ import {
 } from "./roomService.js"
 import { getUserIdsInGame } from "./gameService.js"
 
-function handleNewConnection(userId, socket) {
-  // Attaching custom properties "isUser" and "userId" to socket.
-  // userId (passed in from Firebase) is null if the user isn't registered.
-  // isUser in particular will be used to check if the db should be updated.
-  socket.isUser = userId ? true : false
+const MIN_FIREBASE_UID_LENGTH = 28
 
-  // socket.userId will be set and used in lieu of passing around
-  // the userId param constantly from client to server.
-  // It encompasses both Auth and Guest users, so it can be
-  // thought of as the "server id". It's also important to note that a userId
-  // and socket.id cannot overlap; Firebase Auth = 28 chars, socket.id = 20 chars.
-  // This is important, or we would have duplicate ids flying around.
+function handleNewConnection(userId, socket) {
+  // Attaching custom property "userId" to socket.
+  // userId (passed in from Firebase) is null if the user isn't registered.
+  // We use socket.userId in lieu of passing the Firebase param constantly from client to server.
+  // socket.userId encompasses both Auth and Guest users, so it can be
+  // thought of as the "server id". The current naming is a bit confusing.
+  // It's also important to note that a userId and socket.id cannot overlap;
+  // Firebase Auth = 28 chars, socket.id = 20 chars.
+  // This is important, or we would have duplicate ids flying around. We'll
+  // also exploit this fact when trying to determine whether a socket is a user or not.
   socket.userId = userId ? userId : socket.id
 
   console.log(`From handleNewConnection: ${socket.userId}`)
@@ -71,6 +71,7 @@ async function getUserStats(userId) {
   }
 }
 
+// TODO: These dpName fxns miiight not belong here? They're not db operations.
 function setDisplayName(roomId, userId, displayName) {
   const roomUserInfo = getRoomUserInfo(roomId)
   if (roomUserInfo) {
@@ -84,6 +85,11 @@ function handleDisplayNameUpdate(roomId, userId, updatedDisplayName, io) {
     setDisplayName(roomId, userId, updatedDisplayName)
     broadcastRoomUserInfo(roomId, io)
   }
+}
+
+function dbIsRegistered(userId) {
+  const registered = userId.length < MIN_FIREBASE_UID_LENGTH ? false : true
+  return registered
 }
 
 function constructCurrStreakUpdate(userId, winnerId, connectionMode, gameMode) {
@@ -175,6 +181,9 @@ async function constructSolveDistributionUpdate(
 ) {
   let update = {}
   const game = getGame()
+  // TODO instead of grabbing the solveDistribution as the initial check,
+  // you can just check if totalsolvetime === 0. 0 solve time = 0 new distribution.
+
   const solveDistributionToAdd = game.gameUserInfo.get(userId).solveDistribution // TODO missing
 
   const sameDistribution = solveDistributionToAdd.every((value) => value === 0)
@@ -276,13 +285,15 @@ async function dbBatchUpdateUsers(
     try {
       const userIds = getUserIdsInGame(roomId)
       const updatePromises = userIds.map(async (userId) => {
-        const userUpdate = await constructUserUpdate(
-          userId,
-          roomConnectionMode,
-          isChallengeMode,
-          gameResult
-        )
-        await User.updateOne({ _id: userId }, userUpdate)
+        if (dbIsRegistered(userId)) {
+          const userUpdate = await constructUserUpdate(
+            userId,
+            roomConnectionMode,
+            isChallengeMode,
+            gameResult
+          )
+          await User.updateOne({ _id: userId }, userUpdate)
+        }
       })
       await Promise.all(updatePromises)
     } catch (error) {

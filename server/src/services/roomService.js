@@ -192,7 +192,7 @@ function removeUserFromRoom(userId, roomId) {
   }
 }
 
-// TODO: Don't think this is necessary anymore. I need the ids in game
+// TODO: Don't think this is necessary anymore. I need the ids in game, not room (to handle spectators)
 // instead of the room, so spectators don't get updated in the db by accident.
 // function getUserIdsInRoom(roomId) {
 //   const room = Rooms.get(roomId)
