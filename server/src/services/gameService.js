@@ -143,6 +143,11 @@ function handleCorrectGuess(roomId, userId, updatedGameBoard, socket, io) {
       game.setGameBoard(userId, updatedGameBoard)
       if (isGameOver(roomId, roomConnectionMode)) {
         game.endGame(roomId, io)
+        // TODO: Current
+        if (isMatchOver(roomId)) {
+          game.broadcastEndOfMatch(roomId, io)
+          // TODO batch update db
+        }
       } else {
         game.broadcastGameBoard(roomId, userId, io)
         // Pretty hacky, maybe a better way to do this. This needs to be separate from game.broadcastFirstSolve above, as that needs to be emitted regardless of if the game is over or not, we only want to set the timer when the game isn't over. But the game over logic depends on game.countSolved being incremented first, and this needs to come after the game over logic, thus this is "technically" checking for first solve logic, but we need to check for a game.countSolved of 1 instead of 0
@@ -160,14 +165,32 @@ function handleCorrectGuess(roomId, userId, updatedGameBoard, socket, io) {
 async function handleOutOfGuesses(roomId, userId, io) {
   const game = Games.get(roomId)
   if (game && game instanceof Game) {
-    if (getRoomConnectionMode(roomId) === "online-public") {
+    const roomConnectionMode = getRoomConnectionMode(roomId)
+    if (roomConnectionMode === "online-public") {
       game.resetStreak(userId)
-      await handleUserStreakReset(userId, roomId) // TODO streak
       game.broadcastStreak(roomId, userId, io)
+      // In the public outOfGuesses case, db must be updated
+      // immediately; can't wait for batch update
+      await dbUpdateUser(
+        userId,
+        game.winnerId,
+        game.connectionMode,
+        game.isRoomChallengeMode,
+        game.hasUpdatedInDbList
+      )
+      game.hasUpdatedInDbList.push(userId)
     }
+    // TODO: Concerned about the ordering of this, since it comes
+    // after a potentially slow db update and other logic might
+    // depend on the countOutOfGuesses? Maybe it's fine.
     game.countOutOfGuesses += 1
     if (isGameOver(roomId)) {
       game.endGame(roomId, io)
+      // TODO: Current
+      if (isMatchOver(roomId)) {
+        game.broadcastEndOfMatch(roomId, io)
+        // TODO batch update db
+      }
     }
   }
 }
@@ -187,6 +210,14 @@ function isGameOver(roomId, roomConnectionMode) {
         return true
       }
     }
+  }
+  return false
+}
+
+function isMatchOver(roomId) {
+  const game = Games.get(roomId)
+  if (game && game instanceof Game) {
+    return game.reachedRoundLimit
   }
   return false
 }

@@ -15,13 +15,13 @@ import {
 // const PRIVATE_GAME_SOLVED_TIMER = 45
 // const ROUND_BREAK_TIME = 7.5
 
-// const PRIVATE_GAME_ROUND_LIMIT = 10
+// const PRIVATE_ROUND_LIMIT = 10
 
 const PRIVATE_GAME_TIMER = 120
 const PRIVATE_GAME_SOLVED_TIMER = 45
 const ROUND_BREAK_TIME = 7.5
 
-const PRIVATE_GAME_ROUND_LIMIT = 2
+const PRIVATE_ROUND_LIMIT = 2
 
 export default class Game {
   constructor() {
@@ -33,11 +33,13 @@ export default class Game {
     this.countSolved = 0
     this.countOutOfGuesses = 0
     this.round = 0
+    this.roundLimit = 0
     this.reachedRoundLimit = false
     this.timer = 0
     this.timerId = null
     this.elapsedTime = 0
     this.elapsedTimerId = null
+    this.hasUpdatedInDbList = []
   }
 
   static createGame(
@@ -69,6 +71,8 @@ export default class Game {
     game.countSolved = 0
     game.countOutOfGuesses = 0
     game.round = prevRound + 1
+    game.roundLimit =
+      connectionMode === "online-public" ? 1 : PRIVATE_ROUND_LIMIT
     game.reachedRoundLimit = false
     game.timer = PRIVATE_GAME_TIMER
 
@@ -304,7 +308,7 @@ export default class Game {
       this.getGameUserInfo(),
       this.solution,
       this.startingWord,
-      PRIVATE_GAME_ROUND_LIMIT,
+      ROUND_LIMIT,
       this.round,
       this.timer
     )
@@ -324,7 +328,7 @@ export default class Game {
     this.broadcastFinalUserInfo(roomId, io)
     if (this.connectionMode === "online-private") {
       setRoomOutOfGame(roomId)
-      if (this.round >= PRIVATE_GAME_ROUND_LIMIT) {
+      if (this.round >= this.roundLimit) {
         this.reachedRoundLimit = true
         this.broadcastEndOfMatch(roomId, io)
         // TODO batch update db
@@ -367,7 +371,7 @@ export default class Game {
     socket.emit(
       "spectatorInfo",
       this.getGameUserInfo(),
-      PRIVATE_GAME_ROUND_LIMIT,
+      this.roundLimit,
       this.round,
       this.timer
     )

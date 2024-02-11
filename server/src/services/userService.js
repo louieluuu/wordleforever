@@ -92,6 +92,10 @@ function dbIsRegistered(userId) {
   return registered
 }
 
+function dbHasUpdated(userId, hasUpdatedList) {
+  return hasUpdatedList.includes(userId)
+}
+
 function constructCurrStreakUpdate(userId, winnerId, connectionMode, gameMode) {
   let update = {}
 
@@ -119,7 +123,6 @@ async function constructMaxStreakUpdate(
   const game = getGame()
   const currStreak = game.gameUserInfo.get(userId).currStreak
 
-  // It's better to retrieve maxStreak here once.
   if (connectionMode === "public" && winnerId === userId) {
     const maxStreakPath = `maxStreak.${gameMode}`
     const maxStreak = await User.findById(userId, maxStreakPath).lean()
@@ -208,11 +211,11 @@ async function constructSolveDistributionUpdate(
   return update
 }
 
-async function constructUserUpdate(
+async function dbConstructUserUpdate(
   userId,
+  winnerId,
   roomConnectionMode,
-  isChallengeMode,
-  gameResult
+  isChallengeMode
 ) {
   let connectionMode =
     roomConnectionMode === "online-public" ? "public" : "private"
@@ -269,36 +272,58 @@ async function constructUserUpdate(
   return userUpdate
 }
 
-// TODO: We can choose to either pass in the whole game here, or just pick and choose the properties we need, wherever we call dbBatchUpdateUsers (which I assume in in Game.js or gameService.js)
-async function dbBatchUpdateUsers(
-  roomId,
+async function dbUpdateUser(
+  userId,
+  winnerId,
   roomConnectionMode,
   isChallengeMode,
-  gameResult
+  hasUpdatedList
 ) {
-  if (roomConnectionMode && isChallengeMode && gameResult) {
+  if (dbIsRegistered(userId) && !dbHasUpdated(userId, hasUpdatedList)) {
+    try {
+      const userUpdate = await dbConstructUserUpdate(
+        userId,
+        winnerId,
+        roomConnectionMode,
+        isChallengeMode
+      )
+      await User.updateOne({ _id: userId }, userUpdate)
+    } catch (error) {
+      console.error(
+        `Error updating user info in the database: ${error.message}`
+      )
+      throw error
+    }
+  }
+}
+
+async function dbBatchUpdateUsers(
+  userIds,
+  winnerId,
+  roomConnectionMode,
+  isChallengeMode,
+  hasUpdatedList
+) {
+  if (winnerId && roomConnectionMode && isChallengeMode) {
     // We could use a for loop to update each user in the db, but it would
     // be sequential. The following approach allows parallel execution.
     // .map() to create an array of Promises for each user update operation,
     // then Promise.all() to wait for all of them to complete.
     // NOTE: This parallel approach may actually hinder the db's performance.
     try {
-      const userIds = getUserIdsInGame(roomId)
-      const updatePromises = userIds.map(async (userId) => {
-        if (dbIsRegistered(userId)) {
-          const userUpdate = await constructUserUpdate(
-            userId,
-            roomConnectionMode,
-            isChallengeMode,
-            gameResult
-          )
-          await User.updateOne({ _id: userId }, userUpdate)
-        }
-      })
+      const updatePromises = userIds.map((userId) =>
+        dbUpdateUser(
+          userId,
+          winnerId,
+          roomConnectionMode,
+          isChallengeMode,
+          hasUpdatedList
+        )
+      )
       await Promise.all(updatePromises)
     } catch (error) {
       console.error(
-        `Error updating user info in the database: ${error.message}`
+        `Error batch updating user info in the database: ${error.message}`
       )
       throw error
     }

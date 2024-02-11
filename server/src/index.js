@@ -79,6 +79,7 @@ io.on("connection", (socket) => {
   socket.on("wrongGuess", (roomId, updatedGameBoard) =>
     handleWrongGuess(roomId, socket.userId, updatedGameBoard, io)
   )
+  // TODO:
   socket.on(
     "correctGuess",
     async (roomId, updatedGameBoard) =>
