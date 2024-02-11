@@ -1,7 +1,13 @@
+// Server
 import express from "express"
 import { createServer } from "http"
 import { Server } from "socket.io"
-import "./database/db.js"
+
+// Database
+import "./database/db.js" // TODO: is this actually used here?
+import User from "./database/User.js"
+
+// Middleware
 import cors from "cors"
 
 // Controllers
@@ -29,21 +35,40 @@ import {
   handleGameJoinedInProgress,
 } from "./services/gameService.js"
 
-const app = express()
-const server = createServer(app)
-
-app.use(cors())
-
+// TODO: whats this for (I changed the order of this btw)
 process.on("unhandledRejection", (reason, promise) => {
   console.error("Unhandled Rejection at:", promise, "reason:", reason)
 })
 
-const io = new Server(server, {
+const app = express()
+const httpServer = createServer(app)
+
+app.use(cors())
+
+const io = new Server(httpServer, {
   cors: {
     origin: "http://localhost:5173",
   },
 })
 
+// Endpoints
+app.get("/users/duplicate/:username", async (req, res) => {
+  const submittedUsername = req.params.username
+  try {
+    const duplicate = await User.findOne({ username: submittedUsername }).lean()
+
+    if (duplicate) {
+      res.send({ isDuplicateUsername: true })
+    } else {
+      res.send({ isDuplicateUsername: false })
+    }
+  } catch (error) {
+    console.error(`Error checking for duplicate username: ${error.message}`)
+    res.send({ isDuplicateUsername: undefined })
+  }
+})
+
+// Socket.IO
 io.on("connection", (socket) => {
   console.log(`A user connected with socketId: ${socket.id}`)
 
@@ -102,8 +127,8 @@ io.on("connection", (socket) => {
   socket.on("leaveRoom", async () => await handleLeaveRoom(socket, io))
 })
 
-const PORT = process.env.PORT || 3005
+const PORT = 3005
 
-server.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
 })

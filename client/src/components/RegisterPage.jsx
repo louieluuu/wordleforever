@@ -47,11 +47,13 @@ function RegisterPage({ setRoomId }) {
     // Restrictions
     if (username.length < 1 || username.length > 20) {
       console.log("Username must be between 1-20 characters long.")
+      return false
     }
     if (validChars.test(username) === false) {
       console.log(
         "Username must only contain Latin letters, numbers, '-', '_'."
       )
+      return false
     }
     if (
       username.startsWith("-") ||
@@ -60,17 +62,30 @@ function RegisterPage({ setRoomId }) {
       username.endsWith("_")
     ) {
       console.log("Username cannot start or end with: '-', '_'.")
+      return false
     }
 
     // Duplicates
-    if (isDuplicateUsername(username)) {
-      console.log("Username already exists.")
+    const isDuplicate = isDuplicateUsername(username)
+
+    if (isDuplicate === undefined) {
+      console.log("Server error. Please try again later.")
+      return false
+    } else if (isDuplicate === true) {
+      console.log("Username already in use.")
+      return false
+    } else if (isDuplicate === false) {
+      return true
     }
+
+    return false // catch-all if isDuplicate returned something weird
   }
 
   function register() {
-    validateUsername(username)
-    createUserWithEmailAndPassword(email, password)
+    const isValid = validateUsername(username)
+    if (isValid) {
+      createUserWithEmailAndPassword(email, password)
+    }
   }
 
   function getErrorMessage() {
