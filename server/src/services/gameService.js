@@ -115,8 +115,13 @@ function handleWrongGuess(roomId, userId, updatedGameBoard, io) {
   }
 }
 
-// TODO not sure if async yet (endGame)
-function handleCorrectGuess(roomId, userId, updatedGameBoard, socket, io) {
+async function handleCorrectGuess(
+  roomId,
+  userId,
+  updatedGameBoard,
+  socket,
+  io
+) {
   try {
     const roomConnectionMode = getRoomConnectionMode(roomId)
     const game = Games.get(roomId)
@@ -143,10 +148,9 @@ function handleCorrectGuess(roomId, userId, updatedGameBoard, socket, io) {
       game.setGameBoard(userId, updatedGameBoard)
       if (isGameOver(roomId, roomConnectionMode)) {
         game.endGame(roomId, io)
-        // TODO: Current
         if (isMatchOver(roomId)) {
           game.broadcastEndOfMatch(roomId, io)
-          // TODO batch update db
+          await dbBatchUpdateUsers(game)
         }
       } else {
         game.broadcastGameBoard(roomId, userId, io)
@@ -171,13 +175,7 @@ async function handleOutOfGuesses(roomId, userId, io) {
       game.broadcastStreak(roomId, userId, io)
       // In the public outOfGuesses case, db must be updated
       // immediately; can't wait for batch update
-      await dbUpdateUser(
-        userId,
-        game.winnerId,
-        game.connectionMode,
-        game.isRoomChallengeMode,
-        game.hasUpdatedInDbList
-      )
+      await dbUpdateUser(userId, game)
       game.hasUpdatedInDbList.push(userId)
     }
     // TODO: Concerned about the ordering of this, since it comes
@@ -186,10 +184,9 @@ async function handleOutOfGuesses(roomId, userId, io) {
     game.countOutOfGuesses += 1
     if (isGameOver(roomId)) {
       game.endGame(roomId, io)
-      // TODO: Current
       if (isMatchOver(roomId)) {
         game.broadcastEndOfMatch(roomId, io)
-        // TODO batch update db
+        await dbBatchUpdateUsers(game)
       }
     }
   }

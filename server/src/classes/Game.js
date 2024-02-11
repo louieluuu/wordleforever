@@ -75,6 +75,7 @@ export default class Game {
       connectionMode === "online-public" ? 1 : PRIVATE_ROUND_LIMIT
     game.reachedRoundLimit = false
     game.timer = PRIVATE_GAME_TIMER
+    game.hasUpdatedInDbList = []
 
     return game
   }
@@ -330,8 +331,6 @@ export default class Game {
       setRoomOutOfGame(roomId)
       if (this.round >= this.roundLimit) {
         this.reachedRoundLimit = true
-        this.broadcastEndOfMatch(roomId, io)
-        // TODO batch update db
       } else {
         this.startNextRoundAfterBreak(roomId, io)
       }

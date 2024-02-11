@@ -272,20 +272,14 @@ async function dbConstructUserUpdate(
   return userUpdate
 }
 
-async function dbUpdateUser(
-  userId,
-  winnerId,
-  roomConnectionMode,
-  isChallengeMode,
-  hasUpdatedList
-) {
+async function dbUpdateUser(userId, game) {
   if (dbIsRegistered(userId) && !dbHasUpdated(userId, hasUpdatedList)) {
     try {
       const userUpdate = await dbConstructUserUpdate(
         userId,
-        winnerId,
-        roomConnectionMode,
-        isChallengeMode
+        game.winnerId,
+        game.roomConnectionMode,
+        game.isChallengeMode
       )
       await User.updateOne({ _id: userId }, userUpdate)
     } catch (error) {
@@ -297,27 +291,22 @@ async function dbUpdateUser(
   }
 }
 
-async function dbBatchUpdateUsers(
-  userIds,
-  winnerId,
-  roomConnectionMode,
-  isChallengeMode,
-  hasUpdatedList
-) {
+async function dbBatchUpdateUsers(game) {
   if (winnerId && roomConnectionMode && isChallengeMode) {
     // We could use a for loop to update each user in the db, but it would
     // be sequential. The following approach allows parallel execution.
     // .map() to create an array of Promises for each user update operation,
     // then Promise.all() to wait for all of them to complete.
     // NOTE: This parallel approach may actually hinder the db's performance.
+    const userIds = game.getUserIdsInGame()
     try {
       const updatePromises = userIds.map((userId) =>
         dbUpdateUser(
           userId,
-          winnerId,
-          roomConnectionMode,
-          isChallengeMode,
-          hasUpdatedList
+          game.winnerId,
+          game.roomConnectionMode,
+          game.isChallengeMode,
+          game.hasUpdatedList
         )
       )
       await Promise.all(updatePromises)
