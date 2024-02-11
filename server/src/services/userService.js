@@ -42,7 +42,7 @@ async function createNewUser(userId) {
     try {
       const existingUser = await User.findById(userId).lean()
       if (!existingUser) {
-        await User.create({ _id: userId, userId: userId })
+        await User.create({ _id: userId, username: "Guest" })
       }
     } catch (error) {
       console.error(
@@ -88,12 +88,13 @@ function handleDisplayNameUpdate(roomId, userId, updatedDisplayName, io) {
 }
 
 function dbIsRegistered(userId) {
-  const registered = userId.length < MIN_FIREBASE_UID_LENGTH ? false : true
-  return registered
+  // userId can either be exactly 20 chars (default socket.id length; cannot be a user),
+  // or 28+ chars (Firebase uid length; must be a user).
+  return userId.length >= MIN_FIREBASE_UID_LENGTH ? true : false
 }
 
-function dbHasUpdated(userId, hasUpdatedList) {
-  return hasUpdatedList.includes(userId)
+function dbHasUpdated(userId, hasUpdatedInDbList) {
+  return hasUpdatedInDbList.includes(userId)
 }
 
 function constructCurrStreakUpdate(userId, winnerId, connectionMode, gameMode) {
@@ -221,18 +222,18 @@ async function dbConstructUserUpdate(
     roomConnectionMode === "online-public" ? "public" : "private"
   let gameMode = isChallengeMode ? "challenge" : "normal"
 
-  // TODO: Change order of params (gameResult doesn't exist anymore either)
   const currStreakUpdate = constructCurrStreakUpdate(
     userId,
+    winnerId,
     connectionMode,
-    gameMode,
-    gameResult
+    gameMode
   )
+
   const maxStreakUpdate = await constructMaxStreakUpdate(
     userId,
+    winnerId,
     connectionMode,
-    gameMode,
-    gameResult
+    gameMode
   )
 
   const totalGamesUpdate = constructTotalGamesUpdate(
@@ -273,7 +274,10 @@ async function dbConstructUserUpdate(
 }
 
 async function dbUpdateUser(userId, game) {
-  if (dbIsRegistered(userId) && !dbHasUpdated(userId, hasUpdatedList)) {
+  if (
+    dbIsRegistered(userId) &&
+    !dbHasUpdated(userId, game.hasUpdatedInDbList)
+  ) {
     try {
       const userUpdate = await dbConstructUserUpdate(
         userId,
@@ -292,23 +296,16 @@ async function dbUpdateUser(userId, game) {
 }
 
 async function dbBatchUpdateUsers(game) {
-  if (winnerId && roomConnectionMode && isChallengeMode) {
+  if (game.winnerId && game.roomConnectionMode && game.isChallengeMode) {
     // We could use a for loop to update each user in the db, but it would
     // be sequential. The following approach allows parallel execution.
     // .map() to create an array of Promises for each user update operation,
     // then Promise.all() to wait for all of them to complete.
-    // NOTE: This parallel approach may actually hinder the db's performance.
+    // NOTE: This parallel approach may actually *hinder* the db's performance
+    // if our db doesn't handle multiprocessing well. Should test if possible.
     const userIds = game.getUserIdsInGame()
     try {
-      const updatePromises = userIds.map((userId) =>
-        dbUpdateUser(
-          userId,
-          game.winnerId,
-          game.roomConnectionMode,
-          game.isChallengeMode,
-          game.hasUpdatedList
-        )
-      )
+      const updatePromises = userIds.map((userId) => dbUpdateUser(userId, game))
       await Promise.all(updatePromises)
     } catch (error) {
       console.error(

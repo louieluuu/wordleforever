@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
 import socket from "../socket"
+import axios from "axios"
 
 import { useNavigate } from "react-router-dom"
 import useSetRoomId from "../helpers/useSetRoomId"
@@ -12,6 +13,8 @@ function RegisterPage({ setRoomId }) {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [username, setUsername] = useState("")
+
   const [createUserWithEmailAndPassword, user, loading, error] =
     useCreateUserWithEmailAndPassword(auth)
 
@@ -21,7 +24,7 @@ function RegisterPage({ setRoomId }) {
   useEffect(() => {
     if (user) {
       const userId = user.user.uid
-      socket.emit("createNewUser", userId)
+      socket.emit("createNewUser", userId, username)
       navigate("/")
     }
   }, [user])
@@ -32,7 +35,41 @@ function RegisterPage({ setRoomId }) {
     }
   }
 
+  async function isDuplicateUsername(username) {
+    axios.get(`/users/duplicate/${username}`).then((res) => {
+      return res.isDuplicateUsername
+    })
+  }
+
+  function validateUsername(username) {
+    const validChars = /^[a-zA-Z0-9_-]+$/
+
+    // Restrictions
+    if (username.length < 1 || username.length > 20) {
+      console.log("Username must be between 1-20 characters long.")
+    }
+    if (validChars.test(username) === false) {
+      console.log(
+        "Username must only contain Latin letters, numbers, '-', '_'."
+      )
+    }
+    if (
+      username.startsWith("-") ||
+      username.startsWith("_") ||
+      username.endsWith("-") ||
+      username.endsWith("_")
+    ) {
+      console.log("Username cannot start or end with: '-', '_'.")
+    }
+
+    // Duplicates
+    if (isDuplicateUsername(username)) {
+      console.log("Username already exists.")
+    }
+  }
+
   function register() {
+    validateUsername(username)
     createUserWithEmailAndPassword(email, password)
   }
 
@@ -96,6 +133,14 @@ function RegisterPage({ setRoomId }) {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+        <input
+          className="auth__form"
+          placeholder="Username"
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           onKeyDown={handleKeyDown}
         />
         <button className="menu__btn--auth" onClick={register}>

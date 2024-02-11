@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema({
   // But by specifying the type as String, we can bypass this restriction and use the Firebase uid directly.
   _id: String,
 
-  userId: String,
+  username: String,
   currStreak: {
     normal: { type: Number, default: 0 },
     challenge: { type: Number, default: 0 },
