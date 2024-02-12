@@ -152,9 +152,9 @@ async function handleCorrectGuess(
       game.broadcastSolvedAudio(roomId, socket)
       game.setGameBoard(userId, updatedGameBoard)
 
-      if (isGameOver(roomId, roomConnectionMode)) {
+      if (game.isGameOver()) {
         game.endGame(roomId, io)
-        if (isMatchOver(roomId)) {
+        if (game.isMatchOver()) {
           game.broadcastEndOfMatch(roomId, io)
           await dbBatchUpdateUsers(game)
         }
@@ -187,9 +187,9 @@ async function handleOutOfGuesses(roomId, userId, io) {
     // after a potentially slow db update and other logic might
     // depend on the countOutOfGuesses? Maybe it's fine.
     game.countOutOfGuesses += 1
-    if (isGameOver(roomId)) {
+    if (game.isGameOver()) {
       game.endGame(roomId, io)
-      if (isMatchOver(roomId)) {
+      if (game.isMatchOver()) {
         game.broadcastEndOfMatch(roomId, io)
         // If it's a public game, and everyone gets out of guesses (which is the only way this condition would be reached), then the db has already updated everyone individually above. Only need to handle the private case.
         if (game.connectionMode === "private") {
