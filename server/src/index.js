@@ -76,6 +76,8 @@ app.get("/users/duplicate/:username", async (req, res) => {
     try {
       const user = await dbGetUserByName(submittedUsername)
 
+      //TODO: can this only be one check?
+
       if (user) {
         res.send({ isDuplicateUsername: true })
       } else {
@@ -90,6 +92,7 @@ app.get("/users/duplicate/:username", async (req, res) => {
       res.send({ isDuplicateUsername: undefined })
     }
   }
+  // add a check to always send a response
 })
 
 // Socket.IO

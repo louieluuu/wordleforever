@@ -54,6 +54,7 @@ function initializeGameInfo(roomId) {
   Games.set(roomId, game)
 }
 
+// TODO TODAY: This should be a Game class method, not here
 function getUserIdsInGame(roomId) {
   const game = Games.get(roomId)
   if (game && game instanceof Game) {
@@ -115,6 +116,8 @@ function handleWrongGuess(roomId, userId, updatedGameBoard, io) {
   }
 }
 
+// TODO: do not batch update for public games, individually update
+// the format of public games demands it (not everyone finishes at the same time, it's weird to pigeonhole it into a batch update)
 async function handleCorrectGuess(
   roomId,
   userId,
@@ -172,8 +175,7 @@ async function handleCorrectGuess(
 async function handleOutOfGuesses(roomId, userId, io) {
   const game = Games.get(roomId)
   if (game && game instanceof Game) {
-    const roomConnectionMode = getRoomConnectionMode(roomId)
-    if (roomConnectionMode === "public") {
+    if (game.connectionMode === "public") {
       game.resetStreak(userId)
       game.broadcastStreak(roomId, userId, io)
       // In the public outOfGuesses case, db must be updated
@@ -189,37 +191,13 @@ async function handleOutOfGuesses(roomId, userId, io) {
       game.endGame(roomId, io)
       if (isMatchOver(roomId)) {
         game.broadcastEndOfMatch(roomId, io)
-        await dbBatchUpdateUsers(game)
+        // If it's a public game, and everyone gets out of guesses (which is the only way this condition would be reached), then the db has already updated everyone individually above. Only need to handle the private case.
+        if (game.connectionMode === "private") {
+          dbBatchUpdateUsers(game)
+        }
       }
     }
   }
-}
-
-function isGameOver(roomId, roomConnectionMode) {
-  const game = Games.get(roomId)
-  if (game && game instanceof Game) {
-    if (roomConnectionMode === "private") {
-      if (game.countSolved + game.countOutOfGuesses >= game.getRoomSize()) {
-        return true
-      }
-    } else if (roomConnectionMode === "public") {
-      if (
-        game.countSolved > 0 ||
-        game.countOutOfGuesses >= game.getRoomSize()
-      ) {
-        return true
-      }
-    }
-  }
-  return false
-}
-
-function isMatchOver(roomId) {
-  const game = Games.get(roomId)
-  if (game && game instanceof Game) {
-    return game.reachedRoundLimit
-  }
-  return false
 }
 
 export {

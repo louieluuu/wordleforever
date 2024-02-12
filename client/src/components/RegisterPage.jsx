@@ -37,6 +37,7 @@ function RegisterPage({ setRoomId }) {
 
   async function isDuplicateUsername(username) {
     axios.get(`/users/duplicate/${username}`).then((res) => {
+      // TODO This scares Thomas (.isDuplicateUsername)
       return res.isDuplicateUsername
     })
   }

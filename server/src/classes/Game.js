@@ -315,7 +315,7 @@ export default class Game {
       this.getGameUserInfo(),
       this.solution,
       this.startingWord,
-      ROUND_LIMIT,
+      PRIVATE_ROUND_LIMIT,
       this.round,
       this.timer
     )
@@ -329,15 +329,36 @@ export default class Game {
     }
   }
 
+  isGameOver() {
+    if (this.connectionMode === "private") {
+      if (this.countSolved + this.countOutOfGuesses >= this.getRoomSize()) {
+        return true
+      }
+    } else if (this.connectionMode === "public") {
+      if (
+        this.countSolved > 0 ||
+        this.countOutOfGuesses >= this.getRoomSize()
+      ) {
+        return true
+      }
+    }
+    return false
+  }
+
+  isMatchOver() {
+    return this.reachedRoundLimit
+  }
+
   endGame(roomId, io) {
     clearInterval(this.timerId)
     clearInterval(this.elapsedTimerId)
     this.broadcastFinalUserInfo(roomId, io)
+    if (this.round >= this.roundLimit) {
+      this.reachedRoundLimit = true
+    }
     if (this.connectionMode === "private") {
       setRoomOutOfGame(roomId)
-      if (this.round >= this.roundLimit) {
-        this.reachedRoundLimit = true
-      } else {
+      if (!this.reachedRoundLimit) {
         this.startNextRoundAfterBreak(roomId, io)
       }
     }

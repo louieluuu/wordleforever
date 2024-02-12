@@ -148,6 +148,7 @@ async function constructMaxStreakUpdate(
   gameUserInfo
 ) {
   let update = {}
+  // TODO TODAY use Game.getStreak(userId) instead
   const currStreak = gameUserInfo.get(userId).currStreak
 
   if (connectionMode === "public" && userId === winnerId) {
@@ -155,6 +156,7 @@ async function constructMaxStreakUpdate(
     const maxStreakPath = `maxStreak.${gameMode}`
     const user = await User.findById(userId, maxStreakPath).lean()
     const maxStreak = user[maxStreakPath]
+
     // TODO actually have to see what the findById returns. Not sure if it's the
     // maxStreakPath directly or the whole user object.
 
@@ -177,7 +179,7 @@ function constructTotalGamesUpdate(
   let update = {}
   const countGames = totalRounds
 
-  if (countGames > 0 && countGames < roundLimit) {
+  if (countGames > 0 && countGames <= roundLimit) {
     const totalGamesPath = `totalGames.${connectionMode}.${gameMode}`
     update = { $inc: { [totalGamesPath]: countGames } }
   }
@@ -193,9 +195,10 @@ function constructTotalWinsUpdate(
   roundLimit
 ) {
   let update = {}
+  // TODO TODAY use Game.getRoundsWon(userId) instead, but call it outside (from dbUserUpdate?) and pass it in
   const countWins = gameUserInfo.get(userId).roundsWon
 
-  if (countWins > 0 && countWins < roundLimit) {
+  if (countWins > 0 && countWins <= roundLimit) {
     const totalWinsPath = `totalWins.${connectionMode}.${gameMode}`
     update = { $inc: { [totalWinsPath]: countWins } }
   }
@@ -213,7 +216,7 @@ function constructTotalSolveTimeUpdate(
   let update = {}
   const solveTime = gameUserInfo.get(userId).solveTime
 
-  if (solveTime !== 0 && solveTime < timeLimit) {
+  if (solveTime > 0 && solveTime <= timeLimit) {
     const totalSolveTimePath = `totalSolveTime.${connectionMode}.${gameMode}`
     update = { $inc: { [totalSolveTimePath]: solveTime } }
   }
@@ -315,7 +318,7 @@ async function dbConstructUserUpdate(userId, game) {
 async function dbUpdateUser(userId, game) {
   if (
     dbIsRegistered(userId) &&
-    !dbHasUpdated(userId, game.hasUpdatedInDbList)
+    !dbHasUpdated(userId, game.hasUpdatedInDbList) // TODO wont need this anymore because of the public/private update logic split
   ) {
     try {
       const userUpdate = await dbConstructUserUpdate(userId, game)
@@ -337,6 +340,7 @@ async function dbBatchUpdateUsers(game) {
     // then Promise.all() to wait for all of them to complete.
     // NOTE: This parallel approach may actually *hinder* the db's performance
     // if our db doesn't handle multiprocessing well. Should test if possible.
+    // TODO TODAY: This should be a Game class method, not here
     const userIds = game.getUserIdsInGame()
     try {
       const updatePromises = userIds.map((userId) => dbUpdateUser(userId, game))
