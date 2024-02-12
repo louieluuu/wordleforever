@@ -128,11 +128,13 @@ function constructCurrStreakUpdate(userId, winnerId, connectionMode, gameMode) {
   if (connectionMode === "public") {
     const currStreakPath = `currStreak.${gameMode}`
 
-    if (winnerId === userId) {
+    if (userId === winnerId) {
       update = { $inc: { [currStreakPath]: 1 } }
     } else {
       update = { $set: { [currStreakPath]: 0 } }
     }
+  } else if (connectionMode === "private") {
+    // Private games don't have streaks.
   }
 
   return update
@@ -142,32 +144,40 @@ async function constructMaxStreakUpdate(
   userId,
   winnerId,
   connectionMode,
-  gameMode
+  gameMode,
+  gameUserInfo
 ) {
   let update = {}
+  const currStreak = gameUserInfo.get(userId).currStreak
 
-  const game = getGame()
-  const currStreak = game.gameUserInfo.get(userId).currStreak
-
-  if (connectionMode === "public" && winnerId === userId) {
+  if (connectionMode === "public" && userId === winnerId) {
+    // Retrieve the current maxStreak from db and compare.
     const maxStreakPath = `maxStreak.${gameMode}`
-    const maxStreak = await User.findById(userId, maxStreakPath).lean()
+    const user = await User.findById(userId, maxStreakPath).lean()
+    const maxStreak = user[maxStreakPath]
+    // TODO actually have to see what the findById returns. Not sure if it's the
+    // maxStreakPath directly or the whole user object.
 
     if (currStreak > maxStreak) {
       update = { $set: { [maxStreakPath]: currStreak } }
     }
+  } else if (connectionMode === "private") {
+    // Private games don't have streaks.
   }
 
   return update
 }
 
-function constructTotalGamesUpdate(connectionMode, gameMode) {
+function constructTotalGamesUpdate(
+  connectionMode,
+  gameMode,
+  totalRounds,
+  roundLimit
+) {
   let update = {}
-  const game = getGame()
-  const countGames = game.round // TODO missing. Also, has a pretty high chance to be inaccurate for our purposes. Triple check this.
+  const countGames = totalRounds
 
-  // TODO "game.roundLimit" doesn't exist yet, but it will when we add the customizability.
-  if (countGames > 0 && countGames < game.roundLimit) {
+  if (countGames > 0 && countGames < roundLimit) {
     const totalGamesPath = `totalGames.${connectionMode}.${gameMode}`
     update = { $inc: { [totalGamesPath]: countGames } }
   }
@@ -175,14 +185,17 @@ function constructTotalGamesUpdate(connectionMode, gameMode) {
   return update
 }
 
-function constructTotalWinsUpdate(userId, connectionMode, gameMode) {
+function constructTotalWinsUpdate(
+  userId,
+  connectionMode,
+  gameMode,
+  gameUserInfo,
+  roundLimit
+) {
   let update = {}
-  const game = getGame()
-  const countWins = game.gameUserInfo.get(userId).roundsWon // TODO missing
+  const countWins = gameUserInfo.get(userId).roundsWon
 
-  // i.e. if there's actually a change. else wasting db operation.
-  // also some error checking.
-  if (countWins > 0 && countWins < game.roundLimit) {
+  if (countWins > 0 && countWins < roundLimit) {
     const totalWinsPath = `totalWins.${connectionMode}.${gameMode}`
     update = { $inc: { [totalWinsPath]: countWins } }
   }
@@ -190,12 +203,17 @@ function constructTotalWinsUpdate(userId, connectionMode, gameMode) {
   return update
 }
 
-function constructTotalSolveTimeUpdate(userId, connectionMode, gameMode) {
+function constructTotalSolveTimeUpdate(
+  userId,
+  connectionMode,
+  gameMode,
+  gameUserInfo,
+  timeLimit
+) {
   let update = {}
-  const game = getGame()
-  const solveTime = game.gameUserInfo.get(userId).solveTime // TODO missing
+  const solveTime = gameUserInfo.get(userId).solveTime
 
-  if (solveTime !== 0 && solveTime < game.timeLimit) {
+  if (solveTime !== 0 && solveTime < timeLimit) {
     const totalSolveTimePath = `totalSolveTime.${connectionMode}.${gameMode}`
     update = { $inc: { [totalSolveTimePath]: solveTime } }
   }
@@ -206,21 +224,20 @@ function constructTotalSolveTimeUpdate(userId, connectionMode, gameMode) {
 async function constructSolveDistributionUpdate(
   userId,
   connectionMode,
-  gameMode
+  gameMode,
+  gameUserInfo
 ) {
   let update = {}
-  const game = getGame()
-  // TODO instead of grabbing the solveDistribution as the initial check,
-  // you can just check if totalsolvetime === 0. 0 solve time = 0 new distribution.
 
-  const solveDistributionToAdd = game.gameUserInfo.get(userId).solveDistribution // TODO missing
-
+  const solveDistributionToAdd = gameUserInfo.get(userId).solveDistribution
   const sameDistribution = solveDistributionToAdd.every((value) => value === 0)
 
   if (!sameDistribution) {
+    // TODO:
     // Retrieve the old solveDistribution from db and map over the new values.
+    // We can't use $inc w/ arrays here. If we were to use an Object, we could.
+    // But it'd be uglier syntax.
     const solveDistributionPath = `solveDistribution.${connectionMode}.${gameMode}`
-
     const oldSolveDistribution = await User.findById(
       userId,
       solveDistributionPath
@@ -237,53 +254,52 @@ async function constructSolveDistributionUpdate(
   return update
 }
 
-async function dbConstructUserUpdate(
-  userId,
-  winnerId,
-  roomConnectionMode,
-  isChallengeMode
-) {
+async function dbConstructUserUpdate(userId, game) {
   let connectionMode =
-    roomConnectionMode === "online-public" ? "public" : "private"
-  let gameMode = isChallengeMode ? "challenge" : "normal"
+    game.roomConnectionMode === "online-public" ? "public" : "private"
+  let gameMode = game.isChallengeMode ? "challenge" : "normal"
 
   const currStreakUpdate = constructCurrStreakUpdate(
     userId,
-    winnerId,
+    game.winnerId,
     connectionMode,
     gameMode
   )
 
   const maxStreakUpdate = await constructMaxStreakUpdate(
     userId,
-    winnerId,
+    game.winnerId,
     connectionMode,
-    gameMode
+    gameMode,
+    game.gameUserInfo
   )
 
   const totalGamesUpdate = constructTotalGamesUpdate(
-    userId,
     connectionMode,
     gameMode,
-    gameResult
+    game.round,
+    game.roundLimit
   )
+
   const totalWinsUpdate = constructTotalWinsUpdate(
     userId,
     connectionMode,
     gameMode,
-    gameResult
+    game.gameUserInfo,
+    game.roundLimit
   )
   const totalSolveTimeUpdate = constructTotalSolveTimeUpdate(
     userId,
     connectionMode,
     gameMode,
-    gameResult
+    game.gameUserInfo,
+    game.timer
   )
   const solveDistribution = await constructSolveDistributionUpdate(
     userId,
     connectionMode,
     gameMode,
-    gameResult
+    game.gameUserInfo
   )
 
   const userUpdate = {
@@ -304,12 +320,7 @@ async function dbUpdateUser(userId, game) {
     !dbHasUpdated(userId, game.hasUpdatedInDbList)
   ) {
     try {
-      const userUpdate = await dbConstructUserUpdate(
-        userId,
-        game.winnerId,
-        game.roomConnectionMode,
-        game.isChallengeMode
-      )
+      const userUpdate = await dbConstructUserUpdate(userId, game)
       await User.updateOne({ _id: userId }, userUpdate)
     } catch (error) {
       console.error(
