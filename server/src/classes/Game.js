@@ -352,10 +352,10 @@ export default class Game {
   endGame(roomId, io) {
     clearInterval(this.timerId)
     clearInterval(this.elapsedTimerId)
-    this.broadcastFinalUserInfo(roomId, io)
     if (this.round >= this.roundLimit) {
       this.reachedRoundLimit = true
     }
+    this.broadcastEndOfGameInfo(roomId, io)
     if (this.connectionMode === "private") {
       setRoomOutOfGame(roomId)
       if (!this.reachedRoundLimit) {
@@ -456,11 +456,15 @@ export default class Game {
     }
   }
 
-  broadcastFinalUserInfo(roomId, io) {
+  broadcastEndOfGameInfo(roomId, io) {
     if (roomId) {
-      io.to(roomId).emit("finalUserInfo", this.getGameUserInfo())
+      io.to(roomId).emit(
+        "endOfGameInfo",
+        this.getGameUserInfo(),
+        this.isMatchOver()
+      )
     } else {
-      console.error("Invalid roomId for broadcasting final user info")
+      console.error("Invalid roomId for broadcasting end of game info")
     }
   }
 

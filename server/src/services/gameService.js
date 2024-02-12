@@ -155,7 +155,6 @@ async function handleCorrectGuess(
       if (game.isGameOver()) {
         game.endGame(roomId, io)
         if (game.isMatchOver()) {
-          game.broadcastEndOfMatch(roomId, io)
           await dbBatchUpdateUsers(game)
         }
       } else {

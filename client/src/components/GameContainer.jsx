@@ -290,20 +290,23 @@ function GameContainer({
         playAudio(audioOpponentSolve)
       })
 
-      socket.on("finalUserInfo", (finalUserInfo) => {
+      socket.on("endOfGameInfo", (endOfGameUserInfo, isMatchOver) => {
         if (!isOutOfGuesses && !hasSolved) {
           playAudio(audioGameOver)
         }
 
         // Used to sort the users so the client's board always shows first.
         // For displaying on the game boards.
-        const sortedUserInfo = finalUserInfo.sort((obj) => {
+        const sortedUserInfo = endOfGameUserInfo.sort((obj) => {
           return obj.userId === socket.id ? -1 : 1
         })
 
         setUserInfo(sortedUserInfo)
         setIsGameOver(true)
         setHasOnlineGameStarted(false)
+        if (isMatchOver) {
+          setIsMatchOver(true)
+        }
       })
 
       return () => {
@@ -314,7 +317,7 @@ function GameContainer({
         socket.off("streakUpdated")
         socket.off("firstSolve")
         socket.off("opponentSolvedAudio")
-        socket.off("finalUserInfo")
+        socket.off("endOfGameInfo")
       }
     }
   }, [hasOnlineGameStarted, isOutOfGuesses, hasSolved]) // LOUIE: added dep
@@ -327,18 +330,13 @@ function GameContainer({
       }
     })
 
-    socket.on("endOfMatch", () => {
-      setIsMatchOver(true)
-    })
-
     return () => {
       socket.off("newHost")
-      socket.off("endOfMatch")
     }
   }, [])
 
   useEffect(() => {
-    if (isGameOver && isMatchOver) {
+    if (isGameOver && isMatchOver && connectionMode === "private") {
       // Used to sort the users by points.
       // To be passed in for rendering the PostGameDialog leaderboard.
       const copyUserInfo = [...userInfo]
