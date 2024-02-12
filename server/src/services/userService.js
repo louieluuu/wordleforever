@@ -37,7 +37,23 @@ function handleNewConnection(userId, socket) {
   console.log(`From handleNewConnection: ${socket.userId}`)
 }
 
-async function createNewUser(userId, username) {
+// TODO: These dpName fxns miiight not belong here? They're not db operations.
+function setDisplayName(roomId, userId, displayName) {
+  const roomUserInfo = getRoomUserInfo(roomId)
+  if (roomUserInfo) {
+    const previousValue = roomUserInfo.get(userId)
+    roomUserInfo.set(userId, { ...previousValue, displayName: displayName })
+  }
+}
+
+function handleDisplayNameUpdate(roomId, userId, updatedDisplayName, io) {
+  if (roomInLobby(roomId) && isUserInRoom(roomId, userId)) {
+    setDisplayName(roomId, userId, updatedDisplayName)
+    broadcastRoomUserInfo(roomId, io)
+  }
+}
+
+async function dbCreateNewUser(userId, username) {
   if (userId && username) {
     try {
       const existingUser = await User.findById(userId).lean()
@@ -56,33 +72,37 @@ async function createNewUser(userId, username) {
   }
 }
 
-// This only runs for registered users, so no additional checks are needed.
-async function getUserStats(userId) {
-  try {
-    const user = await User.findById(userId).lean()
-    if (!user) {
-      console.error(`No guest or user found with userId: ${userId}`)
+async function dbGetUserById(userId) {
+  if (userId) {
+    try {
+      const user = await User.findById(userId).lean()
+      if (!user) {
+        console.error(`No user found with userId: ${userId}`)
+      }
+      return user
+    } catch (error) {
+      console.error(
+        `Error getting user info from the database: ${error.message}`
+      )
+      throw error
     }
-    return user
-  } catch (error) {
-    console.error(`Error getting user info from the database: ${error.message}`)
-    throw error
   }
 }
 
-// TODO: These dpName fxns miiight not belong here? They're not db operations.
-function setDisplayName(roomId, userId, displayName) {
-  const roomUserInfo = getRoomUserInfo(roomId)
-  if (roomUserInfo) {
-    const previousValue = roomUserInfo.get(userId)
-    roomUserInfo.set(userId, { ...previousValue, displayName: displayName })
-  }
-}
-
-function handleDisplayNameUpdate(roomId, userId, updatedDisplayName, io) {
-  if (roomInLobby(roomId) && isUserInRoom(roomId, userId)) {
-    setDisplayName(roomId, userId, updatedDisplayName)
-    broadcastRoomUserInfo(roomId, io)
+async function dbGetUserByName(username) {
+  if (username) {
+    try {
+      const user = await User.findOne({ username: username }).lean()
+      if (!user) {
+        console.error(`No user found with username: ${username}`)
+      }
+      return user
+    } catch (error) {
+      console.error(
+        `Error getting user info from the database: ${error.message}`
+      )
+      throw error
+    }
   }
 }
 
@@ -340,7 +360,9 @@ async function handleLeaveRoom(socket, io) {
 
 export {
   handleNewConnection,
-  createNewUser,
+  dbCreateNewUser,
+  dbGetUserById,
+  dbGetUserByName,
   setDisplayName,
   handleDisplayNameUpdate,
   handleUserDisconnect,

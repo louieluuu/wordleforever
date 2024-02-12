@@ -22,7 +22,9 @@ import {
 // Services
 import {
   handleNewConnection,
-  createNewUser,
+  dbCreateNewUser,
+  dbGetUserById,
+  dbGetUserByName,
   handleDisplayNameUpdate,
   handleUserDisconnect,
   handleLeaveRoom,
@@ -52,11 +54,27 @@ const io = new Server(httpServer, {
 })
 
 // Endpoints
+app.get("/user/:username", async (req, res) => {
+  const username = req.params.username
+  try {
+    if (username) {
+      const user = await dbGetUserByName(username)
+
+      if (user) {
+        res.send(user)
+      }
+    }
+  } catch (error) {
+    console.error(`Error fetching user by username: ${error.message}`)
+    res.send({ error: error.message })
+  }
+}) // TODO: Maybe only send the specific stats requested instead of the whole obj?
+
 app.get("/users/duplicate/:username", async (req, res) => {
   const submittedUsername = req.params.username
   if (submittedUsername) {
     try {
-      const user = await User.findOne({ username: submittedUsername }).lean()
+      const user = await dbGetUserByName(submittedUsername)
 
       if (user) {
         res.send({ isDuplicateUsername: true })
@@ -80,7 +98,7 @@ io.on("connection", (socket) => {
 
   socket.on("newConnection", (userId) => handleNewConnection(userId, socket))
 
-  socket.on("createNewUser", (userId) => createNewUser(userId))
+  socket.on("createNewUser", (userId) => dbCreateNewUser(userId))
 
   // Interact with WaitingRoom component
   // Find match
