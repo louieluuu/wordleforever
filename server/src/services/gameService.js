@@ -128,24 +128,25 @@ async function handleCorrectGuess(
 
     if (roomConnectionMode && game && game instanceof Game) {
       if (roomConnectionMode === "online-private") {
-        if (game.countSolved === 0) {
-          game.broadcastFirstSolve(roomId, userId, io)
-        }
         game.updatePoints(userId)
         game.broadcastPoints(roomId, userId, io)
-        game.incrementTotalGuesses(userId)
-        game.incrementRoundsSolved(userId)
-        game.incrementTotalSolveTime(userId)
       } else if (roomConnectionMode === "online-public") {
         game.updateStreaks(userId)
       }
-      // Guarantee only one winner.
-      if (game.winnerId === null) {
-        game.winnerId = userId
+      // Applies to both
+      if (game.countSolved === 0) {
+        game.broadcastFirstSolve(roomId, userId, io)
       }
+      game.setWinner(userId)
       game.countSolved += 1
+
+      game.incrementTotalGuesses(userId)
+      game.incrementRoundsSolved(userId)
+      game.incrementTotalSolveTime(userId)
+
       game.broadcastSolvedAudio(roomId, socket)
       game.setGameBoard(userId, updatedGameBoard)
+
       if (isGameOver(roomId, roomConnectionMode)) {
         game.endGame(roomId, io)
         if (isMatchOver(roomId)) {

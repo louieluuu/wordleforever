@@ -131,6 +131,13 @@ export default class Game {
     }
   }
 
+  setWinner(userId) {
+    // Guarantees only one winner.
+    if (this.winnerId === null) {
+      this.winnerId = userId
+    }
+  }
+
   getAllRoundsWon() {
     const allRoundsWonMapping = new Map()
     this.gameUserInfo.forEach((userInfo, userId) => {
