@@ -141,6 +141,8 @@ async function handleCorrectGuess(
       game.countSolved += 1
 
       game.incrementTotalGuesses(userId)
+      // We want both totalGuesses for private room stats, as well as a guessDistribution for proper stats dialog. Means we need to add a currentGuess number counter.
+      // TODO: game.updateGuessDistribution(userId)
       game.incrementRoundsSolved(userId)
       game.incrementTotalSolveTime(userId)
 

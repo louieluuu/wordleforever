@@ -109,11 +109,17 @@ async function dbGetUserByName(username) {
 function dbIsRegistered(userId) {
   // userId can either be exactly 20 chars (default socket.id length; cannot be a user),
   // or 28+ chars (Firebase uid length; must be a user).
-  return userId.length >= MIN_FIREBASE_UID_LENGTH ? true : false
+  if (userId) {
+    return userId.length >= MIN_FIREBASE_UID_LENGTH ? true : false
+  }
+  return false
 }
 
 function dbHasUpdated(userId, hasUpdatedInDbList) {
-  return hasUpdatedInDbList.includes(userId)
+  if (userId) {
+    return hasUpdatedInDbList.includes(userId)
+  }
+  return true
 }
 
 function constructCurrStreakUpdate(userId, winnerId, connectionMode, gameMode) {
