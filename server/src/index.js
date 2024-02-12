@@ -54,17 +54,23 @@ const io = new Server(httpServer, {
 // Endpoints
 app.get("/users/duplicate/:username", async (req, res) => {
   const submittedUsername = req.params.username
-  try {
-    const duplicate = await User.findOne({ username: submittedUsername }).lean()
+  if (submittedUsername) {
+    try {
+      const user = await User.findOne({ username: submittedUsername }).lean()
 
-    if (duplicate) {
-      res.send({ isDuplicateUsername: true })
-    } else {
-      res.send({ isDuplicateUsername: false })
+      if (user) {
+        res.send({ isDuplicateUsername: true })
+      } else {
+        // Still need one more check for case-insensitive duplicates
+        if (submittedUsername.toLowerCase() === user.username.toLowerCase()) {
+          res.send({ isDuplicateUsername: true })
+        }
+        res.send({ isDuplicateUsername: false })
+      }
+    } catch (error) {
+      console.error(`Error checking for duplicate username: ${error.message}`)
+      res.send({ isDuplicateUsername: undefined })
     }
-  } catch (error) {
-    console.error(`Error checking for duplicate username: ${error.message}`)
-    res.send({ isDuplicateUsername: undefined })
   }
 })
 
