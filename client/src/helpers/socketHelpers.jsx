@@ -2,7 +2,7 @@ import socket from "../socket"
 
 function handleStartPrivateGame(isChallengeOn, setIsHost) {
   return new Promise((resolve, reject) => {
-    socket.emit("createRoom", "online-private", isChallengeOn)
+    socket.emit("createRoom", "private", isChallengeOn)
 
     socket.on("roomCreated", (roomId) => {
       setIsHost(true)
@@ -36,7 +36,7 @@ function handleStartPublicGame(isChallengeOn) {
     }
 
     function handleNoMatchesFound(isChallengeOn) {
-      socket.emit("createRoom", "online-public", isChallengeOn)
+      socket.emit("createRoom", "public", isChallengeOn)
       socket.off("matchFound")
       socket.off("noMatchesFound")
     }

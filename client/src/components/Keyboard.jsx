@@ -86,7 +86,7 @@ function Keyboard({
     if (isGameOver && key !== "Enter") {
       return
     }
-    if (connectionMode === "online-private") {
+    if (connectionMode === "private") {
       if (isMatchOver && key === "Enter") {
         await handlePlayAgain()
         return
@@ -115,10 +115,10 @@ function Keyboard({
       }
 
       switch (connectionMode) {
-        case "online-private":
+        case "private":
           startNewGame()
           break
-        case "online-public":
+        case "public":
           const publicRoomId = await handleStartPublicGame(isChallengeOn)
           navigate(`/room/${publicRoomId}`)
           break
@@ -217,7 +217,7 @@ function Keyboard({
               <MdKeyboardDoubleArrowUp />
             </div>
           )}
-          {(connectionMode !== "online-private" || (isMatchOver && isHost)) && (
+          {(connectionMode !== "private" || (isMatchOver && isHost)) && (
             <button className="menu__btn--new-game" onClick={handlePlayAgain}>
               NEW GAME
               <IoReturnDownBackSharp />

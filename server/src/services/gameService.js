@@ -127,10 +127,10 @@ async function handleCorrectGuess(
     const game = Games.get(roomId)
 
     if (roomConnectionMode && game && game instanceof Game) {
-      if (roomConnectionMode === "online-private") {
+      if (roomConnectionMode === "private") {
         game.updatePoints(userId)
         game.broadcastPoints(roomId, userId, io)
-      } else if (roomConnectionMode === "online-public") {
+      } else if (roomConnectionMode === "public") {
         game.updateStreaks(userId)
       }
       // Applies to both
@@ -173,7 +173,7 @@ async function handleOutOfGuesses(roomId, userId, io) {
   const game = Games.get(roomId)
   if (game && game instanceof Game) {
     const roomConnectionMode = getRoomConnectionMode(roomId)
-    if (roomConnectionMode === "online-public") {
+    if (roomConnectionMode === "public") {
       game.resetStreak(userId)
       game.broadcastStreak(roomId, userId, io)
       // In the public outOfGuesses case, db must be updated
@@ -198,11 +198,11 @@ async function handleOutOfGuesses(roomId, userId, io) {
 function isGameOver(roomId, roomConnectionMode) {
   const game = Games.get(roomId)
   if (game && game instanceof Game) {
-    if (roomConnectionMode === "online-private") {
+    if (roomConnectionMode === "private") {
       if (game.countSolved + game.countOutOfGuesses >= game.getRoomSize()) {
         return true
       }
-    } else if (roomConnectionMode === "online-public") {
+    } else if (roomConnectionMode === "public") {
       if (
         game.countSolved > 0 ||
         game.countOutOfGuesses >= game.getRoomSize()

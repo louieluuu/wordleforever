@@ -119,7 +119,7 @@ function WaitingRoom({
   useEffect(() => {
     if (
       typeof connectionMode === "string" &&
-      connectionMode === "online-public" &&
+      connectionMode === "public" &&
       userInfo.length > 1
     ) {
       startCountdown()
@@ -214,7 +214,7 @@ function WaitingRoom({
         inGame={false}
       />
 
-      {connectionMode === "online-private" && isHost && (
+      {connectionMode === "private" && isHost && (
         <div
           style={{
             display: "flex",
@@ -233,14 +233,14 @@ function WaitingRoom({
         {userInfo.map((user) => (
           <div key={user.userId}>
             {user.displayName}
-            {connectionMode === "online-public" && user.currStreak !== 0 && (
+            {connectionMode === "public" && user.currStreak !== 0 && (
               <span> &nbsp;&nbsp;{user.currStreak}🔥 </span>
             )}
           </div>
         ))}
       </div>
 
-      {connectionMode === "online-private" && (
+      {connectionMode === "private" && (
         <>
           {isHost ? (
             <div

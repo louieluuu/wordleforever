@@ -239,7 +239,7 @@ function findMatchingRoom(isChallengeOn) {
 
   for (let [roomId, roomObj] of Rooms.entries()) {
     if (
-      roomObj.connectionMode === "online-public" &&
+      roomObj.connectionMode === "public" &&
       roomObj.isChallengeOn === isChallengeOn &&
       !roomObj.inGame
     ) {

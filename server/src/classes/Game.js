@@ -71,8 +71,7 @@ export default class Game {
     game.countSolved = 0
     game.countOutOfGuesses = 0
     game.round = prevRound + 1
-    game.roundLimit =
-      connectionMode === "online-public" ? 1 : PRIVATE_ROUND_LIMIT
+    game.roundLimit = connectionMode === "public" ? 1 : PRIVATE_ROUND_LIMIT
     game.reachedRoundLimit = false
     game.timer = PRIVATE_GAME_TIMER
     game.hasUpdatedInDbList = []
@@ -321,7 +320,7 @@ export default class Game {
       this.timer
     )
     // Start timer for private games
-    if (this.connectionMode === "online-private") {
+    if (this.connectionMode === "private") {
       // Wait for the in game countdown to finish
       setTimeout(() => {
         this.startTimer(roomId, io)
@@ -334,7 +333,7 @@ export default class Game {
     clearInterval(this.timerId)
     clearInterval(this.elapsedTimerId)
     this.broadcastFinalUserInfo(roomId, io)
-    if (this.connectionMode === "online-private") {
+    if (this.connectionMode === "private") {
       setRoomOutOfGame(roomId)
       if (this.round >= this.roundLimit) {
         this.reachedRoundLimit = true

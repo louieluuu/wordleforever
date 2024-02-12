@@ -24,7 +24,7 @@ function OnlineGameBoardContainer({
   }
 
   function isUserLeading(currUserId) {
-    if (connectionMode === "online-private") {
+    if (connectionMode === "private") {
       let maxPoints = 0
       let leadingUser
       userInfo.forEach((userInfoObject) => {

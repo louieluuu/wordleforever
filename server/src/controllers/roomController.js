@@ -69,9 +69,9 @@ function handleCountdownStart(roomId, io) {
     io.to(roomId).emit("countdownStarted")
     let seconds
     const roomConnectionMode = getRoomConnectionMode(roomId)
-    if (roomConnectionMode === "online-private") {
+    if (roomConnectionMode === "private") {
       seconds = PRIVATE_ROOM_COUNTDOWN_TIMER
-    } else if (roomConnectionMode === "online-public") {
+    } else if (roomConnectionMode === "public") {
       seconds = PUBLIC_ROOM_COUNTDOWN_TIMER
     } else {
       seconds = PUBLIC_ROOM_COUNTDOWN_TIMER

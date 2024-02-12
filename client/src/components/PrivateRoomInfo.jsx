@@ -55,7 +55,7 @@ function PrivateRoomInfo({
 
   return (
     <>
-      {connectionMode === "online-private" && roundCounter !== 0 && (
+      {connectionMode === "private" && roundCounter !== 0 && (
         <div className="private-room-info">
           <span className="round-counter">
             Round: {roundCounter}/{maxRounds}

@@ -51,7 +51,7 @@ function CountdownModal({
 
   return (
     <dialog className="countdown-timer" open={isCountdownRunning}>
-      {connectionMode === "online-private" ? (
+      {connectionMode === "private" ? (
         <p>
           Round {roundCounter} will start in... {seconds}
         </p>

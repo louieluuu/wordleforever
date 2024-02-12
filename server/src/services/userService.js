@@ -255,27 +255,25 @@ async function constructSolveDistributionUpdate(
 }
 
 async function dbConstructUserUpdate(userId, game) {
-  let connectionMode =
-    game.roomConnectionMode === "online-public" ? "public" : "private"
   let gameMode = game.isChallengeMode ? "challenge" : "normal"
 
   const currStreakUpdate = constructCurrStreakUpdate(
     userId,
     game.winnerId,
-    connectionMode,
+    game.connectionMode,
     gameMode
   )
 
   const maxStreakUpdate = await constructMaxStreakUpdate(
     userId,
     game.winnerId,
-    connectionMode,
+    game.connectionMode,
     gameMode,
     game.gameUserInfo
   )
 
   const totalGamesUpdate = constructTotalGamesUpdate(
-    connectionMode,
+    game.connectionMode,
     gameMode,
     game.round,
     game.roundLimit
@@ -283,21 +281,21 @@ async function dbConstructUserUpdate(userId, game) {
 
   const totalWinsUpdate = constructTotalWinsUpdate(
     userId,
-    connectionMode,
+    game.connectionMode,
     gameMode,
     game.gameUserInfo,
     game.roundLimit
   )
   const totalSolveTimeUpdate = constructTotalSolveTimeUpdate(
     userId,
-    connectionMode,
+    game.connectionMode,
     gameMode,
     game.gameUserInfo,
     game.timer
   )
   const solveDistribution = await constructSolveDistributionUpdate(
     userId,
-    connectionMode,
+    game.connectionMode,
     gameMode,
     game.gameUserInfo
   )

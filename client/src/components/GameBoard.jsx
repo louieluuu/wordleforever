@@ -67,11 +67,11 @@ function GameBoard({
 
   function getBoardClassName() {
     let boardClassName = addPrefix("game-board")
-    if (connectionMode === "online-public") {
+    if (connectionMode === "public") {
       if (isOutOfGuesses) {
         boardClassName += "--game-over"
       }
-    } else if (connectionMode === "online-private") {
+    } else if (connectionMode === "private") {
       if (!isUser && !isGameOver && isBoardSolved(board)) {
         boardClassName += "--solved"
       } else if (!isUser && !isGameOver && isBoardOutOfGuesses(board)) {
@@ -168,7 +168,7 @@ function GameBoard({
   // Functionality elsewhere doesn't rely on this anyways, points is stored separately
   // The safeguards are to guard from displaying the wrong information, which hopefully this does
   useEffect(() => {
-    if (connectionMode === "online-private") {
+    if (connectionMode === "private") {
       if (points === 0) {
         setDisplayPoints(0)
       } else {
@@ -214,13 +214,13 @@ function GameBoard({
           {isLeading && <span className={getCrownClassName()}>👑&nbsp;</span>}
           {displayName}
         </span>
-        {connectionMode === "online-private" && (
+        {connectionMode === "private" && (
           <>
             &nbsp;-&nbsp;
             {displayPoints}
           </>
         )}
-        {connectionMode === "online-public" && (
+        {connectionMode === "public" && (
           <>
             &nbsp;-&nbsp;
             {streak}
@@ -257,7 +257,7 @@ function GameBoard({
             ))}
           </div>
         )}
-        {connectionMode === "online-private" &&
+        {connectionMode === "private" &&
           !isUser &&
           winningUser &&
           !isGameOver && (

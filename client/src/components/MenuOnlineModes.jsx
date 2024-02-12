@@ -24,13 +24,13 @@ function MenuOnlineModes({
   const navigate = useNavigate()
 
   async function selectPublicGame() {
-    setConnectionMode("online-public")
+    setConnectionMode("public")
     const publicRoomId = await handleStartPublicGame(isChallengeOn)
     navigate(`/room/${publicRoomId}`)
   }
 
   async function selectPrivateGame() {
-    setConnectionMode("online-private")
+    setConnectionMode("private")
     const privateRoomId = await handleStartPrivateGame(isChallengeOn, setIsHost)
     navigate(`/room/${privateRoomId}`)
   }

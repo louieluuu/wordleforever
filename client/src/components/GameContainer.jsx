@@ -149,8 +149,7 @@ function GameContainer({
   // Set the challenge mode guess in online mode (only colorize after the countdown is finished)
   useEffect(() => {
     if (
-      typeof connectionMode === "string" &&
-      connectionMode.includes("online") &&
+      isOnline(connectionMode) &&
       isChallengeOn &&
       solution !== "" &&
       challengeModeGuess !== null
@@ -397,11 +396,12 @@ function GameContainer({
 
   // Helper functions
 
+  function isOnline(connectionMode) {
+    return connectionMode === "public" || connectionMode === "private"
+  }
+
   function startNewGame() {
-    if (
-      typeof connectionMode === "string" &&
-      connectionMode.includes("online")
-    ) {
+    if (isOnline(connectionMode)) {
       socket.emit("loadUser", roomId)
     } else if (connectionMode === "offline") {
       resetStates()
@@ -546,20 +546,14 @@ function GameContainer({
 
     if (guess === solution) {
       setHasSolved(true)
-      if (
-        typeof connectionMode === "string" &&
-        connectionMode.includes("online")
-      ) {
+      if (isOnline(connectionMode)) {
         socket.emit("correctGuess", roomId, updatedBoard)
-        if (
-          typeof connectionMode === "string" &&
-          connectionMode === "online-public"
-        ) {
+        if (typeof connectionMode === "string" && connectionMode === "public") {
           handleWin()
         }
         if (
           typeof connectionMode === "string" &&
-          connectionMode === "online-private"
+          connectionMode === "private"
         ) {
           if (winningUserId && socket.id !== winningUserId) {
             playAudio(audioSolve)
@@ -571,10 +565,7 @@ function GameContainer({
         handleWin()
       }
     } else {
-      if (
-        typeof connectionMode === "string" &&
-        connectionMode.includes("online")
-      ) {
+      if (isOnline(connectionMode)) {
         socket.emit("wrongGuess", roomId, updatedBoard)
       }
       setSubmittedGuesses([...submittedGuesses, activeRowIndex])
@@ -586,10 +577,10 @@ function GameContainer({
         playAudio(audioGameOver)
         if (connectionMode === "offline") {
           setIsGameOver(true)
-        } else if (connectionMode === "online-public") {
+        } else if (connectionMode === "public") {
           socket.emit("outOfGuesses", roomId)
           setIsGameOver(true)
-        } else if (connectionMode === "online-private") {
+        } else if (connectionMode === "private") {
           socket.emit("outOfGuesses", roomId)
         }
       } else {
