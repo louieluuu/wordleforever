@@ -121,13 +121,13 @@ function dbHasUpdated(userId, hasUpdatedInDbList) {
   return true
 }
 
-function constructCurrStreakUpdate(userId, winnerId, connectionMode, gameMode) {
+function constructCurrStreakUpdate(isWinner, connectionMode, gameMode) {
   let update = {}
 
   if (connectionMode === "public") {
     const currStreakPath = `currStreak.${gameMode}`
 
-    if (userId === winnerId) {
+    if (isWinner) {
       update = { $inc: { [currStreakPath]: 1 } }
     } else {
       update = { $set: { [currStreakPath]: 0 } }
@@ -141,16 +141,14 @@ function constructCurrStreakUpdate(userId, winnerId, connectionMode, gameMode) {
 
 async function constructMaxStreakUpdate(
   userId,
-  winnerId,
+  isWinner,
+  currStreak,
   connectionMode,
-  gameMode,
-  gameUserInfo
+  gameMode
 ) {
   let update = {}
-  // TODO TODAY use Game.getStreak(userId) instead
-  const currStreak = gameUserInfo.get(userId).currStreak
 
-  if (connectionMode === "public" && userId === winnerId) {
+  if (connectionMode === "public" && isWinner) {
     // Retrieve the current maxStreak from db and compare.
     const maxStreakPath = `maxStreak.${gameMode}`
     const user = await User.findById(userId, maxStreakPath).lean()
@@ -187,16 +185,14 @@ function constructTotalGamesUpdate(
 }
 
 function constructTotalWinsUpdate(
-  userId,
+  roundsWon,
   connectionMode,
   gameMode,
-  gameUserInfo,
   roundLimit
 ) {
   let update = {}
-  // TODO TODAY use Game.getRoundsWon(userId) instead, but call it outside (from dbUserUpdate?) and pass it in
-  const countWins = gameUserInfo.get(userId).roundsWon
 
+  const countWins = roundsWon
   if (countWins > 0 && countWins <= roundLimit) {
     const totalWinsPath = `totalWins.${connectionMode}.${gameMode}`
     update = { $inc: { [totalWinsPath]: countWins } }
@@ -206,18 +202,16 @@ function constructTotalWinsUpdate(
 }
 
 function constructTotalSolveTimeUpdate(
-  userId,
+  totalSolveTime,
   connectionMode,
   gameMode,
-  gameUserInfo,
   timeLimit
 ) {
   let update = {}
-  const solveTime = gameUserInfo.get(userId).solveTime
 
-  if (solveTime > 0 && solveTime <= timeLimit) {
+  if (totalSolveTime > 0 && totalSolveTime <= timeLimit) {
     const totalSolveTimePath = `totalSolveTime.${connectionMode}.${gameMode}`
-    update = { $inc: { [totalSolveTimePath]: solveTime } }
+    update = { $inc: { [totalSolveTimePath]: totalSolveTime } }
   }
 
   return update
@@ -258,18 +252,17 @@ async function constructSolveDistributionUpdate(
 
 async function dbConstructUserUpdate(userId, game) {
   const currStreakUpdate = constructCurrStreakUpdate(
-    userId,
-    game.winnerId,
+    game.isWinner(userId),
     game.connectionMode,
     game.gameMode
   )
 
   const maxStreakUpdate = await constructMaxStreakUpdate(
     userId,
-    game.winnerId,
+    game.isWinner(userId),
+    game.getStreak(userId),
     game.connectionMode,
-    game.gameMode,
-    game.gameUserInfo
+    game.gameMode
   )
 
   const totalGamesUpdate = constructTotalGamesUpdate(
@@ -280,19 +273,19 @@ async function dbConstructUserUpdate(userId, game) {
   )
 
   const totalWinsUpdate = constructTotalWinsUpdate(
-    userId,
+    game.getRoundsWon(userId),
     game.connectionMode,
     game.gameMode,
-    game.gameUserInfo,
     game.roundLimit
   )
+
   const totalSolveTimeUpdate = constructTotalSolveTimeUpdate(
-    userId,
+    game.getTotalSolveTime(userId),
     game.connectionMode,
     game.gameMode,
-    game.gameUserInfo,
     game.timer
   )
+
   const solveDistribution = await constructSolveDistributionUpdate(
     userId,
     game.connectionMode,

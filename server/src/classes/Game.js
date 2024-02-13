@@ -150,6 +150,13 @@ export default class Game {
     return allRoundsWonMapping
   }
 
+  getRoundsWon(userId) {
+    const userInfo = this.gameUserInfo.get(userId)
+    if (userInfo) {
+      return userInfo.roundsWon
+    }
+  }
+
   incrementRoundsWon(userId) {
     const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
@@ -196,6 +203,13 @@ export default class Game {
     })
 
     return allTotalSolveTimeMapping
+  }
+
+  getTotalSolveTime(userId) {
+    const userInfo = this.gameUserInfo.get(userId)
+    if (userInfo) {
+      return userInfo.totalSolveTime
+    }
   }
 
   incrementTotalSolveTime(userId) {
@@ -281,6 +295,10 @@ export default class Game {
 
       return userInfoEntry
     })
+  }
+
+  isWinner(userId) {
+    return this.winnerId === userId
   }
 
   generateSolution() {
