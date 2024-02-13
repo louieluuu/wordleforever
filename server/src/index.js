@@ -25,10 +25,10 @@ import {
   dbCreateNewUser,
   dbGetUserById,
   dbGetUserByName,
-  handleDisplayNameUpdate,
   handleUserDisconnect,
   handleLeaveRoom,
 } from "./services/userService.js"
+import { handleDisplayNameUpdate } from "./services/roomService.js"
 import {
   handleLoadUser,
   handleWrongGuess,

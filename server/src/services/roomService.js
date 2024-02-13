@@ -54,6 +54,21 @@ function getRoomGameMode(roomId) {
   return null
 }
 
+function setDisplayName(roomId, userId, displayName) {
+  const roomUserInfo = getRoomUserInfo(roomId)
+  if (roomUserInfo) {
+    const previousValue = roomUserInfo.get(userId)
+    roomUserInfo.set(userId, { ...previousValue, displayName: displayName })
+  }
+}
+
+function handleDisplayNameUpdate(roomId, userId, updatedDisplayName, io) {
+  if (roomInLobby(roomId) && isUserInRoom(roomId, userId)) {
+    setDisplayName(roomId, userId, updatedDisplayName)
+    broadcastRoomUserInfo(roomId, io)
+  }
+}
+
 function isHostLeaving(roomId, userId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
@@ -264,6 +279,7 @@ export {
   deleteRoom,
   getRoomConnectionMode,
   getRoomGameMode,
+  handleDisplayNameUpdate,
   isHostLeaving,
   generateNewHostInRoom,
   isRoomEmpty,

@@ -8,9 +8,6 @@ import Guest from "../classes/Guest.js"
 // Services
 import {
   getRoom,
-  getRoomUserInfo,
-  roomInLobby,
-  isUserInRoom,
   deleteRoom,
   removeUserFromRoom,
   isRoomEmpty,
@@ -34,22 +31,6 @@ function handleNewConnection(userId, socket) {
   socket.userId = userId ? userId : socket.id
 
   console.log(`From handleNewConnection's socketUserId: ${socket.userId}`)
-}
-
-// TODO: These dpName fxns miiight not belong here? They're not db operations.
-function setDisplayName(roomId, userId, displayName) {
-  const roomUserInfo = getRoomUserInfo(roomId)
-  if (roomUserInfo) {
-    const previousValue = roomUserInfo.get(userId)
-    roomUserInfo.set(userId, { ...previousValue, displayName: displayName })
-  }
-}
-
-function handleDisplayNameUpdate(roomId, userId, updatedDisplayName, io) {
-  if (roomInLobby(roomId) && isUserInRoom(roomId, userId)) {
-    setDisplayName(roomId, userId, updatedDisplayName)
-    broadcastRoomUserInfo(roomId, io)
-  }
 }
 
 async function dbCreateNewUser(userId, username) {
@@ -389,8 +370,6 @@ export {
   dbGetUserByName,
   dbUpdateUser,
   dbBatchUpdateUsers,
-  setDisplayName,
-  handleDisplayNameUpdate,
   handleUserDisconnect,
   handleLeaveRoom,
 }
