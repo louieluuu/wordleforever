@@ -18,19 +18,47 @@ function RegisterPage({ setRoomId }) {
   const [createUserWithEmailAndPassword, user, loading, error] =
     useCreateUserWithEmailAndPassword(auth)
 
+  const [errorMessage, setErrorMessage] = useState("")
+
   const navigate = useNavigate()
 
   // Redirect to home page once user is logged in.
   // TODO: Feel like an async/await or .then() would be more
   // reliable than this useEffect.
+
+  // TODO: Also, it would be nice if the email/pw errors had
+  // prio over the username errors, but the order would have to change and it's not trivial. (prob can't use the firebase-hook)
   useEffect(() => {
     if (user) {
       const userId = user.user.uid
-      console.log(`username from inside useEffect: ${username}`)
       socket.emit("createNewUser", userId, username)
       navigate("/")
     }
   }, [user, username])
+
+  useEffect(() => {
+    if (error) {
+      switch (error.code) {
+        case "auth/missing-email":
+          setErrorMessage("Missing email address.")
+          break
+        case "auth/invalid-email":
+          setErrorMessage("Invalid email address.")
+          break
+        case "auth/email-already-in-use":
+          setErrorMessage("Email already in use.")
+          break
+        case "auth/missing-password":
+          setErrorMessage("Missing password.")
+          break
+        case "auth/weak-password":
+          setErrorMessage("Password must be at least 6 chars long.")
+          break
+        default:
+          setErrorMessage("An error occurred. Please try again.")
+      }
+    }
+  }, [error])
 
   function handleKeyDown(e) {
     if (e.key === "Enter") {
@@ -43,7 +71,7 @@ function RegisterPage({ setRoomId }) {
       const res = await axios.get(
         `http://localhost:3005/users/duplicate/${username}`
       )
-      return res.data.isDuplicateUsername
+      return res.data?.isDuplicateUsername
     } catch (error) {
       console.error(`Error checking for duplicate username: ${error.message}`)
       return undefined
@@ -55,13 +83,11 @@ function RegisterPage({ setRoomId }) {
 
     // Restrictions
     if (username.length < 1 || username.length > 20) {
-      console.log("Username must be between 1-20 characters long.")
+      setErrorMessage("Username must be between 1-20 characters long.")
       return false
     }
     if (validChars.test(username) === false) {
-      console.log(
-        "Username must only contain Latin letters, numbers, '-', '_'."
-      )
+      setErrorMessage("Username must only contain a-z, 0-9, '-', '_'.")
       return false
     }
     if (
@@ -70,19 +96,18 @@ function RegisterPage({ setRoomId }) {
       username.endsWith("-") ||
       username.endsWith("_")
     ) {
-      console.log("Username cannot start or end with: '-', '_'.")
+      setErrorMessage("Username cannot start or end with: '-', '_'.")
       return false
     }
 
     // Duplicates
     const isDuplicate = await checkDuplicateUsername(username)
-    console.log(`isDuplicate: ${isDuplicate}`)
 
     if (isDuplicate === undefined) {
-      console.log("Server error. Please try again later.")
+      setErrorMessage("Server error. Please try again later.")
       return false
     } else if (isDuplicate === true) {
-      console.log("Username already in use.")
+      setErrorMessage("Username already in use.")
       return false
     } else if (isDuplicate === false) {
       return true
@@ -92,42 +117,10 @@ function RegisterPage({ setRoomId }) {
   }
 
   async function register() {
-    const isValid = await validateUsername(username)
-    console.log(`isValid: ${isValid}`)
-
-    if (isValid) {
-      console.log("isValid. Registering...")
+    const validUsername = await validateUsername(username)
+    if (validUsername) {
       createUserWithEmailAndPassword(email, password)
     }
-  }
-
-  function getErrorMessage() {
-    let errorMessage = "hidden"
-
-    if (error) {
-      switch (error.code) {
-        case "auth/missing-email":
-          errorMessage = "Missing email address."
-          break
-        case "auth/invalid-email":
-          errorMessage = "Invalid email address."
-          break
-        case "auth/email-already-in-use":
-          errorMessage = "Email already in use."
-          break
-        case "auth/missing-password":
-          errorMessage = "Missing password."
-          break
-        case "auth/weak-password":
-          errorMessage = "Password must be at least 6 chars long."
-          break
-        default:
-          errorMessage = "An error occurred. Please try again."
-          console.log(error.code)
-      }
-    }
-
-    return errorMessage
   }
 
   return (
@@ -144,8 +137,8 @@ function RegisterPage({ setRoomId }) {
       <div style={{ fontSize: "0.9rem" }}></div>
 
       <div className="auth">
-        <div className={`auth__error${error ? "" : "--hidden"}`}>
-          {getErrorMessage()}
+        <div className={`auth__error${errorMessage ? "" : "--hidden"}`}>
+          {errorMessage}
         </div>
         <input
           className="auth__form"
