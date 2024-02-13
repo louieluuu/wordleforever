@@ -53,15 +53,13 @@ function handleDisplayNameUpdate(roomId, userId, updatedDisplayName, io) {
 }
 
 async function dbCreateNewUser(userId, username) {
-  console.log("Inside dbCreateNewUser")
-  console.log(`userId: ${userId}, username: ${username}`)
   if (userId && username) {
-    console.log(`userId: ${userId}, username: ${username}`)
     try {
       const existingUser = await User.findById(userId).lean()
       if (!existingUser) {
         await User.create({ _id: userId, username: username })
         console.log(`New user created with userId: ${userId}`)
+        // socket.userId = userId // tested: not necessary, but is explicit
       }
     } catch (error) {
       console.error(
@@ -69,9 +67,6 @@ async function dbCreateNewUser(userId, username) {
       )
       throw error
     }
-
-    // // TODO: Not sure if we actually need this due to page refreshes on client-side, but it is explicit.
-    // socket.userId = userId
   }
 }
 

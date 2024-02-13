@@ -66,17 +66,13 @@ app.get("/user/:username", async (req, res) => {
   }
 }) // TODO: Maybe only send the specific stats requested instead of the whole obj?
 
-//TODO: can this only be one check?
-
 app.get("/users/duplicate/:username", async (req, res) => {
   const usernameToTest = req.params.username
 
   if (usernameToTest) {
     try {
-      const user = await dbGetUserByName(usernameToTest)
-      console.log(`user: ${user}`)
-
-      if (user) {
+      const existingUsername = await dbGetUserByName(usernameToTest)
+      if (existingUsername) {
         res.send({ isDuplicateUsername: true })
       } else {
         res.send({ isDuplicateUsername: false })
@@ -85,8 +81,9 @@ app.get("/users/duplicate/:username", async (req, res) => {
       console.error(`Error checking for duplicate username: ${error.message}`)
       res.send({ isDuplicateUsername: undefined })
     }
+  } else {
+    res.send({ isDuplicateUsername: undefined })
   }
-  // TODO: add a check to always send a response
 })
 
 // Socket.IO
