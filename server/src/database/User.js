@@ -47,6 +47,16 @@ const UserSchema = new mongoose.Schema({
       challenge: { type: Number, default: 0 },
     },
   },
+  totalGuesses: {
+    public: {
+      normal: { type: Number, default: 0 },
+      challenge: { type: Number, default: 0 },
+    },
+    private: {
+      normal: { type: Number, default: 0 },
+      challenge: { type: Number, default: 0 },
+    },
+  },
   totalSolveTime: {
     public: {
       normal: { type: Number, default: 0 },
@@ -57,7 +67,6 @@ const UserSchema = new mongoose.Schema({
       challenge: { type: Number, default: 0 },
     },
   },
-  // TODO totalGuesses should be here as well, which counts guesses in both solved and unsolved games.
   solveDistribution: {
     public: {
       normal: { type: [Number], default: [0, 0, 0, 0, 0, 0] },

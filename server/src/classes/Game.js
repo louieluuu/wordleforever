@@ -189,6 +189,13 @@ export default class Game {
     return allTotalGuessesMapping
   }
 
+  getTotalGuesses(userId) {
+    const userInfo = this.gameUserInfo.get(userId)
+    if (userInfo) {
+      return userInfo.totalGuesses
+    }
+  }
+
   incrementTotalGuesses(userId) {
     const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {

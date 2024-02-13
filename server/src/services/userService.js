@@ -201,6 +201,17 @@ function constructTotalWinsUpdate(
   return update
 }
 
+function constructTotalGuessesUpdate(totalGuesses, connectionMode, gameMode) {
+  let update = {}
+
+  if (totalGuesses > 0) {
+    const totalGuessesPath = `totalGuesses.${connectionMode}.${gameMode}`
+    update = { $inc: { [totalGuessesPath]: totalGuesses } }
+  }
+
+  return update
+}
+
 function constructTotalSolveTimeUpdate(
   totalSolveTime,
   connectionMode,
@@ -279,6 +290,12 @@ async function dbConstructUserUpdate(userId, game) {
     game.roundLimit
   )
 
+  const totalGuessesUpdate = constructTotalGuessesUpdate(
+    game.getTotalGuesses(userId),
+    game.connectionMode,
+    game.gameMode
+  )
+
   const totalSolveTimeUpdate = constructTotalSolveTimeUpdate(
     game.getTotalSolveTime(userId),
     game.connectionMode,
@@ -298,6 +315,7 @@ async function dbConstructUserUpdate(userId, game) {
     ...maxStreakUpdate,
     ...totalGamesUpdate,
     ...totalWinsUpdate,
+    ...totalGuessesUpdate,
     ...totalSolveTimeUpdate,
     ...solveDistribution,
   }
