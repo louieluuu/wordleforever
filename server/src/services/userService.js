@@ -18,7 +18,6 @@ import {
   generateNewHostInRoom,
   broadcastRoomUserInfo,
 } from "./roomService.js"
-import { getUserIdsInGame } from "./gameService.js"
 
 const MIN_FIREBASE_UID_LENGTH = 28
 
@@ -338,8 +337,7 @@ async function dbBatchUpdateUsers(game) {
     // then Promise.all() to wait for all of them to complete.
     // NOTE: This parallel approach may actually *hinder* the db's performance
     // if our db doesn't handle multiprocessing well. Should test if possible.
-    // TODO TODAY: This should be a Game class method, not here
-    const userIds = game.getUserIdsInGame()
+    const userIds = game.getUserIds()
     try {
       const updatePromises = userIds.map((userId) => dbUpdateUser(userId, game))
       await Promise.all(updatePromises)

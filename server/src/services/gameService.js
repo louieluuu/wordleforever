@@ -55,15 +55,6 @@ function initializeGameInfo(roomId) {
   Games.set(roomId, game)
 }
 
-// TODO TODAY: This should be a Game class method, not here
-function getUserIdsInGame(roomId) {
-  const game = Games.get(roomId)
-  if (game && game instanceof Game) {
-    return game.getUserIds()
-  }
-  return []
-}
-
 // Maybe eventually store games in a DB instead for match history info, for now they are deleted upon completion
 function deleteGame(roomId) {
   const game = Games.get(roomId)
@@ -205,7 +196,6 @@ function handleBatchDbUpdate(game) {
 }
 
 export {
-  getUserIdsInGame,
   deleteGame,
   handleGameStart,
   handleLoadUser,
