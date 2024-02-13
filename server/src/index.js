@@ -37,11 +37,6 @@ import {
   handleGameJoinedInProgress,
 } from "./services/gameService.js"
 
-// TODO: whats this for (I changed the order of this btw)
-process.on("unhandledRejection", (reason, promise) => {
-  console.error("Unhandled Rejection at:", promise, "reason:", reason)
-})
-
 const app = express()
 const httpServer = createServer(app)
 
@@ -156,4 +151,9 @@ const PORT = 3005
 
 httpServer.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
+})
+
+// For helpful output when debugging hanging promises
+process.on("unhandledRejection", (reason, promise) => {
+  console.error(`Unhandled rejection at: ${promise}, reason: ${reason}`)
 })
