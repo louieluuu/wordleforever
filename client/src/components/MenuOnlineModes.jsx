@@ -14,7 +14,7 @@ import {
 import useSetRoomId from "../helpers/useSetRoomId"
 
 function MenuOnlineModes({
-  isChallengeOn,
+  gameMode,
   setConnectionMode,
   setIsHost,
   setRoomId,
@@ -25,13 +25,13 @@ function MenuOnlineModes({
 
   async function selectPublicGame() {
     setConnectionMode("public")
-    const publicRoomId = await handleStartPublicGame(isChallengeOn)
+    const publicRoomId = await handleStartPublicGame(gameMode)
     navigate(`/room/${publicRoomId}`)
   }
 
   async function selectPrivateGame() {
     setConnectionMode("private")
-    const privateRoomId = await handleStartPrivateGame(isChallengeOn, setIsHost)
+    const privateRoomId = await handleStartPrivateGame(gameMode, setIsHost)
     navigate(`/room/${privateRoomId}`)
   }
 

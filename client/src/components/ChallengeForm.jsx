@@ -12,13 +12,13 @@ const formStyle = {
   paddingBottom: "0.5rem",
 }
 
-function ChallengeForm({ isChallengeOn, setIsChallengeOn }) {
+function ChallengeForm({ gameMode, setGameMode }) {
   function handleClick() {
-    setIsChallengeOn((prev) => !prev)
+    const target = gameMode === "normal" ? "challenge" : "normal"
+    console.log(`Setting game mode to ${target}`)
 
-    // localStorage stores items as strings, so we use JSON.parse to convert it back to bool
-    const previousBool = JSON.parse(localStorage.getItem("isChallengeOn"))
-    localStorage.setItem("isChallengeOn", !previousBool)
+    setGameMode(target)
+    localStorage.setItem("gameMode", target)
   }
 
   return (
@@ -29,7 +29,7 @@ function ChallengeForm({ isChallengeOn, setIsChallengeOn }) {
             id="activate_challenge_mode"
             type="checkbox"
             className="challenge__checkbox"
-            checked={isChallengeOn}
+            checked={gameMode === "challenge"}
             onChange={handleClick}
           />
           &nbsp;Challenge Mo

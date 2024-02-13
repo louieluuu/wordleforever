@@ -105,12 +105,10 @@ io.on("connection", (socket) => {
 
   // Interact with WaitingRoom component
   // Find match
-  socket.on("findMatch", (isChallengeOn) =>
-    handleMatchmaking(isChallengeOn, socket)
-  )
+  socket.on("findMatch", (gameMode) => handleMatchmaking(gameMode, socket))
   // Create room
-  socket.on("createRoom", (connectionMode, isChallengeOn) =>
-    createRoom(connectionMode, isChallengeOn, socket)
+  socket.on("createRoom", (connectionMode, gameMode) =>
+    createRoom(connectionMode, gameMode, socket)
   )
   // Join room
   socket.on("joinRoom", (roomId, displayName) =>

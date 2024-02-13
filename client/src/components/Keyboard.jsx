@@ -29,7 +29,7 @@ function Keyboard({
   isMatchOver,
   hasSolved,
   isOutOfGuesses,
-  isChallengeOn,
+  gameMode,
   connectionMode,
   isHost,
   startNewGame,
@@ -119,7 +119,7 @@ function Keyboard({
           startNewGame()
           break
         case "public":
-          const publicRoomId = await handleStartPublicGame(isChallengeOn)
+          const publicRoomId = await handleStartPublicGame(gameMode)
           navigate(`/room/${publicRoomId}`)
           break
         case "offline":

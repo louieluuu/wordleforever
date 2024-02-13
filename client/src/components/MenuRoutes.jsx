@@ -15,8 +15,8 @@ function MenuRoutes({
   setDisplayName,
   inputWidth,
   setInputWidth,
-  isChallengeOn,
-  setIsChallengeOn,
+  gameMode,
+  setGameMode,
   connectionMode,
   setConnectionMode,
   isHost,
@@ -34,10 +34,7 @@ function MenuRoutes({
         setInputWidth={setInputWidth}
       />
       {!roomId && (
-        <ChallengeForm
-          isChallengeOn={isChallengeOn}
-          setIsChallengeOn={setIsChallengeOn}
-        />
+        <ChallengeForm gameMode={gameMode} setGameMode={setGameMode} />
       )}
       <AnimatePresence mode="wait">
         <Routes>
@@ -46,7 +43,7 @@ function MenuRoutes({
             path="/online"
             element={
               <MenuOnlineModes
-                isChallengeOn={isChallengeOn}
+                gameMode={gameMode}
                 setConnectionMode={setConnectionMode}
                 setIsHost={setIsHost}
                 setRoomId={setRoomId}
@@ -69,7 +66,7 @@ function MenuRoutes({
                 displayName={displayName}
                 connectionMode={connectionMode}
                 setConnectionMode={setConnectionMode}
-                setIsChallengeOn={setIsChallengeOn}
+                setGameMode={setGameMode}
                 isHost={isHost}
                 setIsHost={setIsHost}
                 setIsSpectating={setIsSpectating}

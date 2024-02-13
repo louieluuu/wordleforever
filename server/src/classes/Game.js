@@ -47,22 +47,23 @@ export default class Game {
 
   static createGame(
     connectionMode,
+    gameMode,
     roomUserInfo,
     prevPoints,
     prevRound,
     prevRoundsWon,
     prevRoundsSolved,
     prevTotalGuesses,
-    prevTotalSolveTime,
-    isChallengeMode
+    prevTotalSolveTime
   ) {
     const game = new Game()
 
     game.connectionMode = connectionMode
     game.solution = game.generateSolution()
-    game.startingWord = isChallengeMode
-      ? game.generateRandomFirstGuess(game.solution)
-      : null
+    game.startingWord =
+      gameMode === "challenge"
+        ? game.generateRandomFirstGuess(game.solution)
+        : null
     game.gameUserInfo = game.initializeGameUserInfo(
       roomUserInfo,
       prevPoints,

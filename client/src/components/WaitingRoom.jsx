@@ -12,7 +12,7 @@ function WaitingRoom({
   displayName,
   connectionMode,
   setConnectionMode,
-  setIsChallengeOn,
+  setGameMode,
   isHost,
   setIsHost,
   setIsSpectating,
@@ -46,14 +46,14 @@ function WaitingRoom({
     }
 
     // Make sure modes are set, important for users joining from a link
-    socket.on("roomJoined", (roomConnectionMode, isChallengeOn) => {
+    socket.on("roomJoined", (roomConnectionMode, gameMode) => {
       setConnectionMode(roomConnectionMode)
-      setIsChallengeOn(isChallengeOn)
+      setGameMode(gameMode)
     })
 
-    socket.on("roomJoinedInProgress", (roomConnectionMode, isChallengeOn) => {
+    socket.on("roomJoinedInProgress", (roomConnectionMode, gameMode) => {
       setConnectionMode(roomConnectionMode)
-      setIsChallengeOn(isChallengeOn)
+      setGameMode(gameMode)
       setIsSpectating(true)
       navigate(`/game/${roomId}`)
     })

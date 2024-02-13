@@ -258,26 +258,24 @@ async function constructSolveDistributionUpdate(
 }
 
 async function dbConstructUserUpdate(userId, game) {
-  let gameMode = game.isChallengeMode ? "challenge" : "normal"
-
   const currStreakUpdate = constructCurrStreakUpdate(
     userId,
     game.winnerId,
     game.connectionMode,
-    gameMode
+    game.gameMode
   )
 
   const maxStreakUpdate = await constructMaxStreakUpdate(
     userId,
     game.winnerId,
     game.connectionMode,
-    gameMode,
+    game.gameMode,
     game.gameUserInfo
   )
 
   const totalGamesUpdate = constructTotalGamesUpdate(
     game.connectionMode,
-    gameMode,
+    game.gameMode,
     game.round,
     game.roundLimit
   )
@@ -285,21 +283,21 @@ async function dbConstructUserUpdate(userId, game) {
   const totalWinsUpdate = constructTotalWinsUpdate(
     userId,
     game.connectionMode,
-    gameMode,
+    game.gameMode,
     game.gameUserInfo,
     game.roundLimit
   )
   const totalSolveTimeUpdate = constructTotalSolveTimeUpdate(
     userId,
     game.connectionMode,
-    gameMode,
+    game.gameMode,
     game.gameUserInfo,
     game.timer
   )
   const solveDistribution = await constructSolveDistributionUpdate(
     userId,
     game.connectionMode,
-    gameMode,
+    game.gameMode,
     game.gameUserInfo
   )
 
@@ -333,7 +331,7 @@ async function dbUpdateUser(userId, game) {
 }
 
 async function dbBatchUpdateUsers(game) {
-  if (game.winnerId && game.roomConnectionMode && game.isChallengeMode) {
+  if (game.winnerId && game.roomConnectionMode && game.gameMode) {
     // We could use a for loop to update each user in the db, but it would
     // be sequential. The following approach allows parallel execution.
     // .map() to create an array of Promises for each user update operation,

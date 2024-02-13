@@ -1,7 +1,7 @@
 export default class Room {
-  constructor(connectionMode, isChallengeOn, userId) {
+  constructor(connectionMode, gameMode, userId) {
     this.connectionMode = connectionMode
-    this.isChallengeOn = isChallengeOn
+    this.gameMode = gameMode
     this.hostUserId = userId
 
     this.userInfo = new Map()

@@ -65,7 +65,7 @@ const audioWinMatch = new Howl({ src: [winMatchWebm, winMatchMp3] })
 const audioWinRound = new Howl({ src: [winRoundWebm, winRoundMp3] })
 
 function GameContainer({
-  isChallengeOn,
+  gameMode,
   connectionMode,
   isHost,
   setIsHost,
@@ -141,7 +141,11 @@ function GameContainer({
 
   // Generate and set challenge mode guess in offline mode
   useEffect(() => {
-    if (connectionMode === "offline" && isChallengeOn && solution !== "") {
+    if (
+      connectionMode === "offline" &&
+      gameMode === "challenge" &&
+      solution !== ""
+    ) {
       generateRandomFirstGuess(solution)
     }
   }, [solution])
@@ -150,7 +154,7 @@ function GameContainer({
   useEffect(() => {
     if (
       isOnline(connectionMode) &&
-      isChallengeOn &&
+      gameMode === "challenge" &&
       solution !== "" &&
       challengeModeGuess !== null
     ) {
@@ -406,7 +410,7 @@ function GameContainer({
       const newSolution = generateSolution()
       setSolution(newSolution)
     }
-    console.log("Starting game with", connectionMode, isChallengeOn)
+    console.log("Starting game with", connectionMode, gameMode)
   }
 
   function resetStates() {
@@ -503,7 +507,7 @@ function GameContainer({
       setAlertMessage("Not in word list")
       setShowAlertModal(true)
       return false
-    } else if (isChallengeOn && !usesPreviousHints(guess).isValid) {
+    } else if (gameMode === "challenge" && !usesPreviousHints(guess).isValid) {
       if (usesPreviousHints(guess).failCondition.color === "green") {
         playAudio(audioGuessInvalid)
         const index = usesPreviousHints(guess).failCondition.index
@@ -832,7 +836,7 @@ function GameContainer({
             isMatchOver={isMatchOver}
             hasSolved={hasSolved}
             isOutOfGuesses={isOutOfGuesses}
-            isChallengeOn={isChallengeOn}
+            gameMode={gameMode}
             connectionMode={connectionMode}
             isHost={isHost}
             startNewGame={startNewGame}

@@ -18,9 +18,8 @@ function App() {
   const isPhoneLayout = useMediaQuery({ maxWidth: breakpointSm })
 
   const [connectionMode, setConnectionMode] = useState("offline")
-  // localStorage stores items as strings, so we use JSON.parse to convert it back to its original type.
-  const [isChallengeOn, setIsChallengeOn] = useState(
-    JSON.parse(localStorage.getItem("isChallengeOn")) || false
+  const [gameMode, setGameMode] = useState(
+    localStorage.getItem("gameMode") || "normal"
   )
 
   const [displayName, setDisplayName] = useState(
@@ -47,8 +46,8 @@ function App() {
                     setDisplayName={setDisplayName}
                     inputWidth={inputWidth}
                     setInputWidth={setInputWidth}
-                    isChallengeOn={isChallengeOn}
-                    setIsChallengeOn={setIsChallengeOn}
+                    gameMode={gameMode}
+                    setGameMode={setGameMode}
                     connectionMode={connectionMode}
                     setConnectionMode={setConnectionMode}
                     isHost={isHost}
@@ -75,7 +74,7 @@ function App() {
                 path="/game/:roomId"
                 element={
                   <GameContainer
-                    isChallengeOn={isChallengeOn}
+                    gameMode={gameMode}
                     connectionMode={connectionMode}
                     isHost={isHost}
                     setIsHost={setIsHost}
@@ -90,7 +89,7 @@ function App() {
                 path="/offline/classic"
                 element={
                   <GameContainer
-                    isChallengeOn={isChallengeOn}
+                    gameMode={gameMode}
                     connectionMode={connectionMode}
                     isHost={isHost}
                     setIsHost={setIsHost}

@@ -4,8 +4,8 @@ import Game from "../classes/Game.js"
 // Services
 import {
   getRoomUserInfo,
-  isRoomChallengeMode,
   getRoomConnectionMode,
+  getRoomGameMode,
   setRoomInProgress,
   setRoomInGame,
   roomInLobby,
@@ -43,14 +43,14 @@ function initializeGameInfo(roomId) {
   }
   const game = Game.createGame(
     getRoomConnectionMode(roomId),
+    getRoomGameMode(roomId),
     getRoomUserInfo(roomId),
     prevPoints,
     prevRound,
     prevRoundsWon,
     prevRoundsSolved,
     prevTotalGuesses,
-    prevTotalSolveTime,
-    isRoomChallengeMode(roomId)
+    prevTotalSolveTime
   )
   Games.set(roomId, game)
 }
@@ -117,6 +117,7 @@ function handleWrongGuess(roomId, userId, updatedGameBoard, io) {
   }
 }
 
+// POST- TODO: I don't think this is true lol
 // TODO: do not batch update for public games, individually update
 // the format of public games demands it (not everyone finishes at the same time, it's weird to pigeonhole it into a batch update)
 async function handleCorrectGuess(
