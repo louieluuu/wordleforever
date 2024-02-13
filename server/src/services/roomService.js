@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid"
 import Room from "../classes/Room.js"
 
 // Services
-import {} from "./userService.js"
+import { dbGetCurrStreak } from "./userService.js"
 import { deleteGame } from "./gameService.js"
 
 const Rooms = new Map()
@@ -183,7 +183,7 @@ function areAllUsersLoaded(roomId) {
   return false
 }
 
-function addUserToRoom(socket, displayName, roomId) {
+async function addUserToRoom(socket, displayName, roomId) {
   // TODO
   // Attaching custom properties to socket.
   // Handles the bug case where users join by pasting a link,
@@ -192,7 +192,15 @@ function addUserToRoom(socket, displayName, roomId) {
   socket.userId = socket.userId || socket.id
   socket.roomId = roomId
 
-  const userObject = { displayName: displayName, currStreak: 0 } // TODO actual streak mia
+  const currStreak = await dbGetCurrStreak(
+    socket.userId,
+    getRoomGameMode(roomId)
+  )
+
+  const userObject = {
+    displayName: displayName,
+    currStreak: currStreak,
+  }
 
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {

@@ -4,7 +4,7 @@ import { createServer } from "http"
 import { Server } from "socket.io"
 
 // Database
-import "./database/db.js" // TODO: is this actually used here?
+import "./database/db.js" // TODO: is this actually used here? on that note, at some point comb through all the imports and eliminate all unnecessary ones.
 import User from "./database/User.js"
 
 // Middleware

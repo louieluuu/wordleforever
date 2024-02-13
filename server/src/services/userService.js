@@ -1,3 +1,6 @@
+import { get } from "lodash-es"
+const _ = { get }
+
 // Database models
 import User from "../database/User.js"
 
@@ -71,6 +74,7 @@ async function dbGetUserById(userId) {
 async function dbGetUserByName(username) {
   if (username) {
     try {
+      // Case-insensitive search
       const user = await User.findOne({
         username: { $regex: new RegExp(username, "i") },
       }).lean()
@@ -78,6 +82,34 @@ async function dbGetUserByName(username) {
     } catch (error) {
       console.error(
         `Error getting user info from the database: ${error.message}`
+      )
+      throw error
+    }
+  }
+}
+
+async function dbGetCurrStreak(userId, gameMode) {
+  if (userId) {
+    const currStreakPath = `currStreak.${gameMode}`
+    try {
+      const currStreakDoc = await User.findById(
+        userId,
+        `${currStreakPath} -_id`
+      ).lean()
+
+      if (currStreakDoc === null) {
+        return 0
+      }
+
+      const currStreak = _.get(currStreakDoc, currStreakPath)
+      if (typeof currStreak === "number") {
+        return currStreak
+      } else {
+        return 0
+      }
+    } catch (error) {
+      console.error(
+        `Error getting user streak from the database: ${error.message}`
       )
       throw error
     }
@@ -368,6 +400,7 @@ export {
   dbCreateNewUser,
   dbGetUserById,
   dbGetUserByName,
+  dbGetCurrStreak,
   dbUpdateUser,
   dbBatchUpdateUsers,
   handleUserDisconnect,
