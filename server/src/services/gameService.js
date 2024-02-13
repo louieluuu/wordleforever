@@ -12,7 +12,8 @@ import {
   areAllUsersLoaded,
   loadUser,
 } from "./roomService.js"
-import { dbBatchUpdateUsers } from "./userService.js" // TODO idk if this belongs in here or in Game.js
+
+import { dbUpdateUser, dbBatchUpdateUsers } from "./userService.js"
 
 const Games = new Map()
 
@@ -155,7 +156,7 @@ async function handleCorrectGuess(
       if (game.isGameOver()) {
         game.endGame(roomId, io)
         if (game.isMatchOver()) {
-          await dbBatchUpdateUsers(game)
+          dbBatchUpdateUsers(game)
         }
       } else {
         game.broadcastGameBoard(roomId, userId, io)
@@ -189,7 +190,6 @@ async function handleOutOfGuesses(roomId, userId, io) {
     if (game.isGameOver()) {
       game.endGame(roomId, io)
       if (game.isMatchOver()) {
-        game.broadcastEndOfMatch(roomId, io)
         // If it's a public game, and everyone gets out of guesses (which is the only way this condition would be reached), then the db has already updated everyone individually above. Only need to handle the private case.
         if (game.connectionMode === "private") {
           dbBatchUpdateUsers(game)
@@ -197,6 +197,10 @@ async function handleOutOfGuesses(roomId, userId, io) {
       }
     }
   }
+}
+
+function handleBatchDbUpdate(game) {
+  dbBatchUpdateUsers(game)
 }
 
 export {
@@ -208,4 +212,5 @@ export {
   handleCorrectGuess,
   handleOutOfGuesses,
   handleGameJoinedInProgress,
+  handleBatchDbUpdate,
 }

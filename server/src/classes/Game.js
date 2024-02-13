@@ -1,7 +1,10 @@
 // Data
 import VALID_WORDS from "../data/validWords.js"
 import WORDLE_ANSWERS from "../data/wordleAnswers.js"
-import { handleGameStart } from "../services/gameService.js"
+import {
+  handleGameStart,
+  handleBatchDbUpdate,
+} from "../services/gameService.js"
 
 // Services
 import {
@@ -17,7 +20,7 @@ import {
 
 // const PRIVATE_ROUND_LIMIT = 10
 
-const PRIVATE_GAME_TIMER = 120
+const PRIVATE_GAME_TIMER = 5
 const PRIVATE_GAME_SOLVED_TIMER = 45
 const ROUND_BREAK_TIME = 7.5
 
@@ -350,11 +353,11 @@ export default class Game {
   }
 
   endGame(roomId, io) {
-    clearInterval(this.timerId)
-    clearInterval(this.elapsedTimerId)
     if (this.round >= this.roundLimit) {
       this.reachedRoundLimit = true
     }
+    clearInterval(this.timerId)
+    clearInterval(this.elapsedTimerId)
     this.broadcastEndOfGameInfo(roomId, io)
     if (this.connectionMode === "private") {
       setRoomOutOfGame(roomId)
@@ -378,6 +381,9 @@ export default class Game {
 
       if (this.timer <= 0) {
         this.endGame(roomId, io)
+        if (this.isMatchOver()) {
+          handleBatchDbUpdate(this) // TODO: does this work? (test)
+        }
       }
     }, 1000)
   }

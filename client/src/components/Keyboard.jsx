@@ -209,14 +209,16 @@ function Keyboard({
       </div>
       {isGameOver && (
         <div className="post-game-buttons">
-          {isMatchOver && !showPostGameDialog && (
-            <div
-              className="show-scoreboard-btn"
-              onClick={() => setShowPostGameDialog(true)}
-            >
-              <MdKeyboardDoubleArrowUp />
-            </div>
-          )}
+          {connectionMode === "private" &&
+            isMatchOver &&
+            !showPostGameDialog && (
+              <div
+                className="show-scoreboard-btn"
+                onClick={() => setShowPostGameDialog(true)}
+              >
+                <MdKeyboardDoubleArrowUp />
+              </div>
+            )}
           {(connectionMode !== "private" || (isMatchOver && isHost)) && (
             <button className="menu__btn--new-game" onClick={handlePlayAgain}>
               NEW GAME

@@ -382,9 +382,10 @@ export {
   dbCreateNewUser,
   dbGetUserById,
   dbGetUserByName,
+  dbUpdateUser,
+  dbBatchUpdateUsers,
   setDisplayName,
   handleDisplayNameUpdate,
   handleUserDisconnect,
   handleLeaveRoom,
-  dbBatchUpdateUsers,
 }
