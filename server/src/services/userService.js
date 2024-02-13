@@ -33,7 +33,7 @@ function handleNewConnection(userId, socket) {
   // also exploit this fact when trying to determine whether a socket is a user or not.
   socket.userId = userId ? userId : socket.id
 
-  console.log(`From handleNewConnection: ${socket.userId}`)
+  console.log(`From handleNewConnection's socketUserId: ${socket.userId}`)
 }
 
 // TODO: These dpName fxns miiight not belong here? They're not db operations.
@@ -53,11 +53,15 @@ function handleDisplayNameUpdate(roomId, userId, updatedDisplayName, io) {
 }
 
 async function dbCreateNewUser(userId, username) {
+  console.log("Inside dbCreateNewUser")
+  console.log(`userId: ${userId}, username: ${username}`)
   if (userId && username) {
+    console.log(`userId: ${userId}, username: ${username}`)
     try {
       const existingUser = await User.findById(userId).lean()
       if (!existingUser) {
         await User.create({ _id: userId, username: username })
+        console.log(`New user created with userId: ${userId}`)
       }
     } catch (error) {
       console.error(
@@ -66,8 +70,8 @@ async function dbCreateNewUser(userId, username) {
       throw error
     }
 
-    // TODO: Not sure if we actually need this due to page refreshes on client-side, but it is explicit.
-    socket.userId = userId
+    // // TODO: Not sure if we actually need this due to page refreshes on client-side, but it is explicit.
+    // socket.userId = userId
   }
 }
 
@@ -91,10 +95,9 @@ async function dbGetUserById(userId) {
 async function dbGetUserByName(username) {
   if (username) {
     try {
-      const user = await User.findOne({ username: username }).lean()
-      if (!user) {
-        console.error(`No user found with username: ${username}`)
-      }
+      const user = await User.findOne({
+        username: { $regex: new RegExp(username, "i") },
+      }).lean()
       return user
     } catch (error) {
       console.error(

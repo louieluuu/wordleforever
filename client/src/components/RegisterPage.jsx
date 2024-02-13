@@ -21,13 +21,16 @@ function RegisterPage({ setRoomId }) {
   const navigate = useNavigate()
 
   // Redirect to home page once user is logged in.
+  // TODO: Feel like an async/await or .then() would be more
+  // reliable than this useEffect.
   useEffect(() => {
     if (user) {
       const userId = user.user.uid
+      console.log(`username from inside useEffect: ${username}`)
       socket.emit("createNewUser", userId, username)
       navigate("/")
     }
-  }, [user])
+  }, [user, username])
 
   function handleKeyDown(e) {
     if (e.key === "Enter") {
@@ -35,14 +38,19 @@ function RegisterPage({ setRoomId }) {
     }
   }
 
-  async function isDuplicateUsername(username) {
-    axios.get(`/users/duplicate/${username}`).then((res) => {
-      // TODO This scares Thomas (.isDuplicateUsername)
-      return res.isDuplicateUsername
-    })
+  async function checkDuplicateUsername(username) {
+    try {
+      const res = await axios.get(
+        `http://localhost:3005/users/duplicate/${username}`
+      )
+      return res.data.isDuplicateUsername
+    } catch (error) {
+      console.error(`Error checking for duplicate username: ${error.message}`)
+      return undefined
+    }
   }
 
-  function validateUsername(username) {
+  async function validateUsername(username) {
     const validChars = /^[a-zA-Z0-9_-]+$/
 
     // Restrictions
@@ -67,7 +75,8 @@ function RegisterPage({ setRoomId }) {
     }
 
     // Duplicates
-    const isDuplicate = isDuplicateUsername(username)
+    const isDuplicate = await checkDuplicateUsername(username)
+    console.log(`isDuplicate: ${isDuplicate}`)
 
     if (isDuplicate === undefined) {
       console.log("Server error. Please try again later.")
@@ -79,12 +88,15 @@ function RegisterPage({ setRoomId }) {
       return true
     }
 
-    return false // catch-all if isDuplicate returned something weird
+    return false
   }
 
-  function register() {
-    const isValid = validateUsername(username)
+  async function register() {
+    const isValid = await validateUsername(username)
+    console.log(`isValid: ${isValid}`)
+
     if (isValid) {
+      console.log("isValid. Registering...")
       createUserWithEmailAndPassword(email, password)
     }
   }

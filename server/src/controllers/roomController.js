@@ -36,7 +36,7 @@ function createRoom(connectionMode, gameMode, socket) {
 function joinRoom(roomId, displayName, io, socket) {
   try {
     if (!isRoomFull(roomId)) {
-      console.log(`${socket.id} joining room: ${roomId}`)
+      console.log(`${socket.userId} joining room: ${roomId}`)
       addUserToRoom(socket, displayName, roomId)
       broadcastRoomUserInfo(roomId, io)
 
@@ -54,7 +54,7 @@ function joinRoom(roomId, displayName, io, socket) {
         )
       }
     } else {
-      console.log(`${socket.id} failed to join room: ${roomId}`)
+      console.log(`${socket.userId} failed to join room: ${roomId}`)
       socket.emit("roomFull")
     }
   } catch (error) {

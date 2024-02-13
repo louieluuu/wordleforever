@@ -1,3 +1,5 @@
+// TODO: Logout should reload back to home page, it feels super weird when it doesn't.
+
 import React, { useState, useLayoutEffect } from "react"
 
 import { Link } from "react-router-dom"

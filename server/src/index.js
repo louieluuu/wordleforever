@@ -37,6 +37,7 @@ import {
   handleGameJoinedInProgress,
 } from "./services/gameService.js"
 
+// Server setup
 const app = express()
 const httpServer = createServer(app)
 
@@ -65,21 +66,19 @@ app.get("/user/:username", async (req, res) => {
   }
 }) // TODO: Maybe only send the specific stats requested instead of the whole obj?
 
-app.get("/users/duplicate/:username", async (req, res) => {
-  const submittedUsername = req.params.username
-  if (submittedUsername) {
-    try {
-      const user = await dbGetUserByName(submittedUsername)
+//TODO: can this only be one check?
 
-      //TODO: can this only be one check?
+app.get("/users/duplicate/:username", async (req, res) => {
+  const usernameToTest = req.params.username
+
+  if (usernameToTest) {
+    try {
+      const user = await dbGetUserByName(usernameToTest)
+      console.log(`user: ${user}`)
 
       if (user) {
         res.send({ isDuplicateUsername: true })
       } else {
-        // Still need one more check for case-insensitive duplicates
-        if (submittedUsername.toLowerCase() === user.username.toLowerCase()) {
-          res.send({ isDuplicateUsername: true })
-        }
         res.send({ isDuplicateUsername: false })
       }
     } catch (error) {
@@ -87,7 +86,7 @@ app.get("/users/duplicate/:username", async (req, res) => {
       res.send({ isDuplicateUsername: undefined })
     }
   }
-  // add a check to always send a response
+  // TODO: add a check to always send a response
 })
 
 // Socket.IO
@@ -96,7 +95,9 @@ io.on("connection", (socket) => {
 
   socket.on("newConnection", (userId) => handleNewConnection(userId, socket))
 
-  socket.on("createNewUser", (userId) => dbCreateNewUser(userId))
+  socket.on("createNewUser", (userId, username) =>
+    dbCreateNewUser(userId, username, socket)
+  )
 
   // Interact with WaitingRoom component
   // Find match
