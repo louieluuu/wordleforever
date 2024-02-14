@@ -24,9 +24,8 @@ function initializeGameInfo(roomId) {
   let prevPoints = new Map()
   let prevRound = 0
   let prevRoundsWon = new Map()
-  let prevRoundsSolved = new Map()
-  let prevTotalSolveTime = new Map()
   let prevSolveDistribution = new Map()
+  let prevTotalSolveTime = new Map()
   let prevTotalGuesses = new Map()
   let prevTotalOutOfGuesses = new Map()
   if (Games.has(roomId)) {
@@ -35,9 +34,8 @@ function initializeGameInfo(roomId) {
       prevPoints = prevGame.getAllPoints()
       prevRound = prevGame.round
       prevRoundsWon = prevGame.getAllRoundsWon()
-      prevRoundsSolved = prevGame.getAllRoundsSolved()
-      prevTotalSolveTime = prevGame.getAllTotalSolveTime()
       prevSolveDistribution = prevGame.getAllSolveDistribution()
+      prevTotalSolveTime = prevGame.getAllTotalSolveTime()
       prevTotalGuesses = prevGame.getAllTotalGuesses()
       prevTotalOutOfGuesses = prevGame.getAllTotalOutOfGuesses()
       deleteGame(roomId)
@@ -52,9 +50,8 @@ function initializeGameInfo(roomId) {
     prevPoints,
     prevRound,
     prevRoundsWon,
-    prevRoundsSolved,
-    prevTotalSolveTime,
     prevSolveDistribution,
+    prevTotalSolveTime,
     prevTotalGuesses,
     prevTotalOutOfGuesses
   )
@@ -144,9 +141,8 @@ async function handleCorrectGuess(
       game.countSolved += 1
 
       // Update stats (TODO: can write one function to handle all of these?)
-      game.incrementRoundsSolved(userId)
-      game.incrementTotalSolveTime(userId)
       game.updateSolveDistribution(userId, correctGuessIndex)
+      game.incrementTotalSolveTime(userId)
       game.incrementTotalGuesses(userId)
 
       // Additional effects

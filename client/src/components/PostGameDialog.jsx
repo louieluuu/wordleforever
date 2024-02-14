@@ -7,6 +7,8 @@ import { MdOutlineDoubleArrow } from "react-icons/md"
 
 // TODO: please fix this complete abomination from top to bottom. god has abandoned us.
 
+// TODO 2: user.roundsSolved === user.solveDistribution.reduce((a, b) => a + b, 0) - not sure where to put this though
+
 function PostGameDialog({
   setShowPostGameDialog,
   showScoreboard,
@@ -199,17 +201,23 @@ function PostGameDialog({
                         <td>{user.displayName}</td>
                         <td>{user.points}</td>
                         <td>{user.roundsWon}</td>
-                        <td>{user.roundsSolved}</td>
+                        <td>
+                          {user.solveDistribution.reduce((a, b) => a + b, 0)}
+                        </td>
                         <td>
                           {user.totalGuesses > 0
                             ? (user.totalGuesses / maxRounds).toFixed(2)
                             : "/"}
                         </td>
                         <td>
-                          {user.roundsSolved > 0
-                            ? (user.totalSolveTime / user.roundsSolved).toFixed(
-                                2
-                              )
+                          {user.solveDistribution.reduce((a, b) => a + b, 0) > 0
+                            ? (
+                                user.totalSolveTime /
+                                user.solveDistribution.reduce(
+                                  (a, b) => a + b,
+                                  0
+                                )
+                              ).toFixed(2)
                             : "/"}
                         </td>
                         {/* Add more cells for additional properties */}

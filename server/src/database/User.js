@@ -47,14 +47,14 @@ const UserSchema = new mongoose.Schema({
       challenge: { type: Number, default: 0 },
     },
   },
-  totalSolves: {
+  solveDistribution: {
     public: {
-      normal: { type: Number, default: 0 },
-      challenge: { type: Number, default: 0 },
+      normal: { type: [Number], default: [0, 0, 0, 0, 0, 0] },
+      challenge: { type: [Number], default: [0, 0, 0, 0, 0, 0] },
     },
     private: {
-      normal: { type: Number, default: 0 },
-      challenge: { type: Number, default: 0 },
+      normal: { type: [Number], default: [0, 0, 0, 0, 0, 0] },
+      challenge: { type: [Number], default: [0, 0, 0, 0, 0, 0] },
     },
   },
   totalSolveTime: {
@@ -65,16 +65,6 @@ const UserSchema = new mongoose.Schema({
     private: {
       normal: { type: Number, default: 0 },
       challenge: { type: Number, default: 0 },
-    },
-  },
-  solveDistribution: {
-    public: {
-      normal: { type: [Number], default: [0, 0, 0, 0, 0, 0] },
-      challenge: { type: [Number], default: [0, 0, 0, 0, 0, 0] },
-    },
-    private: {
-      normal: { type: [Number], default: [0, 0, 0, 0, 0, 0] },
-      challenge: { type: [Number], default: [0, 0, 0, 0, 0, 0] },
     },
   },
   totalGuesses: {

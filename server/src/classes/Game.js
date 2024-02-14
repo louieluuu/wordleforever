@@ -21,7 +21,7 @@ const PRIVATE_GAME_TIMER = 120
 const PRIVATE_GAME_SOLVED_TIMER = 45
 const ROUND_BREAK_TIME = 7.5
 
-const PRIVATE_ROUND_LIMIT = 10
+const PRIVATE_ROUND_LIMIT = 2
 
 export default class Game {
   constructor() {
@@ -50,9 +50,8 @@ export default class Game {
     prevPoints,
     prevRound,
     prevRoundsWon,
-    prevRoundsSolved,
-    prevTotalSolveTime,
     prevSolveDistribution,
+    prevTotalSolveTime,
     prevTotalGuesses,
     prevTotalOutOfGuesses
   ) {
@@ -69,9 +68,8 @@ export default class Game {
       roomUserInfo,
       prevPoints,
       prevRoundsWon,
-      prevRoundsSolved,
-      prevTotalSolveTime,
       prevSolveDistribution,
+      prevTotalSolveTime,
       prevTotalGuesses,
       prevTotalOutOfGuesses
     )
@@ -90,9 +88,8 @@ export default class Game {
     roomUserInfo,
     prevPoints,
     prevRoundsWon,
-    prevRoundsSolved,
-    prevTotalSolveTime,
     prevSolveDistribution,
+    prevTotalSolveTime,
     prevTotalGuesses,
     prevTotalOutOfGuesses
   ) {
@@ -107,11 +104,10 @@ export default class Game {
         streak: user.currStreak,
         points: prevPoints.get(userId) || 0,
         roundsWon: prevRoundsWon.get(userId) || 0,
-        roundsSolved: prevRoundsSolved.get(userId) || 0,
-        totalSolveTime: prevTotalSolveTime.get(userId) || 0,
         solveDistribution: prevSolveDistribution.get(userId) || [
           0, 0, 0, 0, 0, 0,
         ],
+        totalSolveTime: prevTotalSolveTime.get(userId) || 0,
         totalGuesses: prevTotalGuesses.get(userId) || 0,
         totalOutOfGuesses: prevTotalOutOfGuesses.get(userId) || 0,
       })
@@ -170,22 +166,6 @@ export default class Game {
     const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
       userInfo.roundsWon += 1
-    }
-  }
-
-  getAllRoundsSolved() {
-    const allRoundsSolvedMapping = new Map()
-    this.gameUserInfo.forEach((userInfo, userId) => {
-      allRoundsSolvedMapping.set(userId, userInfo.roundsSolved)
-    })
-
-    return allRoundsSolvedMapping
-  }
-
-  incrementRoundsSolved(userId) {
-    const userInfo = this.gameUserInfo.get(userId)
-    if (userInfo) {
-      userInfo.roundsSolved += 1
     }
   }
 
