@@ -63,7 +63,6 @@ async function dbCreateNewUser(userId, username) {
       if (!existingUser) {
         await User.create({ _id: userId, username: username })
         console.log(`New user created with userId: ${userId}`)
-        // socket.userId = userId // tested: not necessary, but is explicit
       }
     } catch (error) {
       console.error(

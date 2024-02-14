@@ -69,6 +69,7 @@ function RegisterPage({ setRoomId }) {
   async function checkDuplicateUsername(username) {
     try {
       const res = await axios.get(
+        // TODO: Change to production URL
         `http://localhost:3005/users/duplicate/${username}`
       )
       return res.data?.isDuplicateUsername

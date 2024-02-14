@@ -44,6 +44,8 @@ const io = new Server(httpServer, {
 })
 
 // Endpoints
+// TODO: Create another endpoint for createNewUser that takes in a username and userId (access through req.query.userId, for example) and calls dbCreateNewUser(). Socket.IO shouldn't be handling it.
+
 app.get("/user/:username", async (req, res) => {
   const username = req.params.username
   try {
@@ -82,8 +84,9 @@ app.get("/users/duplicate/:username", async (req, res) => {
 io.on("connection", (socket) => {
   // Init
   socket.on("newConnection", (userId) => handleNewConnection(userId, socket))
+  // TODO: Not socket.io's job. Create an endpoint.
   socket.on("createNewUser", (userId, username) =>
-    dbCreateNewUser(userId, username, socket)
+    dbCreateNewUser(userId, username)
   )
 
   // WaitingRoom
