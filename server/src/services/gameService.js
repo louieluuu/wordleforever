@@ -147,8 +147,6 @@ async function handleCorrectGuess(
 
       if (game.isGameOver()) {
         game.endGame(roomId, io)
-        dbUpdateUser(userId, game) // TODO: Just testing for now, remove later
-
         if (game.isMatchOver()) {
           dbBatchUpdateUsers(game)
         }

@@ -36,6 +36,27 @@ function handleNewConnection(userId, socket) {
   console.log(`From handleNewConnection's socketUserId: ${socket.userId}`)
 }
 
+function dbIsRegistered(userId) {
+  // userId can either be exactly 20 chars (default socket.id length; cannot be a user),
+  // or 28+ chars (Firebase uid length; must be a user).
+  if (userId) {
+    console.log(
+      `dbIsRegistered returning: ${
+        userId.length >= MIN_FIREBASE_UID_LENGTH
+      } for userId: ${userId}`
+    )
+    return userId.length >= MIN_FIREBASE_UID_LENGTH ? true : false
+  }
+  return false
+}
+
+function dbHasUpdated(userId, hasUpdatedInDbList) {
+  if (userId) {
+    return hasUpdatedInDbList.includes(userId)
+  }
+  return true
+}
+
 async function dbCreateNewUser(userId, username) {
   if (userId && username) {
     try {
@@ -116,24 +137,10 @@ async function dbGetCurrStreak(userId, gameMode) {
   }
 }
 
-function dbIsRegistered(userId) {
-  // userId can either be exactly 20 chars (default socket.id length; cannot be a user),
-  // or 28+ chars (Firebase uid length; must be a user).
-  if (userId) {
-    return userId.length >= MIN_FIREBASE_UID_LENGTH ? true : false
-  }
-  return false
-}
-
-function dbHasUpdated(userId, hasUpdatedInDbList) {
-  if (userId) {
-    return hasUpdatedInDbList.includes(userId)
-  }
-  return true
-}
-
 function constructCurrStreakUpdate(isWinner, connectionMode, gameMode) {
   let update = {}
+
+  console.log(`isWinner: ${isWinner}`)
 
   if (connectionMode === "public") {
     const currStreakPath = `currStreak.${gameMode}`
@@ -356,13 +363,19 @@ async function dbUpdateUser(userId, game) {
 }
 
 async function dbBatchUpdateUsers(game) {
-  if (game.winnerId && game.roomConnectionMode && game.gameMode) {
+  console.log(`game.winnerId: ${game.winnerId}`)
+  console.log(`game.connectionMode: ${game.connectionMode}`)
+  console.log(`game.gameMode: ${game.gameMode}`)
+
+  if (game.winnerId && game.connectionMode && game.gameMode) {
     // We could use a for loop to update each user in the db, but it would
     // be sequential. The following approach allows parallel execution.
     // .map() to create an array of Promises for each user update operation,
     // then Promise.all() to wait for all of them to complete.
     // NOTE: This parallel approach may actually *hinder* the db's performance
     // if our db doesn't handle multiprocessing well. Should test if possible.
+    console.log("Inside dbBatchUpdateUsers")
+
     const userIds = game.getUserIds()
     try {
       const updatePromises = userIds.map((userId) => dbUpdateUser(userId, game))
