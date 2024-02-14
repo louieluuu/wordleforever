@@ -25,8 +25,10 @@ function initializeGameInfo(roomId) {
   let prevRound = 0
   let prevRoundsWon = new Map()
   let prevRoundsSolved = new Map()
-  let prevTotalGuesses = new Map()
   let prevTotalSolveTime = new Map()
+  let prevSolveDistribution = new Map()
+  let prevTotalGuesses = new Map()
+  let prevTotalOutOfGuesses = new Map()
   if (Games.has(roomId)) {
     const prevGame = Games.get(roomId)
     if (!prevGame.reachedRoundLimit) {
@@ -34,8 +36,10 @@ function initializeGameInfo(roomId) {
       prevRound = prevGame.round
       prevRoundsWon = prevGame.getAllRoundsWon()
       prevRoundsSolved = prevGame.getAllRoundsSolved()
-      prevTotalGuesses = prevGame.getAllTotalGuesses()
       prevTotalSolveTime = prevGame.getAllTotalSolveTime()
+      prevSolveDistribution = prevGame.getAllSolveDistribution()
+      prevTotalGuesses = prevGame.getAllTotalGuesses()
+      prevTotalOutOfGuesses = prevGame.getAllTotalOutOfGuesses()
       deleteGame(roomId)
     } else {
       deleteGame(roomId)
@@ -49,8 +53,10 @@ function initializeGameInfo(roomId) {
     prevRound,
     prevRoundsWon,
     prevRoundsSolved,
+    prevTotalSolveTime,
+    prevSolveDistribution,
     prevTotalGuesses,
-    prevTotalSolveTime
+    prevTotalOutOfGuesses
   )
   Games.set(roomId, game)
 }
@@ -115,6 +121,7 @@ async function handleCorrectGuess(
   roomId,
   userId,
   updatedGameBoard,
+  correctGuessIndex,
   socket,
   io
 ) {
@@ -136,11 +143,11 @@ async function handleCorrectGuess(
       game.setWinner(userId)
       game.countSolved += 1
 
+      // Stats
       game.incrementTotalGuesses(userId)
-      // We want both totalGuesses for private room stats, as well as a guessDistribution for proper stats dialog. Means we need to add a currentGuess number counter.
-      // TODO: game.updateGuessDistribution(userId)
       game.incrementRoundsSolved(userId)
       game.incrementTotalSolveTime(userId)
+      game.updateSolveDistribution(userId, correctGuessIndex)
 
       game.broadcastSolvedAudio(roomId, socket)
       game.setGameBoard(userId, updatedGameBoard)

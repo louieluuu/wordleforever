@@ -260,16 +260,14 @@ async function constructSolveDistributionUpdate(
   const sameDistribution = solveDistributionToAdd.every((value) => value === 0)
 
   if (!sameDistribution) {
-    // TODO:
-    // Retrieve the old solveDistribution from db and map over the new values.
-    // We can't use $inc w/ arrays here. If we were to use an Object, we could.
-    // But it'd be uglier syntax.
+    // Retrieve the old solveDistribution from db.
     const solveDistributionPath = `solveDistribution.${connectionMode}.${gameMode}`
     const oldSolveDistribution = await User.findById(
       userId,
       solveDistributionPath
     ).lean()
 
+    // Map over the new values by adding.
     const updatedSolveDistribution = oldSolveDistribution.map(
       (value, index) => {
         return value + solveDistributionToAdd[index]
@@ -323,21 +321,21 @@ async function dbConstructUserUpdate(userId, game) {
     game.timer
   )
 
-  // const solveDistribution = await constructSolveDistributionUpdate(
-  //   userId,
-  //   game.connectionMode,
-  //   game.gameMode,
-  //   game.gameUserInfo
-  // )
+  const solveDistribution = await constructSolveDistributionUpdate(
+    userId,
+    game.connectionMode,
+    game.gameMode,
+    game.gameUserInfo
+  )
 
   const userUpdate = _.merge(
-    currStreakUpdate,
-    maxStreakUpdate,
-    totalGamesUpdate,
-    totalWinsUpdate,
-    totalGuessesUpdate,
-    totalSolveTimeUpdate
-    // solveDistribution
+    // currStreakUpdate,
+    // maxStreakUpdate,
+    // totalGamesUpdate,
+    // totalWinsUpdate,
+    // totalGuessesUpdate,
+    // totalSolveTimeUpdate
+    solveDistribution
   )
 
   return userUpdate

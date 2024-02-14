@@ -2,6 +2,8 @@ import mongoose from "mongoose"
 import dotenv from "dotenv"
 import User from "./User.js"
 
+// TODO: Would prefer int32 over Number type
+
 // import.meta.env doesn't work in Node.js
 dotenv.config()
 

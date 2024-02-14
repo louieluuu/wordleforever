@@ -549,7 +549,7 @@ function GameContainer({
     if (guess === solution) {
       setHasSolved(true)
       if (isOnline(connectionMode)) {
-        socket.emit("correctGuess", roomId, updatedBoard)
+        socket.emit("correctGuess", roomId, updatedBoard, activeRowIndex)
         if (typeof connectionMode === "string" && connectionMode === "public") {
           handleWin()
         }

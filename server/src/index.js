@@ -124,11 +124,12 @@ io.on("connection", (socket) => {
   )
   socket.on(
     "correctGuess",
-    async (roomId, updatedGameBoard) =>
+    async (roomId, updatedGameBoard, correctGuessIndex) =>
       await handleCorrectGuess(
         roomId,
         socket.userId,
         updatedGameBoard,
+        correctGuessIndex,
         socket,
         io
       )

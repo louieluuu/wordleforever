@@ -7,10 +7,7 @@ import {
 } from "../services/gameService.js"
 
 // Services
-import {
-  getRoomConnectionMode,
-  setRoomOutOfGame,
-} from "../services/roomService.js"
+import { setRoomOutOfGame } from "../services/roomService.js"
 
 // These are all in seconds
 // Mess around with these for testing, but always return them to the following unless permanently changing:
@@ -54,8 +51,10 @@ export default class Game {
     prevRound,
     prevRoundsWon,
     prevRoundsSolved,
+    prevTotalSolveTime,
+    prevSolveDistribution,
     prevTotalGuesses,
-    prevTotalSolveTime
+    prevTotalOutOfGuesses
   ) {
     const game = new Game()
 
@@ -71,8 +70,10 @@ export default class Game {
       prevPoints,
       prevRoundsWon,
       prevRoundsSolved,
+      prevTotalSolveTime,
+      prevSolveDistribution,
       prevTotalGuesses,
-      prevTotalSolveTime
+      prevTotalOutOfGuesses
     )
     game.countSolved = 0
     game.countOutOfGuesses = 0
@@ -90,8 +91,10 @@ export default class Game {
     prevPoints,
     prevRoundsWon,
     prevRoundsSolved,
+    prevTotalSolveTime,
+    prevSolveDistribution,
     prevTotalGuesses,
-    prevTotalSolveTime
+    prevTotalOutOfGuesses
   ) {
     const gameUserInfoMap = new Map()
 
@@ -105,8 +108,12 @@ export default class Game {
         points: prevPoints.get(userId) || 0,
         roundsWon: prevRoundsWon.get(userId) || 0,
         roundsSolved: prevRoundsSolved.get(userId) || 0,
-        totalGuesses: prevTotalGuesses.get(userId) || 0,
         totalSolveTime: prevTotalSolveTime.get(userId) || 0,
+        solveDistribution: prevSolveDistribution.get(userId) || [
+          0, 0, 0, 0, 0, 0,
+        ],
+        totalGuesses: prevTotalGuesses.get(userId) || 0,
+        totalOutOfGuesses: prevTotalOutOfGuesses.get(userId) || 0,
       })
     })
 
@@ -182,29 +189,6 @@ export default class Game {
     }
   }
 
-  getAllTotalGuesses() {
-    const allTotalGuessesMapping = new Map()
-    this.gameUserInfo.forEach((userInfo, userId) => {
-      allTotalGuessesMapping.set(userId, userInfo.totalGuesses)
-    })
-
-    return allTotalGuessesMapping
-  }
-
-  getTotalGuesses(userId) {
-    const userInfo = this.gameUserInfo.get(userId)
-    if (userInfo) {
-      return userInfo.totalGuesses
-    }
-  }
-
-  incrementTotalGuesses(userId) {
-    const userInfo = this.gameUserInfo.get(userId)
-    if (userInfo) {
-      userInfo.totalGuesses += 1
-    }
-  }
-
   getAllTotalSolveTime() {
     const allTotalSolveTimeMapping = new Map()
     this.gameUserInfo.forEach((userInfo, userId) => {
@@ -228,30 +212,72 @@ export default class Game {
     }
   }
 
-  getPoints(userId) {
+  getAllSolveDistribution() {
+    const allSolveDistributionMapping = new Map()
+    this.gameUserInfo.forEach((userInfo, userId) => {
+      allSolveDistributionMapping.set(userId, userInfo.solveDistribution)
+    })
+
+    return allSolveDistributionMapping
+  }
+
+  getSolveDistribution(userId) {
     const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
-      return userInfo.points
+      return userInfo.solveDistribution
     }
   }
 
-  getAllPoints() {
-    const pointsMapping = new Map()
-    this.gameUserInfo.forEach((userInfo, userId) => {
-      pointsMapping.set(userId, userInfo.points)
-    })
-
-    return pointsMapping
-  }
-
-  updatePoints(userId) {
+  updateSolveDistribution(userId, correctGuessIndex) {
     const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
-      if (this.countSolved === 0 && this.timer > PRIVATE_GAME_SOLVED_TIMER) {
-        userInfo.points += PRIVATE_GAME_SOLVED_TIMER * 2
-      } else {
-        userInfo.points += this.timer
-      }
+      userInfo.solveDistribution[correctGuessIndex] += 1
+    }
+  }
+
+  getAllTotalGuesses() {
+    const allTotalGuessesMapping = new Map()
+    this.gameUserInfo.forEach((userInfo, userId) => {
+      allTotalGuessesMapping.set(userId, userInfo.totalGuesses)
+    })
+
+    return allTotalGuessesMapping
+  }
+
+  getTotalGuesses(userId) {
+    const userInfo = this.gameUserInfo.get(userId)
+    if (userInfo) {
+      return userInfo.totalGuesses
+    }
+  }
+
+  incrementTotalGuesses(userId) {
+    const userInfo = this.gameUserInfo.get(userId)
+    if (userInfo) {
+      userInfo.totalGuesses += 1
+    }
+  }
+
+  getAllTotalOutOfGuesses() {
+    const allTotalOutOfGuessesMapping = new Map()
+    this.gameUserInfo.forEach((userInfo, userId) => {
+      allTotalOutOfGuessesMapping.set(userId, userInfo.totalOutOfGuesses)
+    })
+
+    return allTotalOutOfGuessesMapping
+  }
+
+  getTotalOutOfGuesses(userId) {
+    const userInfo = this.gameUserInfo.get(userId)
+    if (userInfo) {
+      return userInfo.totalOutOfGuesses
+    }
+  }
+
+  incrementTotalOutOfGuesses(userId) {
+    const userInfo = this.gameUserInfo.get(userId)
+    if (userInfo) {
+      userInfo.totalOutOfGuesses += 1
     }
   }
 
@@ -284,6 +310,33 @@ export default class Game {
         this.resetStreak(userId)
       }
     })
+  }
+
+  getPoints(userId) {
+    const userInfo = this.gameUserInfo.get(userId)
+    if (userInfo) {
+      return userInfo.points
+    }
+  }
+
+  getAllPoints() {
+    const pointsMapping = new Map()
+    this.gameUserInfo.forEach((userInfo, userId) => {
+      pointsMapping.set(userId, userInfo.points)
+    })
+
+    return pointsMapping
+  }
+
+  updatePoints(userId) {
+    const userInfo = this.gameUserInfo.get(userId)
+    if (userInfo) {
+      if (this.countSolved === 0 && this.timer > PRIVATE_GAME_SOLVED_TIMER) {
+        userInfo.points += PRIVATE_GAME_SOLVED_TIMER * 2
+      } else {
+        userInfo.points += this.timer
+      }
+    }
   }
 
   setSolvedTimer(roomId, io) {
