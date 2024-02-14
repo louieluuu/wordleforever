@@ -232,6 +232,7 @@ export default class Game {
     const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
       userInfo.solveDistribution[correctGuessIndex] += 1
+      console.log(`Updated solve distribution: ${userInfo.solveDistribution}`)
     }
   }
 
@@ -278,6 +279,7 @@ export default class Game {
     const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
       userInfo.totalOutOfGuesses += 1
+      console.log(`Updated total out of guesses: ${userInfo.totalOutOfGuesses}`)
     }
   }
 

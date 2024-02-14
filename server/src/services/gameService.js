@@ -143,12 +143,13 @@ async function handleCorrectGuess(
       game.setWinner(userId)
       game.countSolved += 1
 
-      // Stats
-      game.incrementTotalGuesses(userId)
+      // Update stats (TODO: can write one function to handle all of these?)
       game.incrementRoundsSolved(userId)
       game.incrementTotalSolveTime(userId)
       game.updateSolveDistribution(userId, correctGuessIndex)
+      game.incrementTotalGuesses(userId)
 
+      // Additional effects
       game.broadcastSolvedAudio(roomId, socket)
       game.setGameBoard(userId, updatedGameBoard)
 
@@ -174,6 +175,9 @@ async function handleCorrectGuess(
 async function handleOutOfGuesses(roomId, userId, io) {
   const game = Games.get(roomId)
   if (game && game instanceof Game) {
+    // TODO: Thoughts on placement?
+    game.incrementTotalOutOfGuesses(userId)
+    game.countOutOfGuesses += 1
     if (game.connectionMode === "public") {
       game.resetStreak(userId)
       game.broadcastStreak(roomId, userId, io)
@@ -182,10 +186,6 @@ async function handleOutOfGuesses(roomId, userId, io) {
       await dbUpdateUser(userId, game)
       game.hasUpdatedInDbList.push(userId)
     }
-    // TODO: Concerned about the ordering of this, since it comes
-    // after a potentially slow db update and other logic might
-    // depend on the countOutOfGuesses? Maybe it's fine.
-    game.countOutOfGuesses += 1
     if (game.isGameOver()) {
       game.endGame(roomId, io)
       if (game.isMatchOver()) {

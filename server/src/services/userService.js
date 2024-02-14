@@ -217,19 +217,6 @@ function constructTotalWinsUpdate(
   return update
 }
 
-function constructTotalGuessesUpdate(totalGuesses, connectionMode, gameMode) {
-  let update = {}
-
-  if (typeof totalGuesses === "number") {
-    if (totalGuesses > 0) {
-      const totalGuessesPath = `totalGuesses.${connectionMode}.${gameMode}`
-      update = { $inc: { [totalGuessesPath]: totalGuesses } }
-    }
-  }
-
-  return update
-}
-
 function constructTotalSolveTimeUpdate(
   totalSolveTime,
   connectionMode,
@@ -250,32 +237,67 @@ function constructTotalSolveTimeUpdate(
 
 async function constructSolveDistributionUpdate(
   userId,
+  solveDistribution,
   connectionMode,
-  gameMode,
-  gameUserInfo
+  gameMode
 ) {
   let update = {}
 
-  const solveDistributionToAdd = gameUserInfo.get(userId).solveDistribution
-  const sameDistribution = solveDistributionToAdd.every((value) => value === 0)
+  if (typeof solveDistribution === "object") {
+    const isSameDistribution = solveDistribution.every((value) => value === 0)
+    if (!isSameDistribution) {
+      // Retrieve the old solveDistribution from db.
+      const solveDistributionPath = `solveDistribution.${connectionMode}.${gameMode}`
+      const solveDistributionDoc = await User.findById(
+        userId,
+        `${solveDistributionPath} -_id`
+      ).lean()
+      const prevSolveDistribution = _.get(
+        solveDistributionDoc,
+        solveDistributionPath
+      )
 
-  if (!sameDistribution) {
-    // Retrieve the old solveDistribution from db.
-    const solveDistributionPath = `solveDistribution.${connectionMode}.${gameMode}`
-    const oldSolveDistribution = await User.findById(
-      userId,
-      solveDistributionPath
-    ).lean()
+      // Add the new values via mapping.
+      const updatedSolveDistribution = prevSolveDistribution.map(
+        (value, index) => {
+          return value + solveDistribution[index]
+        }
+      )
 
-    // Map over the new values by adding.
-    const updatedSolveDistribution = oldSolveDistribution.map(
-      (value, index) => {
-        return value + solveDistributionToAdd[index]
-      }
-    )
-
-    update = { $set: { [solveDistributionPath]: updatedSolveDistribution } }
+      update = { $set: { [solveDistributionPath]: updatedSolveDistribution } }
+    }
   }
+
+  return update
+}
+
+function constructTotalGuessesUpdate(totalGuesses, connectionMode, gameMode) {
+  let update = {}
+
+  if (typeof totalGuesses === "number") {
+    if (totalGuesses > 0) {
+      const totalGuessesPath = `totalGuesses.${connectionMode}.${gameMode}`
+      update = { $inc: { [totalGuessesPath]: totalGuesses } }
+    }
+  }
+
+  return update
+}
+
+function constructTotalOutOfGuessesUpdate(
+  totalOutOfGuesses,
+  connectionMode,
+  gameMode
+) {
+  let update = {}
+
+  if (typeof totalOutOfGuesses === "number") {
+    if (totalOutOfGuesses > 0) {
+      const totalOutOfGuessesPath = `totalOutOfGuesses.${connectionMode}.${gameMode}`
+      update = { $inc: { [totalOutOfGuessesPath]: totalOutOfGuesses } }
+    }
+  }
+
   return update
 }
 
@@ -308,12 +330,6 @@ async function dbConstructUserUpdate(userId, game) {
     game.roundLimit
   )
 
-  const totalGuessesUpdate = constructTotalGuessesUpdate(
-    game.getTotalGuesses(userId),
-    game.connectionMode,
-    game.gameMode
-  )
-
   const totalSolveTimeUpdate = constructTotalSolveTimeUpdate(
     game.getTotalSolveTime(userId),
     game.connectionMode,
@@ -323,19 +339,33 @@ async function dbConstructUserUpdate(userId, game) {
 
   const solveDistribution = await constructSolveDistributionUpdate(
     userId,
+    game.getSolveDistribution(userId),
     game.connectionMode,
-    game.gameMode,
-    game.gameUserInfo
+    game.gameMode
   )
 
+  const totalGuessesUpdate = constructTotalGuessesUpdate(
+    game.getTotalGuesses(userId),
+    game.connectionMode,
+    game.gameMode
+  )
+
+  const totalOutOfGuessesUpdate = constructTotalOutOfGuessesUpdate(
+    game.getTotalOutOfGuesses(userId),
+    game.connectionMode,
+    game.gameMode
+  )
+
+  // With _.merge, multiple $inc operations will be aggregated instead of overwritten.
   const userUpdate = _.merge(
-    // currStreakUpdate,
-    // maxStreakUpdate,
-    // totalGamesUpdate,
-    // totalWinsUpdate,
-    // totalGuessesUpdate,
-    // totalSolveTimeUpdate
-    solveDistribution
+    currStreakUpdate,
+    maxStreakUpdate,
+    totalGamesUpdate,
+    totalWinsUpdate,
+    totalSolveTimeUpdate,
+    solveDistribution,
+    totalGuessesUpdate,
+    totalOutOfGuessesUpdate
   )
 
   return userUpdate
