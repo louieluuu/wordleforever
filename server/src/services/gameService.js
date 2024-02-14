@@ -52,7 +52,6 @@ function initializeGameInfo(roomId) {
     prevTotalGuesses,
     prevTotalSolveTime
   )
-  console.log(`From createGame: ${game.gameMode}`)
   Games.set(roomId, game)
 }
 

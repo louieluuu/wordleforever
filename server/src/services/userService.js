@@ -135,14 +135,8 @@ function dbHasUpdated(userId, hasUpdatedInDbList) {
 function constructCurrStreakUpdate(isWinner, connectionMode, gameMode) {
   let update = {}
 
-  console.log(`isWinner: ${isWinner}`)
-  console.log(`connectionMode: ${connectionMode}`)
-  console.log(`gameMode: ${gameMode}`)
-
   if (connectionMode === "public") {
     const currStreakPath = `currStreak.${gameMode}`
-    console.log(`currStreakPath: ${currStreakPath}`)
-
     if (isWinner) {
       update = { $inc: { [currStreakPath]: 1 } }
     } else {
