@@ -1,5 +1,5 @@
-import { get } from "lodash-es"
-const _ = { get }
+import { get, merge } from "lodash-es"
+const _ = { get, merge }
 
 // Database models
 import User from "../database/User.js"
@@ -140,8 +140,6 @@ async function dbGetCurrStreak(userId, gameMode) {
 function constructCurrStreakUpdate(isWinner, connectionMode, gameMode) {
   let update = {}
 
-  console.log(`isWinner: ${isWinner}`)
-
   if (connectionMode === "public") {
     const currStreakPath = `currStreak.${gameMode}`
     if (isWinner) {
@@ -166,13 +164,13 @@ async function constructMaxStreakUpdate(
   let update = {}
 
   if (connectionMode === "public" && isWinner) {
-    // Retrieve the current maxStreak from db and compare.
+    // Read the current maxStreak from db and compare.
     const maxStreakPath = `maxStreak.${gameMode}`
-    const user = await User.findById(userId, maxStreakPath).lean()
-    const maxStreak = user[maxStreakPath]
-
-    // TODO actually have to see what the findById returns. Not sure if it's the
-    // maxStreakPath directly or the whole user object.
+    const maxStreakDoc = await User.findById(
+      userId,
+      `${maxStreakPath} -_id`
+    ).lean()
+    const maxStreak = _.get(maxStreakDoc, maxStreakPath)
 
     if (currStreak > maxStreak) {
       update = { $set: { [maxStreakPath]: currStreak } }
@@ -191,8 +189,8 @@ function constructTotalGamesUpdate(
   roundLimit
 ) {
   let update = {}
-  const countGames = totalRounds
 
+  const countGames = totalRounds
   if (countGames > 0 && countGames <= roundLimit) {
     const totalGamesPath = `totalGames.${connectionMode}.${gameMode}`
     update = { $inc: { [totalGamesPath]: countGames } }
@@ -285,20 +283,20 @@ async function dbConstructUserUpdate(userId, game) {
     game.gameMode
   )
 
-  // const maxStreakUpdate = await constructMaxStreakUpdate(
-  //   userId,
-  //   game.isWinner(userId),
-  //   game.getStreak(userId),
-  //   game.connectionMode,
-  //   game.gameMode
-  // )
+  const maxStreakUpdate = await constructMaxStreakUpdate(
+    userId,
+    game.isWinner(userId),
+    game.getStreak(userId),
+    game.connectionMode,
+    game.gameMode
+  )
 
-  // const totalGamesUpdate = constructTotalGamesUpdate(
-  //   game.connectionMode,
-  //   game.gameMode,
-  //   game.round,
-  //   game.roundLimit
-  // )
+  const totalGamesUpdate = constructTotalGamesUpdate(
+    game.connectionMode,
+    game.gameMode,
+    game.round,
+    game.roundLimit
+  )
 
   // const totalWinsUpdate = constructTotalWinsUpdate(
   //   game.getRoundsWon(userId),
@@ -327,15 +325,18 @@ async function dbConstructUserUpdate(userId, game) {
   //   game.gameUserInfo
   // )
 
-  const userUpdate = {
-    ...currStreakUpdate,
-    // ...maxStreakUpdate,
-    // ...totalGamesUpdate,
-    // ...totalWinsUpdate,
-    // ...totalGuessesUpdate,
-    // ...totalSolveTimeUpdate,
-    // ...solveDistribution,
-  }
+  const userUpdate = _.merge(
+    currStreakUpdate,
+    maxStreakUpdate,
+    totalGamesUpdate
+  )
+
+  // const userUpdate = {
+  // ...totalWinsUpdate,
+  // ...totalGuessesUpdate,
+  // ...totalSolveTimeUpdate,
+  // ...solveDistribution,
+  // }
 
   return userUpdate
 }
