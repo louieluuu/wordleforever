@@ -5,8 +5,7 @@ const _ = { get, merge }
 import User from "../database/User.js"
 
 // Classes
-import Room from "../classes/Room.js"
-import Guest from "../classes/Guest.js"
+import Game from "../classes/Game.js"
 
 // Services
 import {
@@ -217,24 +216,6 @@ function constructTotalWinsUpdate(
   return update
 }
 
-function constructTotalSolveTimeUpdate(
-  totalSolveTime,
-  timeLimit,
-  connectionMode,
-  gameMode
-) {
-  let update = {}
-
-  if (typeof totalSolveTime === "number") {
-    if (totalSolveTime > 0 && totalSolveTime <= timeLimit) {
-      const totalSolveTimePath = `totalSolveTime.${connectionMode}.${gameMode}`
-      update = { $inc: { [totalSolveTimePath]: totalSolveTime } }
-    }
-  }
-
-  return update
-}
-
 async function constructSolveDistributionUpdate(
   userId,
   solveDistribution,
@@ -265,6 +246,23 @@ async function constructSolveDistributionUpdate(
       )
 
       update = { $set: { [solveDistributionPath]: updatedSolveDistribution } }
+    }
+  }
+
+  return update
+}
+
+function constructTotalSolveTimeUpdate(
+  totalSolveTime,
+  connectionMode,
+  gameMode
+) {
+  let update = {}
+
+  if (typeof totalSolveTime === "number") {
+    if (totalSolveTime > 0) {
+      const totalSolveTimePath = `totalSolveTime.${connectionMode}.${gameMode}`
+      update = { $inc: { [totalSolveTimePath]: totalSolveTime } }
     }
   }
 
@@ -324,15 +322,8 @@ async function dbConstructUserUpdate(userId, game) {
   )
 
   const totalWinsUpdate = constructTotalWinsUpdate(
-    game.gameMode,
-    game.roundLimit,
     game.getRoundsWon(userId),
-    game.connectionMode
-  )
-
-  const totalSolveTimeUpdate = constructTotalSolveTimeUpdate(
-    game.getTotalSolveTime(userId),
-    game.timer,
+    game.roundLimit,
     game.connectionMode,
     game.gameMode
   )
@@ -340,6 +331,12 @@ async function dbConstructUserUpdate(userId, game) {
   const solveDistribution = await constructSolveDistributionUpdate(
     userId,
     game.getSolveDistribution(userId),
+    game.connectionMode,
+    game.gameMode
+  )
+
+  const totalSolveTimeUpdate = constructTotalSolveTimeUpdate(
+    game.getTotalSolveTime(userId),
     game.connectionMode,
     game.gameMode
   )
@@ -362,8 +359,8 @@ async function dbConstructUserUpdate(userId, game) {
     maxStreakUpdate,
     totalGamesUpdate,
     totalWinsUpdate,
-    totalSolveTimeUpdate,
     solveDistribution,
+    totalSolveTimeUpdate,
     totalGuessesUpdate,
     totalOutOfGuessesUpdate
   )
@@ -375,8 +372,6 @@ async function dbUpdateUser(userId, game) {
   if (
     dbIsRegistered(userId) &&
     !dbHasUpdated(userId, game.hasUpdatedInDbList)
-    // TODO: I think the todo below is lying (2024-02-13)
-    // TODO wont need this anymore because of the public/private update logic split (2024-02-12)
   ) {
     try {
       const userUpdate = await dbConstructUserUpdate(userId, game)
@@ -398,7 +393,7 @@ async function dbBatchUpdateUsers(game) {
   console.log(`game.connectionMode: ${game.connectionMode}`)
   console.log(`game.gameMode: ${game.gameMode}`)
 
-  if (game.winnerId && game.connectionMode && game.gameMode) {
+  if (game && game instanceof Game) {
     // We could use a for loop to update each user in the db, but it would
     // be sequential. The following approach allows parallel execution.
     // .map() to create an array of Promises for each user update operation,

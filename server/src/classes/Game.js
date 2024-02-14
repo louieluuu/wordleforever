@@ -17,7 +17,7 @@ import { setRoomOutOfGame } from "../services/roomService.js"
 
 // const PRIVATE_ROUND_LIMIT = 10
 
-const PRIVATE_GAME_TIMER = 120
+const PRIVATE_GAME_TIMER = 5
 const PRIVATE_GAME_SOLVED_TIMER = 45
 const ROUND_BREAK_TIME = 7.5
 
@@ -166,6 +166,8 @@ export default class Game {
     const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
       userInfo.roundsWon += 1
+      console.log("From incrementRoundsWon:")
+      console.log(`roundsWon: ${userInfo.roundsWon}`)
     }
   }
 
@@ -442,7 +444,7 @@ export default class Game {
       if (this.timer <= 0) {
         this.endGame(roomId, io)
         if (this.isMatchOver()) {
-          handleBatchDbUpdate(this) // TODO !!!!!!! does this work? MUST TEST
+          handleBatchDbUpdate(this)
         }
       }
     }, 1000)

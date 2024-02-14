@@ -120,10 +120,8 @@ async function handleCorrectGuess(
   io
 ) {
   try {
-    const roomConnectionMode = getRoomConnectionMode(roomId)
     const game = Games.get(roomId)
-
-    if (roomConnectionMode && game && game instanceof Game) {
+    if (game && game instanceof Game) {
       // Game logic first
       game.setGameBoard(userId, updatedGameBoard)
       game.setWinner(userId)
@@ -135,9 +133,9 @@ async function handleCorrectGuess(
       }
 
       // Update stats
-      if (roomConnectionMode === "public") {
+      if (game.connectionMode === "public") {
         game.updateStreaks(userId)
-      } else if (roomConnectionMode === "private") {
+      } else if (game.connectionMode === "private") {
         game.updatePoints(userId)
         game.broadcastPoints(roomId, userId, io)
       }
