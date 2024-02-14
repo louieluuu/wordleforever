@@ -182,10 +182,10 @@ async function constructMaxStreakUpdate(
 }
 
 function constructTotalGamesUpdate(
-  connectionMode,
-  gameMode,
   totalRounds,
-  roundLimit
+  roundLimit,
+  connectionMode,
+  gameMode
 ) {
   let update = {}
 
@@ -201,9 +201,9 @@ function constructTotalGamesUpdate(
 
 function constructTotalWinsUpdate(
   roundsWon,
+  roundLimit,
   connectionMode,
-  gameMode,
-  roundLimit
+  gameMode
 ) {
   let update = {}
 
@@ -219,9 +219,9 @@ function constructTotalWinsUpdate(
 
 function constructTotalSolveTimeUpdate(
   totalSolveTime,
+  timeLimit,
   connectionMode,
-  gameMode,
-  timeLimit
+  gameMode
 ) {
   let update = {}
 
@@ -317,24 +317,24 @@ async function dbConstructUserUpdate(userId, game) {
   )
 
   const totalGamesUpdate = constructTotalGamesUpdate(
-    game.connectionMode,
-    game.gameMode,
     game.round,
-    game.roundLimit
+    game.roundLimit,
+    game.connectionMode,
+    game.gameMode
   )
 
   const totalWinsUpdate = constructTotalWinsUpdate(
-    game.getRoundsWon(userId),
-    game.connectionMode,
     game.gameMode,
-    game.roundLimit
+    game.roundLimit,
+    game.getRoundsWon(userId),
+    game.connectionMode
   )
 
   const totalSolveTimeUpdate = constructTotalSolveTimeUpdate(
     game.getTotalSolveTime(userId),
+    game.timer,
     game.connectionMode,
-    game.gameMode,
-    game.timer
+    game.gameMode
   )
 
   const solveDistribution = await constructSolveDistributionUpdate(

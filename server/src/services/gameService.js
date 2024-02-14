@@ -111,9 +111,6 @@ function handleWrongGuess(roomId, userId, updatedGameBoard, io) {
   }
 }
 
-// POST- TODO: I don't think this is true lol
-// TODO: do not batch update for public games, individually update
-// the format of public games demands it (not everyone finishes at the same time, it's weird to pigeonhole it into a batch update)
 async function handleCorrectGuess(
   roomId,
   userId,
@@ -127,28 +124,28 @@ async function handleCorrectGuess(
     const game = Games.get(roomId)
 
     if (roomConnectionMode && game && game instanceof Game) {
-      if (roomConnectionMode === "private") {
-        game.updatePoints(userId)
-        game.broadcastPoints(roomId, userId, io)
-      } else if (roomConnectionMode === "public") {
-        game.updateStreaks(userId)
-      }
-      // Applies to both
-      if (game.countSolved === 0) {
-        game.broadcastFirstSolve(roomId, userId, io)
-      }
+      // Game logic first
+      game.setGameBoard(userId, updatedGameBoard)
       game.setWinner(userId)
       game.countSolved += 1
+      game.broadcastSolvedAudio(roomId, socket)
+      if (game.countSolved === 1) {
+        game.incrementRoundsWon(userId)
+        game.broadcastFirstSolve(roomId, userId, io)
+      }
 
-      // Update stats (TODO: can write one function to handle all of these?)
+      // Update stats
+      if (roomConnectionMode === "public") {
+        game.updateStreaks(userId)
+      } else if (roomConnectionMode === "private") {
+        game.updatePoints(userId)
+        game.broadcastPoints(roomId, userId, io)
+      }
       game.updateSolveDistribution(userId, correctGuessIndex)
       game.incrementTotalSolveTime(userId)
       game.incrementTotalGuesses(userId)
 
-      // Additional effects
-      game.broadcastSolvedAudio(roomId, socket)
-      game.setGameBoard(userId, updatedGameBoard)
-
+      // Game progression
       if (game.isGameOver()) {
         game.endGame(roomId, io)
         if (game.isMatchOver()) {
@@ -157,6 +154,9 @@ async function handleCorrectGuess(
       } else {
         game.broadcastGameBoard(roomId, userId, io)
         // Pretty hacky, maybe a better way to do this. This needs to be separate from game.broadcastFirstSolve above, as that needs to be emitted regardless of if the game is over or not, we only want to set the timer when the game isn't over. But the game over logic depends on game.countSolved being incremented first, and this needs to come after the game over logic, thus this is "technically" checking for first solve logic, but we need to check for a game.countSolved of 1 instead of 0
+
+        // Example: 2-person private game, first person goes OOG, second person solves:
+        // in this case, we don't want setSolvedTimer to run
         if (game.countSolved === 1) {
           game.setSolvedTimer(roomId, io)
         }
@@ -171,14 +171,14 @@ async function handleCorrectGuess(
 async function handleOutOfGuesses(roomId, userId, io) {
   const game = Games.get(roomId)
   if (game && game instanceof Game) {
-    // TODO: Thoughts on placement?
     game.incrementTotalOutOfGuesses(userId)
     game.countOutOfGuesses += 1
+
+    // In the public outOfGuesses case, db must be updated
+    // immediately; can't wait for batch update
     if (game.connectionMode === "public") {
       game.resetStreak(userId)
       game.broadcastStreak(roomId, userId, io)
-      // In the public outOfGuesses case, db must be updated
-      // immediately; can't wait for batch update
       await dbUpdateUser(userId, game)
       game.hasUpdatedInDbList.push(userId)
     }

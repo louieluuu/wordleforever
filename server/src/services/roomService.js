@@ -215,16 +215,6 @@ function removeUserFromRoom(userId, roomId) {
   }
 }
 
-// TODO: Don't think this is necessary anymore. I need the ids in game, not room (to handle spectators)
-// instead of the room, so spectators don't get updated in the db by accident.
-// function getUserIdsInRoom(roomId) {
-//   const room = Rooms.get(roomId)
-//   if (room && room instanceof Room) {
-//     return [...room.userInfo.keys()]
-//   }
-//   return []
-// }
-
 function getRoomUserInfo(roomId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
@@ -304,7 +294,6 @@ export {
   areAllUsersLoaded,
   addUserToRoom,
   removeUserFromRoom,
-  // getUserIdsInRoom,
   getRoomUserInfo,
   isUserInRoom,
   findMatchingRoom,

@@ -78,7 +78,7 @@ export default class Game {
     game.round = prevRound + 1
     game.roundLimit = connectionMode === "public" ? 1 : PRIVATE_ROUND_LIMIT
     game.reachedRoundLimit = false
-    game.timer = PRIVATE_GAME_TIMER
+    game.timer = connectionMode === "public" ? Infinity : PRIVATE_GAME_TIMER
     game.hasUpdatedInDbList = []
 
     return game
@@ -212,7 +212,6 @@ export default class Game {
     const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
       userInfo.solveDistribution[correctGuessIndex] += 1
-      console.log(`Updated solve distribution: ${userInfo.solveDistribution}`)
     }
   }
 
@@ -259,7 +258,6 @@ export default class Game {
     const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
       userInfo.totalOutOfGuesses += 1
-      console.log(`Updated total out of guesses: ${userInfo.totalOutOfGuesses}`)
     }
   }
 
@@ -284,9 +282,9 @@ export default class Game {
     }
   }
 
-  updateStreaks(winnerUserId) {
+  updateStreaks(winnerId) {
     this.gameUserInfo.forEach((_, userId) => {
-      if (userId === winnerUserId) {
+      if (userId === winnerId) {
         this.incrementStreak(userId)
       } else {
         this.resetStreak(userId)
@@ -313,7 +311,7 @@ export default class Game {
   updatePoints(userId) {
     const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
-      if (this.countSolved === 0 && this.timer > PRIVATE_GAME_SOLVED_TIMER) {
+      if (this.countSolved === 1 && this.timer > PRIVATE_GAME_SOLVED_TIMER) {
         userInfo.points += PRIVATE_GAME_SOLVED_TIMER * 2
       } else {
         userInfo.points += this.timer
@@ -328,8 +326,8 @@ export default class Game {
     }
   }
 
-  // TODO: getGameUserInfoArray? just to be clear it's for socket transmission
-  getGameUserInfo() {
+  // For socket transmission (socket.IO doesn't transmit Maps).
+  getGameUserInfoArray() {
     return Array.from(this.gameUserInfo.entries()).map(([userId, userInfo]) => {
       const userInfoEntry = { userId }
 
@@ -350,7 +348,7 @@ export default class Game {
       WORDLE_ANSWERS[
         Math.floor(Math.random() * WORDLE_ANSWERS.length)
       ].toUpperCase()
-    console.log("Solution is", newSolution)
+    console.log(`Solution is: ${newSolution}`)
     return newSolution
   }
 
@@ -378,21 +376,20 @@ export default class Game {
   startGame(roomId, io) {
     io.to(roomId).emit(
       "gameStarted",
-      this.getGameUserInfo(),
+      this.getGameUserInfoArray(),
       this.solution,
       this.startingWord,
       PRIVATE_ROUND_LIMIT,
       this.round,
       this.timer
     )
-    // Start timer for private games
-    if (this.connectionMode === "private") {
-      // Wait for the in game countdown to finish
-      setTimeout(() => {
+    // Wait for the in game countdown to finish
+    setTimeout(() => {
+      if (this.connectionMode === "private") {
         this.startTimer(roomId, io)
-        this.startElapsedTime()
-      }, 3000)
-    }
+      }
+      this.startElapsedTime()
+    }, 3000)
   }
 
   isGameOver() {
@@ -445,7 +442,7 @@ export default class Game {
       if (this.timer <= 0) {
         this.endGame(roomId, io)
         if (this.isMatchOver()) {
-          handleBatchDbUpdate(this) // TODO: does this work? (test)
+          handleBatchDbUpdate(this) // TODO !!!!!!! does this work? MUST TEST
         }
       }
     }, 1000)
@@ -465,7 +462,7 @@ export default class Game {
   broadcastSpectatorInfo(socket) {
     socket.emit(
       "spectatorInfo",
-      this.getGameUserInfo(),
+      this.getGameUserInfoArray(),
       this.roundLimit,
       this.round,
       this.timer
@@ -510,7 +507,6 @@ export default class Game {
 
   broadcastFirstSolve(roomId, userId, io) {
     if (roomId) {
-      this.incrementRoundsWon(userId)
       io.to(roomId).emit("firstSolve", userId)
     } else {
       console.error("Invalid roomId for broadcasting first solve")
@@ -529,7 +525,7 @@ export default class Game {
     if (roomId) {
       io.to(roomId).emit(
         "endOfGameInfo",
-        this.getGameUserInfo(),
+        this.getGameUserInfoArray(),
         this.isMatchOver()
       )
     } else {
