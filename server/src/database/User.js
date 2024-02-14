@@ -1,15 +1,5 @@
 import { mongoose } from "./db.js"
 
-// Store stats for each user
-// Max streak
-// Current streak
-// Win percentage (total games, total wins)
-// Avg number of guesses (total guesses)
-// Avg solve time (total time in game, check if won)
-
-// User
-// ID, max streak, curr streak, total games, total wins, total guesses, total time in games won, points
-
 const UserSchema = new mongoose.Schema({
   // Special property that is automatically indexed by MongoDB,
   // resulting in faster queries by using findById().

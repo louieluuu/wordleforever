@@ -32,7 +32,7 @@ function handleNewConnection(userId, socket) {
   // also exploit this fact when trying to determine whether a socket is a user or not.
   socket.userId = userId ? userId : socket.id
 
-  console.log(`From handleNewConnection's socketUserId: ${socket.userId}`)
+  console.log(`A new user connected with socket.userId: ${socket.userId}`)
 }
 
 function dbIsRegistered(userId) {
