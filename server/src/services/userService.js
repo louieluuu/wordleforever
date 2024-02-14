@@ -135,8 +135,13 @@ function dbHasUpdated(userId, hasUpdatedInDbList) {
 function constructCurrStreakUpdate(isWinner, connectionMode, gameMode) {
   let update = {}
 
+  console.log(`isWinner: ${isWinner}`)
+  console.log(`connectionMode: ${connectionMode}`)
+  console.log(`gameMode: ${gameMode}`)
+
   if (connectionMode === "public") {
     const currStreakPath = `currStreak.${gameMode}`
+    console.log(`currStreakPath: ${currStreakPath}`)
 
     if (isWinner) {
       update = { $inc: { [currStreakPath]: 1 } }
@@ -279,56 +284,56 @@ async function dbConstructUserUpdate(userId, game) {
     game.gameMode
   )
 
-  const maxStreakUpdate = await constructMaxStreakUpdate(
-    userId,
-    game.isWinner(userId),
-    game.getStreak(userId),
-    game.connectionMode,
-    game.gameMode
-  )
+  // const maxStreakUpdate = await constructMaxStreakUpdate(
+  //   userId,
+  //   game.isWinner(userId),
+  //   game.getStreak(userId),
+  //   game.connectionMode,
+  //   game.gameMode
+  // )
 
-  const totalGamesUpdate = constructTotalGamesUpdate(
-    game.connectionMode,
-    game.gameMode,
-    game.round,
-    game.roundLimit
-  )
+  // const totalGamesUpdate = constructTotalGamesUpdate(
+  //   game.connectionMode,
+  //   game.gameMode,
+  //   game.round,
+  //   game.roundLimit
+  // )
 
-  const totalWinsUpdate = constructTotalWinsUpdate(
-    game.getRoundsWon(userId),
-    game.connectionMode,
-    game.gameMode,
-    game.roundLimit
-  )
+  // const totalWinsUpdate = constructTotalWinsUpdate(
+  //   game.getRoundsWon(userId),
+  //   game.connectionMode,
+  //   game.gameMode,
+  //   game.roundLimit
+  // )
 
-  const totalGuessesUpdate = constructTotalGuessesUpdate(
-    game.getTotalGuesses(userId),
-    game.connectionMode,
-    game.gameMode
-  )
+  // const totalGuessesUpdate = constructTotalGuessesUpdate(
+  //   game.getTotalGuesses(userId),
+  //   game.connectionMode,
+  //   game.gameMode
+  // )
 
-  const totalSolveTimeUpdate = constructTotalSolveTimeUpdate(
-    game.getTotalSolveTime(userId),
-    game.connectionMode,
-    game.gameMode,
-    game.timer
-  )
+  // const totalSolveTimeUpdate = constructTotalSolveTimeUpdate(
+  //   game.getTotalSolveTime(userId),
+  //   game.connectionMode,
+  //   game.gameMode,
+  //   game.timer
+  // )
 
-  const solveDistribution = await constructSolveDistributionUpdate(
-    userId,
-    game.connectionMode,
-    game.gameMode,
-    game.gameUserInfo
-  )
+  // const solveDistribution = await constructSolveDistributionUpdate(
+  //   userId,
+  //   game.connectionMode,
+  //   game.gameMode,
+  //   game.gameUserInfo
+  // )
 
   const userUpdate = {
     ...currStreakUpdate,
-    ...maxStreakUpdate,
-    ...totalGamesUpdate,
-    ...totalWinsUpdate,
-    ...totalGuessesUpdate,
-    ...totalSolveTimeUpdate,
-    ...solveDistribution,
+    // ...maxStreakUpdate,
+    // ...totalGamesUpdate,
+    // ...totalWinsUpdate,
+    // ...totalGuessesUpdate,
+    // ...totalSolveTimeUpdate,
+    // ...solveDistribution,
   }
 
   return userUpdate
@@ -337,10 +342,15 @@ async function dbConstructUserUpdate(userId, game) {
 async function dbUpdateUser(userId, game) {
   if (
     dbIsRegistered(userId) &&
-    !dbHasUpdated(userId, game.hasUpdatedInDbList) // TODO wont need this anymore because of the public/private update logic split
+    !dbHasUpdated(userId, game.hasUpdatedInDbList)
+    // TODO: I think the todo below is lying (2024-02-13)
+    // TODO wont need this anymore because of the public/private update logic split (2024-02-12)
   ) {
     try {
       const userUpdate = await dbConstructUserUpdate(userId, game)
+      console.log(
+        `dbConstructUserUpdate returns: ${JSON.stringify(userUpdate)}`
+      )
       await User.updateOne({ _id: userId }, userUpdate)
     } catch (error) {
       console.error(

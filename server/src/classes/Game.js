@@ -29,6 +29,7 @@ const PRIVATE_ROUND_LIMIT = 10
 export default class Game {
   constructor() {
     this.connectionMode = null
+    this.gameMode = null
     this.solution = null
     this.startingWord = null
     this.gameUserInfo = new Map()
@@ -59,6 +60,7 @@ export default class Game {
     const game = new Game()
 
     game.connectionMode = connectionMode
+    game.gameMode = gameMode
     game.solution = game.generateSolution()
     game.startingWord =
       gameMode === "challenge"
