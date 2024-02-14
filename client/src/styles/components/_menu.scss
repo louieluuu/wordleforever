@@ -115,6 +115,10 @@
       background-color: $btn-game-hover;
       border: 3px solid $btn-game-hover;
     }
+
+    &.unclickable {
+      opacity: 60%;
+    }
   }
 
   &__btn--copy {
@@ -133,6 +137,15 @@
     &:active {
       font-size: 1.2rem;
     }
+  }
+
+  &__btn--ready {
+    @extend .menu__btn--copy;
+  }
+
+  &__btn--unready {
+    @extend .menu__btn--copy;
+    opacity: 80%;
   }
 
   &__btn--new-game {

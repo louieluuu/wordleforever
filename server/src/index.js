@@ -24,7 +24,11 @@ import {
   handleUserDisconnect,
   handleLeaveRoom,
 } from "./services/userService.js"
-import { handleDisplayNameUpdate } from "./services/roomService.js"
+import {
+  handleDisplayNameUpdate,
+  handleUserReadyUp,
+  handleUserUnreadyUp,
+} from "./services/roomService.js"
 import {
   handleLoadUser,
   handleWrongGuess,
@@ -100,6 +104,7 @@ io.on("connection", (socket) => {
   socket.on("updateDisplayName", (roomId, updatedDisplayName) =>
     handleDisplayNameUpdate(roomId, socket.userId, updatedDisplayName, io)
   )
+  // Start countdown before starting the game -> navigate to game room
   socket.on("startCountdown", (roomId) => handleCountdownStart(roomId, io))
   socket.on("stopCountdown", (roomId) => handleCountdownStop(roomId, io))
   socket.on("loadUser", (roomId) => handleLoadUser(roomId, socket.userId, io))

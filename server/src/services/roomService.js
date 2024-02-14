@@ -200,6 +200,7 @@ async function addUserToRoom(socket, displayName, roomId) {
   const userObject = {
     displayName: displayName,
     currStreak: currStreak,
+    isReady: false,
   }
 
   const room = Rooms.get(roomId)
@@ -213,6 +214,38 @@ function removeUserFromRoom(userId, roomId) {
   if (room && room instanceof Room) {
     room.userInfo.delete(userId)
   }
+}
+
+function userReadyUp(roomId, userId) {
+  const roomUserInfo = getRoomUserInfo(roomId)
+  if (roomUserInfo) {
+    const previousValue = roomUserInfo.get(userId)
+    roomUserInfo.set(userId, {
+      ...previousValue,
+      isReady: true,
+    })
+  }
+}
+
+function userUnreadyUp(roomId, userId) {
+  const roomUserInfo = getRoomUserInfo(roomId)
+  if (roomUserInfo) {
+    const previousValue = roomUserInfo.get(userId)
+    roomUserInfo.set(userId, {
+      ...previousValue,
+      isReady: false,
+    })
+  }
+}
+
+function handleUserReadyUp(roomId, userId, io) {
+  userReadyUp(roomId, userId)
+  broadcastRoomUserInfo(roomId, io)
+}
+
+function handleUserUnreadyUp(roomId, userId, io) {
+  userUnreadyUp(roomId, userId)
+  broadcastRoomUserInfo(roomId, io)
 }
 
 function getRoomUserInfo(roomId) {
@@ -234,6 +267,7 @@ function getRoomUserInfoAsArray(roomId) {
         userId: userId,
         displayName: userObj.displayName,
         currStreak: userObj.currStreak,
+        isReady: userObj.isReady,
       })
     )
   }
@@ -295,6 +329,8 @@ export {
   addUserToRoom,
   removeUserFromRoom,
   getRoomUserInfo,
+  handleUserReadyUp,
+  handleUserUnreadyUp,
   isUserInRoom,
   findMatchingRoom,
   broadcastRoomUserInfo,

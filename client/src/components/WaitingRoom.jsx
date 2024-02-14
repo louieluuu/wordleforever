@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import socket from "../socket"
 import useSetRoomId from "../helpers/useSetRoomId"
 import WAITING_ROOM_MESSAGES from "../data/waitingRoomMessages"
+import Checkmark from "../assets/checkmark.svg?react"
 
 // Components
 import LobbyCountdownModal from "./LobbyCountdownModal"
@@ -27,10 +28,8 @@ function WaitingRoom({
   const [showLobbyCountdownModal, setShowLobbyCountdownModal] = useState(false)
   const [joinRoom, setJoinRoom] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
-
-  const [nonHostMessage, setNonHostMessage] = useState("")
-  const [hiddenPeriods, setHiddenPeriods] = useState("")
-  const [messageIndex, setMessageIndex] = useState(0)
+  const [isReady, setIsReady] = useState(false)
+  const [allPlayersReady, setAllPlayersReady] = useState(false)
 
   const [alertMessage, setAlertMessage] = useState("")
   const [showAlertModal, setShowAlertModal] = useState(false)
@@ -125,8 +124,29 @@ function WaitingRoom({
       startCountdown()
     }
     // Might be a bit hacky since it "should" be < 2, but this was running on the empty first initialized userInfo array when a new user joins in the middle of a countdown
-    if (userInfo.length === 1) {
+    if (userInfo.length === 1 && showLobbyCountdownModal) {
+      userUnreadyUp()
       stopCountdown()
+    }
+  }, [userInfo])
+
+  // Check if all players are ready in a private room
+  useEffect(() => {
+    if (userInfo.length >= 2) {
+      let playersReady = 0
+      userInfo.forEach((obj) => {
+        // This needs to be socket.userId
+        // None of the client side logic using socket.id has been changed
+        // Using socket.userId right now doesn't work -> undefined
+        if (socket.id && socket.id !== obj.userId && obj.isReady) {
+          playersReady++
+        }
+      })
+      if (playersReady >= userInfo.length - 1) {
+        setAllPlayersReady(true)
+      } else {
+        setAllPlayersReady(false)
+      }
     }
   }, [userInfo])
 
@@ -139,35 +159,15 @@ function WaitingRoom({
     setMessage(randomMessage)
   }, [])
 
-  // Cycle through trailing periods
-  useEffect(() => {
-    const cycle = setInterval(() => {
-      setMessageIndex((prevMessageIndex) => (prevMessageIndex + 1) % 4)
-    }, 1000)
-
-    return () => clearInterval(cycle)
-  }, [])
-
-  // Set non host message and corresponding remaining periods (which are hidden for styling)
-  useEffect(() => {
-    setNonHostMessage(NON_HOST_MESSAGES[messageIndex])
-    setHiddenPeriods(HIDDEN_PERIODS[messageIndex])
-  }, [messageIndex])
-
-  const NON_HOST_MESSAGES = [
-    "Waiting for host",
-    "Waiting for host.",
-    "Waiting for host..",
-    "Waiting for host...",
-  ]
-
-  const HIDDEN_PERIODS = ["...", "..", ".", ""]
-
   function startCountdown() {
     if (userInfo.length < 2) {
       setAlertMessage("Need at least 2 players to start a room")
       setShowAlertModal(true)
+    } else if (!allPlayersReady) {
+      setAlertMessage("Waiting for all players to ready up")
+      setShowAlertModal(true)
     } else {
+      userReadyUp()
       socket.emit("startCountdown", roomId)
     }
   }
@@ -176,6 +176,25 @@ function WaitingRoom({
     // TODO: display something to the user?
     socket.emit("stopCountdown", roomId)
     setShowLobbyCountdownModal(false)
+    setAllPlayersReady(false)
+  }
+
+  function userReadyUp() {
+    socket.emit("userReadyUp", roomId)
+    setIsReady(true)
+  }
+
+  function userUnreadyUp() {
+    socket.emit("userUnreadyUp", roomId)
+    setIsReady(false)
+  }
+
+  function toggleUserReady() {
+    if (isReady) {
+      userUnreadyUp()
+    } else {
+      userReadyUp()
+    }
   }
 
   function leaveRoom() {
@@ -231,7 +250,17 @@ function WaitingRoom({
 
       <div className="waiting-room-user-info">
         {userInfo.map((user) => (
-          <div key={user.userId}>
+          <div key={user.userId} className="waiting-room-user-line">
+            {connectionMode === "private" &&
+              (user.isReady ? (
+                <div className="checkmark__ready">
+                  <Checkmark />
+                </div>
+              ) : (
+                <div className="checkmark__not-ready">
+                  <Checkmark />
+                </div>
+              ))}
             {user.displayName}
             {connectionMode === "public" && user.currStreak !== 0 && (
               <span> &nbsp;&nbsp;{user.currStreak}🔥 </span>
@@ -252,7 +281,9 @@ function WaitingRoom({
             >
               <b style={{ fontWeight: 900 }}>2.&nbsp;&nbsp;</b>
               <button
-                className="menu__btn--start-game"
+                className={`menu__btn--start-game${
+                  !allPlayersReady ? " unclickable" : ""
+                }`}
                 onClick={startCountdown}
               >
                 START GAME
@@ -260,10 +291,12 @@ function WaitingRoom({
             </div>
           ) : (
             !showLobbyCountdownModal && (
-              <div className="non-host-waiting-message">
-                {nonHostMessage}
-                <span className="hidden-periods">{hiddenPeriods}</span>
-              </div>
+              <button
+                className={`menu__btn--${isReady ? "unready" : "ready"}`}
+                onClick={toggleUserReady}
+              >
+                {isReady ? "UNREADY" : "READY"}
+              </button>
             )
           )}
         </>

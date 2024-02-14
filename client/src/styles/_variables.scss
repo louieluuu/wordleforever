@@ -41,6 +41,7 @@ html[data-theme="light"] {
   --header-hover: 65%;
   --waiting-room-background-filter: invert(0);
   --private-room-info: hsl(273, 22%, 84%);
+  --private-room-ready: hsl(120, 70%, 35%);
 }
 
 html,
@@ -86,6 +87,7 @@ html[data-theme="dark"] {
   --header-hover: 85%;
   --waiting-room-background-filter: invert(1);
   --private-room-info: hsl(40, 20%, 45%);
+  --private-room-ready: hsl(120, 100%, 60%);
 }
 
 // Main colors
@@ -133,6 +135,7 @@ $username-shadow-hover: var(--username-shadow-hover);
 $header-hover: var(--header-hover);
 $waiting-room-background-filter: var(--waiting-room-background-filter);
 $private-room-info: var(--private-room-info);
+$private-room-ready: var(--private-room-ready);
 
 // Breakpoints
 $breakpoint-sm: 640px;
