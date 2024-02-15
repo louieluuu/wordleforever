@@ -329,7 +329,7 @@ export default class Game {
   }
 
   // For socket transmission (socket.IO doesn't transmit Maps).
-  getGameUserInfoArray() {
+  getGameUserInfoAsArray() {
     return Array.from(this.gameUserInfo.entries()).map(([userId, userInfo]) => {
       const userInfoEntry = { userId }
 
@@ -378,7 +378,7 @@ export default class Game {
   startGame(roomId, io) {
     io.to(roomId).emit(
       "gameStarted",
-      this.getGameUserInfoArray(),
+      this.getGameUserInfoAsArray(),
       this.solution,
       this.startingWord,
       PRIVATE_ROUND_LIMIT,
@@ -431,14 +431,14 @@ export default class Game {
 
   startElapsedTime() {
     this.elapsedTimerId = setInterval(() => {
-      this.elapsedTime++
+      this.elapsedTime += 1
     }, 1000)
   }
 
   startTimer(roomId, io) {
     io.to(roomId).emit("timerTick", this.timer)
     this.timerId = setInterval(() => {
-      this.timer--
+      this.timer -= 1
       io.to(roomId).emit("timerTick", this.timer)
 
       if (this.timer <= 0) {
@@ -464,7 +464,7 @@ export default class Game {
   broadcastSpectatorInfo(socket) {
     socket.emit(
       "spectatorInfo",
-      this.getGameUserInfoArray(),
+      this.getGameUserInfoAsArray(),
       this.roundLimit,
       this.round,
       this.timer
@@ -527,7 +527,7 @@ export default class Game {
     if (roomId) {
       io.to(roomId).emit(
         "endOfGameInfo",
-        this.getGameUserInfoArray(),
+        this.getGameUserInfoAsArray(),
         this.isMatchOver()
       )
     } else {

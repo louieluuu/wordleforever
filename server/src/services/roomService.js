@@ -257,21 +257,17 @@ function getRoomUserInfo(roomId) {
 }
 
 function getRoomUserInfoAsArray(roomId) {
-  let roomUserInfoArray
   const roomUserInfoMap = getRoomUserInfo(roomId)
 
-  if (roomUserInfoMap) {
-    roomUserInfoArray = Array.from(
-      roomUserInfoMap.entries(),
-      ([userId, userObj]) => ({
-        userId: userId,
-        displayName: userObj.displayName,
-        currStreak: userObj.currStreak,
-        isReady: userObj.isReady,
-      })
-    )
-  }
-  return roomUserInfoArray
+  return Array.from(roomUserInfoMap.entries()).map(([userId, userInfo]) => {
+    const userInfoEntry = { userId }
+
+    for (const [key, value] of Object.entries(userInfo)) {
+      userInfoEntry[key] = value
+    }
+
+    return userInfoEntry
+  })
 }
 
 function isUserInRoom(roomId, userId) {
