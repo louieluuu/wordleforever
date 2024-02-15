@@ -155,7 +155,7 @@ function WaitingRoom({
     if (userInfo.length < 2) {
       setAlertMessage("Need at least 2 players to start a room")
       setShowAlertModal(true)
-    } else if (!allPlayersReady) {
+    } else if (connectionMode === "private" && !allPlayersReady) {
       setAlertMessage("Waiting for all players to ready up")
       setShowAlertModal(true)
     } else {
