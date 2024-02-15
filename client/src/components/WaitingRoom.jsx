@@ -39,7 +39,7 @@ function WaitingRoom({
   useEffect(() => {
     if (isSocketConnected && roomId) {
       console.log(`My socket.userId: ${socket.userId}`)
-      socket.emit("joinRoom", socket.userId, roomId, displayName)
+      socket.emit("joinRoom", roomId, displayName)
     }
   }, [isSocketConnected, roomId])
 

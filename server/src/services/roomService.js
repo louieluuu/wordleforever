@@ -183,12 +183,7 @@ function areAllUsersLoaded(roomId) {
   return false
 }
 
-async function addUserToRoom(userId, roomId, displayName, socket) {
-  // TODO
-  // Attaching custom properties to socket.
-  // Handles the bug case where users join by pasting a link,
-  // but feels awfully hacky.
-  socket.userId = userId ? userId : socket.id
+async function addUserToRoom(roomId, displayName, socket) {
   socket.roomId = roomId
   socket.join(roomId)
 

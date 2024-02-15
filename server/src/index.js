@@ -98,8 +98,8 @@ io.on("connection", (socket) => {
   socket.on("createRoom", (connectionMode, gameMode) =>
     createRoom(connectionMode, gameMode, socket)
   )
-  socket.on("joinRoom", (userId, roomId, displayName) => {
-    joinRoom(userId, roomId, displayName, io, socket)
+  socket.on("joinRoom", (roomId, displayName) => {
+    joinRoom(roomId, displayName, io, socket)
   })
   socket.on("updateDisplayName", (roomId, updatedDisplayName) =>
     handleDisplayNameUpdate(roomId, socket.userId, updatedDisplayName, io)
