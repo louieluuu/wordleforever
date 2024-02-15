@@ -104,6 +104,12 @@ io.on("connection", (socket) => {
   socket.on("updateDisplayName", (roomId, updatedDisplayName) =>
     handleDisplayNameUpdate(roomId, socket.userId, updatedDisplayName, io)
   )
+  socket.on("userReadyUp", (roomId) =>
+    handleUserReadyUp(roomId, socket.userId, io)
+  )
+  socket.on("userUnreadyUp", (roomId) =>
+    handleUserUnreadyUp(roomId, socket.userId, io)
+  )
   // Start countdown before starting the game -> navigate to game room
   socket.on("startCountdown", (roomId) => handleCountdownStart(roomId, io))
   socket.on("stopCountdown", (roomId) => handleCountdownStop(roomId, io))
