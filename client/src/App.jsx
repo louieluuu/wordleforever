@@ -1,7 +1,11 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useMediaQuery } from "react-responsive"
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+
+// TODO delete later
+import socket from "./socket"
+import { auth } from "./firebase"
 
 // Components
 import NavBar from "./components/NavBar"
@@ -17,6 +21,7 @@ function App() {
   const breakpointSm = "640px"
   const isPhoneLayout = useMediaQuery({ maxWidth: breakpointSm })
 
+  const [isSocketConnected, setIsSocketConnected] = useState(false)
   const [connectionMode, setConnectionMode] = useState("offline")
   const [gameMode, setGameMode] = useState(
     localStorage.getItem("gameMode") || "normal"
@@ -30,6 +35,36 @@ function App() {
   const [inputWidth, setInputWidth] = useState(0)
 
   const [roomId, setRoomId] = useState("")
+
+  // Socket.IO initialization
+  useEffect(() => {
+    socket.on("connect", async () => {
+      await new Promise((resolve) => {
+        auth.onAuthStateChanged((user) => {
+          const userId = user ? user.uid : null
+
+          // Set the custom userId property on the client socket object.
+          socket.userId = userId ? userId : socket.id
+          socket.emit("newConnection", userId)
+
+          console.log(
+            `Connected to client with socket.userId: ${socket.userId}`
+          )
+          resolve()
+        })
+      })
+      setIsSocketConnected(true)
+    })
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected from server")
+    })
+
+    return () => {
+      socket.off("connect")
+      socket.off("disconnect")
+    }
+  }, [])
 
   return (
     <>
@@ -46,6 +81,7 @@ function App() {
                     setDisplayName={setDisplayName}
                     inputWidth={inputWidth}
                     setInputWidth={setInputWidth}
+                    isSocketConnected={isSocketConnected}
                     gameMode={gameMode}
                     setGameMode={setGameMode}
                     connectionMode={connectionMode}

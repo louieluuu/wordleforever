@@ -98,9 +98,9 @@ io.on("connection", (socket) => {
   socket.on("createRoom", (connectionMode, gameMode) =>
     createRoom(connectionMode, gameMode, socket)
   )
-  socket.on("joinRoom", (roomId, displayName) =>
-    joinRoom(roomId, displayName, io, socket)
-  )
+  socket.on("joinRoom", (userId, roomId, displayName) => {
+    joinRoom(userId, roomId, displayName, io, socket)
+  })
   socket.on("updateDisplayName", (roomId, updatedDisplayName) =>
     handleDisplayNameUpdate(roomId, socket.userId, updatedDisplayName, io)
   )
@@ -139,8 +139,8 @@ io.on("connection", (socket) => {
   )
 
   // Cleanup
-  socket.on("disconnecting", async () => await handleUserDisconnect(socket, io))
-  socket.on("leaveRoom", async () => await handleLeaveRoom(socket, io))
+  socket.on("disconnecting", () => handleUserDisconnect(socket, io))
+  socket.on("leaveRoom", () => handleLeaveRoom(socket, io))
 })
 
 const PORT = 3005

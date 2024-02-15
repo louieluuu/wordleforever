@@ -15,6 +15,7 @@ function MenuRoutes({
   setDisplayName,
   inputWidth,
   setInputWidth,
+  isSocketConnected,
   gameMode,
   setGameMode,
   connectionMode,
@@ -64,6 +65,7 @@ function MenuRoutes({
             element={
               <WaitingRoom
                 displayName={displayName}
+                isSocketConnected={isSocketConnected}
                 connectionMode={connectionMode}
                 setConnectionMode={setConnectionMode}
                 setGameMode={setGameMode}

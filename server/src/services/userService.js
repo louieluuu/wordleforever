@@ -74,12 +74,11 @@ async function dbCreateNewUser(userId, username) {
 }
 
 async function dbGetUserById(userId) {
-  if (userId) {
+  if (dbIsRegistered(userId)) {
     try {
+      // TODO: If I don't want to transfer the entire user object,
+      // how can I slim the returned object? Really just want a bool
       const user = await User.findById(userId).lean()
-      if (!user) {
-        console.error(`No user found with userId: ${userId}`)
-      }
       return user
     } catch (error) {
       console.error(
@@ -108,30 +107,27 @@ async function dbGetUserByName(username) {
 }
 
 async function dbGetCurrStreak(userId, gameMode) {
-  if (userId) {
-    const currStreakPath = `currStreak.${gameMode}`
-    try {
-      const currStreakDoc = await User.findById(
-        userId,
-        `${currStreakPath} -_id`
-      ).lean()
+  if (!dbIsRegistered(userId)) {
+    return 0
+  }
+  const currStreakPath = `currStreak.${gameMode}`
+  try {
+    const currStreakDoc = await User.findById(
+      userId,
+      `${currStreakPath} -_id`
+    ).lean()
 
-      if (currStreakDoc === null) {
-        return 0
-      }
-
-      const currStreak = _.get(currStreakDoc, currStreakPath)
-      if (typeof currStreak === "number") {
-        return currStreak
-      } else {
-        return 0
-      }
-    } catch (error) {
-      console.error(
-        `Error getting user streak from the database: ${error.message}`
-      )
-      throw error
+    const currStreak = _.get(currStreakDoc, currStreakPath)
+    if (typeof currStreak === "number") {
+      return currStreak
+    } else {
+      return 0
     }
+  } catch (error) {
+    console.error(
+      `Error getting user streak from the database: ${error.message}`
+    )
+    throw error
   }
 }
 
@@ -414,12 +410,12 @@ async function dbBatchUpdateUsers(game) {
   }
 }
 
-async function handleUserDisconnect(socket, io) {
-  console.log(`A user disconnected with userId: ${socket.userId}`)
+function handleUserDisconnect(socket, io) {
+  console.log(`A user disconnected with socket.userId: ${socket.userId}`)
   handleLeaveRoom(socket, io)
 }
 
-async function handleLeaveRoom(socket, io) {
+function handleLeaveRoom(socket, io) {
   const roomId = socket.roomId
   if (roomId) {
     console.log(`Removing user ${socket.userId} from ${roomId}`)

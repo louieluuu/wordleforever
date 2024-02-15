@@ -203,7 +203,7 @@ function GameContainer({
         setHasOnlineGameStarted(true)
         resetStates()
         const sortedUserInfo = initialUserInfo.sort((obj) => {
-          return obj.userId === socket.id ? -1 : 1
+          return obj.userId === socket.userId ? -1 : 1
         })
         setUserInfo(sortedUserInfo)
         setSolution(newSolution)
@@ -243,7 +243,7 @@ function GameContainer({
         setUserInfo((prevUserInfo) => {
           const updatedUserInfo = [...prevUserInfo]
           updatedUserInfo.forEach((obj) => {
-            if (obj.userId !== socket.id && obj.userId === updatedUserId) {
+            if (obj.userId !== socket.userId && obj.userId === updatedUserId) {
               if (isSpectating) {
                 obj.gameBoard = updatedBoard
               } else {
@@ -279,13 +279,9 @@ function GameContainer({
         })
       })
 
-      socket.on("firstSolve", (firstSolveUserId) => {
-        setWinningUserId(firstSolveUserId)
-
-        // TODO anywhere that says "socket.id" must be audited,
-        // because it should actually be userId - which is
-        // either Firebase's auth userId or socket.id.
-        if (socket.id === firstSolveUserId) {
+      socket.on("firstSolve", (winnerId) => {
+        setWinningUserId(winnerId)
+        if (socket.userId === winnerId) {
           handleWin()
         }
       })
@@ -302,7 +298,7 @@ function GameContainer({
         // Used to sort the users so the client's board always shows first.
         // For displaying on the game boards.
         const sortedUserInfo = endOfGameUserInfo.sort((obj) => {
-          return obj.userId === socket.id ? -1 : 1
+          return obj.userId === socket.userId ? -1 : 1
         })
 
         setUserInfo(sortedUserInfo)
@@ -329,7 +325,7 @@ function GameContainer({
   // These can't be in the main useEffect loop, as they need to happen outside of hasOnlineGameStarted logic (post round in private games)
   useEffect(() => {
     socket.on("newHost", (newHostId) => {
-      if (socket.id === newHostId) {
+      if (socket.userId === newHostId) {
         setIsHost(true)
       }
     })
@@ -346,7 +342,7 @@ function GameContainer({
       const copyUserInfo = [...userInfo]
       const sortedByPoints = copyUserInfo.sort((a, b) => b.points - a.points)
 
-      if (socket.id === sortedByPoints[0].userId) {
+      if (socket.userId === sortedByPoints[0].userId) {
         playAudio(audioWinMatch)
       }
 
@@ -557,7 +553,7 @@ function GameContainer({
           typeof connectionMode === "string" &&
           connectionMode === "private"
         ) {
-          if (winningUserId && socket.id !== winningUserId) {
+          if (winningUserId && socket.userId !== winningUserId) {
             playAudio(audioSolve)
           }
         }

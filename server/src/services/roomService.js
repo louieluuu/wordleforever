@@ -183,14 +183,16 @@ function areAllUsersLoaded(roomId) {
   return false
 }
 
-async function addUserToRoom(socket, displayName, roomId) {
+async function addUserToRoom(userId, roomId, displayName, socket) {
   // TODO
   // Attaching custom properties to socket.
   // Handles the bug case where users join by pasting a link,
   // but feels awfully hacky.
-  socket.join(roomId)
-  socket.userId = socket.userId || socket.id
+  socket.userId = userId ? userId : socket.id
   socket.roomId = roomId
+  socket.join(roomId)
+
+  console.log(`${socket.userId} joining room: ${roomId}`)
 
   const currStreak = await dbGetCurrStreak(
     socket.userId,

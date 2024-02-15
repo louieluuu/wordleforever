@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import socket from "../socket"
+
 import useSetRoomId from "../helpers/useSetRoomId"
 import WAITING_ROOM_MESSAGES from "../data/waitingRoomMessages"
 import Checkmark from "../assets/checkmark.svg?react"
@@ -11,6 +12,7 @@ import AlertModal from "./AlertModal"
 
 function WaitingRoom({
   displayName,
+  isSocketConnected,
   connectionMode,
   setConnectionMode,
   setGameMode,
@@ -26,7 +28,6 @@ function WaitingRoom({
   const [userInfo, setUserInfo] = useState([])
   const [message, setMessage] = useState("")
   const [showLobbyCountdownModal, setShowLobbyCountdownModal] = useState(false)
-  const [joinRoom, setJoinRoom] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
   const [isReady, setIsReady] = useState(false)
   const [allPlayersReady, setAllPlayersReady] = useState(false)
@@ -34,16 +35,16 @@ function WaitingRoom({
   const [alertMessage, setAlertMessage] = useState("")
   const [showAlertModal, setShowAlertModal] = useState(false)
 
+  // Join room once
+  useEffect(() => {
+    if (isSocketConnected && roomId) {
+      console.log(`My socket.userId: ${socket.userId}`)
+      socket.emit("joinRoom", socket.userId, roomId, displayName)
+    }
+  }, [isSocketConnected, roomId])
+
   // Main useEffect loop
   useEffect(() => {
-    if (socket.id === undefined) {
-      socket.on("connect", () => {
-        setJoinRoom(true)
-      })
-    } else {
-      setJoinRoom(true)
-    }
-
     // Make sure modes are set, important for users joining from a link
     socket.on("roomJoined", (roomConnectionMode, gameMode) => {
       setConnectionMode(roomConnectionMode)
@@ -71,7 +72,7 @@ function WaitingRoom({
     })
 
     socket.on("newHost", (newHostId) => {
-      if (socket.id === newHostId) {
+      if (socket.userId === newHostId) {
         setIsHost(true)
       }
     })
@@ -89,7 +90,6 @@ function WaitingRoom({
     })
 
     return () => {
-      socket.off("connect")
       socket.off("roomJoined")
       socket.off("roomFull")
       socket.off("matchFound")
@@ -99,13 +99,6 @@ function WaitingRoom({
       socket.off("roomStarted")
     }
   }, [roomId])
-
-  // Join room once
-  useEffect(() => {
-    if (joinRoom) {
-      socket.emit("joinRoom", roomId, displayName)
-    }
-  }, [joinRoom])
 
   // TODO: Don't like this placement here, I think it should belong with nicknameform.
   // Keep displayName up to date
@@ -137,10 +130,7 @@ function WaitingRoom({
     if (userInfo.length >= 2) {
       let playersReady = 0
       userInfo.forEach((obj) => {
-        // This needs to be socket.userId
-        // None of the client side logic using socket.id has been changed
-        // Using socket.userId right now doesn't work -> undefined
-        if (socket.id && socket.id !== obj.userId && obj.isReady) {
+        if (socket.userId && socket.userId !== obj.userId && obj.isReady) {
           playersReady += 1
         }
       })
