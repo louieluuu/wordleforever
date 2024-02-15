@@ -25,6 +25,7 @@ socket.on("connect", () => {
     }
 
     socket.emit("newConnection", userId)
+    socket.userId = userId ? userId : socket.id
   })
 })
 

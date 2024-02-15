@@ -9,7 +9,6 @@
 
     .checkmark {
       width: 4.5vw;
-      height: 4.5vw;
       margin-right: 2.5vw;
     }
 
@@ -74,13 +73,14 @@
 
     .waiting-room-user-line {
       display: flex;
+      align-items: center;
     }
   }
 
   .checkmark {
     display: flex;
     width: 2rem;
-    height: 1.25rem;
+    height: 0;
     align-items: center;
     margin-right: 1.5rem;
 

@@ -126,10 +126,12 @@ function WaitingRoom({
     // Might be a bit hacky since it "should" be < 2, but this was running on the empty first initialized userInfo array when a new user joins in the middle of a countdown
     if (userInfo.length === 1 && showLobbyCountdownModal) {
       userUnreadyUp()
+      setAllPlayersReady(false)
       stopCountdown()
     }
   }, [userInfo])
 
+  // TODO: check if this should be merged with the above useEffect as they both only have the one dependency on userInfo, or is it okay to keep it more "readable" with 2 blocks
   // Check if all players are ready in a private room
   useEffect(() => {
     if (userInfo.length >= 2) {
@@ -139,7 +141,7 @@ function WaitingRoom({
         // None of the client side logic using socket.id has been changed
         // Using socket.userId right now doesn't work -> undefined
         if (socket.id && socket.id !== obj.userId && obj.isReady) {
-          playersReady++
+          playersReady += 1
         }
       })
       if (playersReady >= userInfo.length - 1) {
@@ -176,7 +178,6 @@ function WaitingRoom({
     // TODO: display something to the user?
     socket.emit("stopCountdown", roomId)
     setShowLobbyCountdownModal(false)
-    setAllPlayersReady(false)
   }
 
   function userReadyUp() {
