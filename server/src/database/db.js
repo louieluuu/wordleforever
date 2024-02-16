@@ -36,4 +36,4 @@ db.once("open", async () => {
   // await cleanupDatabase()
 })
 
-export { mongoose } // TODO: Wait, is this actually a thing?
+export default mongoose
