@@ -57,12 +57,31 @@ $login-padding-inline: 3.5vw;
     display: flex;
     // justify-content: flex-end;
     align-items: center;
+    font-size: 1.75rem;
     gap: 1rem;
   }
 
   &__info {
-    width: 1.5rem;
-    height: 1.5rem;
+    font-size: 1.5rem;
+
+    cursor: pointer;
+
+    &:hover {
+      opacity: $header-hover;
+      transition-duration: 0.1s;
+    }
+
+    &:active {
+      transform: scale(0.9);
+    }
+  }
+
+  &__link {
+    color: $color;
+  }
+
+  &__stats {
+    display: flex;
     cursor: pointer;
 
     &:hover {
@@ -76,8 +95,6 @@ $login-padding-inline: 3.5vw;
   }
 
   &__color-theme {
-    width: 1.5rem;
-    height: 1.5rem;
     cursor: pointer;
 
     &:hover {
@@ -126,8 +143,6 @@ $login-padding-inline: 3.5vw;
   }
 
   &__logout {
-    width: 1.5rem;
-    height: 1.5rem;
     cursor: pointer;
 
     &:hover {

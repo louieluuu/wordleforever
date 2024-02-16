@@ -1,5 +1,7 @@
 // TODO: Logout should reload back to home page, it feels super weird when it doesn't.
 
+// TODO: "reloadDocument to=" vs. "to="
+
 import React, { useState, useLayoutEffect } from "react"
 
 import { Link } from "react-router-dom"
@@ -7,6 +9,7 @@ import { Link } from "react-router-dom"
 import { auth } from "../firebase"
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth"
 
+import { BiSolidBarChartAlt2, BiBarChartAlt2 } from "react-icons/bi"
 import { BsInfoCircle } from "react-icons/bs"
 import { RiMoonClearFill } from "react-icons/ri"
 import { ImExit } from "react-icons/im"
@@ -87,6 +90,9 @@ function NavBar({ roomId, isPhoneLayout }) {
             title="Info"
             onClick={openInfoDialog}
           />
+          <Link className="navbar__link" reloadDocument to={`/user/}`}>
+            <BiBarChartAlt2 className="navbar__stats" title="Statistics" />
+          </Link>
           <RiMoonClearFill
             className={getColorThemeClassName()}
             title="Switch color theme"
