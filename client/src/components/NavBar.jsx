@@ -90,7 +90,7 @@ function NavBar({ roomId, isPhoneLayout }) {
             title="Info"
             onClick={openInfoDialog}
           />
-          <Link className="navbar__link" reloadDocument to={`/user/}`}>
+          <Link className="navbar__link" reloadDocument to={`/user`}>
             <BiBarChartAlt2 className="navbar__stats" title="Statistics" />
           </Link>
           <RiMoonClearFill

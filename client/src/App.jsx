@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react"
 import { useMediaQuery } from "react-responsive"
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-
-// TODO delete later
 import socket from "./socket"
 import { auth } from "./firebase"
+
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
 // Components
 import NavBar from "./components/NavBar"
@@ -15,6 +14,7 @@ import MenuRoutes from "./components/MenuRoutes"
 import LoginPage from "./components/LoginPage"
 import RegisterPage from "./components/RegisterPage"
 import ResetPasswordPage from "./components/ResetPasswordPage"
+import StatsPage from "./components/StatsPage"
 
 // Global variables
 // Configuration (needed on client side -> used in GameContainer, displayed in WaitingRoom)
@@ -156,6 +156,7 @@ function App() {
                 path="/forgot"
                 element={<ResetPasswordPage setRoomId={setRoomId} />}
               />
+              <Route path="/user" element={<StatsPage />} />
               <Route
                 path="/game/:roomId"
                 element={
