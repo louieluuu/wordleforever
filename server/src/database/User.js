@@ -33,13 +33,15 @@ const userSchema = new Schema({
   username: String,
 
   // Stats
-  public: {
-    normal: publicStatsSchema,
-    challenge: publicStatsSchema,
-  },
-  private: {
-    normal: privateStatsSchema,
-    challenge: privateStatsSchema,
+  stats: {
+    public: {
+      normal: { type: publicStatsSchema, default: {} },
+      challenge: { type: publicStatsSchema, default: {} },
+    },
+    private: {
+      normal: { type: privateStatsSchema, default: {} },
+      challenge: { type: privateStatsSchema, default: {} },
+    },
   },
 })
 
