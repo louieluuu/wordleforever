@@ -61,7 +61,12 @@ async function dbCreateNewUser(userId, username) {
     try {
       const existingUser = await User.findById(userId).lean()
       if (!existingUser) {
-        await User.create({ _id: userId, username: username })
+        await User.create({
+          _id: userId,
+          username: username,
+          public: { normal: {}, challenge: {} },
+          private: { normal: {}, challenge: {} },
+        })
         console.log(`New user created with userId: ${userId}`)
       }
     } catch (error) {
@@ -110,7 +115,7 @@ async function dbGetCurrStreak(userId, gameMode) {
   if (!dbIsRegistered(userId)) {
     return 0
   }
-  const currStreakPath = `currStreak.${gameMode}`
+  const currStreakPath = `public.${gameMode}.currStreak`
   try {
     const currStreakDoc = await User.findById(
       userId,
@@ -135,7 +140,7 @@ function constructCurrStreakUpdate(isWinner, connectionMode, gameMode) {
   let update = {}
 
   if (connectionMode === "public") {
-    const currStreakPath = `currStreak.${gameMode}`
+    const currStreakPath = `public.${gameMode}.currStreak`
     if (isWinner) {
       update = { $inc: { [currStreakPath]: 1 } }
     } else {
@@ -157,7 +162,7 @@ async function constructMaxStreakUpdate(
 
   if (connectionMode === "public" && isWinner) {
     // Read the current maxStreak from db.
-    const maxStreakPath = `maxStreak.${gameMode}`
+    const maxStreakPath = `public.${gameMode}.maxStreak`
     const maxStreakDoc = await User.findById(
       userId,
       `${maxStreakPath} -_id`
@@ -185,7 +190,7 @@ function constructTotalGamesUpdate(
 
   if (typeof totalRounds === "number") {
     if (totalRounds > 0 && totalRounds <= roundLimit) {
-      const totalGamesPath = `totalGames.${connectionMode}.${gameMode}`
+      const totalGamesPath = `${connectionMode}.${gameMode}.totalGames`
       update = { $inc: { [totalGamesPath]: totalRounds } }
     }
   }
@@ -203,7 +208,7 @@ function constructTotalWinsUpdate(
 
   if (typeof roundsWon === "number") {
     if (roundsWon > 0 && roundsWon <= roundLimit) {
-      const totalWinsPath = `totalWins.${connectionMode}.${gameMode}`
+      const totalWinsPath = `${connectionMode}.${gameMode}.totalWins`
       update = { $inc: { [totalWinsPath]: roundsWon } }
     }
   }
@@ -223,7 +228,7 @@ async function constructSolveDistributionUpdate(
     const isSameDistribution = solveDistribution.every((value) => value === 0)
     if (!isSameDistribution) {
       // Retrieve the old solveDistribution from db.
-      const solveDistributionPath = `solveDistribution.${connectionMode}.${gameMode}`
+      const solveDistributionPath = `${connectionMode}.${gameMode}.solveDistribution`
       const solveDistributionDoc = await User.findById(
         userId,
         `${solveDistributionPath} -_id`
@@ -256,7 +261,7 @@ function constructTotalSolveTimeUpdate(
 
   if (typeof totalSolveTime === "number") {
     if (totalSolveTime > 0) {
-      const totalSolveTimePath = `totalSolveTime.${connectionMode}.${gameMode}`
+      const totalSolveTimePath = `${connectionMode}.${gameMode}.totalSolveTime`
       update = { $inc: { [totalSolveTimePath]: totalSolveTime } }
     }
   }
@@ -269,7 +274,7 @@ function constructTotalGuessesUpdate(totalGuesses, connectionMode, gameMode) {
 
   if (typeof totalGuesses === "number") {
     if (totalGuesses > 0) {
-      const totalGuessesPath = `totalGuesses.${connectionMode}.${gameMode}`
+      const totalGuessesPath = `${connectionMode}.${gameMode}.totalGuesses`
       update = { $inc: { [totalGuessesPath]: totalGuesses } }
     }
   }
@@ -286,7 +291,7 @@ function constructTotalOutOfGuessesUpdate(
 
   if (typeof totalOutOfGuesses === "number") {
     if (totalOutOfGuesses > 0) {
-      const totalOutOfGuessesPath = `totalOutOfGuesses.${connectionMode}.${gameMode}`
+      const totalOutOfGuessesPath = `${connectionMode}.${gameMode}.totalOOG`
       update = { $inc: { [totalOutOfGuessesPath]: totalOutOfGuesses } }
     }
   }
