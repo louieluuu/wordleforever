@@ -149,7 +149,7 @@
           padding-inline: 1rem;
           padding-block: 0.6rem;
 
-          background-color: black;
+          background-color: hsl(0, 0%, 10%, 93%);
           color: white;
           border: none;
           border-radius: 1rem;
@@ -157,7 +157,7 @@
           font-size: 0.7rem;
 
           &__display-name {
-            display: inline-block;
+            display: block;
             align-items: center;
             justify-content: center;
             vertical-align: top;

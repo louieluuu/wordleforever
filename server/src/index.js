@@ -21,14 +21,14 @@ import {
   dbCreateNewUser,
   dbGetUserById,
   dbGetUserByName,
-  handleUserDisconnect,
-  handleLeaveRoom,
-  handleKickUser,
 } from "./services/userService.js"
 import {
   handleDisplayNameUpdate,
   handleUserReadyUp,
   handleUserUnreadyUp,
+  handleUserDisconnect,
+  handleLeaveRoom,
+  handleKickUser,
 } from "./services/roomService.js"
 import {
   handleLoadUser,

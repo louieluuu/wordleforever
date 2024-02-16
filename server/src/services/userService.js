@@ -413,34 +413,6 @@ async function dbBatchUpdateUsers(game) {
   }
 }
 
-function handleUserDisconnect(socket, io) {
-  console.log(`A user disconnected with socket.userId: ${socket.userId}`)
-  handleLeaveRoom(socket, io)
-}
-
-function handleLeaveRoom(socket, io) {
-  const roomId = socket.roomId
-  if (roomId) {
-    console.log(`Removing user ${socket.userId} from ${roomId}`)
-    socket.roomId = null
-    removeUserFromRoom(socket.userId, roomId)
-    if (isRoomEmpty(roomId)) {
-      deleteRoom(roomId)
-    } else {
-      if (isHostLeaving(roomId, socket.userId)) {
-        const newHostId = generateNewHostInRoom(roomId)
-        io.to(roomId).emit("newHost", newHostId)
-      }
-    }
-  }
-  broadcastRoomUserInfo(roomId, io)
-}
-
-function handleKickUser(userId, roomId, io) {
-  removeUserFromRoom(userId, roomId)
-  broadcastRoomUserInfo(roomId, io)
-}
-
 export {
   handleNewConnection,
   dbCreateNewUser,
@@ -449,7 +421,4 @@ export {
   dbGetCurrStreak,
   dbUpdateUser,
   dbBatchUpdateUsers,
-  handleUserDisconnect,
-  handleLeaveRoom,
-  handleKickUser,
 }
