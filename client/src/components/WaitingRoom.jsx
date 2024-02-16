@@ -25,6 +25,7 @@ function WaitingRoom({
   useSetRoomId(setRoomId)
 
   const navigate = useNavigate()
+  const [joinRoom, setJoinRoom] = useState(false)
   const [userInfo, setUserInfo] = useState([])
   const [message, setMessage] = useState("")
   const [showLobbyCountdownModal, setShowLobbyCountdownModal] = useState(false)
@@ -35,16 +36,9 @@ function WaitingRoom({
   const [alertMessage, setAlertMessage] = useState("")
   const [showAlertModal, setShowAlertModal] = useState(false)
 
-  // Join room once
-  useEffect(() => {
-    if (isSocketConnected && roomId) {
-      console.log(`My socket.userId: ${socket.userId}`)
-      socket.emit("joinRoom", roomId, displayName)
-    }
-  }, [isSocketConnected, roomId])
-
   // Main useEffect loop
   useEffect(() => {
+    setJoinRoom(true)
     // Make sure modes are set, important for users joining from a link
     socket.on("roomJoined", (roomConnectionMode, gameMode) => {
       setConnectionMode(roomConnectionMode)
@@ -99,6 +93,13 @@ function WaitingRoom({
       socket.off("roomStarted")
     }
   }, [roomId])
+
+  // Join room once
+  useEffect(() => {
+    if (isSocketConnected && roomId && joinRoom) {
+      socket.emit("joinRoom", roomId, displayName)
+    }
+  }, [isSocketConnected, roomId, joinRoom])
 
   // TODO: Don't like this placement here, I think it should belong with nicknameform.
   // Keep displayName up to date
