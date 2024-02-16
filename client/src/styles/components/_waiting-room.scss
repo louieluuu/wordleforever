@@ -3,13 +3,38 @@
     .waiting-room-user-info {
       gap: 0;
       font-size: 3.5vw;
-      padding-inline: 2.5vw;
+      padding-inline: 3vw;
       padding-block: 3.5dvh;
+
+      .waiting-room-user-line {
+        &__display-name {
+          width: 40vw;
+        }
+
+        &__right {
+          margin-left: 3vw;
+
+          .kick-confirmation-modal {
+            padding-inline: 3vw;
+            padding-block: 2dvh;
+
+            font-size: 2.5vw;
+
+            &__display-name {
+              max-width: 35vw;
+            }
+
+            &__buttons {
+              gap: 4vw;
+            }
+          }
+        }
+      }
     }
 
     .checkmark {
       width: 4.5vw;
-      margin-right: 2.5vw;
+      margin-right: 3vw;
     }
 
     .waiting-message {
@@ -66,36 +91,92 @@
     border: 2px dashed hsl(0, 0%, 60%);
     padding-inline: 1.5rem;
     padding-block: 3.5dvh;
-    max-width: 30rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 
     .waiting-room-user-line {
       display: flex;
-      align-items: center;
-    }
-  }
 
-  .checkmark {
-    display: flex;
-    width: 2rem;
-    height: 0;
-    align-items: center;
-    margin-right: 1.5rem;
+      &__display-name {
+        width: 12rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
 
-    &__polyline {
-      @extend .checkmark;
+      &__left {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
 
-      stroke-width: 12;
-    }
+        .checkmark {
+          display: flex;
+          width: 2rem;
+          height: 0;
+          align-items: center;
+          margin-right: 1.5rem;
 
-    &__ready {
-      @extend .checkmark;
-      stroke: $private-room-ready;
-    }
-    &__not-ready {
-      @extend .checkmark;
+          &__polyline {
+            @extend .checkmark;
+
+            stroke-width: 12;
+          }
+
+          &__ready {
+            @extend .checkmark;
+            stroke: $private-room-ready;
+          }
+          &__not-ready {
+            @extend .checkmark;
+          }
+        }
+      }
+
+      &__right {
+        position: relative;
+        display: flex;
+        align-items: center;
+        margin-left: 1.5rem;
+
+        .kick-confirmation-modal {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          z-index: 1;
+          padding-inline: 1rem;
+          padding-block: 0.6rem;
+
+          background-color: black;
+          color: white;
+          border: none;
+          border-radius: 1rem;
+
+          font-size: 0.7rem;
+
+          &__display-name {
+            display: inline-block;
+            align-items: center;
+            justify-content: center;
+            vertical-align: top;
+            max-width: 8rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          &__buttons {
+            display: flex;
+            gap: 1rem;
+
+            &:hover {
+              cursor: pointer;
+            }
+          }
+        }
+      }
     }
   }
 

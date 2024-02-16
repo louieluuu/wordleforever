@@ -5,10 +5,12 @@ import socket from "../socket"
 import useSetRoomId from "../helpers/useSetRoomId"
 import WAITING_ROOM_MESSAGES from "../data/waitingRoomMessages"
 import Checkmark from "../assets/checkmark.svg?react"
+import { AiOutlineCloseCircle } from "react-icons/ai"
 
 // Components
 import LobbyCountdownModal from "./LobbyCountdownModal"
 import AlertModal from "./AlertModal"
+import KickConfirmationModal from "./KickConfirmationModal"
 
 function WaitingRoom({
   displayName,
@@ -35,6 +37,11 @@ function WaitingRoom({
 
   const [alertMessage, setAlertMessage] = useState("")
   const [showAlertModal, setShowAlertModal] = useState(false)
+
+  const [showKickConfirmationModal, setShowKickConfirmationModal] =
+    useState(false)
+  const [userIdToKick, setUserIdToKick] = useState("")
+  const [displayNameToKick, setDisplayNameToKick] = useState("")
 
   // Main useEffect loop
   useEffect(() => {
@@ -128,17 +135,30 @@ function WaitingRoom({
   // TODO: check if this should be merged with the above useEffect as they both only have the one dependency on userInfo, or is it okay to keep it more "readable" with 2 blocks
   // Check if all players are ready in a private room
   useEffect(() => {
-    if (userInfo.length >= 2) {
-      let playersReady = 0
+    let playersReady = 0
+    userInfo.forEach((obj) => {
+      if (socket.userId && socket.userId !== obj.userId && obj.isReady) {
+        playersReady += 1
+      }
+    })
+    if (userInfo.length > 1 && playersReady >= userInfo.length - 1) {
+      setAllPlayersReady(true)
+    } else {
+      setAllPlayersReady(false)
+    }
+  }, [userInfo])
+
+  // Check if you've been kicked from the room
+  useEffect(() => {
+    if (userInfo.length > 0) {
+      let isInRoom = false
       userInfo.forEach((obj) => {
-        if (socket.userId && socket.userId !== obj.userId && obj.isReady) {
-          playersReady += 1
+        if (socket.userId && socket.userId === obj.userId) {
+          isInRoom = true
         }
       })
-      if (playersReady >= userInfo.length - 1) {
-        setAllPlayersReady(true)
-      } else {
-        setAllPlayersReady(false)
+      if (!isInRoom) {
+        navigate("/")
       }
     }
   }, [userInfo])
@@ -194,6 +214,12 @@ function WaitingRoom({
     navigate("/online")
   }
 
+  function handleKickUserButton(userId, displayName) {
+    setUserIdToKick(userId)
+    setDisplayNameToKick(displayName)
+    setShowKickConfirmationModal(true)
+  }
+
   // TODO: what is this for? (Thomas' relic)
   function getUsernamesClassName() {
     let usernamesClassName = "waiting-room-user-info"
@@ -243,20 +269,51 @@ function WaitingRoom({
       <div className="waiting-room-user-info">
         {userInfo.map((user) => (
           <div key={user.userId} className="waiting-room-user-line">
-            {connectionMode === "private" &&
-              (user.isReady ? (
-                <div className="checkmark__ready">
-                  <Checkmark />
-                </div>
-              ) : (
-                <div className="checkmark__not-ready">
-                  <Checkmark />
-                </div>
-              ))}
-            {user.displayName}
-            {connectionMode === "public" && user.currStreak !== 0 && (
-              <span> &nbsp;&nbsp;{user.currStreak}🔥 </span>
-            )}
+            <div className="waiting-room-user-line__left">
+              {connectionMode === "private" &&
+                (user.isReady ? (
+                  <div className="checkmark__ready">
+                    <Checkmark />
+                  </div>
+                ) : (
+                  <div className="checkmark__not-ready">
+                    <Checkmark />
+                  </div>
+                ))}
+              <span className="waiting-room-user-line__display-name">
+                {user.displayName}
+              </span>
+            </div>
+            <div className="waiting-room-user-line__right">
+              {connectionMode === "private" &&
+                isHost &&
+                socket.userId !== user.userId && (
+                  <>
+                    <AiOutlineCloseCircle
+                      className={`kick-button${
+                        showKickConfirmationModal ? "" : " clickable"
+                      }`}
+                      onClick={() =>
+                        handleKickUserButton(user.userId, user.displayName)
+                      }
+                    />
+                    {showKickConfirmationModal &&
+                      user.userId === userIdToKick && (
+                        <KickConfirmationModal
+                          userId={userIdToKick}
+                          roomId={roomId}
+                          displayName={displayNameToKick}
+                          setShowKickConfirmationModal={
+                            setShowKickConfirmationModal
+                          }
+                        />
+                      )}
+                  </>
+                )}
+              {connectionMode === "public" && user.currStreak !== 0 && (
+                <span> &nbsp;&nbsp;{user.currStreak}🔥 </span>
+              )}
+            </div>
           </div>
         ))}
       </div>

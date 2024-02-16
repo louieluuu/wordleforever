@@ -433,6 +433,11 @@ function handleLeaveRoom(socket, io) {
   broadcastRoomUserInfo(roomId, io)
 }
 
+function handleKickUser(userId, roomId, io) {
+  removeUserFromRoom(userId, roomId)
+  broadcastRoomUserInfo(roomId, io)
+}
+
 export {
   handleNewConnection,
   dbCreateNewUser,
@@ -443,4 +448,5 @@ export {
   dbBatchUpdateUsers,
   handleUserDisconnect,
   handleLeaveRoom,
+  handleKickUser,
 }

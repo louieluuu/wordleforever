@@ -23,6 +23,7 @@ import {
   dbGetUserByName,
   handleUserDisconnect,
   handleLeaveRoom,
+  handleKickUser,
 } from "./services/userService.js"
 import {
   handleDisplayNameUpdate,
@@ -110,6 +111,7 @@ io.on("connection", (socket) => {
   socket.on("userUnreadyUp", (roomId) =>
     handleUserUnreadyUp(roomId, socket.userId, io)
   )
+  socket.on("kickUser", (userId, roomId) => handleKickUser(userId, roomId, io))
   // Start countdown before starting the game -> navigate to game room
   socket.on("startCountdown", (roomId) => handleCountdownStart(roomId, io))
   socket.on("stopCountdown", (roomId) => handleCountdownStop(roomId, io))
