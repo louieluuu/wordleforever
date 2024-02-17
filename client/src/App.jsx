@@ -4,6 +4,8 @@ import { useMediaQuery } from "react-responsive"
 import socket from "./socket"
 import { auth } from "./firebase"
 
+import { MantineProvider } from "@mantine/core"
+import "@mantine/core/styles.css"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
 // Components
@@ -114,7 +116,7 @@ function App() {
   }, [])
 
   return (
-    <>
+    <MantineProvider>
       <Router>
         <div className="full-page">
           <NavBar roomId={roomId} isPhoneLayout={isPhoneLayout} />
@@ -191,7 +193,7 @@ function App() {
           </div>
         </div>
       </Router>
-    </>
+    </MantineProvider>
   )
 }
 
