@@ -1,4 +1,6 @@
 import React, { useRef } from "react"
+import { sum } from "lodash-es"
+const _ = { sum }
 
 import { Dialog } from "@headlessui/react"
 
@@ -6,8 +8,6 @@ import { TfiClose } from "react-icons/tfi"
 import { MdOutlineDoubleArrow } from "react-icons/md"
 
 // TODO: please fix this complete abomination from top to bottom. god has abandoned us.
-
-// TODO 2: user.roundsSolved === user.solveDistribution.reduce((a, b) => a + b, 0) - not sure where to put this though
 
 function PostGameDialog({
   setShowPostGameDialog,
@@ -201,22 +201,17 @@ function PostGameDialog({
                         <td>{user.displayName}</td>
                         <td>{user.points}</td>
                         <td>{user.roundsWon}</td>
-                        <td>
-                          {user.solveDistribution.reduce((a, b) => a + b, 0)}
-                        </td>
+                        <td>{_.sum(user.solveDistribution)}</td>
                         <td>
                           {user.totalGuesses > 0
                             ? (user.totalGuesses / maxRounds).toFixed(2)
                             : "/"}
                         </td>
                         <td>
-                          {user.solveDistribution.reduce((a, b) => a + b, 0) > 0
+                          {_.sum(user.solveDistribution) > 0
                             ? (
                                 user.totalSolveTime /
-                                user.solveDistribution.reduce(
-                                  (a, b) => a + b,
-                                  0
-                                )
+                                _.sum(user.solveDistribution)
                               ).toFixed(2)
                             : "/"}
                         </td>
