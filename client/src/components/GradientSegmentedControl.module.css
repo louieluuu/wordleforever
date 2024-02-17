@@ -1,5 +1,5 @@
 .root {
-  width: 35rem;
+  width: 20rem;
 
   background-color: light-dark(
     var(--mantine-color-white),
