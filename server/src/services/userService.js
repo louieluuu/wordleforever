@@ -39,11 +39,6 @@ function dbIsRegistered(userId) {
   // userId can either be exactly 20 chars (default socket.id length; cannot be a user),
   // or 28+ chars (Firebase uid length; must be a user).
   if (userId) {
-    console.log(
-      `dbIsRegistered returning: ${
-        userId.length >= MIN_FIREBASE_UID_LENGTH
-      } for userId: ${userId}`
-    )
     return userId.length >= MIN_FIREBASE_UID_LENGTH ? true : false
   }
   return false
@@ -59,6 +54,8 @@ function dbHasUpdated(userId, hasUpdatedInDbList) {
 async function dbCreateNewUser(userId, username) {
   if (userId && username) {
     try {
+      // TODO: If I don't want to transfer the entire user object,
+      // how can I slim the returned object? Really just want a bool
       const existingUser = await User.findById(userId).lean()
       if (!existingUser) {
         await User.create({
@@ -76,19 +73,20 @@ async function dbCreateNewUser(userId, username) {
   }
 }
 
-async function dbGetUserById(userId) {
-  if (dbIsRegistered(userId)) {
-    try {
-      // TODO: If I don't want to transfer the entire user object,
-      // how can I slim the returned object? Really just want a bool
-      const user = await User.findById(userId).lean()
-      return user
-    } catch (error) {
-      console.error(
-        `Error getting user info from the database: ${error.message}`
-      )
-      throw error
-    }
+async function dbGetStatsById(userId, connectionMode, gameMode) {
+  if (!dbIsRegistered(userId)) {
+    return null
+  }
+  try {
+    const statsPath = `stats.${connectionMode}.${gameMode}`
+    const statsDoc = await User.findById(userId, `${statsPath} -_id`).lean()
+    const stats = _.get(statsDoc, statsPath)
+    return stats
+  } catch (error) {
+    console.error(
+      `Error getting user stats from the database: ${error.message}`
+    )
+    throw error
   }
 }
 
@@ -416,7 +414,7 @@ async function dbBatchUpdateUsers(game) {
 export {
   handleNewConnection,
   dbCreateNewUser,
-  dbGetUserById,
+  dbGetStatsById,
   dbGetUserByName,
   dbGetCurrStreak,
   dbUpdateUser,

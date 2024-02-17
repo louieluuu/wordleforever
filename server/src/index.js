@@ -19,7 +19,7 @@ import {
 import {
   handleNewConnection,
   dbCreateNewUser,
-  dbGetUserById,
+  dbGetStatsById,
   dbGetUserByName,
 } from "./services/userService.js"
 import {
@@ -70,7 +70,21 @@ app.get("/user/:username", async (req, res) => {
     console.error(`Error fetching user by username: ${error.message}`)
     res.send({ error: error.message })
   }
-}) // TODO: Maybe only send the specific stats requested instead of the whole obj?
+})
+
+app.get("/user/:userId/:connectionMode/:gameMode", async (req, res) => {
+  const { userId, connectionMode, gameMode } = req.params
+  try {
+    if (userId && connectionMode && gameMode) {
+      const stats = await dbGetStatsById(userId, connectionMode, gameMode)
+      if (stats) {
+        res.send(stats)
+      }
+    }
+  } catch (error) {
+    console.error(`Error fetching user stats by userId: ${error.message}`)
+  }
+})
 
 app.get("/users/duplicate/:username", async (req, res) => {
   const usernameToTest = req.params.username
