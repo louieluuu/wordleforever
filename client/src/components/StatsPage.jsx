@@ -109,10 +109,13 @@ function StatsPage() {
       <h3>Others</h3>
       <div>
         Average Solve Time:{" "}
-        {userStats.totalSolveTime / _.sum(userStats.solveDistribution)}
+        {(
+          userStats.totalSolveTime / _.sum(userStats.solveDistribution)
+        ).toFixed(2)}
       </div>
       <div>
-        Average Guesses: {userStats.totalGuesses / userStats.totalGames}
+        Average Guesses:{" "}
+        {(userStats.totalGuesses / userStats.totalGames).toFixed(2)}
       </div>
 
       <div># Out of Guesses: {userStats.totalOOG}</div>
