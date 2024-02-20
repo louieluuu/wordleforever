@@ -4,7 +4,7 @@ import { sum } from "lodash-es"
 const _ = { sum }
 
 import { SegmentedControl } from "@mantine/core"
-import classes from "./GradientSegmentedControl.module.css"
+import classes from "./StatsPage.module.css"
 
 import GameIcon from "../assets/game-icon.svg"
 import Flame from "../assets/flame.svg?react"
