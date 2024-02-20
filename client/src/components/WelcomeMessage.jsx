@@ -2,6 +2,7 @@ import React, { useRef, useLayoutEffect } from "react"
 import { HiOutlinePencilSquare } from "react-icons/hi2"
 
 function WelcomeMessage({
+  isFirstTimeVisitor,
   displayName,
   setDisplayName,
   inputWidth,
@@ -57,7 +58,7 @@ function WelcomeMessage({
       <div className="username-line">
         <input
           ref={displayNameRef}
-          className="username-form"
+          className={`username-form${isFirstTimeVisitor ? "--first-time" : ""}`}
           type="text"
           value={displayName}
           onChange={handleDisplayNameChange}

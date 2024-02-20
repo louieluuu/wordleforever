@@ -21,6 +21,7 @@ function App() {
   const breakpointSm = "640px"
   const isPhoneLayout = useMediaQuery({ maxWidth: breakpointSm })
 
+  const [isFirstTimeVisitor, setIsFirstTimeVisitor] = useState(true)
   const [isSocketConnected, setIsSocketConnected] = useState(false)
   const [connectionMode, setConnectionMode] = useState("offline")
   const [gameMode, setGameMode] = useState(
@@ -77,6 +78,7 @@ function App() {
                 path="/*"
                 element={
                   <MenuRoutes
+                    isFirstTimeVisitor={isFirstTimeVisitor}
                     displayName={displayName}
                     setDisplayName={setDisplayName}
                     inputWidth={inputWidth}

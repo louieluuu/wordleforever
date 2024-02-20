@@ -5,7 +5,6 @@ import socket from "../socket"
 import useSetRoomId from "../helpers/useSetRoomId"
 import WAITING_ROOM_MESSAGES from "../data/waitingRoomMessages"
 import Checkmark from "../assets/checkmark.svg?react"
-import { AiOutlineCloseCircle } from "react-icons/ai"
 import { FaGear } from "react-icons/fa6"
 
 // Components
@@ -45,6 +44,7 @@ function WaitingRoom({
   const [userIdToKick, setUserIdToKick] = useState("")
   const [displayNameToKick, setDisplayNameToKick] = useState("")
 
+  // TODO: Wrap these all up in an object?
   // Configuration states
   const [showConfiguration, setShowConfiguration] = useState(false)
   const [maxPlayers, setMaxPlayers] = useState(

@@ -11,6 +11,7 @@ import WaitingRoom from "./WaitingRoom"
 import ChallengeForm from "./ChallengeForm"
 
 function MenuRoutes({
+  isFirstTimeVisitor,
   displayName,
   setDisplayName,
   inputWidth,
@@ -29,6 +30,7 @@ function MenuRoutes({
   return (
     <>
       <WelcomeMessage
+        isFirstTimeVisitor={isFirstTimeVisitor}
         displayName={displayName}
         setDisplayName={setDisplayName}
         inputWidth={inputWidth}
