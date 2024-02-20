@@ -10,14 +10,15 @@ function WelcomeMessage({
 }) {
   const displayNameRef = useRef(null)
   /** Seems a bit hacky but works, uses a hidden span element to measure the width and sets the input box size to that width. Dynamically sizing the input box was tricky */
-  // const textWidthRef = useRef(null)
+  const textWidthRef = useRef(null)
+  const pencilRef = useRef(null)
 
-  // useLayoutEffect(() => {
-  //   if (textWidthRef.current) {
-  //     const textWidth = textWidthRef.current.clientWidth
-  //     setInputWidth(textWidth + 10)
-  //   }
-  // }, [displayName, textWidthRef])
+  useLayoutEffect(() => {
+    if (textWidthRef.current) {
+      const textWidth = textWidthRef.current.clientWidth
+      setInputWidth(textWidth + 10)
+    }
+  }, [displayName, textWidthRef])
 
   function handleDisplayNameChange(e) {
     const updatedDisplayName = e.target.value
@@ -66,12 +67,11 @@ function WelcomeMessage({
           onClick={setCaretPosition}
           onMouseDown={setCaretInvisible}
           spellCheck="false"
-          // style={{ width: `${inputWidth}px` }}
+          style={{ width: `${inputWidth}px` }}
         />
-        {/* !
         <span ref={textWidthRef} className="hidden-span">
           {displayName}
-        </span> */}
+        </span>
       </div>
       <span
         style={{

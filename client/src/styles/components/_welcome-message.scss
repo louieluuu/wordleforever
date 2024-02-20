@@ -51,8 +51,7 @@
 
   &--first-time {
     @extend .username-form;
-    box-shadow: 0 0 0 max(100dvh, 10vw) rgba(0, 0, 0, 0.3);
-    position: relative;
+    box-shadow: $tutorial-shadow;
     z-index: 1;
   }
 
@@ -64,6 +63,9 @@
     font-size: 2rem;
     stroke-width: 0.11rem;
     cursor: pointer;
+
+    background-color: $bg-main;
+    z-index: 1;
   }
 }
 
