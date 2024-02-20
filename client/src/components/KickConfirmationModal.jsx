@@ -41,16 +41,24 @@ function KickConfirmationModal({
     // </Dialog>
 
     <div className="kick-confirmation-modal">
-      <p>
-        Kick{" "}
-        <span className="kick-confirmation-modal__display-name">
-          {displayName}
-        </span>{" "}
-        from the room?
-      </p>
+      Remove{" "}
+      <span className="kick-confirmation-modal__display-name">
+        {displayName}
+      </span>{" "}
+      from the room?
       <div className="kick-confirmation-modal__buttons">
-        <button onClick={kickUser}>Yes</button>
-        <button onClick={() => setShowKickConfirmationModal(false)}>No</button>
+        <div
+          className="kick-confirmation-modal__buttons--left"
+          onClick={kickUser}
+        >
+          ✔
+        </div>
+        <div
+          className="kick-confirmation-modal__buttons--right"
+          onClick={() => setShowKickConfirmationModal(false)}
+        >
+          ✘
+        </div>
       </div>
     </div>
   )

@@ -400,14 +400,14 @@ function WaitingRoom({
                     isHost &&
                     socket.userId !== user.userId && (
                       <>
-                        <AiOutlineCloseCircle
-                          className={`kick-button${
-                            showKickConfirmationModal ? "" : " clickable"
-                          }`}
+                        <div
+                          className="waiting-room-user-line__right--kick-x"
                           onClick={() =>
                             handleKickUserButton(user.userId, user.displayName)
                           }
-                        />
+                        >
+                          X
+                        </div>
                         {showKickConfirmationModal &&
                           user.userId === userIdToKick && (
                             <KickConfirmationModal
