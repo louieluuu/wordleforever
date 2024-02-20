@@ -64,8 +64,15 @@
     stroke-width: 0.11rem;
     cursor: pointer;
 
-    background-color: $bg-main;
-    z-index: 1;
+    &:hover {
+      color: $color-secondary;
+    }
+
+    &--first-time {
+      @extend .username-form__pencil;
+      background-color: $bg-main;
+      z-index: 1;
+    }
   }
 }
 

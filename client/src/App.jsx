@@ -33,6 +33,8 @@ function App() {
   )
   const [isHost, setIsHost] = useState(false)
   const [isSpectating, setIsSpectating] = useState(false)
+
+  // TODO: Shouldn't this be local to WelcomeMessage?
   const [inputWidth, setInputWidth] = useState(0)
 
   const [roomId, setRoomId] = useState("")

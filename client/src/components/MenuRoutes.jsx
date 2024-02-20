@@ -37,7 +37,11 @@ function MenuRoutes({
         setInputWidth={setInputWidth}
       />
       {!roomId && (
-        <ChallengeForm gameMode={gameMode} setGameMode={setGameMode} />
+        <ChallengeForm
+          isFirstTimeVisitor={isFirstTimeVisitor}
+          gameMode={gameMode}
+          setGameMode={setGameMode}
+        />
       )}
       <AnimatePresence mode="wait">
         <Routes>

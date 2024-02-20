@@ -12,7 +12,7 @@ const formStyle = {
   paddingBottom: "0.5rem",
 }
 
-function ChallengeForm({ gameMode, setGameMode }) {
+function ChallengeForm({ isFirstTimeVisitor, gameMode, setGameMode }) {
   function handleClick() {
     const target = gameMode === "normal" ? "challenge" : "normal"
     console.log(`Setting game mode to ${target}`)
@@ -44,13 +44,15 @@ function ChallengeForm({ gameMode, setGameMode }) {
             color="hsl(0,0%,50%)"
           />
         </a>
-        <Tooltip id="challenge-tooltip" place="top">
-          <ul className="challenge__tooltip--list">
-            <li>For experienced Wordlers!</li>
-            <li>Random starting word</li>
-            <li>Must use previous hints</li>
-          </ul>
-        </Tooltip>
+        {!isFirstTimeVisitor && (
+          <Tooltip id="challenge-tooltip" place="top">
+            <ul className="challenge__tooltip--list">
+              <li>For experienced Wordlers!</li>
+              <li>Random starting word</li>
+              <li>Must use previous hints</li>
+            </ul>
+          </Tooltip>
+        )}
       </form>
     </div>
   )

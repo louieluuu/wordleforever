@@ -80,7 +80,9 @@ function WelcomeMessage({
         title="Change display name"
       >
         <HiOutlinePencilSquare
-          className="username-form__pencil"
+          className={`username-form__pencil${
+            isFirstTimeVisitor ? "--first-time" : ""
+          }`}
           onClick={focusDisplayNameForm}
         />
       </span>
