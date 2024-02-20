@@ -9,19 +9,7 @@ import {
 // Services
 import { setRoomOutOfGame } from "../services/roomService.js"
 
-// These are all in seconds
-// Mess around with these for testing, but always return them to the following unless permanently changing:
-// const PRIVATE_GAME_TIMER = 120
-// const PRIVATE_GAME_SOLVED_TIMER = 45
-// const ROUND_BREAK_TIME = 7.5
-
-// const PRIVATE_ROUND_LIMIT = 10
-
-const PRIVATE_GAME_TIMER = 120
-const PRIVATE_GAME_SOLVED_TIMER = 45
-const ROUND_BREAK_TIME = 7.5
-
-const PRIVATE_ROUND_LIMIT = 10
+const ROUND_BREAK_TIME = 7.5 // RESET TO 7.5
 
 export default class Game {
   constructor() {
@@ -38,6 +26,7 @@ export default class Game {
     this.reachedRoundLimit = false
     this.timer = 0
     this.timerId = null
+    this.solvedTimer = 0
     this.elapsedTime = 0
     this.elapsedTimerId = null
     this.hasUpdatedInDbList = []
@@ -46,6 +35,9 @@ export default class Game {
   static createGame(
     connectionMode,
     gameMode,
+    roundLimit,
+    roundTime,
+    dynamicTimerOn,
     roomUserInfo,
     prevPoints,
     prevRound,
@@ -76,9 +68,13 @@ export default class Game {
     game.countSolved = 0
     game.countOutOfGuesses = 0
     game.round = prevRound + 1
-    game.roundLimit = connectionMode === "public" ? 1 : PRIVATE_ROUND_LIMIT
+    game.roundLimit = roundLimit
     game.reachedRoundLimit = false
-    game.timer = connectionMode === "public" ? Infinity : PRIVATE_GAME_TIMER
+    game.timer = roundTime
+    // Not sure if this is the best formula, but this needed to be changed since round time can be set
+    // Default public game round time = 150, 150 / 5 * 2 = 60 seconds solved timer
+    game.solvedTimer = (roundTime / 5) * 2
+    game.dynamicTimerOn = dynamicTimerOn
     game.hasUpdatedInDbList = []
 
     return game
@@ -313,17 +309,25 @@ export default class Game {
   updatePoints(userId) {
     const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
-      if (this.countSolved === 1 && this.timer > PRIVATE_GAME_SOLVED_TIMER) {
-        userInfo.points += PRIVATE_GAME_SOLVED_TIMER * 2
+      if (this.dynamicTimerOn) {
+        if (this.countSolved === 1 && this.timer > this.solvedTimer) {
+          userInfo.points += this.solvedTimer * 2
+        } else {
+          userInfo.points += this.timer
+        }
       } else {
-        userInfo.points += this.timer
+        if (this.countSolved === 1) {
+          userInfo.points += this.timer * 2
+        } else {
+          userInfo.points += this.timer
+        }
       }
     }
   }
 
   setSolvedTimer(roomId, io) {
-    if (this.timer > PRIVATE_GAME_SOLVED_TIMER) {
-      this.timer = PRIVATE_GAME_SOLVED_TIMER
+    if (this.timer > this.solvedTimer) {
+      this.timer = this.solvedTimer
       this.resyncTimer(roomId, io)
     }
   }
@@ -381,7 +385,7 @@ export default class Game {
       this.getGameUserInfoAsArray(),
       this.solution,
       this.startingWord,
-      PRIVATE_ROUND_LIMIT,
+      this.roundLimit,
       this.round,
       this.timer
     )

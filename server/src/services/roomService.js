@@ -9,8 +9,6 @@ import { deleteGame } from "./gameService.js"
 
 const Rooms = new Map()
 
-const MAX_ROOM_SIZE = 7
-
 function initializeRoom(connectionMode, gameMode, userId) {
   let uuid = uuidv4()
   let roomId = uuid.substring(0, 8)
@@ -52,6 +50,38 @@ function getRoomGameMode(roomId) {
     return room.gameMode
   }
   return null
+}
+
+function getRoomRoundLimit(roomId) {
+  const room = Rooms.get(roomId)
+  if (room && room instanceof Room) {
+    return room.roundLimit
+  }
+  return 0
+}
+
+function getRoomRoundTime(roomId) {
+  const room = Rooms.get(roomId)
+  if (room && room instanceof Room) {
+    return room.roundTime
+  }
+  return 0
+}
+
+function getDynamicTimerOn(roomId) {
+  const room = Rooms.get(roomId)
+  if (room && room instanceof Room) {
+    return room.dynamicTimerOn
+  }
+  return true
+}
+
+function getLetterEliminationOn(roomId) {
+  const room = Rooms.get(roomId)
+  if (room && room instanceof Room) {
+    return room.letterEliminationOn
+  }
+  return true
 }
 
 function setDisplayName(roomId, userId, displayName) {
@@ -137,7 +167,7 @@ function setRoomInProgress(roomId) {
 function isRoomFull(roomId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
-    return room.userInfo.size >= MAX_ROOM_SIZE
+    return room.userInfo.size >= room.maxPlayers
   }
   return false
 }
@@ -298,6 +328,54 @@ function broadcastRoomUserInfo(roomId, io) {
   }
 }
 
+function handleUpdateMaxPlayers(socket, roomId, newMaxPlayers) {
+  const room = Rooms.get(roomId)
+  if (room && room instanceof Room) {
+    room.maxPlayers = newMaxPlayers
+    socket.to(roomId).emit("maxPlayersUpdated", newMaxPlayers)
+  }
+}
+
+function handleUpdateRoundLimit(socket, roomId, newRoundLimit) {
+  const room = Rooms.get(roomId)
+  if (room && room instanceof Room) {
+    room.roundLimit = newRoundLimit
+    socket.to(roomId).emit("roundLimitUpdated", newRoundLimit)
+  }
+}
+
+function handleUpdateRoundTime(socket, roomId, newRoundTime) {
+  const room = Rooms.get(roomId)
+  if (room && room instanceof Room) {
+    room.roundTime = newRoundTime
+    socket.to(roomId).emit("roundTimeUpdated", newRoundTime)
+  }
+}
+
+function handleUpdateDynamicTimerOn(socket, roomId, newDynamicTimer) {
+  const room = Rooms.get(roomId)
+  if (room && room instanceof Room) {
+    room.dynamicTimerOn = newDynamicTimer
+    socket.to(roomId).emit("dynamicTimerUpdated", newDynamicTimer)
+  }
+}
+
+function handleUpdateLetterEliminationOn(socket, roomId, newLetterElimination) {
+  const room = Rooms.get(roomId)
+  if (room && room instanceof Room) {
+    room.letterEliminationOn = newLetterElimination
+    socket.to(roomId).emit("letterEliminationUpdated", newLetterElimination)
+  }
+}
+
+function handleUpdateGameMode(socket, roomId, newGameMode) {
+  const room = Rooms.get(roomId)
+  if (room && room instanceof Room) {
+    room.gameMode = newGameMode
+    socket.to(roomId).emit("gameModeUpdated", newGameMode)
+  }
+}
+
 function handleUserDisconnect(socket, io) {
   console.log(`A user disconnected with socket.userId: ${socket.userId}`)
   handleLeaveRoom(socket, io)
@@ -332,6 +410,10 @@ export {
   deleteRoom,
   getRoomConnectionMode,
   getRoomGameMode,
+  getRoomRoundLimit,
+  getRoomRoundTime,
+  getDynamicTimerOn,
+  getLetterEliminationOn,
   handleDisplayNameUpdate,
   isHostLeaving,
   generateNewHostInRoom,
@@ -355,6 +437,12 @@ export {
   isUserInRoom,
   findMatchingRoom,
   broadcastRoomUserInfo,
+  handleUpdateMaxPlayers,
+  handleUpdateRoundLimit,
+  handleUpdateRoundTime,
+  handleUpdateGameMode,
+  handleUpdateDynamicTimerOn,
+  handleUpdateLetterEliminationOn,
   handleUserDisconnect,
   handleLeaveRoom,
   handleKickUser,

@@ -6,11 +6,14 @@ import {
   getRoomUserInfo,
   getRoomConnectionMode,
   getRoomGameMode,
+  getRoomRoundLimit,
   setRoomInProgress,
   setRoomInGame,
   roomInLobby,
   areAllUsersLoaded,
   loadUser,
+  getRoomRoundTime,
+  getDynamicTimerOn,
 } from "./roomService.js"
 
 import { dbUpdateUser, dbBatchUpdateUsers } from "./userService.js"
@@ -46,6 +49,9 @@ function initializeGameInfo(roomId) {
   const game = Game.createGame(
     getRoomConnectionMode(roomId),
     getRoomGameMode(roomId),
+    getRoomRoundLimit(roomId),
+    getRoomRoundTime(roomId),
+    getDynamicTimerOn(roomId),
     getRoomUserInfo(roomId),
     prevPoints,
     prevRound,
@@ -155,7 +161,7 @@ async function handleCorrectGuess(
 
         // Example: 2-person private game, first person goes OOG, second person solves:
         // in this case, we don't want setSolvedTimer to run
-        if (game.countSolved === 1) {
+        if (game.countSolved === 1 && game.dynamicTimerOn) {
           game.setSolvedTimer(roomId, io)
         }
       }

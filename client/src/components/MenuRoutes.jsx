@@ -68,6 +68,7 @@ function MenuRoutes({
                 isSocketConnected={isSocketConnected}
                 connectionMode={connectionMode}
                 setConnectionMode={setConnectionMode}
+                gameMode={gameMode}
                 setGameMode={setGameMode}
                 isHost={isHost}
                 setIsHost={setIsHost}

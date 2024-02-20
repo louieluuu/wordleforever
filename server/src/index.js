@@ -29,6 +29,12 @@ import {
   handleUserDisconnect,
   handleLeaveRoom,
   handleKickUser,
+  handleUpdateMaxPlayers,
+  handleUpdateRoundLimit,
+  handleUpdateRoundTime,
+  handleUpdateGameMode,
+  handleUpdateDynamicTimerOn,
+  handleUpdateLetterEliminationOn,
 } from "./services/roomService.js"
 import {
   handleLoadUser,
@@ -112,6 +118,25 @@ io.on("connection", (socket) => {
     handleUserUnreadyUp(roomId, socket.userId, io)
   )
   socket.on("kickUser", (userId, roomId) => handleKickUser(userId, roomId, io))
+  // Configuration changes (private room)
+  socket.on("updateMaxPlayers", (roomId, newMaxPlayers) =>
+    handleUpdateMaxPlayers(socket, roomId, newMaxPlayers)
+  )
+  socket.on("updateRoundLimit", (roomId, newRoundLimit) =>
+    handleUpdateRoundLimit(socket, roomId, newRoundLimit)
+  )
+  socket.on("updateRoundTime", (roomId, newRoundTime) =>
+    handleUpdateRoundTime(socket, roomId, newRoundTime)
+  )
+  socket.on("updateGameMode", (roomId, newGameMode) =>
+    handleUpdateGameMode(socket, roomId, newGameMode)
+  )
+  socket.on("updateDynamicTimer", (roomId, newDynamicTimer) =>
+    handleUpdateDynamicTimerOn(socket, roomId, newDynamicTimer)
+  )
+  socket.on("updateLetterElimination", (roomId, newLetterElimination) =>
+    handleUpdateLetterEliminationOn(socket, roomId, newLetterElimination)
+  )
   // Start countdown before starting the game -> navigate to game room
   socket.on("startCountdown", (roomId) => handleCountdownStart(roomId, io))
   socket.on("stopCountdown", (roomId) => handleCountdownStop(roomId, io))

@@ -6,6 +6,7 @@ import useSetRoomId from "../helpers/useSetRoomId"
 import WAITING_ROOM_MESSAGES from "../data/waitingRoomMessages"
 import Checkmark from "../assets/checkmark.svg?react"
 import { AiOutlineCloseCircle } from "react-icons/ai"
+import { FaGear } from "react-icons/fa6"
 
 // Components
 import LobbyCountdownModal from "./LobbyCountdownModal"
@@ -17,6 +18,7 @@ function WaitingRoom({
   isSocketConnected,
   connectionMode,
   setConnectionMode,
+  gameMode,
   setGameMode,
   isHost,
   setIsHost,
@@ -42,6 +44,25 @@ function WaitingRoom({
     useState(false)
   const [userIdToKick, setUserIdToKick] = useState("")
   const [displayNameToKick, setDisplayNameToKick] = useState("")
+
+  // Configuration states
+  const [showConfiguration, setShowConfiguration] = useState(false)
+  const [maxPlayers, setMaxPlayers] = useState(
+    localStorage.getItem("maxPlayers") || 7
+  )
+  const [roundLimit, setRoundLimit] = useState(
+    localStorage.getItem("roundLimit") || 5
+  )
+  const [roundTime, setRoundTime] = useState(
+    localStorage.getItem("roundTime") || 150
+  )
+  // gameMode and setGameMode are passed in as props
+  const [dynamicTimer, setDynamicTimer] = useState(
+    JSON.parse(localStorage.getItem("dynamicTimer")) || true
+  )
+  const [letterElimination, setLetterElimination] = useState(
+    JSON.parse(localStorage.getItem("letterElimination")) || true
+  )
 
   // Main useEffect loop
   useEffect(() => {
@@ -72,6 +93,26 @@ function WaitingRoom({
       setUserInfo(updatedUserInfo)
     })
 
+    socket.on("maxPlayersUpdated", (newMaxPlayers) =>
+      setMaxPlayers(newMaxPlayers)
+    )
+
+    socket.on("roundLimitUpdated", (newRoundLimit) =>
+      setRoundLimit(newRoundLimit)
+    )
+
+    socket.on("roundTimeUpdated", (newRoundTime) => setRoundTime(newRoundTime))
+
+    socket.on("gameModeUpdated", (newGameMode) => setGameMode(newGameMode))
+
+    socket.on("dynamicTimerUpdated", (newDynamicTimer) =>
+      setDynamicTimer(newDynamicTimer)
+    )
+
+    socket.on("letterEliminationUpdated", (newLetterElimination) =>
+      setLetterElimination(newLetterElimination)
+    )
+
     socket.on("newHost", (newHostId) => {
       if (socket.userId === newHostId) {
         setIsHost(true)
@@ -95,6 +136,12 @@ function WaitingRoom({
       socket.off("roomFull")
       socket.off("matchFound")
       socket.off("userInfoUpdated")
+      socket.off("maxPlayersUpdated")
+      socket.off("roundLimitUpdated")
+      socket.off("roundTimeUpdated")
+      socket.off("gameModeUpdated")
+      socket.off("dynamicTimerUpdated")
+      socket.off("letterEliminationUpdated")
       socket.off("countdownStarted")
       socket.off("countdownTick")
       socket.off("roomStarted")
@@ -234,93 +281,88 @@ function WaitingRoom({
     setIsCopied(true)
   }
 
+  // Configuration setters
+  function handleMaxPlayersChange(event) {
+    const newMaxPlayers = parseInt(event.target.value)
+    setMaxPlayers(newMaxPlayers)
+    socket.emit("updateMaxPlayers", roomId, newMaxPlayers)
+    if (isHost) {
+      localStorage.setItem("maxPlayers", newMaxPlayers)
+    }
+  }
+
+  function handleRoundLimitChange(event) {
+    const newRoundLimit = parseInt(event.target.value)
+    setRoundLimit(newRoundLimit)
+    socket.emit("updateRoundLimit", roomId, newRoundLimit)
+    if (isHost) {
+      localStorage.setItem("roundLimit", newRoundLimit)
+    }
+  }
+
+  function handleRoundTimeChange(event) {
+    const newRoundTime = parseInt(event.target.value)
+    setRoundTime(newRoundTime)
+    socket.emit("updateRoundTime", roomId, newRoundTime)
+    if (isHost) {
+      localStorage.setItem("roundTime", newRoundTime)
+    }
+  }
+
+  function handleGameModeChange() {
+    const newGameMode = gameMode === "normal" ? "challenge" : "normal"
+    setGameMode(newGameMode)
+    socket.emit("updateGameMode", roomId, newGameMode)
+    // Do we want to update hosts localStorage value if changing gameMode in a private game with friends?
+    if (isHost) {
+      localStorage.setItem("gameMode", newGameMode)
+    }
+  }
+
+  function handleDynamicTimerChange() {
+    const newDynamicTimer = !dynamicTimer
+    setDynamicTimer(newDynamicTimer)
+    socket.emit("updateDynamicTimer", roomId, newDynamicTimer)
+    if (isHost) {
+      localStorage.setItem("dynamicTimer", newDynamicTimer)
+    }
+  }
+
+  function handleLetterEliminationChange() {
+    const newLetterElimination = !letterElimination
+    setLetterElimination(newLetterElimination)
+    socket.emit("updateLetterElimination", roomId, newLetterElimination)
+    if (isHost) {
+      localStorage.setItem("letterElimination", newLetterElimination)
+    }
+  }
+
   return (
     <div className="waiting-room-background">
-      <h1 className="waiting-message">[{message}]</h1>
-
-      {showLobbyCountdownModal && (
-        <LobbyCountdownModal
-          setShowLobbyCountdownModal={setShowLobbyCountdownModal}
-        />
-      )}
-
-      <AlertModal
-        showAlertModal={showAlertModal}
-        setShowAlertModal={setShowAlertModal}
-        message={alertMessage}
-        inGame={false}
-      />
-
-      {connectionMode === "private" && isHost && (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <b style={{ fontWeight: 900 }}>1.&nbsp;&nbsp;</b>
-          <button className="menu__btn--copy" onClick={copyLink}>
-            {isCopied ? "LINK COPIED" : "COPY LINK"}
-          </button>
+      {connectionMode === "private" && (
+        <div className="waiting-room-configuration-icon">
+          <FaGear onClick={() => setShowConfiguration(!showConfiguration)} />
         </div>
       )}
 
-      <div className="waiting-room-user-info">
-        {userInfo.map((user) => (
-          <div key={user.userId} className="waiting-room-user-line">
-            <div className="waiting-room-user-line__left">
-              {connectionMode === "private" &&
-                (user.isReady ? (
-                  <div className="checkmark__ready">
-                    <Checkmark />
-                  </div>
-                ) : (
-                  <div className="checkmark__not-ready">
-                    <Checkmark />
-                  </div>
-                ))}
-              <span className="waiting-room-user-line__display-name">
-                {user.displayName}
-              </span>
-            </div>
-            <div className="waiting-room-user-line__right">
-              {connectionMode === "private" &&
-                isHost &&
-                socket.userId !== user.userId && (
-                  <>
-                    <AiOutlineCloseCircle
-                      className={`kick-button${
-                        showKickConfirmationModal ? "" : " clickable"
-                      }`}
-                      onClick={() =>
-                        handleKickUserButton(user.userId, user.displayName)
-                      }
-                    />
-                    {showKickConfirmationModal &&
-                      user.userId === userIdToKick && (
-                        <KickConfirmationModal
-                          userId={userIdToKick}
-                          roomId={roomId}
-                          displayName={displayNameToKick}
-                          setShowKickConfirmationModal={
-                            setShowKickConfirmationModal
-                          }
-                        />
-                      )}
-                  </>
-                )}
-              {connectionMode === "public" && user.currStreak !== 0 && (
-                <span> &nbsp;&nbsp;{user.currStreak}🔥 </span>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {connectionMode === "private" && (
+      {!showConfiguration ? (
         <>
-          {isHost ? (
+          <h1 className="waiting-message">[{message}]</h1>
+
+          {showLobbyCountdownModal && (
+            <LobbyCountdownModal
+              setShowLobbyCountdownModal={setShowLobbyCountdownModal}
+            />
+          )}
+
+          <AlertModal
+            showAlertModal={showAlertModal}
+            setShowAlertModal={setShowAlertModal}
+            message={alertMessage}
+            inGame={false}
+          />
+
+          {connectionMode === "private" && isHost && (
             <div
               style={{
                 display: "flex",
@@ -328,32 +370,185 @@ function WaitingRoom({
                 justifyContent: "center",
               }}
             >
-              <b style={{ fontWeight: 900 }}>2.&nbsp;&nbsp;</b>
-              <button
-                className={`menu__btn--start-game${
-                  !allPlayersReady ? " unclickable" : ""
-                }`}
-                onClick={startCountdown}
-              >
-                START GAME
+              <b style={{ fontWeight: 900 }}>1.&nbsp;&nbsp;</b>
+              <button className="menu__btn--copy" onClick={copyLink}>
+                {isCopied ? "LINK COPIED" : "COPY LINK"}
               </button>
             </div>
-          ) : (
-            !showLobbyCountdownModal && (
-              <button
-                className={`menu__btn--${isReady ? "unready" : "ready"}`}
-                onClick={toggleUserReady}
-              >
-                {isReady ? "UNREADY" : "READY"}
-              </button>
-            )
           )}
-        </>
-      )}
 
-      <button className="menu__btn--cancel" onClick={leaveRoom}>
-        Cancel
-      </button>
+          <div className="waiting-room-user-info">
+            {userInfo.map((user) => (
+              <div key={user.userId} className="waiting-room-user-line">
+                <div className="waiting-room-user-line__left">
+                  {connectionMode === "private" &&
+                    (user.isReady ? (
+                      <div className="checkmark__ready">
+                        <Checkmark />
+                      </div>
+                    ) : (
+                      <div className="checkmark__not-ready">
+                        <Checkmark />
+                      </div>
+                    ))}
+                  <span className="waiting-room-user-line__display-name">
+                    {user.displayName}
+                  </span>
+                </div>
+                <div className="waiting-room-user-line__right">
+                  {connectionMode === "private" &&
+                    isHost &&
+                    socket.userId !== user.userId && (
+                      <>
+                        <AiOutlineCloseCircle
+                          className={`kick-button${
+                            showKickConfirmationModal ? "" : " clickable"
+                          }`}
+                          onClick={() =>
+                            handleKickUserButton(user.userId, user.displayName)
+                          }
+                        />
+                        {showKickConfirmationModal &&
+                          user.userId === userIdToKick && (
+                            <KickConfirmationModal
+                              userId={userIdToKick}
+                              roomId={roomId}
+                              displayName={displayNameToKick}
+                              setShowKickConfirmationModal={
+                                setShowKickConfirmationModal
+                              }
+                            />
+                          )}
+                      </>
+                    )}
+                  {connectionMode === "public" && user.currStreak !== 0 && (
+                    <span> &nbsp;&nbsp;{user.currStreak}🔥 </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {connectionMode === "private" && (
+            <>
+              {isHost ? (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <b style={{ fontWeight: 900 }}>2.&nbsp;&nbsp;</b>
+                  <button
+                    className={`menu__btn--start-game${
+                      !allPlayersReady ? " unclickable" : ""
+                    }`}
+                    onClick={startCountdown}
+                  >
+                    START GAME
+                  </button>
+                </div>
+              ) : (
+                !showLobbyCountdownModal && (
+                  <button
+                    className={`menu__btn--${isReady ? "unready" : "ready"}`}
+                    onClick={toggleUserReady}
+                  >
+                    {isReady ? "UNREADY" : "READY"}
+                  </button>
+                )
+              )}
+            </>
+          )}
+
+          <button className="menu__btn--cancel" onClick={leaveRoom}>
+            Cancel
+          </button>
+        </>
+      ) : (
+        <div className="waiting-room-configuration">
+          <div className="config-option">
+            Max Players
+            <div className="config-option__right">
+              <span>{maxPlayers}</span>
+              <input
+                type="range"
+                min="2"
+                max="7"
+                value={maxPlayers}
+                onChange={handleMaxPlayersChange}
+                disabled={!isHost}
+              />
+            </div>
+          </div>
+          <div className="config-option">
+            Round Limit
+            <div className="config-option__right">
+              <span>{roundLimit}</span>
+              <input
+                type="range"
+                min="1"
+                max="20"
+                value={roundLimit}
+                onChange={handleRoundLimitChange}
+                disabled={!isHost}
+              />
+            </div>
+          </div>
+          <div className="config-option">
+            Round Time
+            <div className="config-option__right">
+              <span>{roundTime}</span>
+              <input
+                type="range"
+                min="15"
+                max="300"
+                step="5"
+                value={roundTime}
+                onChange={handleRoundTimeChange}
+                disabled={!isHost}
+              />
+            </div>
+          </div>
+          <div className="config-option">
+            Challenge Mode
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={gameMode === "challenge"}
+                onChange={handleGameModeChange}
+                disabled={!isHost}
+              />
+              <span className="slider"></span>
+            </label>
+          </div>
+          <div className="config-option">
+            Dynamic Timer
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={dynamicTimer}
+                onChange={handleDynamicTimerChange}
+                disabled={!isHost}
+              />
+              <span className="slider"></span>
+            </label>
+          </div>
+          <div className="config-option">
+            Letter Elimination
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={letterElimination}
+                onChange={handleLetterEliminationChange}
+                disabled={!isHost}
+              />
+              <span className="slider"></span>
+            </label>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
