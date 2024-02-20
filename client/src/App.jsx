@@ -21,7 +21,11 @@ function App() {
   const breakpointSm = "640px"
   const isPhoneLayout = useMediaQuery({ maxWidth: breakpointSm })
 
-  const [isFirstTimeVisitor, setIsFirstTimeVisitor] = useState(true)
+  const [isFirstTimeVisitor, setIsFirstTimeVisitor] = useState(
+    JSON.parse(localStorage.getItem("isFirstTimeVisitor")) === false
+      ? false
+      : true
+  )
   const [isSocketConnected, setIsSocketConnected] = useState(false)
   const [connectionMode, setConnectionMode] = useState("offline")
   const [gameMode, setGameMode] = useState(
@@ -38,6 +42,22 @@ function App() {
   const [inputWidth, setInputWidth] = useState(0)
 
   const [roomId, setRoomId] = useState("")
+
+  // Tutorial for first time visitors
+  useEffect(() => {
+    if (isFirstTimeVisitor) {
+      function handleClick() {
+        setIsFirstTimeVisitor(false)
+        localStorage.setItem("isFirstTimeVisitor", false)
+      }
+
+      document.addEventListener("click", handleClick)
+
+      return () => {
+        document.removeEventListener("click", handleClick)
+      }
+    }
+  }, [])
 
   // Socket.IO initialization
   useEffect(() => {
