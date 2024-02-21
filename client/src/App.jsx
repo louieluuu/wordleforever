@@ -116,7 +116,7 @@ function App() {
   }, [])
 
   return (
-    <MantineProvider>
+    <MantineProvider defaultColorScheme="dark">
       <Router>
         <div className="full-page">
           <NavBar roomId={roomId} isPhoneLayout={isPhoneLayout} />

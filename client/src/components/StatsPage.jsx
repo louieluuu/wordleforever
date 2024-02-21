@@ -75,7 +75,7 @@ function StatsPage() {
         Goldjet
       </div>
       <div style={{ fontSize: "1.5rem", fontStyle: "italic" }}>
-        - the RECKLESS -
+        -- the RECKLESS --
       </div>
       <div
         style={{
