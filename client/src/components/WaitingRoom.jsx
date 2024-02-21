@@ -59,10 +59,12 @@ function WaitingRoom({
   )
   // gameMode and setGameMode are passed in as props
   const [dynamicTimer, setDynamicTimer] = useState(
-    JSON.parse(localStorage.getItem("dynamicTimer")) || true
+    JSON.parse(localStorage.getItem("dynamicTimer")) === false ? false : true
   )
   const [letterElimination, setLetterElimination] = useState(
-    JSON.parse(localStorage.getItem("letterElimination")) || true
+    JSON.parse(localStorage.getItem("letterElimination")) === false
+      ? false
+      : true
   )
 
   // Main useEffect loop
