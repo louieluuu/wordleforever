@@ -46,6 +46,8 @@ html[data-theme="light"] {
   --private-room-info: hsl(273, 22%, 84%);
   // --private-room-ready: hsl(120, 70%, 35%);
   --private-room-ready: hsl(278, 43%, 61%);
+
+  --firefox-checkmark-diamond: hsl(0, 0%, 100%);
 }
 
 html,
@@ -94,6 +96,8 @@ html[data-theme="dark"] {
   --private-room-info: hsl(40, 20%, 45%);
   // --private-room-ready: hsl(120, 100%, 50%);
   --private-room-ready: hsl(51, 100%, 50%);
+
+  --firefox-checkmark-diamond: hsl(150, 100%, 68%, 0.4);
 }
 
 // Main colors
@@ -143,6 +147,8 @@ $header-hover: var(--header-hover);
 $waiting-room-background-filter: var(--waiting-room-background-filter);
 $private-room-info: var(--private-room-info);
 $private-room-ready: var(--private-room-ready);
+
+$firefox-checkmark-diamond: var(--firefox-checkmark-diamond);
 
 // Breakpoints
 $breakpoint-sm: 640px;

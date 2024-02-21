@@ -187,6 +187,14 @@
           mix-blend-mode: soft-light;
         }
 
+        // mix-blend-mode appears differently on Firefox. This is hard-coded for Firefox, but what can you do.
+        @-moz-document url-prefix() {
+          &__diamond {
+            opacity: 65%;
+            fill: $firefox-checkmark-diamond;
+          }
+        }
+
         &__polyline {
           @extend .checkmark;
           stroke-width: 12;
