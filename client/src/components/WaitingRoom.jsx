@@ -6,6 +6,7 @@ import useSetRoomId from "../helpers/useSetRoomId"
 import WAITING_ROOM_MESSAGES from "../data/waitingRoomMessages"
 import Checkmark from "../assets/checkmark.svg?react"
 import { FaGear } from "react-icons/fa6"
+import { FaArrowLeft } from "react-icons/fa"
 
 // Components
 import LobbyCountdownModal from "./LobbyCountdownModal"
@@ -341,7 +342,13 @@ function WaitingRoom({
     <div className="waiting-room-background">
       {connectionMode === "private" && (
         <div className="waiting-room-configuration-icon">
-          <FaGear onClick={() => setShowConfiguration(!showConfiguration)} />
+          {showConfiguration ? (
+            <FaArrowLeft
+              onClick={() => setShowConfiguration((prev) => !prev)}
+            />
+          ) : (
+            <FaGear onClick={() => setShowConfiguration((prev) => !prev)} />
+          )}
         </div>
       )}
 
