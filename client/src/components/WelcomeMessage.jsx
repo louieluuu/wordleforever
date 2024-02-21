@@ -1,5 +1,7 @@
 import React, { useRef, useLayoutEffect } from "react"
+
 import { HiOutlinePencilSquare } from "react-icons/hi2"
+import { Tooltip } from "react-tooltip"
 
 function WelcomeMessage({
   isFirstTimeVisitor,
@@ -11,7 +13,6 @@ function WelcomeMessage({
   const displayNameRef = useRef(null)
   /** Seems a bit hacky but works, uses a hidden span element to measure the width and sets the input box size to that width. Dynamically sizing the input box was tricky */
   const textWidthRef = useRef(null)
-  const pencilRef = useRef(null)
 
   useLayoutEffect(() => {
     if (textWidthRef.current) {
@@ -73,19 +74,28 @@ function WelcomeMessage({
           {displayName}
         </span>
       </div>
-      <span
-        style={{
-          display: "inline-flex",
-        }}
-        title="Change display name"
-      >
+      <a data-tooltip-id="display-name-tooltip">
         <HiOutlinePencilSquare
           className={`username-form__pencil${
             isFirstTimeVisitor ? "--first-time" : ""
           }`}
           onClick={focusDisplayNameForm}
+          title="Change display name"
         />
-      </span>
+      </a>
+      <Tooltip
+        className="display-name-tooltip"
+        id="display-name-tooltip"
+        place="bottom"
+        isOpen={isFirstTimeVisitor}
+      >
+        <div className="display-name-tooltip__text">
+          Welcome to Wordle Forever!
+          <br />
+          Edit your name here at any time.
+          <br />
+        </div>
+      </Tooltip>
     </div>
   )
 }

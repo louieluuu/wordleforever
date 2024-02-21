@@ -28,6 +28,10 @@ body {
 a {
   color: hsl(197, 100%, 40%);
   text-decoration: none;
+
+  &:hover {
+    color: hsl(197, 100%, 50%);
+  }
 }
 
 th,
