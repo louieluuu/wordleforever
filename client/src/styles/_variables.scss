@@ -44,7 +44,8 @@ html[data-theme="light"] {
   --header-hover: 65%;
   --waiting-room-background-filter: invert(0);
   --private-room-info: hsl(273, 22%, 84%);
-  --private-room-ready: hsl(120, 70%, 35%);
+  // --private-room-ready: hsl(120, 70%, 35%);
+  --private-room-ready: hsl(278, 43%, 61%);
 }
 
 html,
@@ -91,7 +92,8 @@ html[data-theme="dark"] {
   --header-hover: 85%;
   --waiting-room-background-filter: invert(1);
   --private-room-info: hsl(40, 20%, 45%);
-  --private-room-ready: hsl(120, 100%, 60%);
+  // --private-room-ready: hsl(120, 100%, 50%);
+  --private-room-ready: hsl(51, 100%, 50%);
 }
 
 // Main colors

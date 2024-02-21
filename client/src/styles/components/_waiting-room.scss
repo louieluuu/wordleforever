@@ -172,27 +172,33 @@
         display: flex;
         flex-direction: row;
         align-items: center;
+      }
 
-        .checkmark {
-          display: flex;
-          width: 2rem;
-          height: 0;
-          align-items: center;
-          margin-right: 1.5rem;
+      // TODO: This technically shouldn't be nested here (?)
+      .checkmark {
+        display: flex;
+        width: 2rem;
+        height: 0;
+        align-items: center;
+        margin-right: 1.5rem;
 
-          &__polyline {
-            @extend .checkmark;
+        &__diamond {
+          fill: white;
+          mix-blend-mode: soft-light;
+        }
 
-            stroke-width: 12;
-          }
+        &__polyline {
+          @extend .checkmark;
+          stroke-width: 12;
+        }
 
-          &__ready {
-            @extend .checkmark;
-            stroke: $private-room-ready;
-          }
-          &__not-ready {
-            @extend .checkmark;
-          }
+        &__ready {
+          @extend .checkmark;
+          stroke: $private-room-ready;
+        }
+
+        &__not-ready {
+          @extend .checkmark;
         }
       }
 
