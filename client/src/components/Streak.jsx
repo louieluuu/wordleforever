@@ -1,81 +1,74 @@
 import React from "react"
 
-import { ReactComponent as Flame } from "../assets/streakFlame.svg"
+import Flame from "../assets/flame.svg?react"
 
-function Streak({ streak, isChallengeOn, gameMode, isInGame }) {
-  /*
-   * HELPER FUNCTIONS
-   */
-
-  function getStreakClassName() {
-    let streakClassName = "streak"
+function Streak({ streak, inGame, connectionMode, gameMode }) {
+  function getFlameClassName() {
+    let flameClassName = "flame"
 
     // Edge case for streak === 0.
     // While inGame and public mode, I want a low opacity flame.
     // In all other cases, I want no flame.
     if (streak === 0) {
-      if (isInGame && gameMode === "online-public") {
-        streakClassName += "--0"
+      if (inGame && connectionMode === "public") {
+        flameClassName += "--0"
       }
       //
       else {
-        streakClassName += "--hidden"
+        flameClassName += "--hidden"
       }
-      return streakClassName
+      return flameClassName
     }
 
-    if (gameMode === "online-private" && isInGame) {
-      streakClassName += "--hidden"
-      return streakClassName
+    if (connectionMode === "private" && inGame) {
+      flameClassName += "--hidden"
+      return flameClassName
     }
 
     // Non-edge cases:
     // First: are we using red or blue?
-    if (isChallengeOn) {
-      streakClassName += "--challenge"
+    if (gameMode === "challenge") {
+      flameClassName += "--challenge"
     }
     //
     else {
-      streakClassName += "--normal"
+      flameClassName += "--normal"
     }
 
     // Second: what is the intensity of the hue?
     if (1 <= streak && streak <= 3) {
-      streakClassName += "--1-3"
+      flameClassName += "--1"
     }
     //
     else if (4 <= streak && streak <= 6) {
-      streakClassName += "--4-6"
+      flameClassName += "--4"
     }
     //
     else if (7 <= streak && streak <= 9) {
-      streakClassName += "--7-9"
+      flameClassName += "--7"
     }
     //
     else {
-      streakClassName += "--10"
+      flameClassName += "--10"
     }
 
-    return streakClassName
+    return flameClassName
   }
 
   return (
     <>
-      {gameMode.includes("offline") ? null : (
-        <div
-          style={{ display: "flex", alignItems: "center", fontSize: "3rem" }}
-        >
-          {streak === 0
-            ? ""
-            : gameMode === "online-private"
-            ? isInGame
+      {connectionMode.includes("offline") ? null : (
+        <div className="streak-container">
+          <Flame className={getFlameClassName()} />
+          <span className="streak-text">
+            {streak === 0
               ? ""
-              : streak
-            : streak}
-          <Flame
-            className={getStreakClassName()}
-            style={{ width: "3rem", height: "3rem" }}
-          />
+              : connectionMode === "private"
+              ? inGame
+                ? ""
+                : streak
+              : `${streak}`}
+          </span>
         </div>
       )}
     </>

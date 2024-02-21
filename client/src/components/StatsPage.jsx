@@ -8,6 +8,7 @@ import classes from "./StatsPage.module.css"
 
 import GameIcon from "../assets/game-icon.svg"
 import Flame from "../assets/flame.svg?react"
+import Streak from "./Streak"
 
 function StatsPage() {
   const [userStats, setUserStats] = useState({})
@@ -43,7 +44,7 @@ function StatsPage() {
   }
 
   return (
-    <>
+    <div className="stats-container">
       <SegmentedControl
         radius="md"
         size="default"
@@ -66,6 +67,7 @@ function StatsPage() {
         classNames={classes}
         onChange={changeGameModePath}
       />
+
       <div
         style={{
           fontSize: "3rem",
@@ -82,12 +84,16 @@ function StatsPage() {
           display: "flex",
           alignItems: "center",
           fontSize: "5rem",
-          border: "0.7rem solid black",
+          border: "0.5rem solid black",
           borderRadius: "50%",
         }}
       >
-        <Flame width="5rem" height="5rem" color="red" />
-        {userStats.maxStreak}
+        <Streak
+          streak={userStats.maxStreak}
+          connectionMode="public"
+          gameMode="normal"
+          inGame={true}
+        />
       </div>
       <h3>Games</h3>
       <div style={{ fontSize: "2rem" }}>
@@ -119,7 +125,7 @@ function StatsPage() {
       </div>
 
       <div># Out of Guesses: {userStats.totalOOG}</div>
-    </>
+    </div>
   )
 }
 

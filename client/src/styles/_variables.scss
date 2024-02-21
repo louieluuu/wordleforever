@@ -46,10 +46,20 @@ html[data-theme="light"] {
   --header-hover: 65%;
   --waiting-room-background-filter: invert(0);
   --private-room-info: hsl(273, 22%, 84%);
-  // --private-room-ready: hsl(120, 70%, 35%);
-  --private-room-ready: hsl(278, 43%, 61%);
+  --private-room-ready: hsl(120, 70%, 35%);
+  // --private-room-ready: hsl(278, 43%, 61%);
 
   --firefox-checkmark-diamond: hsl(0, 0%, 100%);
+
+  --streak-normal-1: hsl(49, 92%, 54%);
+  --streak-normal-4: hsl(36, 88%, 55%);
+  --streak-normal-7: hsl(30, 100%, 47%);
+  --streak-normal-10: hsl(1, 81%, 43%);
+
+  --streak-challenge-1: hsl(208, 60%, 17%);
+  --streak-challenge-4: hsl(204, 65%, 32%);
+  --streak-challenge-7: hsl(188, 57%, 54%);
+  --streak-challenge-10: hsl(180, 100%, 66%);
 }
 
 html,
@@ -102,6 +112,16 @@ html[data-theme="dark"] {
   --private-room-ready: hsl(51, 100%, 50%);
 
   --firefox-checkmark-diamond: hsl(150, 100%, 68%, 0.4);
+
+  --streak-normal-1: hsl(41, 92%, 62%);
+  --streak-normal-4: hsl(32, 78%, 53%);
+  --streak-normal-7: hsl(20, 87%, 52%);
+  --streak-normal-10: hsl(1, 61%, 49%);
+
+  --streak-challenge-1: hsl(208, 60%, 17%);
+  --streak-challenge-4: hsl(204, 65%, 32%);
+  --streak-challenge-7: hsl(188, 57%, 54%);
+  --streak-challenge-10: hsl(180, 100%, 66%);
 }
 
 // Main colors
@@ -153,8 +173,18 @@ $header-hover: var(--header-hover);
 $waiting-room-background-filter: var(--waiting-room-background-filter);
 $private-room-info: var(--private-room-info);
 $private-room-ready: var(--private-room-ready);
-
 $firefox-checkmark-diamond: var(--firefox-checkmark-diamond);
+
+// Streak
+$streak-normal-1: var(--streak-normal-1);
+$streak-normal-4: var(--streak-normal-4);
+$streak-normal-7: var(--streak-normal-7);
+$streak-normal-10: var(--streak-normal-10);
+
+$streak-challenge-1: var(--streak-challenge-1);
+$streak-challenge-4: var(--streak-challenge-4);
+$streak-challenge-7: var(--streak-challenge-7);
+$streak-challenge-10: var(--streak-challenge-10);
 
 // Breakpoints
 $breakpoint-sm: 640px;

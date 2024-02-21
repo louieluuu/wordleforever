@@ -1,19 +1,47 @@
-.streak {
-  &--0 {
-    opacity: 20%;
+.streak-container {
+  display: flex;
+  align-items: center;
+  font-size: 5rem;
+}
+
+.streak-text {
+  text-align: center;
+}
+
+.flame {
+  &--normal {
+    &--1 {
+      fill: $streak-normal-1;
+    }
+
+    &--4 {
+      fill: $streak-normal-4;
+    }
+
+    &--7 {
+      fill: $streak-normal-7;
+    }
+
+    &--10 {
+      fill: $streak-normal-10;
+    }
   }
-  &--1-3 {
-    opacity: 50%;
-  }
-  &--4-6 {
-    opacity: 70%;
-  }
-  &--7-9 {
-    opacity: 100%;
-    transform: scale(1.2);
-  }
-  &--10 {
-    opacity: 100%;
-    transform: scale(1.3);
+
+  &--challenge {
+    &--1 {
+      fill: $streak-challenge-1;
+    }
+
+    &--4 {
+      fill: $streak-challenge-4;
+    }
+
+    &--7 {
+      fill: $streak-challenge-7;
+    }
+
+    &--10 {
+      fill: $streak-challenge-10;
+    }
   }
 }
