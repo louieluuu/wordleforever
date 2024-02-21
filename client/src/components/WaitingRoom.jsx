@@ -478,7 +478,7 @@ function WaitingRoom({
       ) : (
         <div className="waiting-room-configuration">
           <div className="config-option">
-            Max Players
+            Players
             <div className="config-option__right">
               <span>{maxPlayers}</span>
               <input
@@ -492,7 +492,7 @@ function WaitingRoom({
             </div>
           </div>
           <div className="config-option">
-            Round Limit
+            Rounds
             <div className="config-option__right">
               <span>{roundLimit}</span>
               <input
@@ -506,7 +506,7 @@ function WaitingRoom({
             </div>
           </div>
           <div className="config-option">
-            Round Time
+            Guess Time
             <div className="config-option__right">
               <span>{roundTime}</span>
               <input
@@ -533,24 +533,24 @@ function WaitingRoom({
             </label>
           </div>
           <div className="config-option">
-            Dynamic Timer
-            <label className="switch">
-              <input
-                type="checkbox"
-                checked={dynamicTimer}
-                onChange={handleDynamicTimerChange}
-                disabled={!isHost}
-              />
-              <span className="slider"></span>
-            </label>
-          </div>
-          <div className="config-option">
             Letter Elimination
             <label className="switch">
               <input
                 type="checkbox"
                 checked={letterElimination}
                 onChange={handleLetterEliminationChange}
+                disabled={!isHost}
+              />
+              <span className="slider"></span>
+            </label>
+          </div>
+          <div className="config-option">
+            Dynamic Timer
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={dynamicTimer}
+                onChange={handleDynamicTimerChange}
                 disabled={!isHost}
               />
               <span className="slider"></span>
