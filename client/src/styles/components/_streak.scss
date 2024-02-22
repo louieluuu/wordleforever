@@ -2,6 +2,9 @@
   display: flex;
   align-items: center;
   font-size: 5rem;
+
+  // The flame SVG comes packaged with a tiny bit of padding on its left side, so we need to reciprocate on the right.
+  padding-right: 0.4rem;
 }
 
 .streak-text {
