@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
-import { sum } from "lodash-es"
-const _ = { sum }
+import { isEmpty, sum } from "lodash-es"
+const _ = { isEmpty, sum }
 
-import { SegmentedControl } from "@mantine/core"
+import { Divider, SegmentedControl } from "@mantine/core"
 import classes from "./StatsPage.module.css"
 
+import StatsBar from "./StatsBar"
+
 import GameIcon from "../assets/game-icon.svg"
-import Flame from "../assets/flame.svg?react"
 import Streak from "./Streak"
 
 function StatsPage() {
@@ -44,88 +45,93 @@ function StatsPage() {
   }
 
   return (
-    <div className="stats-container">
-      <SegmentedControl
-        radius="md"
-        size="default"
-        value={connectionModePath}
-        data={[
-          { value: "public", label: "Public" },
-          { value: "private", label: "Private" },
-        ]}
-        classNames={classes}
-        onChange={changeConnectionModePath}
-      />
-      <SegmentedControl
-        radius="md"
-        size="default"
-        value={gameModePath}
-        data={[
-          { value: "normal", label: "Normal" },
-          { value: "challenge", label: "Challenge" },
-        ]}
-        classNames={classes}
-        onChange={changeGameModePath}
-      />
-
-      <div
-        style={{
-          fontSize: "3rem",
-          fontWeight: "800",
-        }}
-      >
-        Goldjet
-      </div>
-      <div style={{ fontSize: "1.5rem", fontStyle: "italic" }}>
-        -- the RECKLESS --
-      </div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          fontSize: "5rem",
-          border: "0.5rem solid black",
-          borderRadius: "50%",
-        }}
-      >
-        <Streak
-          streak={userStats.maxStreak}
-          connectionMode="public"
-          gameMode="normal"
-          inGame={true}
-        />
-      </div>
-      <h3>Games</h3>
-      <div style={{ fontSize: "2rem" }}>
-        <img src={GameIcon} width="25rem" alt="GameIcon" />
-        &nbsp;
-        {userStats.totalGames}
-      </div>
-      <div>! insert win % / loss % bar here !</div>
-      <div>
-        {userStats.totalWins} Wins {userStats.totalGames - userStats.totalWins}{" "}
-        Losses
-      </div>
-      <h3>Guesses</h3>
-      {userStats.solveDistribution?.map((solve, index) => (
-        <div key={index}>
-          {index + 1}: {solve}
+    <>
+      {_.isEmpty(userStats) ? (
+        <div>LOADING...</div>
+      ) : (
+        <div className="stats-container">
+          <SegmentedControl
+            radius="md"
+            size="default"
+            value={connectionModePath}
+            data={[
+              { value: "public", label: "Public" },
+              { value: "private", label: "Private" },
+            ]}
+            classNames={classes}
+            onChange={changeConnectionModePath}
+          />
+          <SegmentedControl
+            radius="md"
+            size="default"
+            value={gameModePath}
+            data={[
+              { value: "normal", label: "Normal" },
+              { value: "challenge", label: "Challenge" },
+            ]}
+            classNames={classes}
+            onChange={changeGameModePath}
+          />
+          <div
+            style={{
+              fontSize: "3rem",
+              fontWeight: "800",
+            }}
+          >
+            Goldjet
+          </div>
+          <div style={{ fontSize: "1.5rem", fontStyle: "italic" }}>
+            -- the RECKLESS --
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              fontSize: "5rem",
+              border: "0.5rem solid black",
+              borderRadius: "50%",
+              padding: "1rem",
+            }}
+          >
+            <Streak
+              streak={2}
+              connectionMode="public"
+              gameMode="normal"
+              inGame={true}
+            />
+          </div>
+          <h3>Games</h3>
+          <div style={{ fontSize: "2rem", fontWeight: "bold" }}>
+            <img src={GameIcon} width="25rem" alt="GameIcon" />
+            &nbsp;
+            {userStats.totalGames}
+          </div>
+          <StatsBar
+            totalGames={userStats.totalGames}
+            wins={userStats.totalWins}
+            losses={userStats.totalGames - userStats.totalWins}
+          />
+          <h3>Guesses</h3>
+          {userStats.solveDistribution?.map((solve, index) => (
+            <div key={index}>
+              {index + 1}: {solve}
+            </div>
+          ))}
+          <h3>Others</h3>
+          <div>
+            Average Solve Time:{" "}
+            {(
+              userStats.totalSolveTime / _.sum(userStats.solveDistribution)
+            ).toFixed(2)}
+          </div>
+          <div>
+            Average Guesses:{" "}
+            {(userStats.totalGuesses / userStats.totalGames).toFixed(2)}
+          </div>
+          <div># Out of Guesses: {userStats.totalOOG}</div>
         </div>
-      ))}
-      <h3>Others</h3>
-      <div>
-        Average Solve Time:{" "}
-        {(
-          userStats.totalSolveTime / _.sum(userStats.solveDistribution)
-        ).toFixed(2)}
-      </div>
-      <div>
-        Average Guesses:{" "}
-        {(userStats.totalGuesses / userStats.totalGames).toFixed(2)}
-      </div>
-
-      <div># Out of Guesses: {userStats.totalOOG}</div>
-    </div>
+      )}
+    </>
   )
 }
 
