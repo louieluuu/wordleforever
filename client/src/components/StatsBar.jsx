@@ -1,4 +1,6 @@
-import { Divider, Progress, Text, Group } from "@mantine/core"
+import { Progress, Text, Group } from "@mantine/core"
+
+import styles from "./StatsBar.module.css"
 
 function StatsBar({ totalGames, wins, losses }) {
   const lavender = "hsl(278, 37%, 74%)"
@@ -8,7 +10,7 @@ function StatsBar({ totalGames, wins, losses }) {
   const lossPercentage = ((losses / totalGames) * 100).toFixed(0)
 
   return (
-    <div>
+    <div className={styles.statsBar}>
       <Group justify="space-between">
         <Text fz="xl" c={lavender} fw={700}>
           {winPercentage}%
@@ -17,7 +19,7 @@ function StatsBar({ totalGames, wins, losses }) {
           {lossPercentage}%
         </Text>
       </Group>
-      <Progress.Root size="15" radius="xl" style={{ width: "20rem" }}>
+      <Progress.Root size="15" radius="xl">
         <Progress.Section value={winPercentage} color={lavender} />
         <Progress.Section value={lossPercentage} color={dark} />
       </Progress.Root>

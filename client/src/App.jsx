@@ -5,7 +5,9 @@ import socket from "./socket"
 import { auth } from "./firebase"
 
 import { MantineProvider } from "@mantine/core"
+// TODO: Get rid of these styles.css? Big bloat
 import "@mantine/core/styles.css"
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
 // Components

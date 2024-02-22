@@ -1,3 +1,12 @@
+// TODO: These names are so all-over-the-place. Fix later.
+
+@mixin phone-styles-stats {
+  .stats-container {
+    margin-top: 0.5rem;
+    max-width: 16rem;
+  }
+}
+
 .stats-container {
   display: flex;
   flex-direction: column;
@@ -9,4 +18,24 @@
   //   border-radius: 5rem;
   //   padding: 3rem;
   //   background-color: gray;
+}
+
+.distribution-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+
+  font-size: 0.8rem;
+}
+
+.stat-bar {
+  display: inline-block;
+  text-align: right;
+  padding-right: 0.5rem;
+  background: lightgray;
 }

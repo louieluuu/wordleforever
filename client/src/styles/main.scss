@@ -70,6 +70,7 @@ li {
   @include phone-styles-menu;
   @include phone-styles-dialog;
   @include phone-styles-alert-modal;
+  @include phone-styles-stats;
 }
 
 @media only screen and (min-width: $breakpoint-sm) {

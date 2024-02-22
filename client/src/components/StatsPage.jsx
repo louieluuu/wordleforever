@@ -7,6 +7,7 @@ import { Divider, SegmentedControl } from "@mantine/core"
 import classes from "./StatsPage.module.css"
 
 import StatsBar from "./StatsBar"
+import StatsDistribution from "./StatsDistribution"
 
 import GameIcon from "../assets/game-icon.svg"
 import Streak from "./Streak"
@@ -100,6 +101,9 @@ function StatsPage() {
               inGame={true}
             />
           </div>
+
+          <hr style={{ marginBlock: "1.3rem", width: "100%" }} />
+
           <h3>Games</h3>
           <div style={{ fontSize: "2rem", fontWeight: "bold" }}>
             <img src={GameIcon} width="25rem" alt="GameIcon" />
@@ -112,23 +116,22 @@ function StatsPage() {
             losses={userStats.totalGames - userStats.totalWins}
           />
           <h3>Guesses</h3>
-          {userStats.solveDistribution?.map((solve, index) => (
-            <div key={index}>
-              {index + 1}: {solve}
+          <div className="guesses">
+            <StatsDistribution stats={[1, 6, 3, 10, 15, 2]} />
+
+            <h3>Others</h3>
+            <div>
+              Average Solve Time:{" "}
+              {(
+                userStats.totalSolveTime / _.sum(userStats.solveDistribution)
+              ).toFixed(2)}
             </div>
-          ))}
-          <h3>Others</h3>
-          <div>
-            Average Solve Time:{" "}
-            {(
-              userStats.totalSolveTime / _.sum(userStats.solveDistribution)
-            ).toFixed(2)}
+            <div>
+              Average Guesses:{" "}
+              {(userStats.totalGuesses / userStats.totalGames).toFixed(2)}
+            </div>
+            <div># Out of Guesses: {userStats.totalOOG}</div>
           </div>
-          <div>
-            Average Guesses:{" "}
-            {(userStats.totalGuesses / userStats.totalGames).toFixed(2)}
-          </div>
-          <div># Out of Guesses: {userStats.totalOOG}</div>
         </div>
       )}
     </>

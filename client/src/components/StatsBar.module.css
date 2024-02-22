@@ -1,3 +1,11 @@
+/*
+TODO: Would be nice to not have to hard-code width and max-width here. Not sure where to grab the variable from though.
+*/
+
+.statsBar {
+  width: 16rem;
+}
+
 .progressSection {
   &:not(:first-of-type) {
     border-left: rem(3px) solid
