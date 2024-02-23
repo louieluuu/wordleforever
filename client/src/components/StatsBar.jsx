@@ -15,10 +15,14 @@ function StatsBar({ totalGames, wins, losses }) {
         <Text fz="xl" c={lavender} fw={700}>
           {winPercentage}%
         </Text>
+
+        {6}
+
         <Text fz="xl" c="dark.6" fw={700}>
           {lossPercentage}%
         </Text>
       </Group>
+
       <Progress.Root size="15" radius="xl">
         <Progress.Section value={winPercentage} color={lavender} />
         <Progress.Section value={lossPercentage} color={dark} />

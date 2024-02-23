@@ -39,3 +39,15 @@
   padding-right: 0.5rem;
   background: lightgray;
 }
+
+.stats {
+  &__guesses {
+    display: flex;
+
+    &--misc {
+      display: flex;
+      flex-direction: column;
+      color: red;
+    }
+  }
+}

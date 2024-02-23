@@ -102,9 +102,13 @@ function StatsPage() {
             />
           </div>
 
-          <hr style={{ marginBlock: "1.3rem", width: "100%" }} />
-
-          <h3>Games</h3>
+          <Divider
+            label={
+              <div style={{ color: "black", fontSize: "1.25rem" }}>Games</div>
+            }
+            orientation="vertical"
+            color="gray.6"
+          />
           <div style={{ fontSize: "2rem", fontWeight: "bold" }}>
             <img src={GameIcon} width="25rem" alt="GameIcon" />
             &nbsp;
@@ -115,22 +119,26 @@ function StatsPage() {
             wins={userStats.totalWins}
             losses={userStats.totalGames - userStats.totalWins}
           />
-          <h3>Guesses</h3>
-          <div className="guesses">
+          <Divider
+            label={<div style={{ fontSize: "1.25rem" }}>Guesses</div>}
+            orientation="vertical"
+          />
+          <div className="stats__guesses">
             <StatsDistribution stats={[1, 6, 3, 10, 15, 2]} />
 
-            <h3>Others</h3>
-            <div>
-              Average Solve Time:{" "}
-              {(
-                userStats.totalSolveTime / _.sum(userStats.solveDistribution)
-              ).toFixed(2)}
+            <div className="stats__misc">
+              <div>
+                Average Solve Time:{" "}
+                {(
+                  userStats.totalSolveTime / _.sum(userStats.solveDistribution)
+                ).toFixed(2)}
+              </div>
+              <div>
+                Average Guesses:{" "}
+                {(userStats.totalGuesses / userStats.totalGames).toFixed(2)}
+              </div>
+              <div># Out of Guesses: {userStats.totalOOG}</div>
             </div>
-            <div>
-              Average Guesses:{" "}
-              {(userStats.totalGuesses / userStats.totalGames).toFixed(2)}
-            </div>
-            <div># Out of Guesses: {userStats.totalOOG}</div>
           </div>
         </div>
       )}
