@@ -155,6 +155,9 @@ function WaitingRoom({
   useEffect(() => {
     if (isSocketConnected && roomId && joinRoom) {
       socket.emit("joinRoom", roomId, displayName)
+      if (isHost) {
+        emitAllConfiguration()
+      }
     }
   }, [isSocketConnected, roomId, joinRoom])
 
@@ -338,6 +341,15 @@ function WaitingRoom({
     if (isHost) {
       localStorage.setItem("letterElimination", newLetterElimination)
     }
+  }
+
+  function emitAllConfiguration() {
+    socket.emit("updateMaxPlayers", roomId, maxPlayers)
+    socket.emit("updateRoundLimit", roomId, roundLimit)
+    socket.emit("updateRoundTime", roomId, roundTime)
+    socket.emit("updateGameMode", roomId, gameMode)
+    socket.emit("updateDynamicTimer", roomId, dynamicTimer)
+    socket.emit("updateLetterElimination", roomId, letterElimination)
   }
 
   return (
