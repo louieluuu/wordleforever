@@ -6,6 +6,7 @@ import {
   resetCountdown,
   addUserToRoom,
   getRoomConnectionMode,
+  getRoomConfiguration,
   getRoomGameMode,
   hasCountdownStarted,
   setCountdownStarted,
@@ -43,7 +44,7 @@ async function joinRoom(roomId, displayName, io, socket) {
         socket.emit(
           "roomJoined",
           getRoomConnectionMode(roomId),
-          getRoomGameMode(roomId)
+          getRoomConfiguration(roomId)
         )
       } else {
         socket.emit(

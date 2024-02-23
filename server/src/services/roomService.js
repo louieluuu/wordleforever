@@ -84,6 +84,22 @@ function getLetterEliminationOn(roomId) {
   return true
 }
 
+function getRoomConfiguration(roomId) {
+  const room = Rooms.get(roomId)
+  if (room && room instanceof Room) {
+    const allConfiguration = {
+      maxPlayers: room.maxPlayers,
+      roundLimit: room.roundLimit,
+      roundTime: room.roundTime,
+      gameMode: room.gameMode,
+      dynamicTimerOn: room.dynamicTimerOn,
+      letterEliminationOn: room.letterEliminationOn,
+    }
+    return allConfiguration
+  }
+  return {}
+}
+
 function setDisplayName(roomId, userId, displayName) {
   const roomUserInfo = getRoomUserInfo(roomId)
   if (roomUserInfo) {
@@ -414,6 +430,7 @@ export {
   getRoomRoundTime,
   getDynamicTimerOn,
   getLetterEliminationOn,
+  getRoomConfiguration,
   handleDisplayNameUpdate,
   isHostLeaving,
   generateNewHostInRoom,

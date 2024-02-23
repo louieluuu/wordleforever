@@ -71,16 +71,34 @@ function WaitingRoom({
   const [letterElimination, setLetterElimination] = useState(
     DEFAULT_LETTER_ELIMINATION
   )
+  const [isHostConfigurationSynced, setIsHostConfigurationSynced] =
+    useState(false)
 
   // Main useEffect loop
   useEffect(() => {
     setJoinRoom(true)
     // Make sure modes are set, important for users joining from a link
-    socket.on("roomJoined", (roomConnectionMode, gameMode) => {
-      setConnectionMode(roomConnectionMode)
-      setGameMode(gameMode)
+    socket.on("roomJoined", (roomConnectionMode, roomConfiguration) => {
+      if (isHost) {
+        validateLocalConfigurationThenSet()
+      } else {
+        setConnectionMode(roomConnectionMode)
+        setMaxPlayers(roomConfiguration.maxPlayers)
+        setRoundLimit(roomConfiguration.roundLimit)
+        setRoundTime(roomConfiguration.roundTime)
+        setGameMode(roomConfiguration.gameMode)
+        setDynamicTimer(roomConfiguration.dynamicTimerOn)
+        setLetterElimination(roomConfiguration.letterEliminationOn)
+      }
     })
 
+    // roomJoined and roomJoinedInProgress are slightly different
+    // roomJoined is if you are in the waiting room, you need to get all configuration settings
+    // If you are just spectating / getting straight into the gameContainer, you don't need to see the configuration settings
+    // All relevant game logic is handled anyways
+    // Ex: you don't need this local dynamicTimer to be set to true for it to function that way for your game, this is handled by the server
+    // Having your local connectionMode and gameMode set are the only important ones, as they affect client side logic in gameContainer
+    // The configuration states are essentially just to see the values, logic is handled elsewhere
     socket.on("roomJoinedInProgress", (roomConnectionMode, gameMode) => {
       setConnectionMode(roomConnectionMode)
       setGameMode(gameMode)
@@ -164,12 +182,14 @@ function WaitingRoom({
   useEffect(() => {
     if (isSocketConnected && roomId && joinRoom) {
       socket.emit("joinRoom", roomId, displayName)
-      if (isHost) {
-        validateLocalConfigurationThenSet()
-        emitAllConfiguration()
-      }
     }
   }, [isSocketConnected, roomId, joinRoom])
+
+  useEffect(() => {
+    if (isHostConfigurationSynced) {
+      emitAllConfiguration()
+    }
+  }, [isHostConfigurationSynced])
 
   // TODO: Don't like this placement here, I think it should belong with nicknameform.
   // Keep displayName up to date
@@ -393,6 +413,7 @@ function WaitingRoom({
     ) {
       setLetterElimination(storedLetterElimination === "true")
     }
+    setIsHostConfigurationSynced(true)
   }
 
   function emitAllConfiguration() {
