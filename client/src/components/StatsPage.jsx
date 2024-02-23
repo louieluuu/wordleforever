@@ -12,6 +12,8 @@ import StatsDistribution from "./StatsDistribution"
 import GameIcon from "../assets/game-icon.svg"
 import Streak from "./Streak"
 
+import Stopwatch from "./Stopwatch"
+
 function StatsPage() {
   const [userStats, setUserStats] = useState({})
   const [connectionModePath, setConnectionModePath] = useState(
@@ -51,6 +53,12 @@ function StatsPage() {
         <div>LOADING...</div>
       ) : (
         <div className="stats-container">
+          {/* <StatsBar
+            totalGames={userStats.totalGames}
+            wins={userStats.totalWins}
+            losses={userStats.totalGames - userStats.totalWins}
+          /> */}
+
           <SegmentedControl
             radius="md"
             size="default"
@@ -84,6 +92,28 @@ function StatsPage() {
           <div style={{ fontSize: "1.5rem", fontStyle: "italic" }}>
             -- the RECKLESS --
           </div>
+
+          <Stopwatch
+            time={userStats.totalSolveTime / _.sum(userStats.solveDistribution)}
+          />
+
+          <Divider
+            label={
+              <div style={{ color: "black", fontSize: "1.25rem" }}>Games</div>
+            }
+            orientation="vertical"
+            color="gray.6"
+          />
+
+          <div style={{ fontSize: "2rem", fontWeight: "bold" }}>
+            <img src={GameIcon} width="25rem" alt="GameIcon" />
+            &nbsp;
+            {userStats.totalGames}
+          </div>
+          <div style={{ fontSize: "3rem", fontWeight: "bold" }}>
+            {userStats.totalWins} Wins
+          </div>
+
           <div
             style={{
               display: "flex",
@@ -103,23 +133,6 @@ function StatsPage() {
           </div>
 
           <Divider
-            label={
-              <div style={{ color: "black", fontSize: "1.25rem" }}>Games</div>
-            }
-            orientation="vertical"
-            color="gray.6"
-          />
-          <div style={{ fontSize: "2rem", fontWeight: "bold" }}>
-            <img src={GameIcon} width="25rem" alt="GameIcon" />
-            &nbsp;
-            {userStats.totalGames}
-          </div>
-          <StatsBar
-            totalGames={userStats.totalGames}
-            wins={userStats.totalWins}
-            losses={userStats.totalGames - userStats.totalWins}
-          />
-          <Divider
             label={<div style={{ fontSize: "1.25rem" }}>Guesses</div>}
             orientation="vertical"
           />
@@ -127,12 +140,6 @@ function StatsPage() {
             <StatsDistribution stats={[1, 6, 3, 10, 15, 2]} />
 
             <div className="stats__misc">
-              <div>
-                Average Solve Time:{" "}
-                {(
-                  userStats.totalSolveTime / _.sum(userStats.solveDistribution)
-                ).toFixed(2)}
-              </div>
               <div>
                 Average Guesses:{" "}
                 {(userStats.totalGuesses / userStats.totalGames).toFixed(2)}
