@@ -13,6 +13,21 @@ import LobbyCountdownModal from "./LobbyCountdownModal"
 import AlertModal from "./AlertModal"
 import KickConfirmationModal from "./KickConfirmationModal"
 
+// Global variables
+// Configuration
+const MIN_MAX_PLAYERS = 2
+const MAX_MAX_PLAYERS = 7
+const DEFAULT_MAX_PLAYERS = 7
+const MIN_ROUND_LIMIT = 1
+const MAX_ROUND_LIMIT = 20
+const DEFAULT_ROUND_LIMIT = 5
+const MIN_ROUND_TIME = 15
+const MAX_ROUND_TIME = 300
+const DEFAULT_ROUND_TIME = 150
+// Default for gameMode is set back out at the App level
+const DEFAULT_DYNAMIC_TIMER = true
+const DEFAULT_LETTER_ELIMINATION = true
+
 function WaitingRoom({
   displayName,
   isSocketConnected,
@@ -48,23 +63,13 @@ function WaitingRoom({
   // TODO: Wrap these all up in an object?
   // Configuration states
   const [showConfiguration, setShowConfiguration] = useState(false)
-  const [maxPlayers, setMaxPlayers] = useState(
-    localStorage.getItem("maxPlayers") || 7
-  )
-  const [roundLimit, setRoundLimit] = useState(
-    localStorage.getItem("roundLimit") || 5
-  )
-  const [roundTime, setRoundTime] = useState(
-    localStorage.getItem("roundTime") || 150
-  )
+  const [maxPlayers, setMaxPlayers] = useState(DEFAULT_MAX_PLAYERS)
+  const [roundLimit, setRoundLimit] = useState(DEFAULT_ROUND_LIMIT)
+  const [roundTime, setRoundTime] = useState(DEFAULT_ROUND_TIME)
   // gameMode and setGameMode are passed in as props
-  const [dynamicTimer, setDynamicTimer] = useState(
-    JSON.parse(localStorage.getItem("dynamicTimer")) === false ? false : true
-  )
+  const [dynamicTimer, setDynamicTimer] = useState(DEFAULT_DYNAMIC_TIMER)
   const [letterElimination, setLetterElimination] = useState(
-    JSON.parse(localStorage.getItem("letterElimination")) === false
-      ? false
-      : true
+    DEFAULT_LETTER_ELIMINATION
   )
 
   // Main useEffect loop
@@ -96,25 +101,29 @@ function WaitingRoom({
       setUserInfo(updatedUserInfo)
     })
 
-    socket.on("maxPlayersUpdated", (newMaxPlayers) =>
+    socket.on("maxPlayersUpdated", (newMaxPlayers) => {
       setMaxPlayers(newMaxPlayers)
-    )
+    })
 
-    socket.on("roundLimitUpdated", (newRoundLimit) =>
+    socket.on("roundLimitUpdated", (newRoundLimit) => {
       setRoundLimit(newRoundLimit)
-    )
+    })
 
-    socket.on("roundTimeUpdated", (newRoundTime) => setRoundTime(newRoundTime))
+    socket.on("roundTimeUpdated", (newRoundTime) => {
+      setRoundTime(newRoundTime)
+    })
 
-    socket.on("gameModeUpdated", (newGameMode) => setGameMode(newGameMode))
+    socket.on("gameModeUpdated", (newGameMode) => {
+      setGameMode(newGameMode)
+    })
 
-    socket.on("dynamicTimerUpdated", (newDynamicTimer) =>
+    socket.on("dynamicTimerUpdated", (newDynamicTimer) => {
       setDynamicTimer(newDynamicTimer)
-    )
+    })
 
-    socket.on("letterEliminationUpdated", (newLetterElimination) =>
+    socket.on("letterEliminationUpdated", (newLetterElimination) => {
       setLetterElimination(newLetterElimination)
-    )
+    })
 
     socket.on("newHost", (newHostId) => {
       if (socket.userId === newHostId) {
@@ -156,6 +165,7 @@ function WaitingRoom({
     if (isSocketConnected && roomId && joinRoom) {
       socket.emit("joinRoom", roomId, displayName)
       if (isHost) {
+        validateLocalConfigurationThenSet()
         emitAllConfiguration()
       }
     }
@@ -343,6 +353,48 @@ function WaitingRoom({
     }
   }
 
+  function validateLocalConfigurationThenSet() {
+    const storedMaxPlayers = parseInt(localStorage.getItem("maxPlayers"))
+    if (
+      !isNaN(storedMaxPlayers) &&
+      storedMaxPlayers >= MIN_MAX_PLAYERS &&
+      storedMaxPlayers <= MAX_MAX_PLAYERS
+    ) {
+      setMaxPlayers(storedMaxPlayers)
+    }
+
+    const storedRoundLimit = parseInt(localStorage.getItem("roundLimit"))
+    if (
+      !isNaN(storedRoundLimit) &&
+      storedRoundLimit >= MIN_ROUND_LIMIT &&
+      storedRoundLimit <= MAX_ROUND_LIMIT
+    ) {
+      setRoundLimit(storedRoundLimit)
+    }
+
+    const storedRoundTime = parseInt(localStorage.getItem("roundTime"))
+    if (
+      !isNaN(storedRoundTime) &&
+      storedRoundTime >= MIN_ROUND_TIME &&
+      storedRoundTime <= MAX_ROUND_TIME
+    ) {
+      setRoundTime(storedRoundTime)
+    }
+
+    const storedDynamicTimer = localStorage.getItem("dynamicTimer")
+    if (storedDynamicTimer === "true" || storedDynamicTimer === "false") {
+      setDynamicTimer(storedDynamicTimer === "true")
+    }
+
+    const storedLetterElimination = localStorage.getItem("letterElimination")
+    if (
+      storedLetterElimination === "true" ||
+      storedLetterElimination === "false"
+    ) {
+      setLetterElimination(storedLetterElimination === "true")
+    }
+  }
+
   function emitAllConfiguration() {
     socket.emit("updateMaxPlayers", roomId, maxPlayers)
     socket.emit("updateRoundLimit", roomId, roundLimit)
@@ -495,8 +547,8 @@ function WaitingRoom({
               <span>{maxPlayers}</span>
               <input
                 type="range"
-                min="2"
-                max="7"
+                min={MIN_MAX_PLAYERS}
+                max={MAX_MAX_PLAYERS}
                 value={maxPlayers}
                 onChange={handleMaxPlayersChange}
                 disabled={!isHost}
@@ -509,8 +561,8 @@ function WaitingRoom({
               <span>{roundLimit}</span>
               <input
                 type="range"
-                min="1"
-                max="20"
+                min={MIN_ROUND_LIMIT}
+                max={MAX_ROUND_LIMIT}
                 value={roundLimit}
                 onChange={handleRoundLimitChange}
                 disabled={!isHost}
@@ -523,8 +575,8 @@ function WaitingRoom({
               <span>{roundTime}</span>
               <input
                 type="range"
-                min="15"
-                max="300"
+                min={MIN_ROUND_TIME}
+                max={MAX_ROUND_TIME}
                 step="5"
                 value={roundTime}
                 onChange={handleRoundTimeChange}

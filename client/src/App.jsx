@@ -28,9 +28,7 @@ function App() {
   )
   const [isSocketConnected, setIsSocketConnected] = useState(false)
   const [connectionMode, setConnectionMode] = useState("offline")
-  const [gameMode, setGameMode] = useState(
-    localStorage.getItem("gameMode") || "normal"
-  )
+  const [gameMode, setGameMode] = useState("normal")
 
   const [displayName, setDisplayName] = useState(
     localStorage.getItem("displayName") || "Wordler"
@@ -42,6 +40,13 @@ function App() {
   const [inputWidth, setInputWidth] = useState(0)
 
   const [roomId, setRoomId] = useState("")
+
+  useEffect(() => {
+    const storedGameMode = localStorage.getItem("gameMode")
+    if (storedGameMode === "challenge" || storedGameMode === "normal") {
+      setGameMode(storedGameMode)
+    }
+  }, [])
 
   // Tutorial for first time visitors
   useEffect(() => {
