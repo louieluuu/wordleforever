@@ -1,8 +1,7 @@
-// Default game configuration
-// Most were originally in Game class, moved here due to configuration in WaitingRoom (no Game object created yet)
+// Room contains some configuration settings for the game, since they need to be displayed + be editable in the waiting room in a private game
+// Default configuration settings here will be those set for a public game, the configurations for a private game will be emitted and updated separately within roomService
+
 const MAX_ROOM_SIZE = 7
-const DEFAULT_PRIVATE_ROUND_LIMIT = 5 // RESET TO 5
-const DEFAULT_PRIVATE_ROUND_TIME = 150 // RESET TO 150
 
 export default class Room {
   constructor(connectionMode, gameMode, userId) {
@@ -21,10 +20,8 @@ export default class Room {
     this.countdownStarted = false
 
     this.maxPlayers = MAX_ROOM_SIZE
-    this.roundLimit =
-      connectionMode === "public" ? 1 : DEFAULT_PRIVATE_ROUND_LIMIT
-    this.roundTime =
-      connectionMode === "public" ? Infinity : DEFAULT_PRIVATE_ROUND_TIME
+    this.roundLimit = 1
+    this.roundTime = Infinity
     this.dynamicTimerOn = true
     this.letterEliminationOn = true
   }
