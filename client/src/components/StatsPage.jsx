@@ -105,13 +105,22 @@ function StatsPage() {
             color="gray.6"
           />
 
-          <div style={{ fontSize: "2rem", fontWeight: "bold" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              fontSize: "1.75rem",
+              fontWeight: "bold",
+            }}
+          >
             <img src={GameIcon} width="25rem" alt="GameIcon" />
             &nbsp;
             {userStats.totalGames}
           </div>
-          <div style={{ fontSize: "3rem", fontWeight: "bold" }}>
-            {userStats.totalWins} Wins
+          <div
+            style={{ fontSize: "3rem", fontWeight: "bold", color: "#cea4d5" }}
+          >
+            {userStats.totalWins} <span style={{ color: "#000000" }}>Wins</span>
           </div>
 
           <div
@@ -119,9 +128,9 @@ function StatsPage() {
               display: "flex",
               alignItems: "center",
               fontSize: "5rem",
-              border: "0.5rem solid black",
-              borderRadius: "50%",
-              padding: "1rem",
+              border: "0.3rem solid black",
+              borderRadius: "1.5rem",
+              padding: "0.5rem",
             }}
           >
             <Streak

@@ -2,15 +2,16 @@ import React from "react"
 
 function Stopwatch({ time }) {
   //   const strokeColor = "#cea4d5"
-  const strokeColor = "#000"
+  const strokeColor = "hsl(0, 0%, 75%)"
 
   const minutes = Math.floor(time / 60)
   const seconds = time % 60
   const formattedTime = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`
 
   return (
-    <p>
+    <p style={{ position: "relative" }}>
       <svg
+        className="svg-stopwatch"
         xmlns="http://www.w3.org/2000/svg"
         width="200"
         height="200"
@@ -47,9 +48,18 @@ function Stopwatch({ time }) {
           transform="translate(-50.5 -1)"
           fill={strokeColor}
         />
+      </svg>
+
+      <svg
+        style={{ position: "absolute", top: "0", left: "0" }}
+        xmlns="http://www.w3.org/2000/svg"
+        width="200"
+        height="200"
+        viewBox="0 0 411 508.83"
+      >
         <text
           x="50%"
-          y="63%"
+          y="64%"
           textAnchor="middle"
           dominantBaseline="middle"
           fontSize="8rem"
