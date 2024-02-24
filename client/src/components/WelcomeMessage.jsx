@@ -17,7 +17,7 @@ function WelcomeMessage({
   useLayoutEffect(() => {
     if (textWidthRef.current) {
       const textWidth = textWidthRef.current.clientWidth
-      setInputWidth(textWidth + 10)
+      setInputWidth(textWidth + 45)
     }
   }, [displayName, textWidthRef])
 
