@@ -81,21 +81,21 @@ function StatsPage() {
             <div className="stats__header--title">- the RECKLESS -</div>
           </div>
           <div className="stats__stopwatch">
-            {"{"}
-            {/* <Stopwatch
+            <div className="stats__stopwatch--icon">
+              {"{"}
+              {/* <Stopwatch
               time={
                 userStats.totalSolveTime / _.sum(userStats.solveDistribution)
               }
             /> */}
-            <Stopwatch time={45} />
-            {"}"}
+              <Stopwatch time={15} />
+              {"}"}
+            </div>
+            <div className="stats__stopwatch--caption">Avg Solve Time</div>
           </div>
 
-          <div className="stats__stopwatch--caption">Avg Solve Time</div>
-
           <Divider
-            className="stats__divider"
-            label={<div style={{ fontSize: "1rem" }}>Games</div>}
+            label={<div className="stats__divider--label">Games</div>}
             orientation="vertical"
             color="gray.6"
           />
@@ -175,8 +175,9 @@ function StatsPage() {
           </div>
 
           <Divider
-            label={<div style={{ fontSize: "1rem" }}>Guesses</div>}
+            label={<div className="stats__divider--label">Guesses</div>}
             orientation="vertical"
+            color="gray.6"
           />
 
           <div className="stats__guesses">

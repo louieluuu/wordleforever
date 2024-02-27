@@ -5,61 +5,68 @@
 
 @use "sass:math";
 $ratio: math.div(508.83, 411);
+$platinum-ratio: math.div(508.83, 791.64);
+
 $stopwatch-width: 150px;
 $stopwatch-height: $stopwatch-width * $ratio;
 
 @mixin phone-styles-stats {
-  // Placing the variables in here overwrites the global ones.
-  $stopwatch-width: 5rem;
-  $stopwatch-height: $stopwatch-width * $ratio;
-
   .stats {
     &__container {
-      margin-top: 0.5rem;
-      max-width: 16rem;
+      // Make the page stretch to the bottom.
+      display: flex;
+      flex: 1;
+      justify-content: space-around;
+
+      max-width: 100vw;
+
+      margin-block: 1dvh;
     }
 
     &__header {
       line-height: 1.25;
-      padding-bottom: 0.5rem;
 
       &--username {
-        font-size: 2rem;
+        font-size: 5dvh;
       }
 
       &--title {
-        font-size: 1.25rem;
+        font-size: 3.1dvh;
       }
     }
 
     &__stopwatch {
-      font-size: 5rem;
+      font-size: 12.5dvh;
       font-weight: 500;
       line-height: 1;
 
-      gap: 1rem;
+      padding-top: 1dvh;
+      padding-bottom: 1.75dvh;
+
+      &--icon {
+        gap: 1rem;
+      }
 
       &--caption {
-        font-size: 0.8rem;
+        font-size: 2dvh;
         font-style: italic;
         line-height: 0.5;
-        padding-bottom: 0.75rem;
       }
     }
 
     &__games {
-      $games-size: 1.25rem;
+      $phone-games-size: 3.1dvh;
 
       display: flex;
       align-items: center;
 
-      font-size: $games-size;
+      font-size: $phone-games-size;
       font-weight: bolder;
 
       &--icon {
         display: flex;
-        width: $games-size;
-        height: $games-size;
+        width: $phone-games-size;
+        height: $phone-games-size;
       }
 
       &--total {
@@ -68,10 +75,10 @@ $stopwatch-height: $stopwatch-width * $ratio;
     }
 
     &__wins {
-      font-size: 2.25rem;
+      font-size: 5.6dvh;
       font-weight: bold;
 
-      line-height: 1.5;
+      line-height: 1;
 
       &--total {
         font-weight: bolder;
@@ -84,7 +91,7 @@ $stopwatch-height: $stopwatch-width * $ratio;
     &__streak {
       display: flex;
       align-items: center;
-      font-size: 2.5rem;
+      font-size: 6.25dvh;
       font-family: "Roboto";
     }
 
@@ -109,33 +116,61 @@ $stopwatch-height: $stopwatch-width * $ratio;
         border-left: 1px solid hsl(0, 0%, 75%);
 
         &--title {
-          font-size: 0.9rem;
+          font-size: 2.1dvh;
           line-height: 1;
         }
 
         &--total {
-          font-size: 1.75rem;
+          font-size: 4.3dvh;
         }
+      }
+    }
+
+    &__divider {
+      &--label {
+        font-size: 2.5dvh;
       }
     }
   }
 
   .svg-stopwatch {
-    width: $stopwatch-width;
-    height: $stopwatch-height;
+    $phone-stopwatch-width: 13dvh;
+    $phone-stopwatch-height: $phone-stopwatch-width * $ratio;
+
+    $phone-stopwatch-platinum-width: 25dvh;
+    $phone-stopwatch-platinum-height: $phone-stopwatch-platinum-width *
+      $platinum-ratio;
+
+    width: $phone-stopwatch-width;
+    height: $phone-stopwatch-height;
+
+    &--platinum {
+      width: $phone-stopwatch-platinum-width;
+      height: $phone-stopwatch-platinum-height;
+    }
 
     &__text {
-      width: $stopwatch-width;
-      height: $stopwatch-height;
+      width: $phone-stopwatch-width;
+      height: $phone-stopwatch-height;
 
+      // Note: rem is more consistent than dvh here.
       font-size: 9rem;
       font-weight: 600;
+
+      &--platinum {
+        width: $phone-stopwatch-platinum-width;
+        height: $phone-stopwatch-platinum-height;
+
+        // Note: rem is more consistent than dvh here.
+        font-size: 9rem;
+        font-weight: 600;
+      }
     }
   }
 
   .distribution {
     &__container {
-      font-size: 0.8rem;
+      font-size: 2dvh;
     }
   }
 }
@@ -173,11 +208,18 @@ $stopwatch-height: $stopwatch-width * $ratio;
 
   &__stopwatch {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 
     font-family: "Roboto";
+
+    &--icon {
+      display: flex;
+      flex-direction: row;
+
+      align-items: center;
+    }
   }
 
   &__games {
@@ -194,7 +236,7 @@ $stopwatch-height: $stopwatch-width * $ratio;
     @extend .svg-stopwatch;
     stroke: $stopwatch-bronze;
     fill: $stopwatch-bronze;
-    filter: drop-shadow(0px 5px 2px rgb(0 0 0 / 0.4));
+    filter: drop-shadow(0px 5px 2px rgba(192, 108, 12, 0.4));
   }
 
   &--silver {
@@ -215,7 +257,7 @@ $stopwatch-height: $stopwatch-width * $ratio;
     @extend .svg-stopwatch;
     stroke: $stopwatch-platinum;
     fill: $stopwatch-platinum;
-    filter: drop-shadow(0px 5px 2px rgb(0 0 0 / 0.4));
+    filter: drop-shadow(0px 5px 2px rgba(93, 102, 231, 0.5));
   }
 
   &__text {
@@ -224,6 +266,10 @@ $stopwatch-height: $stopwatch-width * $ratio;
 
     font-family: "Roboto Slab";
     font-weight: 600;
+
+    &--platinum {
+      @extend .svg-stopwatch__text;
+    }
   }
 }
 

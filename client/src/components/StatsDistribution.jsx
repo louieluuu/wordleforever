@@ -1,8 +1,9 @@
 function StatsDistribution({ stats }) {
   const maxStat = Math.max(...stats)
-  const maxBarWidth = 8
+  const maxBarWidth = 50
 
-  const tinyPadding = 0.5
+  // If you don't add some padding, 0 width ends up looking weird.
+  const tinyPadding = 4
 
   return (
     <div className="distribution__container">
@@ -12,7 +13,7 @@ function StatsDistribution({ stats }) {
           <div
             className="distribution__bar"
             style={{
-              width: `${(solve / maxStat) * maxBarWidth + tinyPadding}rem`,
+              width: `${(solve / maxStat) * maxBarWidth + tinyPadding}vw`,
             }}
           >
             {solve}

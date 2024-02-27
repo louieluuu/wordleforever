@@ -24,6 +24,7 @@ body {
   margin: 0;
   background-color: $bg-main;
   color: $color;
+  overflow: hidden;
 }
 
 a {
@@ -55,7 +56,6 @@ li {
   height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
 // Temporary breakpoints
