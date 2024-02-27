@@ -1,17 +1,16 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
+
 import { isEmpty, sum } from "lodash-es"
 const _ = { isEmpty, sum }
 
 import { Divider, SegmentedControl } from "@mantine/core"
 import classes from "./StatsPage.module.css"
 
-import StatsBar from "./StatsBar"
 import StatsDistribution from "./StatsDistribution"
 
 import GameIcon from "../assets/game-icon.svg"
 import Streak from "./Streak"
-
 import Stopwatch from "./Stopwatch"
 
 function StatsPage() {
@@ -52,108 +51,155 @@ function StatsPage() {
       {_.isEmpty(userStats) ? (
         <div>LOADING...</div>
       ) : (
-        <div className="stats-container">
-          {/* <StatsBar
-            totalGames={userStats.totalGames}
-            wins={userStats.totalWins}
-            losses={userStats.totalGames - userStats.totalWins}
-          /> */}
-
-          <SegmentedControl
-            radius="md"
-            size="default"
-            value={connectionModePath}
-            data={[
-              { value: "public", label: "Public" },
-              { value: "private", label: "Private" },
-            ]}
-            classNames={classes}
-            onChange={changeConnectionModePath}
-          />
-          <SegmentedControl
-            radius="md"
-            size="default"
-            value={gameModePath}
-            data={[
-              { value: "normal", label: "Normal" },
-              { value: "challenge", label: "Challenge" },
-            ]}
-            classNames={classes}
-            onChange={changeGameModePath}
-          />
-          <div
-            style={{
-              fontSize: "3rem",
-              fontWeight: "800",
-            }}
-          >
-            Goldjet
+        <div className="stats__container">
+          <div className="stats__tabs">
+            <SegmentedControl
+              radius="md"
+              size="default"
+              value={connectionModePath}
+              data={[
+                { value: "public", label: "Public" },
+                { value: "private", label: "Private" },
+              ]}
+              classNames={classes}
+              onChange={changeConnectionModePath}
+            />
+            <SegmentedControl
+              radius="md"
+              size="default"
+              value={gameModePath}
+              data={[
+                { value: "normal", label: "Normal" },
+                { value: "challenge", label: "Challenge" },
+              ]}
+              classNames={classes}
+              onChange={changeGameModePath}
+            />
           </div>
-          <div style={{ fontSize: "1.5rem", fontStyle: "italic" }}>
-            -- the RECKLESS --
+          <div className="stats__header">
+            <div className="stats__header--username">Goldjet</div>
+            <div className="stats__header--title">- the RECKLESS -</div>
+          </div>
+          <div className="stats__stopwatch">
+            {"{"}
+            {/* <Stopwatch
+              time={
+                userStats.totalSolveTime / _.sum(userStats.solveDistribution)
+              }
+            /> */}
+            <Stopwatch time={45} />
+            {"}"}
           </div>
 
-          <Stopwatch
-            time={userStats.totalSolveTime / _.sum(userStats.solveDistribution)}
-          />
+          <div className="stats__stopwatch--caption">Avg Solve Time</div>
 
           <Divider
-            label={
-              <div style={{ color: "black", fontSize: "1.25rem" }}>Games</div>
-            }
+            className="stats__divider"
+            label={<div style={{ fontSize: "1rem" }}>Games</div>}
             orientation="vertical"
             color="gray.6"
           />
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              fontSize: "1.75rem",
-              fontWeight: "bold",
-            }}
-          >
-            <img src={GameIcon} width="25rem" alt="GameIcon" />
+          <div className="stats__games">
+            <div className="stats__games--icon">
+              <img src={GameIcon} alt="GameIcon" />
+            </div>
             &nbsp;
-            {userStats.totalGames}
-          </div>
-          <div
-            style={{ fontSize: "3rem", fontWeight: "bold", color: "#cea4d5" }}
-          >
-            {userStats.totalWins} <span style={{ color: "#000000" }}>Wins</span>
+            <div className="stats__games--total">{userStats.totalGames}</div>
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              fontSize: "5rem",
-              border: "0.3rem solid black",
-              borderRadius: "1.5rem",
-              padding: "0.5rem",
-            }}
-          >
+          <div className="stats__wins">
+            <span className="stats__wins--total">{userStats.totalWins}</span>
+            &nbsp;Wins
+          </div>
+
+          <div className="stats__streak">
             <Streak
-              streak={2}
+              streak={userStats.currStreak}
+              connectionMode="public"
+              gameMode={gameModePath}
+              inGame={true}
+            />
+            |
+            <span style={{ fontWeight: "700", paddingRight: "0.7rem" }}>
+              {userStats.maxStreak}
+            </span>
+            {/* <Streak
+              streak={null}
               connectionMode="public"
               gameMode="normal"
               inGame={true}
             />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                fontSize: "0.8rem",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              CURR
+              <span
+                style={{ fontSize: "3rem", fontWeight: "500", lineHeight: "1" }}
+              >
+                {userStats.currStreak}
+              </span>
+            </div>
+            <span
+              style={{
+                fontSize: "4rem",
+              }}
+            >
+              &nbsp;|
+            </span>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                fontSize: "0.8rem",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              MAX
+              <span
+                style={{
+                  fontSize: "3rem",
+                  fontWeight: "bold",
+                  lineHeight: "1",
+                }}
+              >
+                {userStats.maxStreak}
+              </span>
+            </div> */}
           </div>
 
           <Divider
-            label={<div style={{ fontSize: "1.25rem" }}>Guesses</div>}
+            label={<div style={{ fontSize: "1rem" }}>Guesses</div>}
             orientation="vertical"
           />
-          <div className="stats__guesses">
-            <StatsDistribution stats={[1, 6, 3, 10, 15, 2]} />
 
-            <div className="stats__misc">
-              <div>
-                Average Guesses:{" "}
+          <div className="stats__guesses">
+            <div className="stats__guesses--distribution">
+              <StatsDistribution stats={userStats.solveDistribution} />
+            </div>
+            <div className="stats__guesses--misc">
+              <div className="stats__guesses--misc--title">
+                Average
+                <br />
+                Guesses
+              </div>
+              <div className="stats__guesses--misc--total">
                 {(userStats.totalGuesses / userStats.totalGames).toFixed(2)}
               </div>
-              <div># Out of Guesses: {userStats.totalOOG}</div>
+              <div className="stats__guesses--misc--title">
+                Out of
+                <br />
+                Guesses
+                <div className="stats__guesses--misc--total">
+                  {userStats.totalOOG}
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -60,6 +60,11 @@ html[data-theme="light"] {
   --streak-challenge-4: hsl(204, 65%, 32%);
   --streak-challenge-7: hsl(188, 57%, 54%);
   --streak-challenge-10: hsl(180, 100%, 66%);
+
+  --stopwatch-bronze: hsl(26, 57%, 48%);
+  --stopwatch-silver: hsl(210, 8%, 80%);
+  --stopwatch-gold: hsl(50, 100%, 50%);
+  --stopwatch-platinum: hsl(180, 80%, 82%);
 }
 
 html,
@@ -122,6 +127,11 @@ html[data-theme="dark"] {
   --streak-challenge-4: hsl(204, 65%, 32%);
   --streak-challenge-7: hsl(188, 57%, 54%);
   --streak-challenge-10: hsl(180, 100%, 66%);
+
+  --stopwatch-bronze: hsl(26, 57%, 38%);
+  --stopwatch-silver: hsl(210, 8%, 70%);
+  --stopwatch-gold: hsl(50, 100%, 40%);
+  --stopwatch-platinum: hsl(180, 80%, 72%);
 }
 
 // Main colors
@@ -185,6 +195,12 @@ $streak-challenge-1: var(--streak-challenge-1);
 $streak-challenge-4: var(--streak-challenge-4);
 $streak-challenge-7: var(--streak-challenge-7);
 $streak-challenge-10: var(--streak-challenge-10);
+
+// Stopwatch
+$stopwatch-bronze: var(--stopwatch-bronze);
+$stopwatch-silver: var(--stopwatch-silver);
+$stopwatch-gold: var(--stopwatch-gold);
+$stopwatch-platinum: var(--stopwatch-platinum);
 
 // Breakpoints
 $breakpoint-sm: 640px;

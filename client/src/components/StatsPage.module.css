@@ -3,8 +3,10 @@ TODO: Would be nice to not have to hard-code width and max-width here. Not sure 
 */
 
 .root {
-  width: 17rem;
-  max-width: 17rem;
+  --width: 95vw;
+
+  width: var(--width);
+  max-width: var(--width);
 
   background-color: light-dark(
     var(--mantine-color-white),

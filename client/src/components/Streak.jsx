@@ -61,7 +61,7 @@ function Streak({ streak, inGame, connectionMode, gameMode }) {
         <div className="streak-container">
           <Flame className={getFlameClassName()} />
           <span className="streak-text">
-            {streak === 0
+            {streak === 0 || streak === null
               ? ""
               : connectionMode === "private"
               ? inGame

@@ -1,53 +1,252 @@
-// TODO: These names are so all-over-the-place. Fix later.
+// The $ratio uses the full, original SVG dimensions.
+
+// To change the SVG size in this CSS file, you just need to
+// change the width, and the height will follow the ratio.
+
+@use "sass:math";
+$ratio: math.div(508.83, 411);
+$stopwatch-width: 150px;
+$stopwatch-height: $stopwatch-width * $ratio;
 
 @mixin phone-styles-stats {
-  .stats-container {
-    margin-top: 0.5rem;
-    max-width: 16rem;
+  // Placing the variables in here overwrites the global ones.
+  $stopwatch-width: 5rem;
+  $stopwatch-height: $stopwatch-width * $ratio;
+
+  .stats {
+    &__container {
+      margin-top: 0.5rem;
+      max-width: 16rem;
+    }
+
+    &__header {
+      line-height: 1.25;
+      padding-bottom: 0.5rem;
+
+      &--username {
+        font-size: 2rem;
+      }
+
+      &--title {
+        font-size: 1.25rem;
+      }
+    }
+
+    &__stopwatch {
+      font-size: 5rem;
+      font-weight: 500;
+      line-height: 1;
+
+      gap: 1rem;
+
+      &--caption {
+        font-size: 0.8rem;
+        font-style: italic;
+        line-height: 0.5;
+        padding-bottom: 0.75rem;
+      }
+    }
+
+    &__games {
+      $games-size: 1.25rem;
+
+      display: flex;
+      align-items: center;
+
+      font-size: $games-size;
+      font-weight: bolder;
+
+      &--icon {
+        display: flex;
+        width: $games-size;
+        height: $games-size;
+      }
+
+      &--total {
+        display: flex;
+      }
+    }
+
+    &__wins {
+      font-size: 2.25rem;
+      font-weight: bold;
+
+      line-height: 1.5;
+
+      &--total {
+        font-weight: bolder;
+        font-style: italic;
+        color: $btn-online;
+        text-shadow: 0px 2px 0px hsla(54, 59%, 54%, 0.5);
+      }
+    }
+
+    &__streak {
+      display: flex;
+      align-items: center;
+      font-size: 2.5rem;
+      font-family: "Roboto";
+    }
+
+    &__guesses {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      gap: 1rem;
+
+      &--distribution {
+        display: flex;
+        align-self: flex-start;
+      }
+
+      &--misc {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+
+        padding-left: 2rem;
+        border-left: 1px solid hsl(0, 0%, 75%);
+
+        &--title {
+          font-size: 0.9rem;
+          line-height: 1;
+        }
+
+        &--total {
+          font-size: 1.75rem;
+        }
+      }
+    }
+  }
+
+  .svg-stopwatch {
+    width: $stopwatch-width;
+    height: $stopwatch-height;
+
+    &__text {
+      width: $stopwatch-width;
+      height: $stopwatch-height;
+
+      font-size: 9rem;
+      font-weight: 600;
+    }
+  }
+
+  .distribution {
+    &__container {
+      font-size: 0.8rem;
+    }
   }
 }
 
-.stats-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  margin-top: 1rem;
-
-  //   border-radius: 5rem;
-  //   padding: 3rem;
-  //   background-color: gray;
-}
-
-.distribution-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.stat {
-  display: flex;
-  align-items: center;
-
-  font-size: 0.8rem;
-}
-
-.stat-bar {
-  display: inline-block;
-  text-align: right;
-  padding-right: 0.5rem;
-  background: lightgray;
-}
-
+// Large screens
 .stats {
-  &__guesses {
+  &__container {
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 
-    &--misc {
-      display: flex;
-      flex-direction: column;
-      color: red;
+  &__tabs {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &--username {
+      font-size: 3rem;
+      font-weight: 800;
     }
+
+    &--title {
+      font-size: 1.5rem;
+      font-family: "Roboto Slab";
+    }
+  }
+
+  &__stopwatch {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    font-family: "Roboto";
+  }
+
+  &__games {
+    display: flex;
+  }
+}
+
+.svg-stopwatch {
+  width: $stopwatch-width;
+  height: $stopwatch-height;
+
+  // Both stroke and fill are necessary for different parts of the SVG. (Stroke for lines, fill for isolated shapes.)
+  &--bronze {
+    @extend .svg-stopwatch;
+    stroke: $stopwatch-bronze;
+    fill: $stopwatch-bronze;
+    filter: drop-shadow(0px 5px 2px rgb(0 0 0 / 0.4));
+  }
+
+  &--silver {
+    @extend .svg-stopwatch;
+    stroke: $stopwatch-silver;
+    fill: $stopwatch-silver;
+    filter: drop-shadow(0px 5px 2px rgb(0 0 0 / 0.4));
+  }
+
+  &--gold {
+    @extend .svg-stopwatch;
+    stroke: $stopwatch-gold;
+    fill: $stopwatch-gold;
+    filter: drop-shadow(0px 5px 2px rgba(155, 100, 0, 0.6));
+  }
+
+  &--platinum {
+    @extend .svg-stopwatch;
+    stroke: $stopwatch-platinum;
+    fill: $stopwatch-platinum;
+    filter: drop-shadow(0px 5px 2px rgb(0 0 0 / 0.4));
+  }
+
+  &__text {
+    width: $stopwatch-width;
+    height: $stopwatch-height;
+
+    font-family: "Roboto Slab";
+    font-weight: 600;
+  }
+}
+
+.distribution {
+  &__container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  &__row {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+
+  &__bar {
+    text-align: right;
+    padding-right: 0.25rem;
+
+    font-weight: 600;
+
+    background: linear-gradient(to right, hsl(180, 100%, 66%), orange);
+    // #ff6b6b - coral color
   }
 }
