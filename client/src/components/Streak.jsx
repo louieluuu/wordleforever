@@ -6,6 +6,10 @@ function Streak({ streak, inGame, connectionMode, gameMode, renderNumber }) {
   function getFlameClassName() {
     let flameClassName = "flame"
 
+    if (streak === undefined) {
+      return flameClassName + "--hidden"
+    }
+
     // Edge case for streak === 0.
     // While inGame and public mode, I want a low opacity flame.
     // In all other cases, I want no flame.

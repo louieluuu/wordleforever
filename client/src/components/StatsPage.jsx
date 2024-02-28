@@ -48,9 +48,37 @@ function StatsPage() {
     setGameModePath(value)
   }
 
+  function allStatsLoaded() {
+    let requiredStats = []
+
+    if (connectionModePath === "public") {
+      requiredStats = [
+        "currStreak",
+        "maxStreak",
+        "totalGames",
+        "totalWins",
+        "solveDistribution",
+        "totalSolveTime",
+        "totalGuesses",
+        "totalOOG",
+      ]
+    } else if (connectionModePath === "private") {
+      requiredStats = [
+        "totalGames",
+        "totalWins",
+        "solveDistribution",
+        "totalSolveTime",
+        "totalGuesses",
+        "totalOOG",
+      ]
+    }
+
+    return requiredStats.every((stat) => stat in userStats)
+  }
+
   return (
     <>
-      {_.isEmpty(userStats) ? (
+      {!allStatsLoaded(userStats) ? (
         <div>LOADING...</div>
       ) : (
         <div className="stats__container">

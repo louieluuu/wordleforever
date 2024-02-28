@@ -6,6 +6,10 @@
 }
 
 .flame {
+  &--hidden {
+    visibility: hidden;
+  }
+
   &--normal {
     &--1 {
       fill: $streak-normal-1;
