@@ -1,6 +1,6 @@
 function StatsDistribution({ stats }) {
   const maxStat = Math.max(...stats)
-  const maxBarWidth = 50
+  const maxBarWidth = 45
 
   // If you don't add some padding, 0 width ends up looking weird.
   const tinyPadding = 4

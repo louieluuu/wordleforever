@@ -116,7 +116,7 @@ function StatsPage() {
             <div className="stats__game-info">
               {/* Wins */}
               <div className="stats__game-info--wins">
-                <div className="stats__game-info--wins--text">&nbsp;Wins</div>
+                <div className="stats__game-info--wins--text">Wins</div>
                 <div className="stats__game-info--wins--total">
                   {userStats.totalWins}
                 </div>
@@ -124,9 +124,7 @@ function StatsPage() {
 
               {/* Solves */}
               <div className="stats__game-info--solves">
-                <div className="stats__game-info--solves--text">
-                  &nbsp;Solves
-                </div>
+                <div className="stats__game-info--solves--text">Solves</div>
                 <div className="stats__game-info--solves--total">
                   {_.sum(userStats.solveDistribution)}
                 </div>
@@ -145,9 +143,7 @@ function StatsPage() {
                 {/* Curr streak */}
                 <div className="stats__game-mode--numbers">
                   <div className="stats__game-mode--top">
-                    <div className="stats__game-mode--top--text">
-                      &nbsp;Curr
-                    </div>
+                    <div className="stats__game-mode--top--text">Curr</div>
                     <div className={`stats__game-mode--top--total`}>
                       {userStats.currStreak}
                     </div>
@@ -155,9 +151,7 @@ function StatsPage() {
 
                   {/* Best streak */}
                   <div className="stats__game-mode--bot">
-                    <div className="stats__game-mode--bot--text">
-                      &nbsp;Best
-                    </div>
+                    <div className="stats__game-mode--bot--text">Best</div>
                     <div className="stats__game-mode--bot--total">
                       {userStats.maxStreak}
                     </div>
@@ -170,86 +164,19 @@ function StatsPage() {
                 {/* Victories */}
                 <div className="stats__game-mode--numbers">
                   <div className="stats__game-mode--top">
-                    <div className="stats__game-mode--top--text">&nbsp;</div>
+                    <div className="stats__game-mode--top--text">Crowns</div>
                     <div className={`stats__game-mode--top--total`}>5</div>
                   </div>
 
                   {/* Matches */}
                   <div className="stats__game-mode--bot">
-                    <div className="stats__game-mode--bot--text">
-                      &nbsp;Matches
-                    </div>
+                    <div className="stats__game-mode--bot--text">Matches</div>
                     <div className="stats__game-mode--bot--total">10</div>
                   </div>
                 </div>
               </div>
             )}
           </div>
-
-          {/* STREAK V1 */}
-          {/* <div className="stats__streak">
-            <Streak
-              streak={userStats.currStreak}
-              connectionMode="public"
-              gameMode={gameModePath}
-              inGame={true}
-            />
-            |
-            <span style={{ fontWeight: "700", paddingRight: "0.7rem" }}>
-              {userStats.maxStreak}
-            </span>
-          </div> */}
-
-          {/* STREAK V2 */}
-          {/* <Streak
-              streak={null}
-              connectionMode="public"
-              gameMode="normal"
-              inGame={true}
-            />
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                fontSize: "0.8rem",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              CURR
-              <span
-                style={{ fontSize: "3rem", fontWeight: "500", lineHeight: "1" }}
-              >
-                {userStats.currStreak}
-              </span>
-            </div>
-            <span
-              style={{
-                fontSize: "4rem",
-              }}
-            >
-              &nbsp;|
-            </span>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                fontSize: "0.8rem",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              MAX
-              <span
-                style={{
-                  fontSize: "3rem",
-                  fontWeight: "bold",
-                  lineHeight: "1",
-                }}
-              >
-                {userStats.maxStreak}
-              </span>
-            </div> */}
 
           <Divider
             label={<div className="stats__divider--label">Guesses</div>}
@@ -258,22 +185,24 @@ function StatsPage() {
           />
 
           <div className="stats__guesses">
-            <div className="stats__guesses--distribution">
-              <StatsDistribution stats={userStats.solveDistribution} />
-            </div>
+            <StatsDistribution stats={userStats.solveDistribution} />
             <div className="stats__guesses--misc">
-              <div className="stats__guesses--misc--title">
-                Average
-                <br />
-                Guesses
+              <div className="stats__guesses--misc--average">
+                <div className="stats__guesses--misc--title">
+                  Avg
+                  <br />
+                  Guesses
+                </div>
+                <div className="stats__guesses--misc--total">
+                  {(userStats.totalGuesses / userStats.totalGames).toFixed(2)}
+                </div>
               </div>
-              <div className="stats__guesses--misc--total">
-                {(userStats.totalGuesses / userStats.totalGames).toFixed(2)}
-              </div>
-              <div className="stats__guesses--misc--title">
-                Out of
-                <br />
-                Guesses
+              <div className="stats__guesses--misc--oog">
+                <div className="stats__guesses--misc--title">
+                  Out of
+                  <br />
+                  Guesses
+                </div>
                 <div className="stats__guesses--misc--total">
                   {userStats.totalOOG}
                 </div>
