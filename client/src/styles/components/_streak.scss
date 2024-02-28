@@ -42,3 +42,13 @@
     }
   }
 }
+
+.crown {
+  &__left {
+    fill: #ffea8a;
+  }
+
+  &__right {
+    fill: #ffdb2d;
+  }
+}

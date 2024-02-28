@@ -51,17 +51,21 @@ $stopwatch-height: $stopwatch-width * $ratio;
         font-size: 2dvh;
         font-style: italic;
         line-height: 0.5;
+
+        color: $color-secondary;
       }
     }
 
-    &__games {
-      $phone-games-size: 3.1dvh;
+    &__total-games {
+      $phone-games-size: 3dvh;
 
       display: flex;
       align-items: center;
 
       font-size: $phone-games-size;
       font-weight: bolder;
+
+      padding-bottom: 1dvh;
 
       &--icon {
         display: flex;
@@ -74,17 +78,131 @@ $stopwatch-height: $stopwatch-width * $ratio;
       }
     }
 
-    &__wins {
-      font-size: 5.6dvh;
-      font-weight: bold;
+    &__game-stats {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    &__game-info {
+      display: flex;
+      flex-direction: column;
+
+      line-height: 1;
+      gap: 1dvh;
+
+      font-size: 2.1dvh;
+
+      &--wins {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        &--total {
+          display: flex;
+
+          font-size: 5dvh;
+          font-weight: 800;
+          font-style: italic;
+          color: $btn-online;
+          text-shadow: 0px 2px 0px hsla(54, 59%, 54%, 0.5);
+        }
+
+        &--text {
+          display: flex;
+          align-items: center;
+
+          color: $color;
+        }
+      }
+
+      &--solves {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        &--total {
+          font-size: 5dvh;
+          font-weight: 800;
+          font-style: italic;
+          color: $btn-offline;
+          text-shadow: 0px 2px 0px hsla(54, 59%, 54%, 0.5);
+        }
+
+        &--text {
+          display: flex;
+          align-items: center;
+
+          color: $color;
+        }
+      }
+    }
+
+    &__game-mode {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
 
       line-height: 1;
 
-      &--total {
-        font-weight: bolder;
-        font-style: italic;
-        color: $btn-online;
-        text-shadow: 0px 2px 0px hsla(54, 59%, 54%, 0.5);
+      font-size: 12dvh;
+
+      &--numbers {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        gap: 1dvh;
+      }
+
+      &--top {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        &--total {
+          display: flex;
+
+          font-size: 5dvh;
+          font-weight: 800;
+          font-style: italic;
+          text-shadow: 0px 2px 0px hsla(0, 0%, 0%, 0.5);
+        }
+
+        &--text {
+          display: flex;
+          align-items: center;
+
+          font-size: 2.1dvh;
+
+          color: $color;
+        }
+      }
+
+      &--bot {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        &--total {
+          font-size: 5dvh;
+          font-weight: 800;
+          font-style: italic;
+          text-shadow: 0px 2px 0px hsla(0, 0%, 0%, 0.5);
+        }
+
+        &--text {
+          display: flex;
+          align-items: center;
+
+          font-size: 2.1dvh;
+
+          color: $color;
+        }
       }
     }
 

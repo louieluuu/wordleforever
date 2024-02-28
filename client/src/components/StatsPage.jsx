@@ -10,6 +10,8 @@ import classes from "./StatsPage.module.css"
 import StatsDistribution from "./StatsDistribution"
 
 import GameIcon from "../assets/game-icon.svg"
+
+import Crown from "../assets/crown.svg?react"
 import Streak from "./Streak"
 import Stopwatch from "./Stopwatch"
 
@@ -97,22 +99,95 @@ function StatsPage() {
           <Divider
             label={<div className="stats__divider--label">Games</div>}
             orientation="vertical"
-            color="gray.6"
+            color="lightgray"
           />
-          <div className="stats__games">
-            <div className="stats__games--icon">
+
+          <div className="stats__total-games">
+            <div className="stats__total-games--icon">
               <img src={GameIcon} alt="GameIcon" />
             </div>
             &nbsp;
-            <div className="stats__games--total">{userStats.totalGames}</div>
+            <div className="stats__total-games--total">
+              {userStats.totalGames}
+            </div>
           </div>
 
-          <div className="stats__wins">
-            <span className="stats__wins--total">{userStats.totalWins}</span>
-            &nbsp;Wins
+          <div className="stats__game-stats">
+            <div className="stats__game-info">
+              {/* Wins */}
+              <div className="stats__game-info--wins">
+                <div className="stats__game-info--wins--text">&nbsp;Wins</div>
+                <div className="stats__game-info--wins--total">
+                  {userStats.totalWins}
+                </div>
+              </div>
+
+              {/* Solves */}
+              <div className="stats__game-info--solves">
+                <div className="stats__game-info--solves--text">
+                  &nbsp;Solves
+                </div>
+                <div className="stats__game-info--solves--total">
+                  {_.sum(userStats.solveDistribution)}
+                </div>
+              </div>
+            </div>
+
+            {connectionModePath === "public" ? (
+              <div className={`stats__game-mode`}>
+                <Streak
+                  streak={userStats.currStreak}
+                  connectionMode="public"
+                  gameMode={gameModePath}
+                  inGame={true}
+                  renderNumber={false}
+                />
+                {/* Curr streak */}
+                <div className="stats__game-mode--numbers">
+                  <div className="stats__game-mode--top">
+                    <div className="stats__game-mode--top--text">
+                      &nbsp;Curr
+                    </div>
+                    <div className={`stats__game-mode--top--total`}>
+                      {userStats.currStreak}
+                    </div>
+                  </div>
+
+                  {/* Best streak */}
+                  <div className="stats__game-mode--bot">
+                    <div className="stats__game-mode--bot--text">
+                      &nbsp;Best
+                    </div>
+                    <div className="stats__game-mode--bot--total">
+                      {userStats.maxStreak}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="stats__game-mode">
+                <Crown />
+                {/* Victories */}
+                <div className="stats__game-mode--numbers">
+                  <div className="stats__game-mode--top">
+                    <div className="stats__game-mode--top--text">&nbsp;</div>
+                    <div className={`stats__game-mode--top--total`}>5</div>
+                  </div>
+
+                  {/* Matches */}
+                  <div className="stats__game-mode--bot">
+                    <div className="stats__game-mode--bot--text">
+                      &nbsp;Matches
+                    </div>
+                    <div className="stats__game-mode--bot--total">10</div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
-          <div className="stats__streak">
+          {/* STREAK V1 */}
+          {/* <div className="stats__streak">
             <Streak
               streak={userStats.currStreak}
               connectionMode="public"
@@ -123,7 +198,10 @@ function StatsPage() {
             <span style={{ fontWeight: "700", paddingRight: "0.7rem" }}>
               {userStats.maxStreak}
             </span>
-            {/* <Streak
+          </div> */}
+
+          {/* STREAK V2 */}
+          {/* <Streak
               streak={null}
               connectionMode="public"
               gameMode="normal"
@@ -172,12 +250,11 @@ function StatsPage() {
                 {userStats.maxStreak}
               </span>
             </div> */}
-          </div>
 
           <Divider
             label={<div className="stats__divider--label">Guesses</div>}
             orientation="vertical"
-            color="gray.6"
+            color="lightgray"
           />
 
           <div className="stats__guesses">

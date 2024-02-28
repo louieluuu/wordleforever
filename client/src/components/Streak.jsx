@@ -2,7 +2,7 @@ import React from "react"
 
 import Flame from "../assets/flame.svg?react"
 
-function Streak({ streak, inGame, connectionMode, gameMode }) {
+function Streak({ streak, inGame, connectionMode, gameMode, renderNumber }) {
   function getFlameClassName() {
     let flameClassName = "flame"
 
@@ -61,7 +61,7 @@ function Streak({ streak, inGame, connectionMode, gameMode }) {
         <div className="streak-container">
           <Flame className={getFlameClassName()} />
           <span className="streak-text">
-            {streak === 0 || streak === null
+            {streak === 0 || renderNumber === false
               ? ""
               : connectionMode === "private"
               ? inGame

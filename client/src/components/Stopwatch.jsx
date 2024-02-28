@@ -47,8 +47,8 @@ function Stopwatch({ time }) {
               r="192"
               fill="none"
               stroke={null}
-              stroke-miterlimit="10"
-              stroke-width="27"
+              strokeMiterlimit="10"
+              strokeWidth="27"
             />
             <line
               x1="395.44"
@@ -57,9 +57,9 @@ function Stopwatch({ time }) {
               y2="174.67"
               fill="none"
               stroke={null}
-              stroke-linecap="round"
-              stroke-miterlimit="10"
-              stroke-width="35"
+              strokeLinecap="round"
+              strokeMiterlimit="10"
+              strokeWidth="35"
             />
             <path
               d="M368,83.56V65s-16-.75-16-16V17s1.13-16,16-16h64s16,.63,16,16V49s-.87,16-16,16V83.56Z"
