@@ -40,7 +40,7 @@ html[data-theme="light"] {
   --tutorial-shadow: 0 0 0 max(100dvh, 100vw) rgba(0, 0, 0, 0.3);
   --username: hsl(278, 37%, 69%);
   --username-hover: hsl(278, 37%, 74%);
-  --username-form-hover: brightness(110%);
+  --username-form-hover: ghtness(110%);
   --username-shadow: hsl(278, 37%, 34%);
   --username-shadow-hover: hsl(278, 37%, 44%);
   --header-hover: 65%;
@@ -65,6 +65,12 @@ html[data-theme="light"] {
   --stopwatch-silver: hsl(210, 8%, 80%);
   --stopwatch-gold: hsl(50, 100%, 50%);
   --stopwatch-platinum: hsl(180, 80%, 82%);
+
+  --stopwatch-shadow-height: 5px;
+  --stopwatch-bronze-shadow: hsla(32, 77%, 38%, 0.4);
+  --stopwatch-silver-shadow: hsla(0, 0%, 0%, 0.4);
+  --stopwatch-gold-shadow: hsla(39, 100%, 30%, 0.6);
+  --stopwatch-platinum-shadow: hsla(236, 74%, 64%, 0.5);
 }
 
 html,
@@ -128,10 +134,16 @@ html[data-theme="dark"] {
   --streak-challenge-7: hsl(188, 57%, 54%);
   --streak-challenge-10: hsl(180, 100%, 66%);
 
-  --stopwatch-bronze: hsl(26, 57%, 38%);
-  --stopwatch-silver: hsl(210, 8%, 70%);
-  --stopwatch-gold: hsl(50, 100%, 40%);
-  --stopwatch-platinum: hsl(180, 80%, 72%);
+  --stopwatch-bronze: hsl(26, 57%, 53%);
+  --stopwatch-silver: hsl(190, 10%, 77%);
+  --stopwatch-gold: hsl(50, 100%, 50%);
+  --stopwatch-platinum: hsl(180, 80%, 84%);
+
+  --stopwatch-shadow-height: 4px;
+  --stopwatch-bronze-shadow: hsla(32, 71%, 41%, 0.4);
+  --stopwatch-silver-shadow: hsla(0, 0%, 45%, 0.6);
+  --stopwatch-gold-shadow: hsla(39, 75%, 52%, 0.6);
+  --stopwatch-platinum-shadow: hsla(240, 100%, 75%, 0.9);
 }
 
 // Main colors
@@ -201,6 +213,12 @@ $stopwatch-bronze: var(--stopwatch-bronze);
 $stopwatch-silver: var(--stopwatch-silver);
 $stopwatch-gold: var(--stopwatch-gold);
 $stopwatch-platinum: var(--stopwatch-platinum);
+
+$stopwatch-shadow-height: var(--stopwatch-shadow-height);
+$stopwatch-bronze-shadow: var(--stopwatch-bronze-shadow);
+$stopwatch-silver-shadow: var(--stopwatch-silver-shadow);
+$stopwatch-gold-shadow: var(--stopwatch-gold-shadow);
+$stopwatch-platinum-shadow: var(--stopwatch-platinum-shadow);
 
 // Breakpoints
 $breakpoint-sm: 640px;

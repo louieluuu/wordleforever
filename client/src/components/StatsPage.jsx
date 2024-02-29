@@ -209,7 +209,6 @@ function StatsPage() {
           <Divider
             label={<div className="stats__divider--label">Guesses</div>}
             orientation="vertical"
-            color="lightgray"
           />
 
           <div className="stats__guesses">
