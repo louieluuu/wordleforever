@@ -67,8 +67,10 @@ function WaitingRoom({
   const [roundLimit, setRoundLimit] = useState(DEFAULT_ROUND_LIMIT)
   const [roundTime, setRoundTime] = useState(DEFAULT_ROUND_TIME)
   // gameMode and setGameMode are passed in as props
-  const [dynamicTimer, setDynamicTimer] = useState(DEFAULT_DYNAMIC_TIMER)
-  const [letterElimination, setLetterElimination] = useState(
+  const [isDynamicTimerOn, setIsDynamicTimerOn] = useState(
+    DEFAULT_DYNAMIC_TIMER
+  )
+  const [isLetterEliminationOn, setIsLetterEliminationOn] = useState(
     DEFAULT_LETTER_ELIMINATION
   )
   const [isHostConfigurationSynced, setIsHostConfigurationSynced] =
@@ -87,8 +89,8 @@ function WaitingRoom({
         setRoundLimit(roomConfiguration.roundLimit)
         setRoundTime(roomConfiguration.roundTime)
         setGameMode(roomConfiguration.gameMode)
-        setDynamicTimer(roomConfiguration.dynamicTimerOn)
-        setLetterElimination(roomConfiguration.letterEliminationOn)
+        setIsDynamicTimerOn(roomConfiguration.isDynamicTimerOn)
+        setIsLetterEliminationOn(roomConfiguration.isLetterEliminationOn)
       }
     })
 
@@ -96,7 +98,7 @@ function WaitingRoom({
     // roomJoined is if you are in the waiting room, you need to get all configuration settings
     // If you are just spectating / getting straight into the gameContainer, you don't need to see the configuration settings
     // All relevant game logic is handled anyways
-    // Ex: you don't need this local dynamicTimer to be set to true for it to function that way for your game, this is handled by the server
+    // Ex: you don't need this local isDynamicTimerOn to be set to true for it to function that way for your game, this is handled by the server
     // Having your local connectionMode and gameMode set are the only important ones, as they affect client side logic in gameContainer
     // The configuration states are essentially just to see the values, logic is handled elsewhere
     socket.on("roomJoinedInProgress", (roomConnectionMode, gameMode) => {
@@ -135,12 +137,12 @@ function WaitingRoom({
       setGameMode(newGameMode)
     })
 
-    socket.on("dynamicTimerUpdated", (newDynamicTimer) => {
-      setDynamicTimer(newDynamicTimer)
+    socket.on("isDynamicTimerOnUpdated", (newIsDynamicTimerOn) => {
+      setIsDynamicTimerOn(newIsDynamicTimerOn)
     })
 
-    socket.on("letterEliminationUpdated", (newLetterElimination) => {
-      setLetterElimination(newLetterElimination)
+    socket.on("isLetterEliminationOnUpdated", (newIsLetterEliminationOn) => {
+      setIsLetterEliminationOn(newIsLetterEliminationOn)
     })
 
     socket.on("newHost", (newHostId) => {
@@ -170,8 +172,8 @@ function WaitingRoom({
       socket.off("roundLimitUpdated")
       socket.off("roundTimeUpdated")
       socket.off("gameModeUpdated")
-      socket.off("dynamicTimerUpdated")
-      socket.off("letterEliminationUpdated")
+      socket.off("isDynamicTimerOnUpdated")
+      socket.off("isLetterEliminationOnUpdated")
       socket.off("countdownStarted")
       socket.off("countdownTick")
       socket.off("roomStarted")
@@ -355,21 +357,21 @@ function WaitingRoom({
     }
   }
 
-  function handleDynamicTimerChange() {
-    const newDynamicTimer = !dynamicTimer
-    setDynamicTimer(newDynamicTimer)
-    socket.emit("updateDynamicTimer", roomId, newDynamicTimer)
+  function handleIsDynamicTimerOnChange() {
+    const newIsDynamicTimerOn = !isDynamicTimerOn
+    setIsDynamicTimerOn(newIsDynamicTimerOn)
+    socket.emit("updateIsDynamicTimerOn", roomId, newIsDynamicTimerOn)
     if (isHost) {
-      localStorage.setItem("dynamicTimer", newDynamicTimer)
+      localStorage.setItem("isDynamicTimerOn", newIsDynamicTimerOn)
     }
   }
 
-  function handleLetterEliminationChange() {
-    const newLetterElimination = !letterElimination
-    setLetterElimination(newLetterElimination)
-    socket.emit("updateLetterElimination", roomId, newLetterElimination)
+  function handleIsLetterEliminationOnChange() {
+    const newIsLetterEliminationOn = !isLetterEliminationOn
+    setIsLetterEliminationOn(newIsLetterEliminationOn)
+    socket.emit("updateIsLetterEliminationOn", roomId, newIsLetterEliminationOn)
     if (isHost) {
-      localStorage.setItem("letterElimination", newLetterElimination)
+      localStorage.setItem("isLetterEliminationOn", newIsLetterEliminationOn)
     }
   }
 
@@ -401,17 +403,22 @@ function WaitingRoom({
       setRoundTime(storedRoundTime)
     }
 
-    const storedDynamicTimer = localStorage.getItem("dynamicTimer")
-    if (storedDynamicTimer === "true" || storedDynamicTimer === "false") {
-      setDynamicTimer(storedDynamicTimer === "true")
+    const storedIsDynamicTimerOn = localStorage.getItem("isDynamicTimerOn")
+    if (
+      storedIsDynamicTimerOn === "true" ||
+      storedIsDynamicTimerOn === "false"
+    ) {
+      setIsDynamicTimerOn(storedIsDynamicTimerOn === "true")
     }
 
-    const storedLetterElimination = localStorage.getItem("letterElimination")
+    const storedIsLetterEliminationOn = localStorage.getItem(
+      "isLetterEliminationOn"
+    )
     if (
-      storedLetterElimination === "true" ||
-      storedLetterElimination === "false"
+      storedIsLetterEliminationOn === "true" ||
+      storedIsLetterEliminationOn === "false"
     ) {
-      setLetterElimination(storedLetterElimination === "true")
+      setIsLetterEliminationOn(storedIsLetterEliminationOn === "true")
     }
     setIsHostConfigurationSynced(true)
   }
@@ -421,8 +428,8 @@ function WaitingRoom({
     socket.emit("updateRoundLimit", roomId, roundLimit)
     socket.emit("updateRoundTime", roomId, roundTime)
     socket.emit("updateGameMode", roomId, gameMode)
-    socket.emit("updateDynamicTimer", roomId, dynamicTimer)
-    socket.emit("updateLetterElimination", roomId, letterElimination)
+    socket.emit("updateIsDynamicTimerOn", roomId, isDynamicTimerOn)
+    socket.emit("updateIsLetterEliminationOn", roomId, isLetterEliminationOn)
   }
 
   return (
@@ -622,8 +629,8 @@ function WaitingRoom({
             <label className="switch">
               <input
                 type="checkbox"
-                checked={letterElimination}
-                onChange={handleLetterEliminationChange}
+                checked={isLetterEliminationOn}
+                onChange={handleIsLetterEliminationOnChange}
                 disabled={!isHost}
               />
               <span className="slider"></span>
@@ -634,8 +641,8 @@ function WaitingRoom({
             <label className="switch">
               <input
                 type="checkbox"
-                checked={dynamicTimer}
-                onChange={handleDynamicTimerChange}
+                checked={isDynamicTimerOn}
+                onChange={handleIsDynamicTimerOnChange}
                 disabled={!isHost}
               />
               <span className="slider"></span>

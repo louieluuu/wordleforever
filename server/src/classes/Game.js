@@ -37,7 +37,7 @@ export default class Game {
     gameMode,
     roundLimit,
     roundTime,
-    dynamicTimerOn,
+    isDynamicTimerOn,
     roomUserInfo,
     prevPoints,
     prevRound,
@@ -74,7 +74,7 @@ export default class Game {
     // Not sure if this is the best formula, but this needed to be changed since round time can be set
     // Default public game round time = 150, 150 / 5 * 2 = 60 seconds solved timer
     game.solvedTimer = (roundTime / 5) * 2
-    game.dynamicTimerOn = dynamicTimerOn
+    game.isDynamicTimerOn = isDynamicTimerOn
     game.hasUpdatedInDbList = []
 
     return game
@@ -309,7 +309,7 @@ export default class Game {
   updatePoints(userId) {
     const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
-      if (this.dynamicTimerOn) {
+      if (this.isDynamicTimerOn) {
         if (this.countSolved === 1 && this.timer > this.solvedTimer) {
           userInfo.points += this.solvedTimer * 2
         } else {

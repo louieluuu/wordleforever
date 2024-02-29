@@ -68,18 +68,18 @@ function getRoomRoundTime(roomId) {
   return 0
 }
 
-function getDynamicTimerOn(roomId) {
+function getIsDynamicTimerOn(roomId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
-    return room.dynamicTimerOn
+    return room.isDynamicTimerOn
   }
   return true
 }
 
-function getLetterEliminationOn(roomId) {
+function getIsLetterEliminationOn(roomId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
-    return room.letterEliminationOn
+    return room.isLetterEliminationOn
   }
   return true
 }
@@ -92,8 +92,8 @@ function getRoomConfiguration(roomId) {
       roundLimit: room.roundLimit,
       roundTime: room.roundTime,
       gameMode: room.gameMode,
-      dynamicTimerOn: room.dynamicTimerOn,
-      letterEliminationOn: room.letterEliminationOn,
+      isDynamicTimerOn: room.isDynamicTimerOn,
+      isLetterEliminationOn: room.isLetterEliminationOn,
     }
     return allConfiguration
   }
@@ -368,19 +368,25 @@ function handleUpdateRoundTime(socket, roomId, newRoundTime) {
   }
 }
 
-function handleUpdateDynamicTimerOn(socket, roomId, newDynamicTimer) {
+function handleUpdateIsDynamicTimerOn(socket, roomId, newIsDynamicTimerOn) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
-    room.dynamicTimerOn = newDynamicTimer
-    socket.to(roomId).emit("dynamicTimerUpdated", newDynamicTimer)
+    room.isDynamicTimerOn = newIsDynamicTimerOn
+    socket.to(roomId).emit("isDynamicTimerOnUpdated", newIsDynamicTimerOn)
   }
 }
 
-function handleUpdateLetterEliminationOn(socket, roomId, newLetterElimination) {
+function handleUpdateIsLetterEliminationOn(
+  socket,
+  roomId,
+  newIsLetterEliminationOn
+) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
-    room.letterEliminationOn = newLetterElimination
-    socket.to(roomId).emit("letterEliminationUpdated", newLetterElimination)
+    room.isLetterEliminationOn = newIsLetterEliminationOn
+    socket
+      .to(roomId)
+      .emit("isLetterEliminationOnUpdated", newIsLetterEliminationOn)
   }
 }
 
@@ -428,8 +434,8 @@ export {
   getRoomGameMode,
   getRoomRoundLimit,
   getRoomRoundTime,
-  getDynamicTimerOn,
-  getLetterEliminationOn,
+  getIsDynamicTimerOn,
+  getIsLetterEliminationOn,
   getRoomConfiguration,
   handleDisplayNameUpdate,
   isHostLeaving,
@@ -458,8 +464,8 @@ export {
   handleUpdateRoundLimit,
   handleUpdateRoundTime,
   handleUpdateGameMode,
-  handleUpdateDynamicTimerOn,
-  handleUpdateLetterEliminationOn,
+  handleUpdateIsDynamicTimerOn,
+  handleUpdateIsLetterEliminationOn,
   handleUserDisconnect,
   handleLeaveRoom,
   handleKickUser,

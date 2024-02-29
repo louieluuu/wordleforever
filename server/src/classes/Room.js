@@ -22,7 +22,7 @@ export default class Room {
     this.maxPlayers = MAX_ROOM_SIZE
     this.roundLimit = 1
     this.roundTime = Infinity
-    this.dynamicTimerOn = true
-    this.letterEliminationOn = true
+    this.isDynamicTimerOn = true
+    this.isLetterEliminationOn = true
   }
 }

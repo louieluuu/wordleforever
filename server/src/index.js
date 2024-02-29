@@ -33,8 +33,8 @@ import {
   handleUpdateRoundLimit,
   handleUpdateRoundTime,
   handleUpdateGameMode,
-  handleUpdateDynamicTimerOn,
-  handleUpdateLetterEliminationOn,
+  handleUpdateIsDynamicTimerOn,
+  handleUpdateIsLetterEliminationOn,
 } from "./services/roomService.js"
 import {
   handleLoadUser,
@@ -131,11 +131,11 @@ io.on("connection", (socket) => {
   socket.on("updateGameMode", (roomId, newGameMode) =>
     handleUpdateGameMode(socket, roomId, newGameMode)
   )
-  socket.on("updateDynamicTimer", (roomId, newDynamicTimer) =>
-    handleUpdateDynamicTimerOn(socket, roomId, newDynamicTimer)
+  socket.on("updateIsDynamicTimerOn", (roomId, newIsDynamicTimerOn) =>
+    handleUpdateIsDynamicTimerOn(socket, roomId, newIsDynamicTimerOn)
   )
-  socket.on("updateLetterElimination", (roomId, newLetterElimination) =>
-    handleUpdateLetterEliminationOn(socket, roomId, newLetterElimination)
+  socket.on("updateIsLetterEliminationOn", (roomId, newIsLetterEliminationOn) =>
+    handleUpdateIsLetterEliminationOn(socket, roomId, newIsLetterEliminationOn)
   )
   // Start countdown before starting the game -> navigate to game room
   socket.on("startCountdown", (roomId) => handleCountdownStart(roomId, io))
