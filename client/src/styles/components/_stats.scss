@@ -108,8 +108,8 @@ $stopwatch-height: $stopwatch-width * $ratio;
           font-size: 5dvh;
           font-weight: 800;
           font-style: italic;
-          color: $btn-online;
-          text-shadow: 0px 2px 0px hsla(54, 59%, 54%, 0.5);
+          color: $wins;
+          text-shadow: 0px 2px 0px $wins-shadow;
         }
 
         &--text {
@@ -127,8 +127,8 @@ $stopwatch-height: $stopwatch-width * $ratio;
           font-size: 5dvh;
           font-weight: 800;
           font-style: italic;
-          color: $btn-offline;
-          text-shadow: 0px 2px 0px hsla(54, 59%, 54%, 0.5);
+          color: $solves;
+          text-shadow: 0px 2px 0px $solves-shadow;
         }
 
         &--text {
@@ -167,7 +167,7 @@ $stopwatch-height: $stopwatch-width * $ratio;
           font-size: 5dvh;
           font-weight: 800;
           font-style: italic;
-          text-shadow: 0px 2px 0px hsla(0, 0%, 0%, 0.5);
+          text-shadow: 0px 2px 0px $text-shadow;
         }
 
         &--text {
@@ -187,7 +187,7 @@ $stopwatch-height: $stopwatch-width * $ratio;
           font-size: 5dvh;
           font-weight: 800;
           font-style: italic;
-          text-shadow: 0px 2px 0px hsla(0, 0%, 0%, 0.5);
+          text-shadow: 0px 2px 0px $text-shadow;
         }
 
         &--text {

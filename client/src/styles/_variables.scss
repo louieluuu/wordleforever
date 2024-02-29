@@ -51,6 +51,12 @@ html[data-theme="light"] {
 
   --firefox-checkmark-diamond: hsl(0, 0%, 100%);
 
+  --wins: hsl(93, 77%, 38%);
+  --solves: hsl(197, 89%, 26%);
+  --wins-shadow: hsla(54, 59%, 54%, 0.5);
+  --solves-shadow: hsla(276, 72%, 72%, 0.5);
+  --text-shadow: hsla(0, 0%, 0%, 0.5);
+
   --streak-normal-1: hsl(49, 92%, 54%);
   --streak-normal-4: hsl(36, 88%, 55%);
   --streak-normal-7: hsl(30, 100%, 47%);
@@ -124,6 +130,12 @@ html[data-theme="dark"] {
 
   --firefox-checkmark-diamond: hsl(150, 100%, 68%, 0.4);
 
+  --wins: hsl(93, 67%, 46%);
+  --solves: hsl(194, 69%, 31%);
+  --wins-shadow: hsla(54, 52%, 36%, 0.5);
+  --solves-shadow: hsla(212, 73%, 32%, 0.5);
+  --text-shadow: hsla(0, 0%, 50%, 0.9);
+
   --streak-normal-1: hsl(41, 92%, 62%);
   --streak-normal-4: hsl(32, 78%, 53%);
   --streak-normal-7: hsl(20, 87%, 52%);
@@ -137,7 +149,7 @@ html[data-theme="dark"] {
   --stopwatch-bronze: hsl(26, 57%, 53%);
   --stopwatch-silver: hsl(190, 10%, 77%);
   --stopwatch-gold: hsl(50, 100%, 50%);
-  --stopwatch-platinum: hsl(180, 80%, 84%);
+  --stopwatch-platinum: hsl(180, 80%, 82%);
 
   --stopwatch-shadow-height: 4px;
   --stopwatch-bronze-shadow: hsla(32, 71%, 41%, 0.4);
@@ -196,6 +208,13 @@ $waiting-room-background-filter: var(--waiting-room-background-filter);
 $private-room-info: var(--private-room-info);
 $private-room-ready: var(--private-room-ready);
 $firefox-checkmark-diamond: var(--firefox-checkmark-diamond);
+
+// Stats Page
+$wins: var(--wins);
+$solves: var(--solves);
+$wins-shadow: var(--wins-shadow);
+$solves-shadow: var(--solves-shadow);
+$text-shadow: var(--text-shadow);
 
 // Streak
 $streak-normal-1: var(--streak-normal-1);
