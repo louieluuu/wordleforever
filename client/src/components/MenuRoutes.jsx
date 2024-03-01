@@ -19,6 +19,8 @@ function MenuRoutes({
   isSocketConnected,
   gameMode,
   setGameMode,
+  isLetterEliminationOn,
+  setIsLetterEliminationOn,
   connectionMode,
   setConnectionMode,
   isHost,
@@ -76,6 +78,8 @@ function MenuRoutes({
                 setConnectionMode={setConnectionMode}
                 gameMode={gameMode}
                 setGameMode={setGameMode}
+                isLetterEliminationOn={isLetterEliminationOn}
+                setIsLetterEliminationOn={setIsLetterEliminationOn}
                 isHost={isHost}
                 setIsHost={setIsHost}
                 setIsSpectating={setIsSpectating}

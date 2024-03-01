@@ -26,7 +26,6 @@ const MAX_ROUND_TIME = 300
 const DEFAULT_ROUND_TIME = 150
 // Default for gameMode is set back out at the App level
 const DEFAULT_DYNAMIC_TIMER = true
-const DEFAULT_LETTER_ELIMINATION = true
 
 function WaitingRoom({
   displayName,
@@ -35,6 +34,8 @@ function WaitingRoom({
   setConnectionMode,
   gameMode,
   setGameMode,
+  isLetterEliminationOn,
+  setIsLetterEliminationOn,
   isHost,
   setIsHost,
   setIsSpectating,
@@ -70,9 +71,7 @@ function WaitingRoom({
   const [isDynamicTimerOn, setIsDynamicTimerOn] = useState(
     DEFAULT_DYNAMIC_TIMER
   )
-  const [isLetterEliminationOn, setIsLetterEliminationOn] = useState(
-    DEFAULT_LETTER_ELIMINATION
-  )
+  // isLetterEliminationOn and setIsLetterEliminationOn are passed in as props
   const [isHostConfigurationSynced, setIsHostConfigurationSynced] =
     useState(false)
 
@@ -411,15 +410,6 @@ function WaitingRoom({
       setIsDynamicTimerOn(storedIsDynamicTimerOn === "true")
     }
 
-    const storedIsLetterEliminationOn = localStorage.getItem(
-      "isLetterEliminationOn"
-    )
-    if (
-      storedIsLetterEliminationOn === "true" ||
-      storedIsLetterEliminationOn === "false"
-    ) {
-      setIsLetterEliminationOn(storedIsLetterEliminationOn === "true")
-    }
     setIsHostConfigurationSynced(true)
   }
 

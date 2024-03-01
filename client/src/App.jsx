@@ -16,6 +16,12 @@ import LoginPage from "./components/LoginPage"
 import RegisterPage from "./components/RegisterPage"
 import ResetPasswordPage from "./components/ResetPasswordPage"
 
+// Global variables
+// Configuration (needed on client side -> used in GameContainer, displayed in WaitingRoom)
+// Rest of configuration is in WaitingRoom as it isn't needed for client side logic (doesn't need to be passed into GameContainer)
+const DEFAULT_GAME_MODE = "normal"
+const DEFAULT_LETTER_ELIMINATION = true
+
 function App() {
   // I'd rather pull the breakpoints from "../styles/_variables.scss", think you can do it with webpack but going to skip it for now
   const breakpointSm = "640px"
@@ -28,7 +34,10 @@ function App() {
   )
   const [isSocketConnected, setIsSocketConnected] = useState(false)
   const [connectionMode, setConnectionMode] = useState("offline")
-  const [gameMode, setGameMode] = useState("normal")
+  const [gameMode, setGameMode] = useState(DEFAULT_GAME_MODE)
+  const [isLetterEliminationOn, setIsLetterEliminationOn] = useState(
+    DEFAULT_LETTER_ELIMINATION
+  )
 
   const [displayName, setDisplayName] = useState(
     localStorage.getItem("displayName") || "Wordler"
@@ -45,6 +54,16 @@ function App() {
     const storedGameMode = localStorage.getItem("gameMode")
     if (storedGameMode === "challenge" || storedGameMode === "normal") {
       setGameMode(storedGameMode)
+    }
+
+    const storedIsLetterEliminationOn = localStorage.getItem(
+      "isLetterEliminationOn"
+    )
+    if (
+      storedIsLetterEliminationOn === "true" ||
+      storedIsLetterEliminationOn === "false"
+    ) {
+      setIsLetterEliminationOn(storedIsLetterEliminationOn === "true")
     }
   }, [])
 
@@ -113,6 +132,8 @@ function App() {
                     isSocketConnected={isSocketConnected}
                     gameMode={gameMode}
                     setGameMode={setGameMode}
+                    isLetterEliminationOn={isLetterEliminationOn}
+                    setIsLetterEliminationOn={setIsLetterEliminationOn}
                     connectionMode={connectionMode}
                     setConnectionMode={setConnectionMode}
                     isHost={isHost}
