@@ -20,9 +20,11 @@ $stopwatch-height: $stopwatch-width * $ratio;
       flex: 1;
       justify-content: space-around;
 
-      max-width: 92.5vw;
+      width: 92.5vw;
 
       margin-block: 1dvh;
+
+      font-family: "Segoe UI";
     }
 
     &__header {
@@ -76,6 +78,7 @@ $stopwatch-height: $stopwatch-width * $ratio;
       &--total {
         display: flex;
         font-style: italic;
+        opacity: 90%;
       }
     }
 
@@ -210,6 +213,7 @@ $stopwatch-height: $stopwatch-width * $ratio;
       &--misc {
         display: flex;
         flex-direction: column;
+        gap: 1dvh;
 
         &--average,
         &--oog {
@@ -401,16 +405,22 @@ $stopwatch-height: $stopwatch-width * $ratio;
   &__row {
     display: flex;
     flex-direction: row;
+    align-items: center;
     gap: 0.5rem;
   }
 
   &__bar {
+    color: hsl(240, 3%, 7%);
     text-align: right;
     padding-right: 0.25rem;
 
     font-weight: 600;
 
-    background: linear-gradient(to right, hsl(180, 100%, 66%), orange);
+    background: linear-gradient(
+      to right,
+      hsl(180, 100%, 66%),
+      hsl(39, 100%, 50%)
+    );
     // #ff6b6b - coral color
   }
 }

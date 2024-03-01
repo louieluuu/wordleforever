@@ -49,10 +49,10 @@
 
 .crown {
   &__left {
-    fill: #ffea8a;
+    fill: $crown-left;
   }
 
   &__right {
-    fill: #ffdb2d;
+    fill: $crown-right;
   }
 }

@@ -51,6 +51,7 @@ html[data-theme="light"] {
 
   --firefox-checkmark-diamond: hsl(0, 0%, 100%);
 
+  --stats-tabs-shadow: hsla(0, 0%, 45%, 0.1);
   --wins: hsl(93, 77%, 38%);
   --solves: hsl(197, 89%, 26%);
   --wins-shadow: hsla(54, 59%, 54%, 0.5);
@@ -66,6 +67,9 @@ html[data-theme="light"] {
   --streak-challenge-4: hsl(204, 65%, 32%);
   --streak-challenge-7: hsl(188, 57%, 54%);
   --streak-challenge-10: hsl(180, 100%, 66%);
+
+  --crown-left: hsl(50, 100%, 75%);
+  --crown-right: hsl(50, 100%, 60%);
 
   --stopwatch-bronze: hsl(26, 57%, 48%);
   --stopwatch-silver: hsl(210, 8%, 80%);
@@ -130,10 +134,11 @@ html[data-theme="dark"] {
 
   --firefox-checkmark-diamond: hsl(150, 100%, 68%, 0.4);
 
+  --stats-tabs-shadow: hsla(0, 0%, 45%, 0.15);
   --wins: hsl(93, 67%, 46%);
   --solves: hsl(194, 69%, 31%);
   --wins-shadow: hsla(54, 52%, 36%, 0.5);
-  --solves-shadow: hsla(212, 73%, 32%, 0.5);
+  --solves-shadow: hsla(278, 58%, 37%, 0.8);
   --text-shadow: hsla(0, 0%, 50%, 0.9);
 
   --streak-normal-1: hsl(41, 92%, 62%);
@@ -145,6 +150,9 @@ html[data-theme="dark"] {
   --streak-challenge-4: hsl(204, 65%, 32%);
   --streak-challenge-7: hsl(188, 57%, 54%);
   --streak-challenge-10: hsl(180, 100%, 66%);
+
+  --crown-left: hsl(50, 100%, 80%);
+  --crown-right: hsl(50, 100%, 60%);
 
   --stopwatch-bronze: hsl(26, 57%, 53%);
   --stopwatch-silver: hsl(190, 10%, 77%);
@@ -210,6 +218,7 @@ $private-room-ready: var(--private-room-ready);
 $firefox-checkmark-diamond: var(--firefox-checkmark-diamond);
 
 // Stats Page
+$stats-tabs-shadow: var(--stats-tabs-shadow);
 $wins: var(--wins);
 $solves: var(--solves);
 $wins-shadow: var(--wins-shadow);
@@ -226,6 +235,10 @@ $streak-challenge-1: var(--streak-challenge-1);
 $streak-challenge-4: var(--streak-challenge-4);
 $streak-challenge-7: var(--streak-challenge-7);
 $streak-challenge-10: var(--streak-challenge-10);
+
+// Crown
+$crown-left: var(--crown-left);
+$crown-right: var(--crown-right);
 
 // Stopwatch
 $stopwatch-bronze: var(--stopwatch-bronze);

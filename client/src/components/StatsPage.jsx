@@ -4,18 +4,26 @@ import axios from "axios"
 import { isEmpty, sum } from "lodash-es"
 const _ = { isEmpty, sum }
 
-import { Divider, SegmentedControl } from "@mantine/core"
-import classes from "./StatsPage.module.css"
+import { SegmentedControl } from "@mantine/core"
+import "@mantine/core/styles/SegmentedControl.css"
+import "../styles/components/_segmented-control.scss"
 
 import StatsDistribution from "./StatsDistribution"
 
 import GameIcon from "../assets/game-icon.svg"
-
 import Crown from "../assets/crown.svg?react"
+import Divider from "./Divider"
 import Streak from "./Streak"
 import Stopwatch from "./Stopwatch"
 
 function StatsPage() {
+  const segmentedControlClasses = {
+    root: "root",
+    indicator: "indicator",
+    control: "control",
+    label: "label",
+  }
+
   const [userStats, setUserStats] = useState({})
   const [connectionModePath, setConnectionModePath] = useState(
     localStorage.getItem("connectionModePath") || "public"
@@ -84,25 +92,21 @@ function StatsPage() {
         <div className="stats__container">
           <div className="stats__tabs">
             <SegmentedControl
-              radius="md"
-              size="default"
+              classNames={segmentedControlClasses}
               value={connectionModePath}
               data={[
                 { value: "public", label: "Public" },
                 { value: "private", label: "Private" },
               ]}
-              classNames={classes}
               onChange={changeConnectionModePath}
             />
             <SegmentedControl
-              radius="md"
-              size="default"
+              classNames={segmentedControlClasses}
               value={gameModePath}
               data={[
                 { value: "normal", label: "Normal" },
                 { value: "challenge", label: "Challenge" },
               ]}
-              classNames={classes}
               onChange={changeGameModePath}
             />
           </div>
@@ -118,17 +122,13 @@ function StatsPage() {
                 userStats.totalSolveTime / _.sum(userStats.solveDistribution)
               }
             /> */}
-              <Stopwatch time={15} />
+              <Stopwatch time={14} />
               {"}"}
             </div>
             <div className="stats__stopwatch--caption">Avg Solve Time</div>
           </div>
 
-          <Divider
-            label={<div className="stats__divider--label">Games</div>}
-            orientation="vertical"
-            color="lightgray"
-          />
+          <Divider label="Games" />
 
           <div className="stats__total-games">
             <div className="stats__total-games--icon">
@@ -206,10 +206,7 @@ function StatsPage() {
             )}
           </div>
 
-          <Divider
-            label={<div className="stats__divider--label">Guesses</div>}
-            orientation="vertical"
-          />
+          <Divider label="Guesses" />
 
           <div className="stats__guesses">
             <StatsDistribution stats={userStats.solveDistribution} />

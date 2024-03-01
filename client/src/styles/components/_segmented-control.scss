@@ -1,0 +1,51 @@
+@import "../variables";
+
+.root {
+  @media only screen and (max-width: $breakpoint-sm) {
+    width: 92.5vw;
+    max-width: 92.5vw;
+  }
+
+  $width-desktop: 50vw;
+
+  width: $width-desktop;
+  max-width: $width-desktop;
+
+  background-color: $bg-main-dark;
+
+  box-shadow: 0 0.0625rem 0.1875rem $stats-tabs-shadow,
+    $stats-tabs-shadow 0 1.25rem 1.5625rem -0.3125rem,
+    $stats-tabs-shadow 0 0.3125rem 0.625rem -0.3125rem;
+}
+
+.indicator {
+  border-radius: 0.5rem;
+
+  background-image: linear-gradient(
+    to right,
+    hsl(339, 76%, 59%),
+    hsl(27, 98%, 54%)
+  );
+}
+
+.control {
+  &::before {
+    display: none;
+  }
+}
+
+.label {
+  &,
+  &:hover {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 1.7rem;
+    font-weight: 600;
+    color: hsl(0, 0%, 50%);
+
+    &[data-active] {
+      color: hsl(0, 0%, 100%);
+    }
+  }
+}
