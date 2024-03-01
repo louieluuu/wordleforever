@@ -54,6 +54,7 @@ html[data-theme="light"] {
   --stats-tabs-shadow: hsla(0, 0%, 45%, 0.1);
   --wins: hsl(93, 77%, 38%);
   --solves: hsl(197, 89%, 26%);
+  --stats-percent-opacity: 80%;
   --wins-shadow: hsla(54, 59%, 54%, 0.5);
   --solves-shadow: hsla(276, 72%, 72%, 0.5);
   --text-shadow: hsla(0, 0%, 0%, 0.5);
@@ -137,8 +138,9 @@ html[data-theme="dark"] {
   --stats-tabs-shadow: hsla(0, 0%, 45%, 0.15);
   --wins: hsl(93, 67%, 46%);
   --solves: hsl(194, 69%, 31%);
+  --stats-percent-opacity: 70%;
   --wins-shadow: hsla(54, 52%, 36%, 0.5);
-  --solves-shadow: hsla(278, 58%, 37%, 0.8);
+  --solves-shadow: hsla(258, 58%, 37%, 0.8);
   --text-shadow: hsla(0, 0%, 50%, 0.9);
 
   --streak-normal-1: hsl(41, 92%, 62%);
@@ -221,6 +223,7 @@ $firefox-checkmark-diamond: var(--firefox-checkmark-diamond);
 $stats-tabs-shadow: var(--stats-tabs-shadow);
 $wins: var(--wins);
 $solves: var(--solves);
+$stats-percent-opacity: var(--stats-percent-opacity);
 $wins-shadow: var(--wins-shadow);
 $solves-shadow: var(--solves-shadow);
 $text-shadow: var(--text-shadow);

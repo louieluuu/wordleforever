@@ -107,12 +107,21 @@ $stopwatch-height: $stopwatch-width * $ratio;
 
         &--total {
           display: flex;
+          align-items: center;
 
           font-size: 5dvh;
           font-weight: 800;
           font-style: italic;
           color: $wins;
           text-shadow: 0px 2px 0px $wins-shadow;
+
+          &--percent {
+            display: flex;
+
+            font-size: 3.5dvh;
+            text-shadow: none;
+            opacity: $stats-percent-opacity;
+          }
         }
 
         &--text {
@@ -127,11 +136,20 @@ $stopwatch-height: $stopwatch-width * $ratio;
         align-items: center;
 
         &--total {
+          display: flex;
+          align-items: center;
+
           font-size: 5dvh;
           font-weight: 800;
           font-style: italic;
           color: $solves;
           text-shadow: 0px 2px 0px $solves-shadow;
+
+          &--percent {
+            font-size: 3.5dvh;
+            text-shadow: none;
+            opacity: $stats-percent-opacity;
+          }
         }
 
         &--text {

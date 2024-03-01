@@ -17,6 +17,7 @@ import Streak from "./Streak"
 import Stopwatch from "./Stopwatch"
 
 function StatsPage() {
+  // Specifying the MantineUI-specific class names.
   const segmentedControlClasses = {
     root: "root",
     indicator: "indicator",
@@ -146,7 +147,15 @@ function StatsPage() {
               <div className="stats__game-info--wins">
                 <div className="stats__game-info--wins--text">Wins</div>
                 <div className="stats__game-info--wins--total">
-                  {userStats.totalWins}
+                  {userStats.totalWins}&nbsp;
+                  <span className="stats__game-info--wins--total--percent">
+                    {"("}
+                    {(
+                      (userStats.totalWins / userStats.totalGames) *
+                      100
+                    ).toFixed(0)}
+                    %{")"}
+                  </span>
                 </div>
               </div>
 
@@ -154,7 +163,16 @@ function StatsPage() {
               <div className="stats__game-info--solves">
                 <div className="stats__game-info--solves--text">Solves</div>
                 <div className="stats__game-info--solves--total">
-                  {_.sum(userStats.solveDistribution)}
+                  {_.sum(userStats.solveDistribution)}&nbsp;
+                  <span className="stats__game-info--solves--total--percent">
+                    {"("}
+                    {(
+                      (_.sum(userStats.solveDistribution) /
+                        userStats.totalGames) *
+                      100
+                    ).toFixed(0)}
+                    %{")"}
+                  </span>
                 </div>
               </div>
             </div>
