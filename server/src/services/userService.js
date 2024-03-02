@@ -98,10 +98,11 @@ async function dbGetUserByUsername(username) {
       // Case-insensitive search
       const user = await User.findOne(
         {
-          username: { $regex: new RegExp(username, "i") },
+          username: { $regex: new RegExp(`^${username}$`, "i") },
         },
         "-_id -__v -username"
       ).lean()
+
       return user
     } catch (error) {
       console.error(

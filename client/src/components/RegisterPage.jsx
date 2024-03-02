@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import socket from "../socket"
 import axios from "axios"
 
@@ -6,37 +6,21 @@ import { useNavigate } from "react-router-dom"
 import useSetRoomId from "../helpers/useSetRoomId"
 
 import { auth } from "../firebase"
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth"
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
 
 function RegisterPage({ setRoomId }) {
   useSetRoomId(setRoomId)
 
+  const navigate = useNavigate()
+
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [username, setUsername] = useState("")
-
-  const [createUserWithEmailAndPassword, user, loading, error] =
-    useCreateUserWithEmailAndPassword(auth)
-
   const [errorMessage, setErrorMessage] = useState("")
 
-  const navigate = useNavigate()
-
-  // Redirect to home page once user is logged in.
-  // TODO: Feel like an async/await or .then() would be more
-  // reliable than this useEffect.
-
-  // TODO: Also, it would be nice if the email/pw errors had
-  // prio over the username errors, but the order would have to change and it's not trivial. (prob can't use the firebase-hook)
-  useEffect(() => {
-    if (user) {
-      const userId = user.user.uid
-      socket.emit("createNewUser", userId, username)
-      navigate("/")
-    }
-  }, [user, username])
-
-  useEffect(() => {
+  // TODO: It would be nice if the email/pw errors had
+  // prio over the username errors, but the order would have to change.
+  function printErrorMessage(error) {
     if (error) {
       switch (error.code) {
         case "auth/missing-email":
@@ -58,7 +42,7 @@ function RegisterPage({ setRoomId }) {
           setErrorMessage("An error occurred. Please try again.")
       }
     }
-  }, [error])
+  }
 
   function handleKeyDown(e) {
     if (e.key === "Enter") {
@@ -120,9 +104,23 @@ function RegisterPage({ setRoomId }) {
   }
 
   async function register() {
-    const validUsername = await validateUsername(username)
-    if (validUsername) {
-      createUserWithEmailAndPassword(email, password)
+    const isValidUsername = await validateUsername(username)
+    if (isValidUsername) {
+      try {
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        )
+        await updateProfile(auth.currentUser, {
+          displayName: username,
+        })
+        const userId = userCredential.user.uid
+        socket.emit("createNewUser", userId, username)
+        navigate("/")
+      } catch (error) {
+        printErrorMessage(error)
+      }
     }
   }
 

@@ -4,7 +4,7 @@
 
 import React, { useState, useLayoutEffect } from "react"
 
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 import { auth } from "../firebase"
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth"
@@ -20,6 +20,8 @@ import logo from "../assets/logo.svg"
 import InfoDialog from "./InfoDialog"
 
 function NavBar({ roomId, isPhoneLayout }) {
+  const navigate = useNavigate()
+
   const [showInfoDialog, setShowInfoDialog] = useState(false)
   const [colorTheme, setColorTheme] = useState("")
 
@@ -65,6 +67,12 @@ function NavBar({ roomId, isPhoneLayout }) {
     setShowInfoDialog(true)
   }
 
+  function handleClickStats() {
+    if (user) {
+      navigate("/user/")
+    }
+  }
+
   function refreshPage() {
     window.location.href = "/"
   }
@@ -90,7 +98,7 @@ function NavBar({ roomId, isPhoneLayout }) {
             title="Info"
             onClick={openInfoDialog}
           />
-          <Link className="navbar__link" reloadDocument to={`/user`}>
+          <Link className="navbar__link" onClick={handleClickStats}>
             <BiBarChartAlt2 className="navbar__stats" title="Statistics" />
           </Link>
           <RiMoonClearFill
