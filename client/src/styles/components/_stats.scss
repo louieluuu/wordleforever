@@ -366,8 +366,8 @@ $stopwatch-height: $stopwatch-width * $ratio;
   // Both stroke and fill are necessary for different parts of the SVG. (Stroke for lines, fill for isolated shapes.)
   &--none {
     @extend .svg-stopwatch;
-    stroke: $bg-main-near;
-    fill: $bg-main-near;
+    stroke: $bg-main-near-invisible;
+    fill: $bg-main-near-invisible;
   }
 
   &--bronze {

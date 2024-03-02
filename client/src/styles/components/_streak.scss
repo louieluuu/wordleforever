@@ -8,8 +8,13 @@
 }
 
 .flame {
+  // TODO: Not sure if we're using this yet.
   &--hidden {
     visibility: hidden;
+  }
+
+  &--none {
+    fill: $bg-main-near-invisible;
   }
 
   &--normal {

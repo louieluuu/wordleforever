@@ -187,6 +187,9 @@ function StatsPage() {
                   streak={
                     userStats[connectionModePath][gameModePath].currStreak
                   }
+                  bestStreak={
+                    userStats[connectionModePath][gameModePath].bestStreak
+                  }
                   connectionMode="public"
                   gameMode={gameModePath}
                   inGame={true}

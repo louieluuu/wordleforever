@@ -2,12 +2,20 @@ import React from "react"
 
 import Flame from "../assets/flame.svg?react"
 
-function Streak({ streak, inGame, connectionMode, gameMode, renderNumber }) {
+function Streak({
+  streak,
+  bestStreak,
+  inGame,
+  connectionMode,
+  gameMode,
+  renderNumber,
+}) {
   function getFlameClassName() {
     let flameClassName = "flame"
 
-    if (streak === undefined) {
-      return flameClassName + "--hidden"
+    // Only for rendering on the Stats Page.
+    if (bestStreak === 0) {
+      return flameClassName + "--none"
     }
 
     // Edge case for streak === 0.

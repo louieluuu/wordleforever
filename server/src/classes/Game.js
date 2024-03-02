@@ -360,6 +360,8 @@ export default class Game {
       }
     })
 
+    console.log(`Match winner is: ${matchWinnerId}`)
+
     return matchWinnerId
   }
 
