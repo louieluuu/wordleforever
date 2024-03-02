@@ -21,9 +21,6 @@ import {
   dbCreateNewUser,
   dbGetUserById,
   dbGetUserByUsername,
-  handleUserDisconnect,
-  handleLeaveRoom,
-  handleKickUser,
 } from "./services/userService.js"
 import {
   handleDisplayNameUpdate,
