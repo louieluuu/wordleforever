@@ -98,7 +98,7 @@ app.get("/users/duplicate/:username", async (req, res) => {
   const usernameToTest = req.params.username
   if (usernameToTest) {
     try {
-      const existingUsername = await dbIsUsernameRegistered(usernameToTest)
+      const existingUsername = await dbGetUserByUsername(usernameToTest)
       if (existingUsername) {
         res.send({ isDuplicateUsername: true })
       } else {
