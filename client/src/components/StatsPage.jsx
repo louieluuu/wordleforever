@@ -103,11 +103,14 @@ function StatsPage() {
               {"{"}
               <Stopwatch
                 time={
-                  userStats[connectionModePath][gameModePath].totalSolveTime /
-                  _.sum(
-                    userStats[connectionModePath][gameModePath]
-                      .solveDistribution
-                  )
+                  userStats[connectionModePath][gameModePath].totalSolveTime > 0
+                    ? userStats[connectionModePath][gameModePath]
+                        .totalSolveTime /
+                      _.sum(
+                        userStats[connectionModePath][gameModePath]
+                          .solveDistribution
+                      )
+                    : null
                 }
               />
               {"}"}
@@ -136,12 +139,15 @@ function StatsPage() {
                   {userStats[connectionModePath][gameModePath].totalWins}&nbsp;
                   <span className="stats__game-info--wins--total--percent">
                     {"("}
-                    {(
-                      (userStats[connectionModePath][gameModePath].totalWins /
-                        userStats[connectionModePath][gameModePath]
-                          .totalGames) *
-                      100
-                    ).toFixed(0)}
+                    {userStats[connectionModePath][gameModePath].totalGames > 0
+                      ? (
+                          (userStats[connectionModePath][gameModePath]
+                            .totalWins /
+                            userStats[connectionModePath][gameModePath]
+                              .totalGames) *
+                          100
+                        ).toFixed(0)
+                      : "--"}
                     %{")"}
                   </span>
                 </div>
@@ -158,15 +164,17 @@ function StatsPage() {
                   &nbsp;
                   <span className="stats__game-info--solves--total--percent">
                     {"("}
-                    {(
-                      (_.sum(
-                        userStats[connectionModePath][gameModePath]
-                          .solveDistribution
-                      ) /
-                        userStats[connectionModePath][gameModePath]
-                          .totalGames) *
-                      100
-                    ).toFixed(0)}
+                    {userStats[connectionModePath][gameModePath].totalGames > 0
+                      ? (
+                          (_.sum(
+                            userStats[connectionModePath][gameModePath]
+                              .solveDistribution
+                          ) /
+                            userStats[connectionModePath][gameModePath]
+                              .totalGames) *
+                          100
+                        ).toFixed(0)
+                      : "--"}
                     %{")"}
                   </span>
                 </div>
@@ -238,10 +246,13 @@ function StatsPage() {
                   Guesses
                 </div>
                 <div className="stats__guesses--misc--total">
-                  {(
-                    userStats[connectionModePath][gameModePath].totalGuesses /
-                    userStats[connectionModePath][gameModePath].totalGames
-                  ).toFixed(2)}
+                  {userStats[connectionModePath][gameModePath].totalGames > 0
+                    ? (
+                        userStats[connectionModePath][gameModePath]
+                          .totalGuesses /
+                        userStats[connectionModePath][gameModePath].totalGames
+                      ).toFixed(2)
+                    : "-"}
                 </div>
               </div>
               <div className="stats__guesses--misc--oog">

@@ -267,6 +267,7 @@ $stopwatch-height: $stopwatch-width * $ratio;
     $phone-stopwatch-width: 13dvh;
     $phone-stopwatch-height: $phone-stopwatch-width * $ratio;
 
+    // Unfortunately, because of the platinum stopwatch's wings, the dimensions are different.
     $phone-stopwatch-platinum-width: 25dvh;
     $phone-stopwatch-platinum-height: $phone-stopwatch-platinum-width *
       $platinum-ratio;
@@ -363,6 +364,12 @@ $stopwatch-height: $stopwatch-width * $ratio;
   height: $stopwatch-height;
 
   // Both stroke and fill are necessary for different parts of the SVG. (Stroke for lines, fill for isolated shapes.)
+  &--none {
+    @extend .svg-stopwatch;
+    stroke: $bg-main-dark;
+    fill: $bg-main-dark;
+  }
+
   &--bronze {
     @extend .svg-stopwatch;
     stroke: $stopwatch-bronze;
@@ -406,6 +413,11 @@ $stopwatch-height: $stopwatch-width * $ratio;
     font-family: "Roboto Slab";
     font-weight: bold;
     fill: $color;
+
+    &--none {
+      @extend .svg-stopwatch__text;
+      letter-spacing: 1rem;
+    }
 
     &--platinum {
       @extend .svg-stopwatch__text;

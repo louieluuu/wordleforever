@@ -1,16 +1,28 @@
 import React from "react"
 
 function Stopwatch({ time }) {
-  const minutes = Math.floor(time / 60)
-  const seconds = (time % 60).toFixed(0)
-  const formattedTime = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`
+  let formattedTime
+
+  if (time === null) {
+    formattedTime = "-:--"
+  }
+  //
+  else {
+    const minutes = Math.floor(time / 60)
+    const seconds = (time % 60).toFixed(0)
+    formattedTime = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`
+  }
 
   const platinumThreshold = 15
 
   function getStopwatchClassName() {
     let stopwatchClassName = "svg-stopwatch"
 
-    if (time >= 60) {
+    if (time === null) {
+      stopwatchClassName += "--none"
+    }
+    //
+    else if (time >= 60) {
       stopwatchClassName += "--bronze"
     }
     //
@@ -31,7 +43,7 @@ function Stopwatch({ time }) {
 
   return (
     <div style={{ position: "relative" }}>
-      {time <= platinumThreshold ? (
+      {time !== null && time <= platinumThreshold ? (
         <>
           <svg
             className={getStopwatchClassName()}
@@ -138,7 +150,7 @@ function Stopwatch({ time }) {
           </svg>
 
           <svg
-            className="svg-stopwatch__text"
+            className={`svg-stopwatch__text${time === null ? "--none" : ""}`}
             style={{ position: "absolute", top: "0", left: "0" }}
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 411 508.83"
