@@ -70,7 +70,7 @@ app.get("/user/:username", async (req, res) => {
       }
       // username doesn't exist in the db
       else {
-        // IDK!! what should we do :)
+        // TODO: IDK!! what should we do :)
       }
     }
   } catch (error) {
@@ -98,7 +98,7 @@ app.get("/users/duplicate/:username", async (req, res) => {
   const usernameToTest = req.params.username
   if (usernameToTest) {
     try {
-      const existingUsername = await dbGetUserByUsername(usernameToTest)
+      const existingUsername = await dbIsUsernameRegistered(usernameToTest)
       if (existingUsername) {
         res.send({ isDuplicateUsername: true })
       } else {

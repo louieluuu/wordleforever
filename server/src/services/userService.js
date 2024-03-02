@@ -90,8 +90,6 @@ async function dbGetUserById(userId, connectionMode, gameMode) {
   }
 }
 
-// TODO: For checking duplicate usernames, we shouldn't be returning the entire user object: complete waste. Use one of the methods shown here (dunno which is the best yet): https://stackoverflow.com/questions/8389811/how-to-query-mongodb-to-test-if-an-item-exists
-// TODO: PS duplicate username check is a separate function from this one, where we actually do want to return all the stats for StatsPage.
 async function dbGetUserByUsername(username) {
   if (username) {
     try {
@@ -443,7 +441,6 @@ async function dbBatchUpdateUsers(game) {
     // then Promise.all() to wait for all of them to complete.
     // NOTE: This parallel approach may actually *hinder* the db's performance
     // if our db doesn't handle multiprocessing well. Should test if possible.
-    console.log("Inside dbBatchUpdateUsers")
 
     const userIds = game.getUserIds()
     try {
