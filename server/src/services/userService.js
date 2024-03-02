@@ -73,7 +73,7 @@ async function dbCreateNewUser(userId, username) {
   }
 }
 
-async function dbGetStatsById(userId, connectionMode, gameMode) {
+async function dbGetUserById(userId, connectionMode, gameMode) {
   if (!dbIsRegistered(userId)) {
     return null
   }
@@ -90,13 +90,18 @@ async function dbGetStatsById(userId, connectionMode, gameMode) {
   }
 }
 
-async function dbGetUserByName(username) {
+// TODO: For checking duplicate usernames, we shouldn't be returning the entire user object: complete waste. Use one of the methods shown here (dunno which is the best yet): https://stackoverflow.com/questions/8389811/how-to-query-mongodb-to-test-if-an-item-exists
+// TODO: PS duplicate username check is a separate function from this one, where we actually do want to return all the stats for StatsPage.
+async function dbGetUserByUsername(username) {
   if (username) {
     try {
       // Case-insensitive search
-      const user = await User.findOne({
-        username: { $regex: new RegExp(username, "i") },
-      }).lean()
+      const user = await User.findOne(
+        {
+          username: { $regex: new RegExp(username, "i") },
+        },
+        "-_id -__v -username"
+      ).lean()
       return user
     } catch (error) {
       console.error(
@@ -414,8 +419,8 @@ async function dbBatchUpdateUsers(game) {
 export {
   handleNewConnection,
   dbCreateNewUser,
-  dbGetStatsById,
-  dbGetUserByName,
+  dbGetUserById,
+  dbGetUserByUsername,
   dbGetCurrStreak,
   dbUpdateUser,
   dbBatchUpdateUsers,

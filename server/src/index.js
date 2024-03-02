@@ -19,8 +19,11 @@ import {
 import {
   handleNewConnection,
   dbCreateNewUser,
-  dbGetStatsById,
-  dbGetUserByName,
+  dbGetUserById,
+  dbGetUserByUsername,
+  handleUserDisconnect,
+  handleLeaveRoom,
+  handleKickUser,
 } from "./services/userService.js"
 import {
   handleDisplayNameUpdate,
@@ -61,13 +64,18 @@ app.get("/user/:username", async (req, res) => {
   const username = req.params.username
   try {
     if (username) {
-      const user = await dbGetUserByName(username)
+      const user = await dbGetUserByUsername(username)
       if (user) {
         res.send(user)
+      }
+      // username doesn't exist in the db
+      else {
+        // IDK!! what should we do :)
       }
     }
   } catch (error) {
     console.error(`Error fetching user by username: ${error.message}`)
+    // TODO: Proper error handling? Reciprocated on client side?
     res.send({ error: error.message })
   }
 })
@@ -76,7 +84,7 @@ app.get("/user/:userId/:connectionMode/:gameMode", async (req, res) => {
   const { userId, connectionMode, gameMode } = req.params
   try {
     if (userId && connectionMode && gameMode) {
-      const stats = await dbGetStatsById(userId, connectionMode, gameMode)
+      const stats = await dbGetUserById(userId)
       if (stats) {
         res.send(stats)
       }
@@ -90,7 +98,7 @@ app.get("/users/duplicate/:username", async (req, res) => {
   const usernameToTest = req.params.username
   if (usernameToTest) {
     try {
-      const existingUsername = await dbGetUserByName(usernameToTest)
+      const existingUsername = await dbGetUserByUsername(usernameToTest)
       if (existingUsername) {
         res.send({ isDuplicateUsername: true })
       } else {

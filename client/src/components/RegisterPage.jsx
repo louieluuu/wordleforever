@@ -67,11 +67,13 @@ function RegisterPage({ setRoomId }) {
   }
 
   async function checkDuplicateUsername(username) {
+    const SERVER_URL =
+      process.env.NODE_ENV === "production"
+        ? import.meta.env.VITE_EC2_URL
+        : `${import.meta.env.VITE_IP_ADDR}:3005`
+
     try {
-      const res = await axios.get(
-        // TODO: Change to production URL
-        `http://localhost:3005/users/duplicate/${username}`
-      )
+      const res = await axios.get(`${SERVER_URL}/users/duplicate/${username}`)
       return res.data?.isDuplicateUsername
     } catch (error) {
       console.error(`Error checking for duplicate username: ${error.message}`)

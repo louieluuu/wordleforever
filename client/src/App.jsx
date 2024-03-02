@@ -158,7 +158,7 @@ function App() {
                 path="/forgot"
                 element={<ResetPasswordPage setRoomId={setRoomId} />}
               />
-              <Route path="/user" element={<StatsPage />} />
+              <Route path="/user/:username" element={<StatsPage />} />
               <Route
                 path="/game/:roomId"
                 element={

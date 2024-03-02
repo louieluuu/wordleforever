@@ -1,20 +1,26 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
+import { useParams } from "react-router-dom"
 
 import { isEmpty, sum } from "lodash-es"
 const _ = { isEmpty, sum }
 
+// MantineUI Component
 import { SegmentedControl } from "@mantine/core"
 import "@mantine/core/styles/SegmentedControl.css"
 import "../styles/components/_segmented-control.scss"
 
-import StatsDistribution from "./StatsDistribution"
-
+// SVGs
 import GameIcon from "../assets/game-icon.svg"
 import Crown from "../assets/crown.svg?react"
-import Divider from "./Divider"
+
+// SVG Components
 import Streak from "./Streak"
 import Stopwatch from "./Stopwatch"
+
+// Components
+import Divider from "./Divider"
+import StatsDistribution from "./StatsDistribution"
 
 function StatsPage() {
   // Specifying the MantineUI-specific class names.
@@ -25,6 +31,8 @@ function StatsPage() {
     label: "label",
   }
 
+  const { username } = useParams()
+
   const [userStats, setUserStats] = useState({})
   const [connectionModePath, setConnectionModePath] = useState(
     localStorage.getItem("connectionModePath") || "public"
@@ -34,18 +42,21 @@ function StatsPage() {
   )
 
   useEffect(() => {
-    const userId = "5bps9cZRCSMKiM362Ayo43PHmRq2"
-    const statsPath = `user/${userId}/${connectionModePath}/${gameModePath}`
-    console.log(`statsPath: ${statsPath}`)
+    const SERVER_URL =
+      process.env.NODE_ENV === "production"
+        ? import.meta.env.VITE_EC2_URL
+        : `${import.meta.env.VITE_IP_ADDR}:3005`
 
-    // TODO: Change to production URL.
-    // TODO: Would like to use await syntax, but useEffect can't be async.
-    axios.get(`http://localhost:3005/${statsPath}`).then((res) => {
-      console.log(res.data)
+    const userPath = `user/${username}`
+    console.log(`userPath: ${userPath}`)
+
+    // Would like to use await syntax, but useEffect can't be async.
+    axios.get(`${SERVER_URL}/${userPath}`).then((res) => {
+      console.log(res.data.stats)
       // TODO: Careful here: if res.data is undefined, you'll be rendering a bunch of undefined as we're calling the properties directly. Need better error checking.
-      setUserStats(res.data)
+      setUserStats(res.data.stats)
     })
-  }, [connectionModePath, gameModePath])
+  }, [])
 
   function changeConnectionModePath(value) {
     localStorage.setItem("connectionModePath", value)
@@ -57,37 +68,9 @@ function StatsPage() {
     setGameModePath(value)
   }
 
-  function allStatsLoaded() {
-    let requiredStats = []
-
-    if (connectionModePath === "public") {
-      requiredStats = [
-        "currStreak",
-        "maxStreak",
-        "totalGames",
-        "totalWins",
-        "solveDistribution",
-        "totalSolveTime",
-        "totalGuesses",
-        "totalOOG",
-      ]
-    } else if (connectionModePath === "private") {
-      requiredStats = [
-        "totalGames",
-        "totalWins",
-        "solveDistribution",
-        "totalSolveTime",
-        "totalGuesses",
-        "totalOOG",
-      ]
-    }
-
-    return requiredStats.every((stat) => stat in userStats)
-  }
-
   return (
     <>
-      {!allStatsLoaded(userStats) ? (
+      {_.isEmpty(userStats) ? (
         <div>LOADING...</div>
       ) : (
         <div className="stats__container">
@@ -112,18 +95,21 @@ function StatsPage() {
             />
           </div>
           <div className="stats__header">
-            <div className="stats__header--username">Goldjet</div>
+            <div className="stats__header--username">{username}</div>
             <div className="stats__header--title">- the RECKLESS -</div>
           </div>
           <div className="stats__stopwatch">
             <div className="stats__stopwatch--icon">
               {"{"}
-              {/* <Stopwatch
-              time={
-                userStats.totalSolveTime / _.sum(userStats.solveDistribution)
-              }
-            /> */}
-              <Stopwatch time={14} />
+              <Stopwatch
+                time={
+                  userStats[connectionModePath][gameModePath].totalSolveTime /
+                  _.sum(
+                    userStats[connectionModePath][gameModePath]
+                      .solveDistribution
+                  )
+                }
+              />
               {"}"}
             </div>
             <div className="stats__stopwatch--caption">Avg Solve Time</div>
@@ -137,7 +123,7 @@ function StatsPage() {
             </div>
             &nbsp;
             <div className="stats__total-games--total">
-              {userStats.totalGames}
+              {userStats[connectionModePath][gameModePath].totalGames}
             </div>
           </div>
 
@@ -147,11 +133,13 @@ function StatsPage() {
               <div className="stats__game-info--wins">
                 <div className="stats__game-info--wins--text">Wins</div>
                 <div className="stats__game-info--wins--total">
-                  {userStats.totalWins}&nbsp;
+                  {userStats[connectionModePath][gameModePath].totalWins}&nbsp;
                   <span className="stats__game-info--wins--total--percent">
                     {"("}
                     {(
-                      (userStats.totalWins / userStats.totalGames) *
+                      (userStats[connectionModePath][gameModePath].totalWins /
+                        userStats[connectionModePath][gameModePath]
+                          .totalGames) *
                       100
                     ).toFixed(0)}
                     %{")"}
@@ -163,12 +151,20 @@ function StatsPage() {
               <div className="stats__game-info--solves">
                 <div className="stats__game-info--solves--text">Solves</div>
                 <div className="stats__game-info--solves--total">
-                  {_.sum(userStats.solveDistribution)}&nbsp;
+                  {_.sum(
+                    userStats[connectionModePath][gameModePath]
+                      .solveDistribution
+                  )}
+                  &nbsp;
                   <span className="stats__game-info--solves--total--percent">
                     {"("}
                     {(
-                      (_.sum(userStats.solveDistribution) /
-                        userStats.totalGames) *
+                      (_.sum(
+                        userStats[connectionModePath][gameModePath]
+                          .solveDistribution
+                      ) /
+                        userStats[connectionModePath][gameModePath]
+                          .totalGames) *
                       100
                     ).toFixed(0)}
                     %{")"}
@@ -180,7 +176,9 @@ function StatsPage() {
             {connectionModePath === "public" ? (
               <div className={`stats__game-mode`}>
                 <Streak
-                  streak={userStats.currStreak}
+                  streak={
+                    userStats[connectionModePath][gameModePath].currStreak
+                  }
                   connectionMode="public"
                   gameMode={gameModePath}
                   inGame={true}
@@ -191,7 +189,7 @@ function StatsPage() {
                   <div className="stats__game-mode--top">
                     <div className="stats__game-mode--top--text">Curr</div>
                     <div className={`stats__game-mode--top--total`}>
-                      {userStats.currStreak}
+                      {userStats[connectionModePath][gameModePath].currStreak}
                     </div>
                   </div>
 
@@ -199,7 +197,7 @@ function StatsPage() {
                   <div className="stats__game-mode--bot">
                     <div className="stats__game-mode--bot--text">Best</div>
                     <div className="stats__game-mode--bot--total">
-                      {userStats.maxStreak}
+                      {userStats[connectionModePath][gameModePath].maxStreak}
                     </div>
                   </div>
                 </div>
@@ -227,7 +225,11 @@ function StatsPage() {
           <Divider label="Guesses" />
 
           <div className="stats__guesses">
-            <StatsDistribution stats={userStats.solveDistribution} />
+            <StatsDistribution
+              stats={
+                userStats[connectionModePath][gameModePath].solveDistribution
+              }
+            />
             <div className="stats__guesses--misc">
               <div className="stats__guesses--misc--average">
                 <div className="stats__guesses--misc--title">
@@ -236,7 +238,10 @@ function StatsPage() {
                   Guesses
                 </div>
                 <div className="stats__guesses--misc--total">
-                  {(userStats.totalGuesses / userStats.totalGames).toFixed(2)}
+                  {(
+                    userStats[connectionModePath][gameModePath].totalGuesses /
+                    userStats[connectionModePath][gameModePath].totalGames
+                  ).toFixed(2)}
                 </div>
               </div>
               <div className="stats__guesses--misc--oog">
@@ -246,7 +251,7 @@ function StatsPage() {
                   Guesses
                 </div>
                 <div className="stats__guesses--misc--total">
-                  {userStats.totalOOG}
+                  {userStats[connectionModePath][gameModePath].totalOOG}
                 </div>
               </div>
             </div>
