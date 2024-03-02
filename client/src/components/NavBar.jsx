@@ -71,6 +71,7 @@ function NavBar({ roomId, isPhoneLayout }) {
     if (user) {
       navigate(`/user/${user.displayName}`)
     } else {
+      // TODO:
       console.log("Must be logged in to view stats :(")
     }
   }

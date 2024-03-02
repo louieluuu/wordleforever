@@ -12,9 +12,9 @@ import "../styles/components/_segmented-control.scss"
 
 // SVGs
 import GameIcon from "../assets/game-icon.svg"
-import Crown from "../assets/crown.svg?react"
 
 // SVG Components
+import Crown from "./Crown"
 import Streak from "./Streak"
 import Stopwatch from "./Stopwatch"
 
@@ -48,11 +48,9 @@ function StatsPage() {
         : `${import.meta.env.VITE_IP_ADDR}:3005`
 
     const userPath = `user/${username}`
-    console.log(`userPath: ${userPath}`)
 
     // Would like to use await syntax, but useEffect can't be async.
     axios.get(`${SERVER_URL}/${userPath}`).then((res) => {
-      console.log(res.data.stats)
       // TODO: Careful here: if res.data is undefined, you'll be rendering a bunch of undefined as we're calling the properties directly. Need better error checking.
       setUserStats(res.data.stats)
     })
@@ -68,6 +66,7 @@ function StatsPage() {
     setGameModePath(value)
   }
 
+  // TODO: The "LOADING..." could definitely be improved. Maybe a spinner or something.
   return (
     <>
       {_.isEmpty(userStats) ? (
@@ -185,7 +184,8 @@ function StatsPage() {
               <div className={`stats__game-mode`}>
                 <Streak
                   streak={
-                    userStats[connectionModePath][gameModePath].currStreak
+                    10
+                    // userStats[connectionModePath][gameModePath].currStreak
                   }
                   bestStreak={
                     userStats[connectionModePath][gameModePath].bestStreak
@@ -215,7 +215,11 @@ function StatsPage() {
               </div>
             ) : (
               <div className="stats__game-mode">
-                <Crown />
+                <Crown
+                  matches={
+                    userStats[connectionModePath][gameModePath].totalMatches
+                  }
+                />
                 {/* Victories */}
                 <div className="stats__game-mode--numbers">
                   <div className="stats__game-mode--top">

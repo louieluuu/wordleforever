@@ -57,9 +57,17 @@
 .crown {
   &__left {
     fill: $crown-left;
+
+    &--none {
+      fill: $bg-main-near-invisible;
+    }
   }
 
   &__right {
     fill: $crown-right;
+
+    &--none {
+      fill: $bg-main-near-invisible;
+    }
   }
 }
