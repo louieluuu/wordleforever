@@ -161,6 +161,7 @@ function App() {
                 element={
                   <GameContainer
                     gameMode={gameMode}
+                    isLetterEliminationOn={isLetterEliminationOn}
                     connectionMode={connectionMode}
                     isHost={isHost}
                     setIsHost={setIsHost}

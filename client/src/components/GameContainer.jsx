@@ -66,6 +66,7 @@ const audioWinRound = new Howl({ src: [winRoundWebm, winRoundMp3] })
 
 function GameContainer({
   gameMode,
+  isLetterEliminationOn,
   connectionMode,
   isHost,
   setIsHost,
@@ -94,6 +95,7 @@ function GameContainer({
     green: new Set(),
     yellow: new Set(),
     grey: new Set(),
+    red: new Set(),
   })
 
   // Alert states
@@ -121,6 +123,12 @@ function GameContainer({
   const [timerIndex, setTimerIndex] = useState(0)
   const [showPostGameDialog, setShowPostGameDialog] = useState(false)
   const [showScoreboard, setShowScoreboard] = useState(true)
+  const [letterEliminationPool, setLetterEliminationPool] = useState(
+    generateAlphabetArray()
+  )
+  const [letterEliminationStartTime, setLetterEliminationStartTime] =
+    useState(0)
+  const [letterEliminationInterval, setLetterEliminationInterval] = useState(0)
 
   // Spectator states
   const [spectatorMessage, setSpectatorMessage] = useState("")
@@ -166,6 +174,19 @@ function GameContainer({
     }
   }, [isCountdownRunning, solution])
 
+  // Remove all letters from the solution from the elimination pool (used for letter elimination hints)
+  useEffect(() => {
+    if (isOnline(connectionMode) && isLetterEliminationOn) {
+      const solutionLetterSet = new Set(solution)
+      setLetterEliminationPool((prevLetters) => {
+        const updatedLetterEliminationPool = prevLetters.filter(
+          (letter) => !solutionLetterSet.has(letter)
+        )
+        return updatedLetterEliminationPool
+      })
+    }
+  }, [solution])
+
   // Confetti timer
   useEffect(() => {
     setNumberOfPieces(200)
@@ -198,7 +219,8 @@ function GameContainer({
         newChallengeModeGuess,
         maxRounds,
         round,
-        timer
+        timer,
+        letterEliminationStartTime
       ) => {
         setHasOnlineGameStarted(true)
         resetStates()
@@ -212,6 +234,10 @@ function GameContainer({
         setMaxRounds(maxRounds)
         setRoundCounter(round)
         setRoundTimer(timer)
+        // Currently this is set in the Game class to be the same as the solved timer (what the timer is set to after the first solve if dynamic timer is on)
+        setLetterEliminationStartTime(letterEliminationStartTime)
+        // Approximately 10 hints maximum regardless of the time of the game
+        setLetterEliminationInterval(Math.ceil(letterEliminationStartTime / 10))
       }
     )
 
@@ -234,7 +260,18 @@ function GameContainer({
         setRoundTimer(timer)
         setTimerIndex(timer % 4)
 
-        if (timer !== 0 && timer <= 15) {
+        if (
+          !hasSolved &&
+          !isOutOfGuesses &&
+          isLetterEliminationOn &&
+          timer > 0 &&
+          timer <= letterEliminationStartTime &&
+          (letterEliminationStartTime - timer) % letterEliminationInterval === 0
+        ) {
+          randomLetterElimination()
+        }
+
+        if (timer > 0 && timer <= 15) {
           playAudio(audioTimerLow)
         }
       })
@@ -320,7 +357,7 @@ function GameContainer({
         socket.off("endOfGameInfo")
       }
     }
-  }, [hasOnlineGameStarted, isOutOfGuesses, hasSolved]) // LOUIE: added dep
+  }, [hasOnlineGameStarted, isOutOfGuesses, hasSolved, letterEliminationPool]) // LOUIE: added dep
 
   // These can't be in the main useEffect loop, as they need to happen outside of hasOnlineGameStarted logic (post round in private games)
   useEffect(() => {
@@ -422,7 +459,13 @@ function GameContainer({
     setActiveRowIndex(0)
     setActiveCellIndex(0)
     setSubmittedGuesses([])
-    setHints({ green: new Set(), yellow: new Set(), grey: new Set() })
+    setHints({
+      green: new Set(),
+      yellow: new Set(),
+      grey: new Set(),
+      red: new Set(),
+    })
+    setLetterEliminationPool(generateAlphabetArray())
     setShowAlertModal(false)
     setIsConfettiRunning(false)
     setIsSpectating(false)
@@ -637,14 +680,45 @@ function GameContainer({
       } else if (cell.color === "grey") {
         updatedGreyHints.add(cell.letter)
       }
+      setLetterEliminationPool((prevLetters) => {
+        const updatedLetterEliminationPool = prevLetters.filter(
+          (letter) => letter !== cell.letter
+        )
+        return updatedLetterEliminationPool
+      })
     })
 
     const newHints = {
       green: updatedGreenHints,
       yellow: updatedYellowHints,
       grey: updatedGreyHints,
+      red: hints.red,
     }
     setHints(newHints)
+  }
+
+  // Optional feature to make the game a little easier by adding hints
+  // Randomly eliminates one unused letter
+  function randomLetterElimination() {
+    if (letterEliminationPool.length === 0) {
+      return
+    }
+
+    const randomLetter =
+      letterEliminationPool[
+        Math.floor(Math.random() * letterEliminationPool.length)
+      ]
+    setLetterEliminationPool((prevLetters) => {
+      const updatedLetterEliminationPool = prevLetters.filter(
+        (letter) => letter !== randomLetter
+      )
+      return updatedLetterEliminationPool
+    })
+    setHints((prevHints) => {
+      const updatedRedHints = new Set(prevHints.red)
+      updatedRedHints.add(randomLetter)
+      return { ...prevHints, red: updatedRedHints }
+    })
   }
 
   // Used for hard / challenge mode
@@ -750,6 +824,15 @@ function GameContainer({
   function displaySolution() {
     setAlertMessage(solution)
     setShowAlertModal(true)
+  }
+
+  function generateAlphabetArray() {
+    const alphabetString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    const alphabetArray = []
+    for (let i = 0; i < alphabetString.length; i++) {
+      alphabetArray.push(alphabetString[i])
+    }
+    return alphabetArray
   }
 
   // Could be generalized but no need for this game since the solution will always be 5 letters

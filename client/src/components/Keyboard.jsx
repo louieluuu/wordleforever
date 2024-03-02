@@ -140,6 +140,8 @@ function Keyboard({
       tileClassName += "--yellow"
     } else if (hints.grey.has(letter)) {
       tileClassName += "--grey"
+    } else if (hints.red.has(letter)) {
+      tileClassName += "--red"
     }
 
     return tileClassName

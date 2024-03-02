@@ -95,6 +95,17 @@
       }
     }
 
+    &--red {
+      @extend .keyboard__cell;
+      color: white;
+      border-color: $hint;
+      background-color: $hint;
+
+      &:hover {
+        background-color: $hint-hover;
+      }
+    }
+
     &--large {
       @extend .keyboard__cell;
       width: 4rem;

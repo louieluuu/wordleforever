@@ -387,7 +387,8 @@ export default class Game {
       this.startingWord,
       this.roundLimit,
       this.round,
-      this.timer
+      this.timer,
+      this.solvedTimer
     )
     // Wait for the in game countdown to finish
     setTimeout(() => {
