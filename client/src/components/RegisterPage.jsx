@@ -104,6 +104,8 @@ function RegisterPage({ setRoomId }) {
   }
 
   async function register() {
+    // TODO: error handling could be better here: what if socket.emit fails?
+
     const isValidUsername = await validateUsername(username)
     if (isValidUsername) {
       try {

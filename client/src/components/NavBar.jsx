@@ -9,13 +9,13 @@ import { Link, useNavigate } from "react-router-dom"
 import { auth } from "../firebase"
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth"
 
-import { BiSolidBarChartAlt2, BiBarChartAlt2 } from "react-icons/bi"
+import { BiBarChartAlt2 } from "react-icons/bi"
 import { BsInfoCircle } from "react-icons/bs"
 import { RiMoonClearFill } from "react-icons/ri"
 import { ImExit } from "react-icons/im"
 // import { FaPowerOff } from "react-icons/fa6"
 
-import logo from "../assets/logo.svg"
+import Logo from "../assets/logo.svg"
 
 import InfoDialog from "./InfoDialog"
 
@@ -69,7 +69,9 @@ function NavBar({ roomId, isPhoneLayout }) {
 
   function handleClickStats() {
     if (user) {
-      navigate("/user/")
+      navigate(`/user/${user.displayName}`)
+    } else {
+      console.log("Must be logged in to view stats :(")
     }
   }
 
@@ -83,7 +85,7 @@ function NavBar({ roomId, isPhoneLayout }) {
       <header className="navbar">
         <div className="navbar__left" onClick={refreshPage}>
           <div className="logo">
-            <img src={logo} alt="Logo" />
+            <img src={Logo} alt="Logo" />
             {!isPhoneLayout && (
               <div className="logo__wordmark">
                 <strong className="logo__wordmark--left">Wordle&nbsp;</strong>
@@ -98,9 +100,11 @@ function NavBar({ roomId, isPhoneLayout }) {
             title="Info"
             onClick={openInfoDialog}
           />
-          <Link className="navbar__link" onClick={handleClickStats}>
-            <BiBarChartAlt2 className="navbar__stats" title="Statistics" />
-          </Link>
+          <BiBarChartAlt2
+            className="navbar__stats"
+            title="Statistics"
+            onClick={handleClickStats}
+          />
           <RiMoonClearFill
             className={getColorThemeClassName()}
             title="Switch color theme"
