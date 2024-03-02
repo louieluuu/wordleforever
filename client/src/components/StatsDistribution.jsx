@@ -1,6 +1,4 @@
 function StatsDistribution({ stats }) {
-  console.log(`StatsDistribution stats: ${stats}`)
-
   // https://stackoverflow.com/questions/70944210/why-is-the-spread-operator-needed-for-math-max
   const maxStat = Math.max(...stats)
   const maxBarWidth = 45

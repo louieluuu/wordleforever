@@ -4,7 +4,7 @@ const { Schema, model } = mongoose
 const publicStatsSchema = new Schema(
   {
     currStreak: { type: Number, default: 0 },
-    maxStreak: { type: Number, default: 0 },
+    bestStreak: { type: Number, default: 0 },
     totalGames: { type: Number, default: 0 },
     totalWins: { type: Number, default: 0 },
     solveDistribution: { type: [Number], default: [0, 0, 0, 0, 0, 0] },
@@ -17,6 +17,8 @@ const publicStatsSchema = new Schema(
 
 const privateStatsSchema = new Schema(
   {
+    totalCrowns: { type: Number, default: 0 },
+    totalMatches: { type: Number, default: 0 },
     totalGames: { type: Number, default: 0 },
     totalWins: { type: Number, default: 0 },
     solveDistribution: { type: [Number], default: [0, 0, 0, 0, 0, 0] },

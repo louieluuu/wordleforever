@@ -205,7 +205,7 @@ function StatsPage() {
                   <div className="stats__game-mode--bot">
                     <div className="stats__game-mode--bot--text">Best</div>
                     <div className="stats__game-mode--bot--total">
-                      {userStats[connectionModePath][gameModePath].maxStreak}
+                      {userStats[connectionModePath][gameModePath].bestStreak}
                     </div>
                   </div>
                 </div>
@@ -217,13 +217,17 @@ function StatsPage() {
                 <div className="stats__game-mode--numbers">
                   <div className="stats__game-mode--top">
                     <div className="stats__game-mode--top--text">Crowns</div>
-                    <div className={`stats__game-mode--top--total`}>5</div>
+                    <div className={`stats__game-mode--top--total`}>
+                      {userStats[connectionModePath][gameModePath].totalCrowns}
+                    </div>
                   </div>
 
                   {/* Matches */}
                   <div className="stats__game-mode--bot">
                     <div className="stats__game-mode--bot--text">Matches</div>
-                    <div className="stats__game-mode--bot--total">10</div>
+                    <div className="stats__game-mode--bot--total">
+                      {userStats[connectionModePath][gameModePath].totalMatches}
+                    </div>
                   </div>
                 </div>
               </div>

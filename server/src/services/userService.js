@@ -153,7 +153,7 @@ function constructCurrStreakUpdate(isWinner, connectionMode, gameMode) {
   return update
 }
 
-async function constructMaxStreakUpdate(
+async function constructBestStreakUpdate(
   userId,
   isWinner,
   currStreak,
@@ -163,20 +163,47 @@ async function constructMaxStreakUpdate(
   let update = {}
 
   if (connectionMode === "public" && isWinner) {
-    // Read the current maxStreak from db.
-    const maxStreakPath = `stats.public.${gameMode}.maxStreak`
-    const maxStreakDoc = await User.findById(
+    // Read the current bestStreak from db.
+    const bestStreakPath = `stats.public.${gameMode}.bestStreak`
+    const bestStreakDoc = await User.findById(
       userId,
-      `${maxStreakPath} -_id`
+      `${bestStreakPath} -_id`
     ).lean()
-    const maxStreak = _.get(maxStreakDoc, maxStreakPath)
+    const bestStreak = _.get(bestStreakDoc, bestStreakPath)
 
     // Compare and update if necessary.
-    if (typeof currStreak === "number" && typeof maxStreak === "number") {
-      if (currStreak > maxStreak) {
-        update = { $set: { [maxStreakPath]: currStreak } }
+    if (typeof currStreak === "number" && typeof bestStreak === "number") {
+      if (currStreak > bestStreak) {
+        update = { $set: { [bestStreakPath]: currStreak } }
       }
     }
+  }
+
+  return update
+}
+
+async function constructTotalCrownsUpdate(
+  userId,
+  matchWinnerId,
+  connectionMode,
+  gameMode
+) {
+  let update = {}
+
+  if (connectionMode === "private" && userId === matchWinnerId) {
+    const totalCrownsPath = `stats.private.${gameMode}.totalCrowns`
+    update = { $inc: { [totalCrownsPath]: 1 } }
+  }
+
+  return update
+}
+
+async function constructTotalMatchesUpdate(connectionMode, gameMode) {
+  let update = {}
+
+  if (connectionMode === "private") {
+    const totalMatchesPath = `stats.private.${gameMode}.totalMatches`
+    update = { $inc: { [totalMatchesPath]: 1 } }
   }
 
   return update
@@ -308,10 +335,22 @@ async function dbConstructUserUpdate(userId, game) {
     game.gameMode
   )
 
-  const maxStreakUpdate = await constructMaxStreakUpdate(
+  const bestStreakUpdate = await constructBestStreakUpdate(
     userId,
     game.isWinner(userId),
     game.getStreak(userId),
+    game.connectionMode,
+    game.gameMode
+  )
+
+  const totalCrownsUpdate = await constructTotalCrownsUpdate(
+    userId,
+    game.getMatchWinnerId(),
+    game.connectionMode,
+    game.gameMode
+  )
+
+  const totalMatchesUpdate = await constructTotalMatchesUpdate(
     game.connectionMode,
     game.gameMode
   )
@@ -358,7 +397,9 @@ async function dbConstructUserUpdate(userId, game) {
   // With _.merge, multiple $inc operations will be aggregated instead of overwritten.
   const userUpdate = _.merge(
     currStreakUpdate,
-    maxStreakUpdate,
+    bestStreakUpdate,
+    totalCrownsUpdate,
+    totalMatchesUpdate,
     totalGamesUpdate,
     totalWinsUpdate,
     solveDistribution,

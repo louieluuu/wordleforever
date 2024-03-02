@@ -4,6 +4,7 @@ html,
 html[data-theme="light"] {
   --bg-main: hsl(0, 0%, 100%);
   --bg-main-dark: hsl(0, 0%, 100%);
+  --bg-main-near: hsl(0, 0%, 95%);
   --color: hsl(240, 3%, 7%);
   --color-secondary: hsl(240, 3%, 37%);
 
@@ -87,7 +88,8 @@ html[data-theme="light"] {
 html,
 html[data-theme="dark"] {
   --bg-main: hsl(240, 3%, 7%);
-  --bg-main-dark: hsl(240, 3%, 11%);
+  --bg-main-dark: hsl(240, 3%, 12%);
+  --bg-main-near: hsl(240, 3%, 12%);
   --color: hsl(0, 0%, 95%);
   --color-secondary: hsl(0, 0%, 85%);
 
@@ -171,6 +173,7 @@ html[data-theme="dark"] {
 // Main colors
 $bg-main: var(--bg-main);
 $bg-main-dark: var(--bg-main-dark);
+$bg-main-near: var(--bg-main-near);
 $color: var(--color);
 $color-secondary: var(--color-secondary);
 
