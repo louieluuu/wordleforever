@@ -73,7 +73,10 @@ export default class Game {
     game.timer = roundTime
     // Not sure if this is the best formula, but this needed to be changed since round time can be set
     // Default public game round time = 150, 150 / 5 * 2 = 60 seconds solved timer
-    game.solvedTimer = (roundTime / 5) * 2
+    // Always rounds up to the next multiple of 5
+    // Ex: round time of 120, 120 / 5 * 2 is 48
+    // 48 / 5 = 9.6, the ceiling of which is 10, then multiply back by 5 to get 50
+    game.solvedTimer = Math.ceil(((roundTime / 5) * 2) / 5) * 5
     game.isDynamicTimerOn = isDynamicTimerOn
     game.hasUpdatedInDbList = []
 
