@@ -42,14 +42,18 @@
 
     &--4 {
       fill: $streak-challenge-4;
+      filter: drop-shadow(0 0 5px $streak-challenge-4-shadow);
     }
 
     &--7 {
       fill: $streak-challenge-7;
+      filter: drop-shadow(0 0 10px $streak-challenge-7-shadow);
     }
 
     &--10 {
       fill: $streak-challenge-10;
+      filter: drop-shadow(0 0 10px $streak-challenge-10-shadow)
+        drop-shadow(0 0 30px $streak-challenge-10-shadow);
     }
   }
 }

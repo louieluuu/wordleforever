@@ -65,10 +65,14 @@ html[data-theme="light"] {
   --streak-normal-7: hsl(30, 100%, 47%);
   --streak-normal-10: hsl(1, 81%, 43%);
 
-  --streak-challenge-1: hsl(208, 60%, 17%);
-  --streak-challenge-4: hsl(204, 65%, 32%);
-  --streak-challenge-7: hsl(188, 57%, 54%);
-  --streak-challenge-10: hsl(180, 100%, 66%);
+  --streak-challenge-1: hsl(208, 67%, 23%);
+  --streak-challenge-4: hsl(204, 75%, 41%);
+  --streak-challenge-7: hsl(180, 65%, 49%);
+  --streak-challenge-10: hsl(180, 90%, 55%);
+
+  --streak-challenge-4-shadow: hsla(195, 89%, 46%, 0.6);
+  --streak-challenge-7-shadow: hsla(178, 94%, 52%, 0.7);
+  --streak-challenge-10-shadow: hsla(177, 100%, 50%, 0.5);
 
   --crown-left: hsl(50, 100%, 75%);
   --crown-right: hsl(50, 100%, 60%);
@@ -150,10 +154,14 @@ html[data-theme="dark"] {
   --streak-normal-7: hsl(20, 77%, 52%);
   --streak-normal-10: hsl(0, 69%, 49%);
 
-  --streak-challenge-1: hsl(208, 60%, 17%);
-  --streak-challenge-4: hsl(204, 65%, 32%);
+  --streak-challenge-1: hsl(208, 67%, 23%);
+  --streak-challenge-4: hsl(204, 75%, 41%);
   --streak-challenge-7: hsl(188, 57%, 54%);
   --streak-challenge-10: hsl(180, 100%, 66%);
+
+  --streak-challenge-4-shadow: hsl(194, 75%, 25%);
+  --streak-challenge-7-shadow: hsl(178, 57%, 40%);
+  --streak-challenge-10-shadow: hsl(170, 100%, 50%);
 
   --crown-left: hsl(50, 100%, 80%);
   --crown-right: hsl(50, 100%, 60%);
@@ -241,6 +249,11 @@ $streak-challenge-1: var(--streak-challenge-1);
 $streak-challenge-4: var(--streak-challenge-4);
 $streak-challenge-7: var(--streak-challenge-7);
 $streak-challenge-10: var(--streak-challenge-10);
+
+$streak-challenge-1-shadow: var(--streak-challenge-1-shadow);
+$streak-challenge-4-shadow: var(--streak-challenge-4-shadow);
+$streak-challenge-7-shadow: var(--streak-challenge-7-shadow);
+$streak-challenge-10-shadow: var(--streak-challenge-10-shadow);
 
 // Crown
 $crown-left: var(--crown-left);

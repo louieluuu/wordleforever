@@ -5,9 +5,9 @@ import Flame from "../assets/flame.svg?react"
 function Streak({
   streak,
   bestStreak,
-  inGame,
   connectionMode,
   gameMode,
+  inGame,
   renderNumber,
 }) {
   function getFlameClassName() {

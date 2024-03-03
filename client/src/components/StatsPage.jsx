@@ -184,8 +184,7 @@ function StatsPage() {
               <div className={`stats__game-mode`}>
                 <Streak
                   streak={
-                    10
-                    // userStats[connectionModePath][gameModePath].currStreak
+                    userStats[connectionModePath][gameModePath].currStreak
                   }
                   bestStreak={
                     userStats[connectionModePath][gameModePath].bestStreak
