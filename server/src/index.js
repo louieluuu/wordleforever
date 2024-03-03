@@ -18,6 +18,7 @@ import {
 // Services
 import {
   handleNewConnection,
+  dbCheckExistingUsername,
   dbCreateNewUser,
   dbGetUserById,
   dbGetUserByUsername,
@@ -95,8 +96,8 @@ app.get("/users/duplicate/:username", async (req, res) => {
   const usernameToTest = req.params.username
   if (usernameToTest) {
     try {
-      const existingUsername = await dbGetUserByUsername(usernameToTest)
-      if (existingUsername) {
+      const usernameExists = await dbCheckExistingUsername(usernameToTest)
+      if (usernameExists) {
         res.send({ isDuplicateUsername: true })
       } else {
         res.send({ isDuplicateUsername: false })

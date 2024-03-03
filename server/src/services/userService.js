@@ -3,20 +3,8 @@ const _ = { get, merge }
 
 // Database models
 import User from "../database/User.js"
-
 // Classes
 import Game from "../classes/Game.js"
-
-// Services
-import {
-  getRoom,
-  deleteRoom,
-  removeUserFromRoom,
-  isRoomEmpty,
-  isHostLeaving,
-  generateNewHostInRoom,
-  broadcastRoomUserInfo,
-} from "./roomService.js"
 
 const MIN_FIREBASE_UID_LENGTH = 28
 
@@ -51,13 +39,19 @@ function dbHasUpdated(userId, hasUpdatedInDbList) {
   return true
 }
 
+async function dbCheckExistingUsername(username) {
+  if (username) {
+    const usernameExists = await User.exists({ username: username })
+    return usernameExists
+  }
+}
+
 async function dbCreateNewUser(userId, username) {
   if (userId && username) {
     try {
-      // TODO: If I don't want to transfer the entire user object,
-      // how can I slim the returned object? Really just want a bool
-      const existingUser = await User.findById(userId).lean()
-      if (!existingUser) {
+      // Just in case...
+      const userIdExists = await User.exists({ _id: userId })
+      if (!userIdExists) {
         await User.create({
           _id: userId,
           username: username,
@@ -457,6 +451,7 @@ async function dbBatchUpdateUsers(game) {
 
 export {
   handleNewConnection,
+  dbCheckExistingUsername,
   dbCreateNewUser,
   dbGetUserById,
   dbGetUserByUsername,
