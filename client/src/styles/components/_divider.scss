@@ -1,9 +1,17 @@
+@mixin phone-styles-divider {
+  .divider {
+    font-size: 2.4dvh;
+  }
+}
+
 .divider {
   display: flex;
   align-items: center;
   width: 100%;
-
   opacity: 60%;
+
+  font-weight: 100;
+  font-size: 1.4rem;
 }
 
 .divider::before,

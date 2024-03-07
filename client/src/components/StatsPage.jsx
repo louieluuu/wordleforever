@@ -22,7 +22,7 @@ import Stopwatch from "./Stopwatch"
 import Divider from "./Divider"
 import StatsDistribution from "./StatsDistribution"
 
-function StatsPage() {
+function StatsPage({ isPhoneLayout }) {
   // Specifying the MantineUI-specific class names.
   const segmentedControlClasses = {
     root: "root",
@@ -117,162 +117,189 @@ function StatsPage() {
             <div className="stats__stopwatch--caption">Avg Solve Time</div>
           </div>
 
-          <Divider label="Games" />
-
-          <div className="stats__total-games">
-            <div className="stats__total-games--icon">
-              <img src={GameIcon} alt="GameIcon" />
-            </div>
-            &nbsp;
-            <div className="stats__total-games--total">
-              {userStats[connectionModePath][gameModePath].totalGames}
-            </div>
-          </div>
-
-          <div className="stats__game-stats">
-            <div className="stats__game-info">
-              {/* Wins */}
-              <div className="stats__game-info--wins">
-                <div className="stats__game-info--wins--text">Wins</div>
-                <div className="stats__game-info--wins--total">
-                  {userStats[connectionModePath][gameModePath].totalWins}&nbsp;
-                  <span className="stats__game-info--wins--total--percent">
-                    {"("}
-                    {userStats[connectionModePath][gameModePath].totalGames > 0
-                      ? (
-                          (userStats[connectionModePath][gameModePath]
-                            .totalWins /
-                            userStats[connectionModePath][gameModePath]
-                              .totalGames) *
-                          100
-                        ).toFixed(0)
-                      : "--"}
-                    %{")"}
-                  </span>
+          <div className="stats__secondary__container">
+            <div className="stats__secondary__container--subcontainer">
+              <Divider label="Games" />
+              <div className="stats__total-games">
+                <div className="stats__total-games--icon">
+                  <img src={GameIcon} alt="GameIcon" />
+                </div>
+                &nbsp;
+                <div className="stats__total-games--total">
+                  {userStats[connectionModePath][gameModePath].totalGames}
                 </div>
               </div>
 
-              {/* Solves */}
-              <div className="stats__game-info--solves">
-                <div className="stats__game-info--solves--text">Solves</div>
-                <div className="stats__game-info--solves--total">
-                  {_.sum(
+              <div className="stats__game-stats">
+                <div className="stats__game-info">
+                  {/* Wins */}
+                  <div className="stats__game-info--wins">
+                    <div className="stats__game-info--wins--text">Wins</div>
+                    <div className="stats__game-info--wins--total">
+                      {userStats[connectionModePath][gameModePath].totalWins}
+                      &nbsp;
+                      <span className="stats__game-info--wins--total--percent">
+                        {"("}
+                        {userStats[connectionModePath][gameModePath]
+                          .totalGames > 0
+                          ? (
+                              (userStats[connectionModePath][gameModePath]
+                                .totalWins /
+                                userStats[connectionModePath][gameModePath]
+                                  .totalGames) *
+                              100
+                            ).toFixed(0)
+                          : "--"}
+                        %{")"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Solves */}
+                  <div className="stats__game-info--solves">
+                    <div className="stats__game-info--solves--text">Solves</div>
+                    <div className="stats__game-info--solves--total">
+                      {_.sum(
+                        userStats[connectionModePath][gameModePath]
+                          .solveDistribution
+                      )}
+                      &nbsp;
+                      <span className="stats__game-info--solves--total--percent">
+                        {"("}
+                        {userStats[connectionModePath][gameModePath]
+                          .totalGames > 0
+                          ? (
+                              (_.sum(
+                                userStats[connectionModePath][gameModePath]
+                                  .solveDistribution
+                              ) /
+                                userStats[connectionModePath][gameModePath]
+                                  .totalGames) *
+                              100
+                            ).toFixed(0)
+                          : "--"}
+                        %{")"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {connectionModePath === "public" ? (
+                  <div className={`stats__game-mode`}>
+                    <Streak
+                      streak={
+                        userStats[connectionModePath][gameModePath].currStreak
+                      }
+                      bestStreak={
+                        userStats[connectionModePath][gameModePath].bestStreak
+                      }
+                      connectionMode="public"
+                      gameMode={gameModePath}
+                      inGame={true}
+                      renderNumber={false}
+                    />
+                    {/* Curr streak */}
+                    <div className="stats__game-mode--numbers">
+                      <div className="stats__game-mode--top">
+                        <div className="stats__game-mode--top--text">Curr</div>
+                        <div className={`stats__game-mode--top--total`}>
+                          {
+                            userStats[connectionModePath][gameModePath]
+                              .currStreak
+                          }
+                        </div>
+                      </div>
+
+                      {/* Best streak */}
+                      <div className="stats__game-mode--bot">
+                        <div className="stats__game-mode--bot--text">Best</div>
+                        <div className="stats__game-mode--bot--total">
+                          {
+                            userStats[connectionModePath][gameModePath]
+                              .bestStreak
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="stats__game-mode">
+                    <Crown
+                      matches={
+                        userStats[connectionModePath][gameModePath].totalMatches
+                      }
+                    />
+                    {/* Victories */}
+                    <div className="stats__game-mode--numbers">
+                      <div className="stats__game-mode--top">
+                        <div className="stats__game-mode--top--text">
+                          Crowns
+                        </div>
+                        <div className={`stats__game-mode--top--total`}>
+                          {
+                            userStats[connectionModePath][gameModePath]
+                              .totalCrowns
+                          }
+                        </div>
+                      </div>
+
+                      {/* Matches */}
+                      <div className="stats__game-mode--bot">
+                        <div className="stats__game-mode--bot--text">
+                          Matches
+                        </div>
+                        <div className="stats__game-mode--bot--total">
+                          {
+                            userStats[connectionModePath][gameModePath]
+                              .totalMatches
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="stats__secondary__container--subcontainer">
+              <Divider label="Guesses" />
+              <div className="stats__guesses">
+                <StatsDistribution
+                  stats={
                     userStats[connectionModePath][gameModePath]
                       .solveDistribution
-                  )}
-                  &nbsp;
-                  <span className="stats__game-info--solves--total--percent">
-                    {"("}
-                    {userStats[connectionModePath][gameModePath].totalGames > 0
-                      ? (
-                          (_.sum(
-                            userStats[connectionModePath][gameModePath]
-                              .solveDistribution
-                          ) /
-                            userStats[connectionModePath][gameModePath]
-                              .totalGames) *
-                          100
-                        ).toFixed(0)
-                      : "--"}
-                    %{")"}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {connectionModePath === "public" ? (
-              <div className={`stats__game-mode`}>
-                <Streak
-                  streak={
-                    userStats[connectionModePath][gameModePath].currStreak
                   }
-                  bestStreak={
-                    userStats[connectionModePath][gameModePath].bestStreak
-                  }
-                  connectionMode="public"
-                  gameMode={gameModePath}
-                  inGame={true}
-                  renderNumber={false}
+                  isPhoneLayout={isPhoneLayout}
                 />
-                {/* Curr streak */}
-                <div className="stats__game-mode--numbers">
-                  <div className="stats__game-mode--top">
-                    <div className="stats__game-mode--top--text">Curr</div>
-                    <div className={`stats__game-mode--top--total`}>
-                      {userStats[connectionModePath][gameModePath].currStreak}
+                <div className="stats__guesses--misc">
+                  <div className="stats__guesses--misc--average">
+                    <div className="stats__guesses--misc--title">
+                      Avg
+                      <br />
+                      Guesses
+                    </div>
+                    <div className="stats__guesses--misc--total">
+                      {userStats[connectionModePath][gameModePath].totalGames >
+                      0
+                        ? (
+                            userStats[connectionModePath][gameModePath]
+                              .totalGuesses /
+                            userStats[connectionModePath][gameModePath]
+                              .totalGames
+                          ).toFixed(2)
+                        : "-"}
                     </div>
                   </div>
-
-                  {/* Best streak */}
-                  <div className="stats__game-mode--bot">
-                    <div className="stats__game-mode--bot--text">Best</div>
-                    <div className="stats__game-mode--bot--total">
-                      {userStats[connectionModePath][gameModePath].bestStreak}
+                  <div className="stats__guesses--misc--oog">
+                    <div className="stats__guesses--misc--title">
+                      Out of
+                      <br />
+                      Guesses
+                    </div>
+                    <div className="stats__guesses--misc--total">
+                      {userStats[connectionModePath][gameModePath].totalOOG}
                     </div>
                   </div>
-                </div>
-              </div>
-            ) : (
-              <div className="stats__game-mode">
-                <Crown
-                  matches={
-                    userStats[connectionModePath][gameModePath].totalMatches
-                  }
-                />
-                {/* Victories */}
-                <div className="stats__game-mode--numbers">
-                  <div className="stats__game-mode--top">
-                    <div className="stats__game-mode--top--text">Crowns</div>
-                    <div className={`stats__game-mode--top--total`}>
-                      {userStats[connectionModePath][gameModePath].totalCrowns}
-                    </div>
-                  </div>
-
-                  {/* Matches */}
-                  <div className="stats__game-mode--bot">
-                    <div className="stats__game-mode--bot--text">Matches</div>
-                    <div className="stats__game-mode--bot--total">
-                      {userStats[connectionModePath][gameModePath].totalMatches}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <Divider label="Guesses" />
-
-          <div className="stats__guesses">
-            <StatsDistribution
-              stats={
-                userStats[connectionModePath][gameModePath].solveDistribution
-              }
-            />
-            <div className="stats__guesses--misc">
-              <div className="stats__guesses--misc--average">
-                <div className="stats__guesses--misc--title">
-                  Avg
-                  <br />
-                  Guesses
-                </div>
-                <div className="stats__guesses--misc--total">
-                  {userStats[connectionModePath][gameModePath].totalGames > 0
-                    ? (
-                        userStats[connectionModePath][gameModePath]
-                          .totalGuesses /
-                        userStats[connectionModePath][gameModePath].totalGames
-                      ).toFixed(2)
-                    : "-"}
-                </div>
-              </div>
-              <div className="stats__guesses--misc--oog">
-                <div className="stats__guesses--misc--title">
-                  Out of
-                  <br />
-                  Guesses
-                </div>
-                <div className="stats__guesses--misc--total">
-                  {userStats[connectionModePath][gameModePath].totalOOG}
                 </div>
               </div>
             </div>

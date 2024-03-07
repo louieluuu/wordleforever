@@ -63,6 +63,8 @@ li {
 // Temporary breakpoints
 
 @media only screen and (max-width: $breakpoint-sm) {
+  @include phone-styles-divider;
+
   @include phone-styles-keyboard;
   @include phone-styles-game-board;
   @include phone-styles-waiting-room;

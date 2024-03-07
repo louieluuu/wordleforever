@@ -1,3 +1,5 @@
+// TODO1 means check if these styles are any different than the desktops.
+
 // The $ratio uses the full, original SVG dimensions.
 
 // To change the SVG size in this CSS file, you just need to
@@ -11,25 +13,21 @@ $stopwatch-width: 150px;
 $stopwatch-height: $stopwatch-width * $ratio;
 
 @mixin phone-styles-stats {
-  $small-text: 1.9dvh;
+  $phone-small-text: 1.9dvh;
 
   .stats {
     &__container {
+      // TODO1
       // Make the page stretch to the bottom.
-      display: flex;
       flex: 1;
       justify-content: space-around;
 
       width: 92.5vw;
 
       margin-block: 1dvh;
-
-      font-family: "Segoe UI";
     }
 
     &__header {
-      line-height: 1.2;
-
       &--username {
         font-size: 5dvh;
       }
@@ -41,8 +39,6 @@ $stopwatch-height: $stopwatch-width * $ratio;
 
     &__stopwatch {
       font-size: 12.5dvh;
-      font-weight: 500;
-      line-height: 1;
 
       padding-top: 1dvh;
       padding-bottom: 1.75dvh;
@@ -52,213 +48,68 @@ $stopwatch-height: $stopwatch-width * $ratio;
       }
 
       &--caption {
-        font-family: "Segoe UI"; // TODO: I don't define this anywhere else... (Mantine default styles css...)
-        font-size: $small-text;
+        font-size: $phone-small-text;
         font-weight: 400;
-        line-height: 0.5;
       }
+    }
+
+    &__secondary__container {
+      flex-direction: column;
     }
 
     &__total-games {
-      $phone-games-size: 3dvh;
+      $phone-games-icon-size: 3dvh;
 
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      font-size: $phone-games-size;
-      font-weight: bolder;
+      font-size: $phone-games-icon-size;
+      margin-bottom: 0;
 
       &--icon {
-        display: flex;
-        width: $phone-games-size;
-        height: $phone-games-size;
+        width: $phone-games-icon-size;
+        height: $phone-games-icon-size;
       }
-
-      &--total {
-        display: flex;
-        font-style: italic;
-        opacity: 90%;
-      }
-    }
-
-    &__game-stats {
-      display: flex;
-      flex-direction: row;
-      width: 100%;
-
-      justify-content: space-around;
-      align-items: center;
     }
 
     &__game-info {
-      display: flex;
-      flex-direction: column;
+      font-size: $phone-small-text;
 
-      line-height: 1;
-      gap: 1dvh;
-
-      font-size: $small-text;
-
-      &--wins {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        &--total {
-          display: flex;
-          align-items: center;
-
-          font-size: 5dvh;
-          font-weight: 800;
-          font-style: italic;
-          color: $wins;
-          text-shadow: 0px 2px 0px $wins-shadow;
-
-          &--percent {
-            display: flex;
-
-            font-size: 3.5dvh;
-            text-shadow: none;
-            opacity: $stats-percent-opacity;
-          }
-        }
-
-        &--text {
-          display: flex;
-          align-items: center;
-        }
-      }
-
+      &--wins,
       &--solves {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
         &--total {
-          display: flex;
-          align-items: center;
-
           font-size: 5dvh;
-          font-weight: 800;
-          font-style: italic;
-          color: $solves;
-          text-shadow: 0px 2px 0px $solves-shadow;
 
           &--percent {
             font-size: 3.5dvh;
-            text-shadow: none;
-            opacity: $stats-percent-opacity;
           }
-        }
-
-        &--text {
-          display: flex;
-          align-items: center;
         }
       }
     }
 
     &__game-mode {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-
-      line-height: 1;
-
       font-size: 12dvh;
 
-      &--numbers {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-
-        gap: 1dvh;
-      }
-
-      &--top {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        &--total {
-          display: flex;
-
-          font-size: 5dvh;
-          font-weight: 800;
-          font-style: italic;
-          text-shadow: 0px 2px 0px $text-shadow;
-        }
-
-        &--text {
-          display: flex;
-          align-items: center;
-
-          font-size: $small-text;
-        }
-      }
-
+      &--top,
       &--bot {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
         &--total {
           font-size: 5dvh;
-          font-weight: 800;
-          font-style: italic;
-          text-shadow: 0px 2px 0px $text-shadow;
         }
 
         &--text {
-          display: flex;
-          align-items: center;
-
-          font-size: $small-text;
+          font-size: $phone-small-text;
         }
       }
     }
 
     &__guesses {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-around;
-      align-items: center;
-
-      width: 100%;
-
       &--misc {
-        display: flex;
-        flex-direction: column;
         gap: 1dvh;
 
-        &--average,
-        &--oog {
-          display: flex;
-          flex-direction: column;
-          text-align: center;
-        }
-
         &--title {
-          font-family: "Segoe UI";
-          font-size: $small-text;
-          line-height: 1;
+          font-size: $phone-small-text;
         }
 
         &--total {
-          font-family: "Roboto";
           font-size: 4.3dvh;
-          font-style: italic;
         }
-      }
-    }
-
-    &__divider {
-      &--label {
-        color: $color-secondary;
-        opacity: 70%;
-        font-size: 2.5dvh;
       }
     }
   }
@@ -302,18 +153,25 @@ $stopwatch-height: $stopwatch-width * $ratio;
   .distribution {
     &__container {
       margin-top: 1dvh;
-      font-size: $small-text;
+      font-size: $phone-small-text;
     }
   }
 }
 
 // Large screens
 .stats {
+  $desktop-small-text: 1.3rem;
+
   &__container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    // Looks much nicer than Roboto on this particular page.
+    font-family: "Segoe UI";
+
+    margin-block: 0.5rem;
   }
 
   &__tabs {
@@ -327,8 +185,10 @@ $stopwatch-height: $stopwatch-width * $ratio;
     justify-content: center;
     align-items: center;
 
+    line-height: 1.2;
+
     &--username {
-      font-size: 3rem;
+      font-size: 4rem;
       font-weight: 800;
     }
 
@@ -344,21 +204,206 @@ $stopwatch-height: $stopwatch-width * $ratio;
     justify-content: center;
     align-items: center;
 
+    // For the { } surrounding the stopwatch.
     font-family: "Roboto";
+
+    font-size: 9rem;
+    font-weight: 500;
+    line-height: 1;
+
+    padding-top: 1rem;
+    padding-bottom: 1.75rem;
 
     &--icon {
       display: flex;
       flex-direction: row;
-
       align-items: center;
+
+      gap: 2rem;
+    }
+
+    &--caption {
+      font-family: "Segoe UI";
+      font-size: $desktop-small-text;
+      font-weight: 100;
+      line-height: 0.5;
     }
   }
 
-  &__games {
+  &__secondary__container {
     display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    &--subcontainer {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  &__total-games {
+    $desktop-games-icon-size: 2.5rem;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    font-weight: 800;
+    font-size: $desktop-games-icon-size;
+
+    margin-bottom: 1rem;
+
+    &--icon {
+      display: flex;
+      width: $desktop-games-icon-size;
+      height: $desktop-games-icon-size;
+    }
+
+    &--total {
+      display: flex;
+      font-style: italic;
+      opacity: 90%;
+    }
+  }
+
+  &__game-stats {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    justify-content: space-around;
+    align-items: center;
+
+    line-height: 1;
+  }
+
+  &__game-info {
+    display: flex;
+    flex-direction: column;
+
+    gap: 1dvh;
+
+    font-size: $desktop-small-text;
+
+    // Styles shared by both wins and solves
+    &--wins,
+    &--solves {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      &--total {
+        display: flex;
+        align-items: center;
+
+        font-size: 3rem;
+        font-weight: 800;
+        font-style: italic;
+
+        &--percent {
+          display: flex;
+          text-shadow: none;
+          opacity: $stats-percent-opacity;
+
+          font-size: 2rem;
+        }
+      }
+    }
+
+    // Specific colors for wins and solves
+    &--wins {
+      &--total {
+        color: $wins;
+        text-shadow: 0px 0.3dvh 0px $wins-shadow;
+      }
+    }
+    &--solves {
+      &--total {
+        color: $solves;
+        text-shadow: 0px 0.3dvh 0px $solves-shadow;
+      }
+    }
+  }
+
+  &__game-mode {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    font-size: 7rem;
+
+    &--numbers {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      gap: 1dvh;
+    }
+
+    // Originally I'd planned for the top and bot to be different colors,
+    // but it looks pretty good with just black.
+    &--top,
+    &--bot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      &--total {
+        display: flex;
+
+        font-size: 3rem;
+        font-weight: 800;
+        font-style: italic;
+        text-shadow: 0px 0.3dvh 0px $text-shadow;
+      }
+
+      &--text {
+        display: flex;
+        align-items: center;
+
+        font-size: $desktop-small-text;
+      }
+    }
+  }
+
+  &__guesses {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+
+    width: 100%;
+
+    &--misc {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      &--average,
+      &--oog {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+      }
+
+      &--title {
+        font-size: $desktop-small-text;
+        line-height: 1;
+      }
+
+      &--total {
+        font-family: "Roboto";
+        font-size: 2.5rem;
+        font-style: italic;
+      }
+    }
   }
 }
 
+// Not actually under the .stats umbrella
 .svg-stopwatch {
   width: $stopwatch-width;
   height: $stopwatch-height;
@@ -451,6 +496,5 @@ $stopwatch-height: $stopwatch-width * $ratio;
       hsl(180, 100%, 66%),
       hsl(39, 100%, 50%)
     );
-    // #ff6b6b - coral color
   }
 }

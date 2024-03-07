@@ -1,5 +1,15 @@
 @import "../variables";
 
+/* 
+ * This file contains special styles for the SegmentedControl component
+ * from Mantine UI. This component has its own pre-defined classes,
+ * such as ".indicator" to animate the tabs switching.
+
+ * Through Mantine UI documentation, we can find these class names and
+ * override their default styles. These classNames are then imported
+ * specifically for the SegmentedControl component at StatsPage.jsx.
+ */
+
 .root {
   @media only screen and (max-width: $breakpoint-sm) {
     width: 92.5vw;
