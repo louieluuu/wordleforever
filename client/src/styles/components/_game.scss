@@ -708,6 +708,7 @@ $phone-star-left: 53%;
       &--grey {
         @extend .game-board__cell--dialog;
         border: none;
+        color: white;
       }
 
       &--green {

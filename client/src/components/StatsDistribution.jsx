@@ -2,7 +2,10 @@ import React from "react"
 
 function StatsDistribution({ stats, isPhoneLayout }) {
   const PHONE_BAR_WIDTH = 55
-  const DESKTOP_BAR_WIDTH = 25
+  const PHONE_UNIT = "vw"
+  // TODO: 19
+  const DESKTOP_BAR_WIDTH = 10
+  const DESKTOP_UNIT = "rem"
 
   // https://stackoverflow.com/questions/70944210/why-is-the-spread-operator-needed-for-math-max
   const maxStat = Math.max(...stats)
@@ -18,7 +21,7 @@ function StatsDistribution({ stats, isPhoneLayout }) {
       ? (barWidth = tinyPadding)
       : (barWidth = (stat / maxStat) * maxBarWidth + tinyPadding)
 
-    return `${barWidth}vw`
+    return `${barWidth}${isPhoneLayout ? PHONE_UNIT : DESKTOP_UNIT}`
   }
 
   return (

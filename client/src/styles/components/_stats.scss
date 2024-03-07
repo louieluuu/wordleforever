@@ -1,30 +1,29 @@
-// TODO1 means check if these styles are any different than the desktops.
-
-// The $ratio uses the full, original SVG dimensions.
-
+// We define this $ratio as the full, original SVG dimensions.
 // To change the SVG size in this CSS file, you just need to
 // change the width, and the height will follow the ratio.
-
 @use "sass:math";
 $ratio: math.div(508.83, 411);
 $platinum-ratio: math.div(508.83, 791.64);
 
-$stopwatch-width: 150px;
-$stopwatch-height: $stopwatch-width * $ratio;
-
 @mixin phone-styles-stats {
-  $phone-small-text: 1.9dvh;
+  $phone-width: 92.5vw;
+  $phone-caption-text: 1.9dvh;
 
   .stats {
+    // For the phone, the whole vert space is taken up by everything,
+    // including the tabs. Not so on desktop, where the tabs remain
+    // at the top of the screen, but everything else is centered.
+    &__page {
+      margin-block: 0.5dvh;
+    }
+
+    &__tabs {
+      margin-top: 0;
+    }
+
     &__container {
-      // TODO1
-      // Make the page stretch to the bottom.
-      flex: 1;
       justify-content: space-around;
-
-      width: 92.5vw;
-
-      margin-block: 1dvh;
+      width: $phone-width;
     }
 
     &__header {
@@ -48,29 +47,35 @@ $stopwatch-height: $stopwatch-width * $ratio;
       }
 
       &--caption {
-        font-size: $phone-small-text;
+        font-size: $phone-caption-text;
         font-weight: 400;
       }
     }
 
     &__secondary__container {
       flex-direction: column;
+      gap: 0;
+
+      &--subcontainer {
+        min-width: $phone-width;
+      }
     }
 
-    &__total-games {
-      $phone-games-icon-size: 3dvh;
+    &__total-games,
+    &__total-guesses {
+      $phone-game-icon-size: 3dvh;
 
-      font-size: $phone-games-icon-size;
+      font-size: $phone-game-icon-size;
       margin-bottom: 0;
 
       &--icon {
-        width: $phone-games-icon-size;
-        height: $phone-games-icon-size;
+        width: 1em;
+        height: 1em;
       }
     }
 
     &__game-info {
-      font-size: $phone-small-text;
+      font-size: $phone-caption-text;
 
       &--wins,
       &--solves {
@@ -94,7 +99,7 @@ $stopwatch-height: $stopwatch-width * $ratio;
         }
 
         &--text {
-          font-size: $phone-small-text;
+          font-size: $phone-caption-text;
         }
       }
     }
@@ -104,7 +109,7 @@ $stopwatch-height: $stopwatch-width * $ratio;
         gap: 1dvh;
 
         &--title {
-          font-size: $phone-small-text;
+          font-size: $phone-caption-text;
         }
 
         &--total {
@@ -135,17 +140,9 @@ $stopwatch-height: $stopwatch-width * $ratio;
       width: $phone-stopwatch-width;
       height: $phone-stopwatch-height;
 
-      // Note: rem is more consistent than dvh here.
-      font-size: 9rem;
-      font-weight: 600;
-
       &--platinum {
         width: $phone-stopwatch-platinum-width;
         height: $phone-stopwatch-platinum-height;
-
-        // Note: rem is more consistent than dvh here.
-        font-size: 9rem;
-        font-weight: 600;
       }
     }
   }
@@ -153,30 +150,42 @@ $stopwatch-height: $stopwatch-width * $ratio;
   .distribution {
     &__container {
       margin-top: 1dvh;
-      font-size: $phone-small-text;
+      font-size: $phone-caption-text;
     }
   }
 }
 
 // Large screens
 .stats {
-  $desktop-small-text: 1.3rem;
+  $desktop-caption-text: 1.3rem;
 
-  &__container {
+  &__page {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    flex: 1;
 
     // Looks much nicer than Roboto on this particular page.
     font-family: "Segoe UI";
-
-    margin-block: 0.5rem;
   }
 
+  // For large screens, the tabs should be thought of as
+  // separate from the actual stats container. This allows
+  // us to keep the tabs at the top, while centering everything else.
   &__tabs {
     display: flex;
     flex-direction: column;
+
+    margin-top: 0.5rem;
+  }
+
+  &__container {
+    // Make the page stretch to the bottom.
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 
   &__header {
@@ -224,7 +233,7 @@ $stopwatch-height: $stopwatch-width * $ratio;
 
     &--caption {
       font-family: "Segoe UI";
-      font-size: $desktop-small-text;
+      font-size: 1.15rem;
       font-weight: 100;
       line-height: 0.5;
     }
@@ -235,14 +244,21 @@ $stopwatch-height: $stopwatch-width * $ratio;
     flex-direction: row;
     width: 100%;
 
+    gap: 4rem;
+
     &--subcontainer {
       display: flex;
       flex-direction: column;
+      // width: clamp(25vw, 100%, 33vw);
+      min-width: 24vw;
+      max-width: 33vw;
     }
   }
 
-  &__total-games {
-    $desktop-games-icon-size: 2.5rem;
+  // Styles for both total-games and total-guesses
+  &__total-games,
+  &__total-guesses {
+    $desktop-game-icon-size: 2.5rem;
 
     display: flex;
     flex-direction: row;
@@ -250,14 +266,12 @@ $stopwatch-height: $stopwatch-width * $ratio;
     align-items: center;
 
     font-weight: 800;
-    font-size: $desktop-games-icon-size;
-
-    margin-bottom: 1rem;
+    font-size: $desktop-game-icon-size;
 
     &--icon {
       display: flex;
-      width: $desktop-games-icon-size;
-      height: $desktop-games-icon-size;
+      width: $desktop-game-icon-size;
+      height: $desktop-game-icon-size;
     }
 
     &--total {
@@ -265,6 +279,15 @@ $stopwatch-height: $stopwatch-width * $ratio;
       font-style: italic;
       opacity: 90%;
     }
+  }
+
+  // Individual styles for total-games and total-guesses
+  &__total-games {
+    margin-bottom: 1rem;
+  }
+
+  &__total-guesses {
+    margin-bottom: 0;
   }
 
   &__game-stats {
@@ -284,7 +307,7 @@ $stopwatch-height: $stopwatch-width * $ratio;
 
     gap: 1dvh;
 
-    font-size: $desktop-small-text;
+    font-size: $desktop-caption-text;
 
     // Styles shared by both wins and solves
     &--wins,
@@ -364,7 +387,7 @@ $stopwatch-height: $stopwatch-width * $ratio;
         display: flex;
         align-items: center;
 
-        font-size: $desktop-small-text;
+        font-size: $desktop-caption-text;
       }
     }
   }
@@ -374,6 +397,8 @@ $stopwatch-height: $stopwatch-width * $ratio;
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
+
+    gap: 2rem;
 
     width: 100%;
 
@@ -390,7 +415,7 @@ $stopwatch-height: $stopwatch-width * $ratio;
       }
 
       &--title {
-        font-size: $desktop-small-text;
+        font-size: $desktop-caption-text;
         line-height: 1;
       }
 
@@ -405,8 +430,16 @@ $stopwatch-height: $stopwatch-width * $ratio;
 
 // Not actually under the .stats umbrella
 .svg-stopwatch {
-  width: $stopwatch-width;
-  height: $stopwatch-height;
+  $desktop-stopwatch-width: 9.5rem;
+  $desktop-stopwatch-height: $desktop-stopwatch-width * $ratio;
+
+  // Unfortunately, because of the platinum stopwatch's wings, the dimensions are different. This magic number (25/13) was just found through experimentation, and it makes the stopwatches appear the exact same size.
+  $desktop-stopwatch-platinum-width: $desktop-stopwatch-width * math.div(25, 13);
+  $desktop-stopwatch-platinum-height: $desktop-stopwatch-platinum-width *
+    $platinum-ratio;
+
+  width: $desktop-stopwatch-width;
+  height: $desktop-stopwatch-height;
 
   // Both stroke and fill are necessary for different parts of the SVG. (Stroke for lines, fill for isolated shapes.)
   &--none {
@@ -444,6 +477,9 @@ $stopwatch-height: $stopwatch-width * $ratio;
 
   &--platinum {
     @extend .svg-stopwatch;
+    width: $desktop-stopwatch-platinum-width;
+    height: $desktop-stopwatch-platinum-height;
+
     stroke: $stopwatch-platinum;
     fill: $stopwatch-platinum;
     filter: drop-shadow(
@@ -452,12 +488,13 @@ $stopwatch-height: $stopwatch-width * $ratio;
   }
 
   &__text {
-    width: $stopwatch-width;
-    height: $stopwatch-height;
+    width: $desktop-stopwatch-width;
+    height: $desktop-stopwatch-height;
 
     font-family: "Roboto Slab";
-    font-weight: bold;
     fill: $color;
+    font-size: 9rem;
+    font-weight: 600;
 
     &--none {
       @extend .svg-stopwatch__text;
@@ -466,6 +503,8 @@ $stopwatch-height: $stopwatch-width * $ratio;
 
     &--platinum {
       @extend .svg-stopwatch__text;
+      width: $desktop-stopwatch-platinum-width;
+      height: $desktop-stopwatch-platinum-height;
     }
   }
 }

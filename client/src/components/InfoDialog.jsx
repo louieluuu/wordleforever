@@ -87,7 +87,7 @@ function InfoDialog({ show }) {
 
         <p style={{ fontWeight: "bold" }}>Examples</p>
 
-        <div className="game-board__row" style={{ gap: "0.2rem" }}>
+        <div className="game-board__row" style={{ gap: "0.3rem" }}>
           <div className="game-board__cell--dialog--green">S</div>
           <div className="game-board__cell--dialog">L</div>
           <div className="game-board__cell--dialog">E</div>
@@ -100,7 +100,7 @@ function InfoDialog({ show }) {
           &nbsp;is in the word, and in the correct spot.
         </p>
 
-        <div className="game-board__row" style={{ gap: "0.2rem" }}>
+        <div className="game-board__row" style={{ gap: "0.3rem" }}>
           <div className="game-board__cell--dialog">L</div>
           <div className="game-board__cell--dialog">O</div>
           <div className="game-board__cell--dialog--yellow">F</div>
@@ -113,7 +113,7 @@ function InfoDialog({ show }) {
           &nbsp;is in the word, but in the wrong spot.
         </p>
 
-        <div className="game-board__row" style={{ gap: "0.2rem" }}>
+        <div className="game-board__row" style={{ gap: "0.3rem" }}>
           <div className="game-board__cell--dialog">V</div>
           <div className="game-board__cell--dialog">A</div>
           <div className="game-board__cell--dialog">R</div>
