@@ -60,6 +60,12 @@ function WelcomeMessage({
     }
   }
 
+  function handleKeyDown(e) {
+    if (e.key === "Enter") {
+      e.target.blur()
+    }
+  }
+
   return (
     <div className="welcome-message">
       Hey there,
@@ -73,6 +79,7 @@ function WelcomeMessage({
           onBlur={handleDisplayNameChange}
           onClick={setCaretPosition}
           onMouseDown={setCaretInvisible}
+          onKeyDown={handleKeyDown}
           spellCheck="false"
           style={{ width: `${inputWidth}px` }}
         />
