@@ -1,5 +1,5 @@
 import React from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 import { HiOutlineArrowUturnLeft } from "react-icons/hi2"
 
@@ -35,10 +35,6 @@ function MenuOnlineModes({
     navigate(`/room/${privateRoomId}`)
   }
 
-  function navigateBack() {
-    navigate("/")
-  }
-
   return (
     <AnimatedPage>
       <div className="menu">
@@ -47,12 +43,12 @@ function MenuOnlineModes({
         </button>
 
         <button className="menu__btn--offline" onClick={selectPrivateGame}>
-          <span>PLAY WITH FRIENDS</span>
+          PLAY WITH FRIENDS
         </button>
 
-        <div className="menu__btn--back" onClick={navigateBack}>
+        <Link to="/" className="menu__btn--back">
           <HiOutlineArrowUturnLeft className="menu__btn--back--icon" />
-        </div>
+        </Link>
       </div>
     </AnimatedPage>
   )

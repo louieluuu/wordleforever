@@ -75,7 +75,7 @@
     cursor: pointer;
 
     &:hover {
-      opacity: 50%;
+      opacity: $header-hover;
     }
 
     &--first-time {
