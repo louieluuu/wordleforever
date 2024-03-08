@@ -123,6 +123,10 @@ function GameContainer({
   const [timerIndex, setTimerIndex] = useState(0)
   const [showPostGameDialog, setShowPostGameDialog] = useState(false)
   const [showScoreboard, setShowScoreboard] = useState(true)
+  // Considered using a set instead of an array for the letterEliminationPool state
+  // Pros: constant time deletion
+  // Cons: linear time random element access (need to convert to array anyways), also linear time to update the state (need to recreate the set and update the state to the new set)
+  // Array should be better, efficiency wise they're similar however we would need to convert back and forth if we want to use a set due to not being able to index a set
   const [letterEliminationPool, setLetterEliminationPool] = useState(
     generateAlphabetArray()
   )
