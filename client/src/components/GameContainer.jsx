@@ -95,7 +95,7 @@ function GameContainer({
     green: new Set(),
     yellow: new Set(),
     grey: new Set(),
-    red: new Set(),
+    eliminated: new Set(),
   })
 
   // Alert states
@@ -467,7 +467,7 @@ function GameContainer({
       green: new Set(),
       yellow: new Set(),
       grey: new Set(),
-      red: new Set(),
+      eliminated: new Set(),
     })
     setLetterEliminationPool(generateAlphabetArray())
     setShowAlertModal(false)
@@ -696,7 +696,7 @@ function GameContainer({
       green: updatedGreenHints,
       yellow: updatedYellowHints,
       grey: updatedGreyHints,
-      red: hints.red,
+      eliminated: hints.eliminated,
     }
     setHints(newHints)
   }
@@ -719,9 +719,9 @@ function GameContainer({
       return updatedLetterEliminationPool
     })
     setHints((prevHints) => {
-      const updatedRedHints = new Set(prevHints.red)
-      updatedRedHints.add(randomLetter)
-      return { ...prevHints, red: updatedRedHints }
+      const updatedEliminatedHints = new Set(prevHints.eliminated)
+      updatedEliminatedHints.add(randomLetter)
+      return { ...prevHints, eliminated: updatedEliminatedHints }
     })
   }
 

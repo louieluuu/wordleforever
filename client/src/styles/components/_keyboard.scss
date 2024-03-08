@@ -95,14 +95,15 @@
       }
     }
 
-    &--red {
+    &--eliminated {
       @extend .keyboard__cell;
       color: white;
-      border-color: $hint;
-      background-color: $hint;
+      border-color: $wrong;
+      background-color: $wrong;
+      transition: background-color 2.5s ease;
 
       &:hover {
-        background-color: $hint-hover;
+        background-color: $wrong-hover;
       }
     }
 
