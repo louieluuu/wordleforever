@@ -68,7 +68,7 @@ function getRoomRoundTime(roomId) {
   return 0
 }
 
-function getIsDynamicTimerOn(roomId) {
+function getRoomIsDynamicTimerOn(roomId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
     return room.isDynamicTimerOn
@@ -76,7 +76,7 @@ function getIsDynamicTimerOn(roomId) {
   return true
 }
 
-function getIsLetterEliminationOn(roomId) {
+function getRoomIsLetterEliminationOn(roomId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
     return room.isLetterEliminationOn
@@ -434,8 +434,8 @@ export {
   getRoomGameMode,
   getRoomRoundLimit,
   getRoomRoundTime,
-  getIsDynamicTimerOn,
-  getIsLetterEliminationOn,
+  getRoomIsDynamicTimerOn,
+  getRoomIsLetterEliminationOn,
   getRoomConfiguration,
   handleDisplayNameUpdate,
   isHostLeaving,

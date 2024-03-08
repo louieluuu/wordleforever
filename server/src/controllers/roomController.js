@@ -8,6 +8,7 @@ import {
   getRoomConnectionMode,
   getRoomConfiguration,
   getRoomGameMode,
+  getRoomIsLetterEliminationOn,
   hasCountdownStarted,
   setCountdownStarted,
   findMatchingRoom,
@@ -50,7 +51,8 @@ async function joinRoom(roomId, displayName, io, socket) {
         socket.emit(
           "roomJoinedInProgress",
           getRoomConnectionMode(roomId),
-          getRoomGameMode(roomId)
+          getRoomGameMode(roomId),
+          getRoomIsLetterEliminationOn(roomId)
         )
       }
     } else {

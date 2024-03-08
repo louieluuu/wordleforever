@@ -13,7 +13,7 @@ import {
   areAllUsersLoaded,
   loadUser,
   getRoomRoundTime,
-  getIsDynamicTimerOn,
+  getRoomIsDynamicTimerOn,
 } from "./roomService.js"
 
 import { dbUpdateUser, dbBatchUpdateUsers } from "./userService.js"
@@ -51,7 +51,7 @@ function initializeGameInfo(roomId) {
     getRoomGameMode(roomId),
     getRoomRoundLimit(roomId),
     getRoomRoundTime(roomId),
-    getIsDynamicTimerOn(roomId),
+    getRoomIsDynamicTimerOn(roomId),
     getRoomUserInfo(roomId),
     prevPoints,
     prevRound,

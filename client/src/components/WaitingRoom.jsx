@@ -98,14 +98,19 @@ function WaitingRoom({
     // If you are just spectating / getting straight into the gameContainer, you don't need to see the configuration settings
     // All relevant game logic is handled anyways
     // Ex: you don't need this local isDynamicTimerOn to be set to true for it to function that way for your game, this is handled by the server
-    // Having your local connectionMode and gameMode set are the only important ones, as they affect client side logic in gameContainer
-    // The configuration states are essentially just to see the values, logic is handled elsewhere
-    socket.on("roomJoinedInProgress", (roomConnectionMode, gameMode) => {
-      setConnectionMode(roomConnectionMode)
-      setGameMode(gameMode)
-      setIsSpectating(true)
-      navigate(`/game/${roomId}`)
-    })
+    // May be slightly confusing, but currently the only states necessary to set are connectionMode, gameMode and isLetterEliminationOn as they are all used in GameContainer
+    // roundTimer and roundLimit technically do get used on the client side in GameContainer, but those are sent along with the initial gameStarted information (ex: timer is just initialized on the server and then sent every tick)
+    // Probably a way to keep these more consistent but it's fine for now
+    socket.on(
+      "roomJoinedInProgress",
+      (roomConnectionMode, gameMode, isLetterEliminationOn) => {
+        setIsSpectating(true)
+        setConnectionMode(roomConnectionMode)
+        setGameMode(gameMode)
+        setIsLetterEliminationOn(isLetterEliminationOn)
+        navigate(`/game/${roomId}`)
+      }
+    )
 
     socket.on("roomFull", () => {
       // TODO: display some sort of error message for the user
