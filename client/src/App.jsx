@@ -52,6 +52,7 @@ function App() {
 
   const [roomId, setRoomId] = useState("")
 
+  // We want to validate before setting these variables because we are pulling from localStorage, which anyone can change within their browser. Need to ensure the value we are pulling is something we expect / know how to handle
   useEffect(() => {
     const storedGameMode = localStorage.getItem("gameMode")
     if (storedGameMode === "challenge" || storedGameMode === "normal") {

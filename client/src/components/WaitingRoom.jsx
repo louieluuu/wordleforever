@@ -374,6 +374,7 @@ function WaitingRoom({
     }
   }
 
+  // We want to validate before setting these variables because we are pulling from localStorage, which anyone can change within their browser. Need to ensure the value we are pulling is something we expect / know how to handle
   function validateLocalConfigurationThenSet() {
     const storedMaxPlayers = parseInt(localStorage.getItem("maxPlayers"))
     if (
