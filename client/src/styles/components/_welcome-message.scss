@@ -74,6 +74,10 @@
     stroke-width: 0.11rem;
     cursor: pointer;
 
+    &:hover {
+      opacity: 50%;
+    }
+
     &--first-time {
       @extend .username-form__pencil;
       background-color: $bg-main;

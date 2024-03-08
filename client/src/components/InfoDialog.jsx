@@ -133,14 +133,24 @@ function InfoDialog({ show }) {
             <i>Wordle Forever</i>
           </b>
           &nbsp;is our love letter to&nbsp;
-          <a href="https://www.nytimes.com/games/wordle/index.html">
+          <a
+            className="text-link"
+            href="https://www.nytimes.com/games/wordle/index.html"
+          >
             <i>Wordle</i>
           </a>{" "}
           by Josh Wardle. Open source and hosted on&nbsp;
-          <a href="https://github.com/louieluuu/wordle-forever">Github</a>
+          <a
+            className="text-link"
+            href="https://github.com/louieluuu/wordle-forever"
+          >
+            Github
+          </a>
           .&nbsp;Your feedback is appreciated. Feel free to reach out via{" "}
-          <a href="mailto:wordleforever@gmail.com">email</a>. Created by Louie
-          Lu and Thomas Chiu,&nbsp;
+          <a className="text-link" href="mailto:wordleforever@gmail.com">
+            email
+          </a>
+          . Created by Louie Lu and Thomas Chiu,&nbsp;
           <span style={{ fontSize: "0.7rem" }}>2023-2024</span>.
         </p>
       </Dialog.Panel>

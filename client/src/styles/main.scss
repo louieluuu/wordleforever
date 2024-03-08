@@ -30,11 +30,14 @@ body {
 }
 
 a {
-  color: hsl(197, 100%, 40%);
   text-decoration: none;
 
-  &:hover {
-    color: hsl(197, 100%, 50%);
+  &.text-link {
+    color: hsl(197, 100%, 40%);
+
+    &:hover {
+      color: hsl(197, 100%, 50%);
+    }
   }
 }
 

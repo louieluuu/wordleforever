@@ -1,5 +1,5 @@
 import React from "react"
-import { useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import useSetRoomId from "../helpers/useSetRoomId"
 
 import { HiOutlineArrowUturnLeft } from "react-icons/hi2"
@@ -10,40 +10,29 @@ import AnimatedPage from "./AnimatedPage"
 function MenuOfflineModes({ setConnectionMode, setRoomId }) {
   useSetRoomId(setRoomId)
 
-  const navigate = useNavigate()
-
-  function selectClassicMode() {
-    setConnectionMode("offline")
-    navigate("/offline/classic")
-  }
-
-  function selectVsBot() {
-    setConnectionMode("offline-bot")
-    // navigate('/offline/wordlebot')
-  }
-
-  function navigateBack() {
-    navigate("/")
-  }
-
   return (
     <AnimatedPage>
       <div className="menu">
-        <button className="menu__btn--online" onClick={selectClassicMode}>
+        <Link
+          to="/offline/classic"
+          className="menu__btn--online"
+          onClick={() => setConnectionMode("offline")}
+        >
           CLASSIC MODE
-        </button>
+        </Link>
 
-        <button
+        <Link
+          to="/offline"
           className="menu__btn--offline"
           style={{ opacity: "25%" }}
-          onClick={selectVsBot}
+          onClick={() => setConnectionMode("offline-bot")}
         >
           VS. WORDLEBOT
-        </button>
+        </Link>
 
-        <div className="menu__btn--back" onClick={navigateBack}>
+        <Link to="/" className="menu__btn--back">
           <HiOutlineArrowUturnLeft className="menu__btn--back--icon" />
-        </div>
+        </Link>
       </div>
     </AnimatedPage>
   )
