@@ -8,6 +8,8 @@ import useSetRoomId from "../helpers/useSetRoomId"
 import { auth } from "../firebase"
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
 
+import containsBadWord from "../helpers/nameFilter"
+
 function RegisterPage({ setRoomId }) {
   useSetRoomId(setRoomId)
 
@@ -84,6 +86,11 @@ function RegisterPage({ setRoomId }) {
       username.endsWith("_")
     ) {
       setErrorMessage("Username cannot start or end with: '-', '_'.")
+      return false
+    }
+    if (containsBadWord(username)) {
+      console.log(`Bad word detected: ${username}`)
+      setErrorMessage("Username is not acceptable.")
       return false
     }
 

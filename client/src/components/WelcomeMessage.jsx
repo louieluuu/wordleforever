@@ -1,4 +1,5 @@
 import React, { useRef, useLayoutEffect } from "react"
+import containsBadWord from "../helpers/nameFilter"
 
 import { HiOutlinePencilSquare } from "react-icons/hi2"
 import { Tooltip } from "react-tooltip"
@@ -32,6 +33,11 @@ function WelcomeMessage({
       if (updatedDisplayName.length > 20) {
         return
       }
+      // Disallow some truly depraved words
+      if (containsBadWord(updatedDisplayName)) {
+        return
+      }
+
       setDisplayName(updatedDisplayName)
       localStorage.setItem("displayName", updatedDisplayName)
     }
