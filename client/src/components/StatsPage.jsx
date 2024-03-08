@@ -32,6 +32,8 @@ function StatsPage({ isPhoneLayout }) {
     label: "label",
   }
 
+  // TODO: Actually, I need the case-insensitive username from the db.
+  // /user/goldjet should return Goldjet as the username.
   const { username } = useParams()
 
   const [userStats, setUserStats] = useState({})

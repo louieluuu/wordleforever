@@ -32,7 +32,7 @@ const privateStatsSchema = new Schema(
 const userSchema = new Schema({
   // During user creation, _id is set to the (unique) Firebase uid so we have a 1:1 mapping between a Firebase account and a MongoDB document. We must explicitly set the _id type to String to allow this.
   _id: String,
-  username: String,
+  username: { type: String, index: true },
 
   // Stats
   stats: {
