@@ -173,7 +173,7 @@ function GameContainer({
       if (isCountdownRunning) {
         displayGuess(challengeModeGuess)
       } else {
-        setUserGuess(challengeModeGuess)
+        enterUserGuess(challengeModeGuess)
       }
     }
   }, [isCountdownRunning, solution])
@@ -535,7 +535,7 @@ function GameContainer({
       .toUpperCase()
 
     if (validateUserGuess(enteredWord)) {
-      setUserGuess(enteredWord)
+      enterUserGuess(enteredWord)
     }
   }
 
@@ -582,7 +582,7 @@ function GameContainer({
     setBoard(updatedBoard)
   }
 
-  function setUserGuess(guess) {
+  function enterUserGuess(guess) {
     const colorizedGuess = assignColors(guess)
     const updatedBoard = board.map((row) => [...row])
     updatedBoard[activeRowIndex] = colorizedGuess
@@ -806,7 +806,7 @@ function GameContainer({
         }
       }
       if (numGreenLetters === 1) {
-        setUserGuess(randomFirstGuess)
+        enterUserGuess(randomFirstGuess)
         return randomFirstGuess
       }
     }
