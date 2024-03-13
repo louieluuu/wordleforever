@@ -300,6 +300,10 @@ function WaitingRoom({
 
   function leaveRoom() {
     socket.emit("leaveRoom", roomId)
+    const storedGameMode = localStorage.getItem("gameMode")
+    if (storedGameMode === "challenge" || storedGameMode === "normal") {
+      setGameMode(storedGameMode)
+    }
     navigate("/online")
   }
 
@@ -355,10 +359,8 @@ function WaitingRoom({
     const newGameMode = gameMode === "normal" ? "challenge" : "normal"
     setGameMode(newGameMode)
     socket.emit("updateGameMode", roomId, newGameMode)
-    // Do we want to update hosts localStorage value if changing gameMode in a private game with friends?
-    if (isHost) {
-      localStorage.setItem("gameMode", newGameMode)
-    }
+    // Don't update localStorage when toggling gameMode in a private game lobby
+    // Assumption: changing gameMode for others, you still want your preference
   }
 
   function handleIsDynamicTimerOnChange() {
