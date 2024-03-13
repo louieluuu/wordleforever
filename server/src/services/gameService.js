@@ -81,6 +81,7 @@ function handleLoadUser(roomId, userId, io) {
 function handleGameJoinedInProgress(roomId, socket) {
   const game = Games.get(roomId)
   if (game && game instanceof Game) {
+    loadUser(socket.userId, roomId)
     game.broadcastSpectatorInfo(socket)
   }
 }
