@@ -52,46 +52,15 @@ function getRoomGameMode(roomId) {
   return null
 }
 
-function getRoomRoundLimit(roomId) {
-  const room = Rooms.get(roomId)
-  if (room && room instanceof Room) {
-    return room.roundLimit
-  }
-  return 0
-}
-
-function getRoomRoundTime(roomId) {
-  const room = Rooms.get(roomId)
-  if (room && room instanceof Room) {
-    return room.roundTime
-  }
-  return 0
-}
-
-function getRoomIsDynamicTimerOn(roomId) {
-  const room = Rooms.get(roomId)
-  if (room && room instanceof Room) {
-    return room.isDynamicTimerOn
-  }
-  return true
-}
-
-function getRoomIsLetterEliminationOn(roomId) {
-  const room = Rooms.get(roomId)
-  if (room && room instanceof Room) {
-    return room.isLetterEliminationOn
-  }
-  return true
-}
-
 function getRoomConfiguration(roomId) {
   const room = Rooms.get(roomId)
   if (room && room instanceof Room) {
     const allConfiguration = {
+      connectionMode: room.connectionMode,
+      gameMode: room.gameMode,
       maxPlayers: room.maxPlayers,
       roundLimit: room.roundLimit,
       roundTime: room.roundTime,
-      gameMode: room.gameMode,
       isDynamicTimerOn: room.isDynamicTimerOn,
       isLetterEliminationOn: room.isLetterEliminationOn,
     }
@@ -432,10 +401,6 @@ export {
   deleteRoom,
   getRoomConnectionMode,
   getRoomGameMode,
-  getRoomRoundLimit,
-  getRoomRoundTime,
-  getRoomIsDynamicTimerOn,
-  getRoomIsLetterEliminationOn,
   getRoomConfiguration,
   handleDisplayNameUpdate,
   isHostLeaving,

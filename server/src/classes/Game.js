@@ -33,11 +33,7 @@ export default class Game {
   }
 
   static createGame(
-    connectionMode,
-    gameMode,
-    roundLimit,
-    roundTime,
-    isDynamicTimerOn,
+    roomConfiguration,
     roomUserInfo,
     prevPoints,
     prevRound,
@@ -49,11 +45,11 @@ export default class Game {
   ) {
     const game = new Game()
 
-    game.connectionMode = connectionMode
-    game.gameMode = gameMode
+    game.connectionMode = roomConfiguration.connectionMode
+    game.gameMode = roomConfiguration.gameMode
     game.solution = game.generateSolution()
     game.startingWord =
-      gameMode === "challenge"
+      game.gameMode === "challenge"
         ? game.generateRandomFirstGuess(game.solution)
         : null
     game.gameUserInfo = game.initializeGameUserInfo(
@@ -68,16 +64,16 @@ export default class Game {
     game.countSolved = 0
     game.countOutOfGuesses = 0
     game.round = prevRound + 1
-    game.roundLimit = roundLimit
+    game.roundLimit = roomConfiguration.roundLimit
     game.reachedRoundLimit = false
-    game.timer = roundTime
+    game.timer = roomConfiguration.roundTime
     // Not sure if this is the best formula, but this needed to be changed since round time can be set
     // Default public game round time = 150, 150 / 5 * 2 = 60 seconds solved timer
     // Always rounds up to the next multiple of 5
     // Ex: round time of 120, 120 / 5 * 2 is 48
     // 48 / 5 = 9.6, the ceiling of which is 10, then multiply back by 5 to get 50
-    game.solvedTimer = Math.ceil(((roundTime / 5) * 2) / 5) * 5
-    game.isDynamicTimerOn = isDynamicTimerOn
+    game.solvedTimer = Math.ceil(((game.timer / 5) * 2) / 5) * 5
+    game.isDynamicTimerOn = roomConfiguration.isDynamicTimerOn
     game.hasUpdatedInDbList = []
 
     return game

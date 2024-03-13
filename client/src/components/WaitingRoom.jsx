@@ -79,15 +79,15 @@ function WaitingRoom({
   useEffect(() => {
     setJoinRoom(true)
     // Make sure modes are set, important for users joining from a link
-    socket.on("roomJoined", (roomConnectionMode, roomConfiguration) => {
+    socket.on("roomJoined", (roomConfiguration) => {
       if (isHost) {
         validateLocalConfigurationThenSet()
       } else {
-        setConnectionMode(roomConnectionMode)
+        setConnectionMode(roomConfiguration.connectionMode)
+        setGameMode(roomConfiguration.gameMode)
         setMaxPlayers(roomConfiguration.maxPlayers)
         setRoundLimit(roomConfiguration.roundLimit)
         setRoundTime(roomConfiguration.roundTime)
-        setGameMode(roomConfiguration.gameMode)
         setIsDynamicTimerOn(roomConfiguration.isDynamicTimerOn)
         setIsLetterEliminationOn(roomConfiguration.isLetterEliminationOn)
       }
@@ -101,16 +101,13 @@ function WaitingRoom({
     // May be slightly confusing, but currently the only states necessary to set are connectionMode, gameMode and isLetterEliminationOn as they are all used in GameContainer
     // roundTimer and roundLimit technically do get used on the client side in GameContainer, but those are sent along with the initial gameStarted information (ex: timer is just initialized on the server and then sent every tick)
     // Probably a way to keep these more consistent but it's fine for now
-    socket.on(
-      "roomJoinedInProgress",
-      (roomConnectionMode, gameMode, isLetterEliminationOn) => {
-        setIsSpectating(true)
-        setConnectionMode(roomConnectionMode)
-        setGameMode(gameMode)
-        setIsLetterEliminationOn(isLetterEliminationOn)
-        navigate(`/game/${roomId}`)
-      }
-    )
+    socket.on("roomJoinedInProgress", (roomConfiguration) => {
+      setIsSpectating(true)
+      setConnectionMode(roomConfiguration.connectionMode)
+      setGameMode(roomConfiguration.gameMode)
+      setIsLetterEliminationOn(roomConfiguration.isLetterEliminationOn)
+      navigate(`/game/${roomId}`)
+    })
 
     socket.on("roomFull", () => {
       // TODO: display some sort of error message for the user

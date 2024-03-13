@@ -3,17 +3,13 @@ import Game from "../classes/Game.js"
 
 // Services
 import {
+  getRoomConfiguration,
   getRoomUserInfo,
-  getRoomConnectionMode,
-  getRoomGameMode,
-  getRoomRoundLimit,
   setRoomInProgress,
   setRoomInGame,
   roomInLobby,
   areAllUsersLoaded,
   loadUser,
-  getRoomRoundTime,
-  getRoomIsDynamicTimerOn,
 } from "./roomService.js"
 
 import { dbUpdateUser, dbBatchUpdateUsers } from "./userService.js"
@@ -47,11 +43,7 @@ function initializeGameInfo(roomId) {
     }
   }
   const game = Game.createGame(
-    getRoomConnectionMode(roomId),
-    getRoomGameMode(roomId),
-    getRoomRoundLimit(roomId),
-    getRoomRoundTime(roomId),
-    getRoomIsDynamicTimerOn(roomId),
+    getRoomConfiguration(roomId),
     getRoomUserInfo(roomId),
     prevPoints,
     prevRound,

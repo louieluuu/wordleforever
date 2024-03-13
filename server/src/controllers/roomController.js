@@ -7,8 +7,6 @@ import {
   addUserToRoom,
   getRoomConnectionMode,
   getRoomConfiguration,
-  getRoomGameMode,
-  getRoomIsLetterEliminationOn,
   hasCountdownStarted,
   setCountdownStarted,
   findMatchingRoom,
@@ -42,18 +40,9 @@ async function joinRoom(roomId, displayName, io, socket) {
       broadcastRoomUserInfo(roomId, io)
 
       if (!isRoomInProgress(roomId)) {
-        socket.emit(
-          "roomJoined",
-          getRoomConnectionMode(roomId),
-          getRoomConfiguration(roomId)
-        )
+        socket.emit("roomJoined", getRoomConfiguration(roomId))
       } else {
-        socket.emit(
-          "roomJoinedInProgress",
-          getRoomConnectionMode(roomId),
-          getRoomGameMode(roomId),
-          getRoomIsLetterEliminationOn(roomId)
-        )
+        socket.emit("roomJoinedInProgress", getRoomConfiguration(roomId))
       }
     } else {
       console.log(`${socket.userId} failed to join room: ${roomId}`)
