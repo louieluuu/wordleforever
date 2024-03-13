@@ -895,6 +895,7 @@ function GameContainer({
           isGameOver={isGameOver}
           hasSolved={hasSolved}
           playAudio={playAudio}
+          isCountdownRunning={isCountdownRunning}
         />
       </div>
 

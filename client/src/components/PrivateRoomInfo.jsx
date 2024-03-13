@@ -22,6 +22,7 @@ function PrivateRoomInfo({
   isGameOver,
   hasSolved,
   playAudio,
+  isCountdownRunning,
 }) {
   const [prevTimer, setPrevTimer] = useState(0)
   const [timerDiff, setTimerDiff] = useState(0)
@@ -38,7 +39,7 @@ function PrivateRoomInfo({
 
   function getTimerClassName() {
     let timerClassName = "timer"
-    if (roundTimer <= 15 && !isGameOver) {
+    if (roundTimer <= 15 && !isGameOver && !isCountdownRunning) {
       timerClassName += "--low"
     } else if (!hasSolved) {
       if (timerDiff > 30) {
