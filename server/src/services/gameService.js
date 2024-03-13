@@ -20,23 +20,13 @@ const Games = new Map()
 // Possible new feature: store game info in DB for match history, in which case they'll need a new gameId
 function initializeGameInfo(roomId) {
   // Should only be set for subsequent games in private games, games should be deleted upon room deletion
-  let prevPoints = new Map()
   let prevRound = 0
-  let prevRoundsWon = new Map()
-  let prevSolveDistribution = new Map()
-  let prevTotalSolveTime = new Map()
-  let prevTotalGuesses = new Map()
-  let prevTotalOutOfGuesses = new Map()
+  let prevGameUserInfo = new Map()
   if (Games.has(roomId)) {
     const prevGame = Games.get(roomId)
     if (!prevGame.reachedRoundLimit) {
-      prevPoints = prevGame.getAllPoints()
       prevRound = prevGame.round
-      prevRoundsWon = prevGame.getAllRoundsWon()
-      prevSolveDistribution = prevGame.getAllSolveDistribution()
-      prevTotalSolveTime = prevGame.getAllTotalSolveTime()
-      prevTotalGuesses = prevGame.getAllTotalGuesses()
-      prevTotalOutOfGuesses = prevGame.getAllTotalOutOfGuesses()
+      prevGameUserInfo = prevGame.gameUserInfo
       deleteGame(roomId)
     } else {
       deleteGame(roomId)
@@ -45,13 +35,8 @@ function initializeGameInfo(roomId) {
   const game = Game.createGame(
     getRoomConfiguration(roomId),
     getRoomUserInfo(roomId),
-    prevPoints,
     prevRound,
-    prevRoundsWon,
-    prevSolveDistribution,
-    prevTotalSolveTime,
-    prevTotalGuesses,
-    prevTotalOutOfGuesses
+    prevGameUserInfo
   )
   Games.set(roomId, game)
 }

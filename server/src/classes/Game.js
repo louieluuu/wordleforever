@@ -35,13 +35,8 @@ export default class Game {
   static createGame(
     roomConfiguration,
     roomUserInfo,
-    prevPoints,
     prevRound,
-    prevRoundsWon,
-    prevSolveDistribution,
-    prevTotalSolveTime,
-    prevTotalGuesses,
-    prevTotalOutOfGuesses
+    prevGameUserInfo
   ) {
     const game = new Game()
 
@@ -54,12 +49,7 @@ export default class Game {
         : null
     game.gameUserInfo = game.initializeGameUserInfo(
       roomUserInfo,
-      prevPoints,
-      prevRoundsWon,
-      prevSolveDistribution,
-      prevTotalSolveTime,
-      prevTotalGuesses,
-      prevTotalOutOfGuesses
+      prevGameUserInfo
     )
     game.countSolved = 0
     game.countOutOfGuesses = 0
@@ -79,15 +69,7 @@ export default class Game {
     return game
   }
 
-  initializeGameUserInfo(
-    roomUserInfo,
-    prevPoints,
-    prevRoundsWon,
-    prevSolveDistribution,
-    prevTotalSolveTime,
-    prevTotalGuesses,
-    prevTotalOutOfGuesses
-  ) {
+  initializeGameUserInfo(roomUserInfo, prevGameUserInfo) {
     const gameUserInfoMap = new Map()
 
     roomUserInfo.forEach((user, userId) => {
@@ -97,14 +79,14 @@ export default class Game {
           .fill()
           .map(() => new Array(5).fill({ letter: "", color: "" })),
         streak: user.currStreak,
-        points: prevPoints.get(userId) || 0,
-        roundsWon: prevRoundsWon.get(userId) || 0,
-        solveDistribution: prevSolveDistribution.get(userId) || [
+        points: prevGameUserInfo.get(userId)?.points || 0,
+        roundsWon: prevGameUserInfo.get(userId)?.roundsWon || 0,
+        solveDistribution: prevGameUserInfo.get(userId)?.solveDistribution || [
           0, 0, 0, 0, 0, 0,
         ],
-        totalSolveTime: prevTotalSolveTime.get(userId) || 0,
-        totalGuesses: prevTotalGuesses.get(userId) || 0,
-        totalOutOfGuesses: prevTotalOutOfGuesses.get(userId) || 0,
+        totalSolveTime: prevGameUserInfo.get(userId)?.totalSolveTime || 0,
+        totalGuesses: prevGameUserInfo.get(userId)?.totalGuesses || 0,
+        totalOutOfGuesses: prevGameUserInfo.get(userId)?.totalOutOfGuesses || 0,
       })
     })
 
