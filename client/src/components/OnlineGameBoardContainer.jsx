@@ -26,18 +26,16 @@ function OnlineGameBoardContainer({
   function isUserLeading(currUserId) {
     if (connectionMode === "private") {
       let maxPoints = 0
-      let leadingUser
+      let currUserPoints = 0
       userInfo.forEach((userInfoObject) => {
-        // If there are multiple "leaders", then there is no leader
-        if (userInfoObject.points === maxPoints) {
-          leadingUser = null
+        if (userInfoObject.userId === currUserId) {
+          currUserPoints = userInfoObject.points
         }
         if (userInfoObject.points > maxPoints) {
           maxPoints = userInfoObject.points
-          leadingUser = userInfoObject.userId
         }
       })
-      if (leadingUser === currUserId) {
+      if (maxPoints > 0 && currUserPoints === maxPoints) {
         return true
       }
     }
