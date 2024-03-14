@@ -44,6 +44,18 @@ jobs:
           touch .env
           echo VITE_EC2_URL=${{ secrets.AWS_EC2_URL }} >> .env
 
+      - name: Run tests
+        run: pnpm run test
+
+      - name: Debugging
+        run: |
+          touch test.txt
+          echo "Hello, World!" >> test.txt
+
+      - name: Debugging part 2
+        run: |
+          cat test.txt
+
       - name: Build project
         run: pnpm run build
 
