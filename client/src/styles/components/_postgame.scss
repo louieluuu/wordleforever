@@ -1,0 +1,11 @@
+.postgame {
+  &__scoreboard {
+  }
+
+  &__user {
+    &--highlight {
+      font-weight: 500;
+      color: $username;
+    }
+  }
+}
