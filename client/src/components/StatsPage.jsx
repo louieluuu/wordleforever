@@ -12,10 +12,10 @@ import "../styles/components/_segmented-control.scss"
 
 // SVGs
 import GameIcon from "../assets/game-icon.svg"
-import GuessIcon from "../assets/guess-icon.svg"
 
 // SVG Components
 import Crown from "./Crown"
+import GuessIcon from "./GuessIcon"
 import Streak from "./Streak"
 import Stopwatch from "./Stopwatch"
 
@@ -278,7 +278,7 @@ function StatsPage({ isPhoneLayout }) {
                 <Divider label="Guesses" />
                 <div className="stats__total-guesses">
                   <div className="stats__total-guesses--icon">
-                    <img src={GuessIcon} alt="Guess Icon" />
+                    <GuessIcon />
                   </div>
                   &nbsp;
                   <div className="stats__total-guesses--total">

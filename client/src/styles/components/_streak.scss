@@ -3,8 +3,6 @@
 .streak-container {
   display: flex;
   align-items: center;
-
-  // The flame SVG comes packaged with a tiny bit of padding on its left side, so we need to reciprocate on the right.
 }
 
 .flame {
@@ -74,4 +72,8 @@
       fill: $bg-main-near-invisible;
     }
   }
+}
+
+.guess-icon {
+  fill: $color;
 }

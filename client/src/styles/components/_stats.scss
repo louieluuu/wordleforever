@@ -67,11 +67,6 @@ $platinum-ratio: math.div(508.83, 791.64);
 
       font-size: $phone-game-icon-size;
       margin-bottom: 0;
-
-      &--icon {
-        width: 1em;
-        height: 1em;
-      }
     }
 
     &__game-info {
@@ -276,8 +271,8 @@ $platinum-ratio: math.div(508.83, 791.64);
 
     &--icon {
       display: flex;
-      width: $desktop-game-icon-size;
-      height: $desktop-game-icon-size;
+      width: 1em;
+      height: 1em;
     }
 
     &--total {
