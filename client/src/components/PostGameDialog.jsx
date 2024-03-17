@@ -1,4 +1,5 @@
 import React, { useRef } from "react"
+
 import { sum, max } from "lodash-es"
 const _ = { sum, max }
 
@@ -40,6 +41,8 @@ function PostGameDialog({
   // console.log(`maxSolves: ${maxSolves}`)
   // console.log(`maxTotalSolveTime: ${minTotalSolveTime}`)
 
+  const closeButtonRef = useRef(null)
+
   // Inline styles
   const flexStart = {
     display: "flex",
@@ -57,23 +60,16 @@ function PostGameDialog({
     alignItems: "center",
   }
 
-  // TODO: hanging variables?
-  const closeButtonRef = useRef(null)
-
   function handleSetShowPostGameDialog() {
     setShowPostGameDialog(false)
-    console.log("Hi1")
   }
 
   function switchPage() {
     setShowScoreboard((prevState) => !prevState)
-    console.log("Hi2")
   }
 
-  // This is running 500 times, not sure why.
-  function isMatchingUserId(userId) {
-    console.log("Hi3")
-    return userId === socket.userId
+  function isMatchingUserId(index) {
+    return userInfoSortedByPoints[index].userId === socket.userId
   }
 
   return (
@@ -120,9 +116,7 @@ function PostGameDialog({
               <b>1.&nbsp;</b>
               <span
                 className={`postgame__user${
-                  isMatchingUserId(userInfoSortedByPoints[0].userId)
-                    ? "--highlight"
-                    : ""
+                  isMatchingUserId(0) ? "--highlight" : ""
                 }`}
               >
                 {userInfoSortedByPoints[0].displayName}
@@ -154,11 +148,10 @@ function PostGameDialog({
                 <b>2.&nbsp;</b>
                 <span
                   className={`postgame__user${
-                    isMatchingUserId(userInfoSortedByPoints[1].userId)
-                      ? "--highlight"
-                      : ""
+                    isMatchingUserId(1) ? "--highlight" : ""
                   }`}
                 >
+                  {" "}
                   {userInfoSortedByPoints[1].displayName}
                 </span>
 
@@ -181,9 +174,7 @@ function PostGameDialog({
                     <b>3.&nbsp;</b>
                     <span
                       className={`postgame__user${
-                        isMatchingUserId(userInfoSortedByPoints[2].userId)
-                          ? "--highlight"
-                          : ""
+                        isMatchingUserId(2) ? "--highlight" : ""
                       }`}
                     >
                       {userInfoSortedByPoints[2].displayName}
@@ -207,11 +198,7 @@ function PostGameDialog({
                     {`${userIndex + 4}.`}&nbsp;
                     <span
                       className={`postgame__user${
-                        isMatchingUserId(
-                          userInfoSortedByPoints[userIndex + 3].userId
-                        )
-                          ? "--highlight"
-                          : ""
+                        isMatchingUserId(userIndex + 3) ? "--highlight" : ""
                       }`}
                     >
                       {user.displayName}
@@ -268,14 +255,16 @@ function PostGameDialog({
                     </tr>
                   </thead>
                   <tbody>
-                    {userInfoSortedByPoints.map((user) => (
+                    {userInfoSortedByPoints.map((user, userIndex) => (
                       <tr key={user.userId}>
-                        <td
-                          className={`postgame__user${
-                            isMatchingUserId(user.userId) ? "--highlight" : ""
-                          }`}
-                        >
-                          {user.displayName}
+                        <td>
+                          <span
+                            className={`postgame__user${
+                              isMatchingUserId(userIndex) ? "--highlight" : ""
+                            }`}
+                          >
+                            {user.displayName}
+                          </span>
                         </td>
                         <td>{user.points}</td>
                         <td>{user.roundsWon}</td>

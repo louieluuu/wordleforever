@@ -1,3 +1,5 @@
+// TODO: Something in this component is causing it to re-render infinitely, and I don't mean the constantly-ticking timer. Even when it's supposedly idle (ex. match has finished, PostGame has started), it's still re-rendering. It's causing the PostGameDialog to infinitely re-render as well. (I tested PostGameDialog with just an empty div and no props, and it was still infinitely re-rendering, because this Component - the parent - is.)
+
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import Confetti from "react-confetti"
@@ -76,6 +78,8 @@ function GameContainer({
   isPhoneLayout,
 }) {
   useSetRoomId(setRoomId)
+
+  console.log("Hiiiiii :)")
 
   // Gameflow states
   const [hasSolved, setHasSolved] = useState(false)
