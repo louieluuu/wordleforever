@@ -48,7 +48,7 @@ $platinum-ratio: math.div(508.83, 791.64);
 
       &--caption {
         font-size: $phone-caption-text;
-        font-weight: 400;
+        font-weight: 300;
       }
     }
 
@@ -157,6 +157,9 @@ $platinum-ratio: math.div(508.83, 791.64);
 
 // Large screens
 .stats {
+  // Looks much nicer than Roboto on this particular page.
+  $main-font: "Open Sans";
+
   $desktop-caption-text: 1.3rem;
 
   &__page {
@@ -165,8 +168,7 @@ $platinum-ratio: math.div(508.83, 791.64);
     align-items: center;
     flex: 1;
 
-    // Looks much nicer than Roboto on this particular page.
-    font-family: "Segoe UI";
+    font-family: $main-font;
   }
 
   // For large screens, the tabs should be thought of as
@@ -175,6 +177,8 @@ $platinum-ratio: math.div(508.83, 791.64);
   &__tabs {
     display: flex;
     flex-direction: column;
+
+    font-family: "Roboto";
 
     margin-top: 0.5rem;
   }
@@ -199,6 +203,8 @@ $platinum-ratio: math.div(508.83, 791.64);
     &--username {
       font-size: 4rem;
       font-weight: 800;
+
+      letter-spacing: -0.1rem;
     }
 
     &--title {
@@ -232,7 +238,7 @@ $platinum-ratio: math.div(508.83, 791.64);
     }
 
     &--caption {
-      font-family: "Segoe UI";
+      font-family: $main-font;
       font-size: 1.15rem;
       font-weight: 100;
       line-height: 0.5;
@@ -528,7 +534,7 @@ $platinum-ratio: math.div(508.83, 791.64);
     text-align: right;
     padding-right: 0.25rem;
 
-    font-weight: 600;
+    font-weight: 500;
 
     background: linear-gradient(
       to right,

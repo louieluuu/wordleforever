@@ -55,7 +55,7 @@ html[data-theme="light"] {
   --solves: hsl(197, 89%, 26%);
   --stats-percent-opacity: 80%;
   --wins-shadow: hsla(54, 59%, 54%, 0.5);
-  --solves-shadow: hsla(276, 72%, 72%, 0.5);
+  --solves-shadow: hsla(249, 72%, 72%, 0.5);
   --text-shadow: hsla(0, 0%, 0%, 0.5);
 
   --streak-normal-1: hsl(49, 92%, 54%);
@@ -141,8 +141,9 @@ html[data-theme="dark"] {
   --wins: hsl(93, 67%, 46%);
   --solves: hsl(194, 69%, 31%);
   --stats-percent-opacity: 70%;
+
   --wins-shadow: hsla(54, 52%, 36%, 0.5);
-  --solves-shadow: hsla(258, 58%, 37%, 0.8);
+  --solves-shadow: hsla(249, 42%, 56%, 0.5);
   --text-shadow: hsla(0, 0%, 50%, 0.9);
 
   --streak-normal-1: hsl(41, 92%, 62%);
