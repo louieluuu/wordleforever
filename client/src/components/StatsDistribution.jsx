@@ -4,7 +4,7 @@ function StatsDistribution({ stats, isPhoneLayout }) {
   const PHONE_BAR_WIDTH = 55
   const PHONE_UNIT = "vw"
   // TODO: 19
-  const DESKTOP_BAR_WIDTH = 10
+  const DESKTOP_BAR_WIDTH = 11.5
   const DESKTOP_UNIT = "rem"
 
   // https://stackoverflow.com/questions/70944210/why-is-the-spread-operator-needed-for-math-max
@@ -12,7 +12,7 @@ function StatsDistribution({ stats, isPhoneLayout }) {
   const maxBarWidth = isPhoneLayout ? PHONE_BAR_WIDTH : DESKTOP_BAR_WIDTH
 
   // If you don't add some padding, 0 width ends up looking weird.
-  const tinyPadding = 4
+  const tinyPadding = isPhoneLayout ? 4 : 1.25
 
   function getBarWidth(stat) {
     let barWidth
