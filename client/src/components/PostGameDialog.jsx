@@ -1,7 +1,7 @@
 import React, { useRef } from "react"
 
-import { sum, max } from "lodash-es"
-const _ = { sum, max }
+import { sum, min, max } from "lodash-es"
+const _ = { sum, min, max }
 
 import socket from "../socket"
 
@@ -22,24 +22,18 @@ function PostGameDialog({
   // Finding the "best" value for each stat. These values
   // will eventually be compared to each user's stats,
   // and bolded if they match.
-
-  // const maxPoints = _.max(userInfoSortedByPoints.map((user) => user.points))
-  // const maxRoundsWon = _.max(
-  //   userInfoSortedByPoints.map((user) => user.roundsWon)
-  // )
-  // const maxSolves = _.max(
-  //   userInfoSortedByPoints.map((user) => _.sum(user.solveDistribution))
-  // )
-  // const minTotalSolveTime = _.max(
-  //   userInfoSortedByPoints.map((user) =>
-  //     (user.totalSolveTime / _.sum(user.solveDistribution)).toFixed(2)
-  //   )
-  // )
-
-  // console.log(`maxPoints: ${maxPoints}`)
-  // console.log(`maxRoundsWon: ${maxRoundsWon}`)
-  // console.log(`maxSolves: ${maxSolves}`)
-  // console.log(`maxTotalSolveTime: ${minTotalSolveTime}`)
+  const maxPoints = _.max(userInfoSortedByPoints.map((user) => user.points))
+  const maxRoundsWon = _.max(
+    userInfoSortedByPoints.map((user) => user.roundsWon)
+  )
+  const maxSolves = _.max(
+    userInfoSortedByPoints.map((user) => _.sum(user.solveDistribution))
+  )
+  const minAvgSolveTime = _.min(
+    userInfoSortedByPoints.map((user) =>
+      (user.totalSolveTime / _.sum(user.solveDistribution)).toFixed(2)
+    )
+  )
 
   const closeButtonRef = useRef(null)
 
@@ -68,8 +62,37 @@ function PostGameDialog({
     setShowScoreboard((prevState) => !prevState)
   }
 
+  function calculateAvgSolveTime(solveDistribution, totalSolveTime) {
+    return _.sum(solveDistribution) > 0
+      ? (totalSolveTime / _.sum(solveDistribution)).toFixed(2)
+      : "/"
+  }
+
   function isMatchingUserId(index) {
     return userInfoSortedByPoints[index].userId === socket.userId
+  }
+
+  function isBestStat(stat, userStat) {
+    if (stat === "points") {
+      return userStat === maxPoints
+    } else if (stat === "roundsWon") {
+      return userStat === maxRoundsWon
+    } else if (stat === "solves") {
+      return userStat === maxSolves
+    } else if (stat === "avgSolveTime") {
+      if (userStat === "/") {
+        return false
+      }
+      return userStat === minAvgSolveTime
+    }
+  }
+
+  function getStatClassName(stat, userStat, userIndex) {
+    let className = `postgame__stat`
+    if (isBestStat(stat, userStat) && isMatchingUserId(userIndex)) {
+      className += "--highlight"
+    }
+    return className
   }
 
   return (
@@ -249,9 +272,8 @@ function PostGameDialog({
                       <th>Points</th>
                       <th>Won</th>
                       <th>Solved</th>
-                      <th>Avg Guesses</th>
                       <th>Avg Solve Time</th>
-                      {/* Add more headers for additional properties */}
+                      <th>Avg Guesses</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -266,24 +288,62 @@ function PostGameDialog({
                             {user.displayName}
                           </span>
                         </td>
-                        <td>{user.points}</td>
-                        <td>{user.roundsWon}</td>
-                        <td>{_.sum(user.solveDistribution)}</td>
                         <td>
-                          {_.sum(user.solveDistribution) > 0
-                            ? (
-                                user.totalSolveTime /
-                                _.sum(user.solveDistribution)
-                              ).toFixed(2)
-                            : "/"}
+                          <span
+                            className={getStatClassName(
+                              "points",
+                              user.points,
+                              userIndex
+                            )}
+                          >
+                            {user.points}
+                          </span>
                         </td>
+                        <td>
+                          <span
+                            className={getStatClassName(
+                              "roundsWon",
+                              user.roundsWon,
+                              userIndex
+                            )}
+                          >
+                            {user.roundsWon}
+                          </span>
+                        </td>
+                        <td>
+                          <span
+                            className={getStatClassName(
+                              "solves",
+                              _.sum(user.solveDistribution),
+                              userIndex
+                            )}
+                          >
+                            {_.sum(user.solveDistribution)}
+                          </span>
+                        </td>
+                        <td>
+                          <span
+                            className={getStatClassName(
+                              "avgSolveTime",
+                              calculateAvgSolveTime(
+                                user.solveDistribution,
+                                user.totalSolveTime
+                              ),
+                              userIndex
+                            )}
+                          >
+                            {calculateAvgSolveTime(
+                              user.solveDistribution,
+                              user.totalSolveTime
+                            )}
+                          </span>
+                        </td>
+                        {/* totalGuesses' "best" is ambiguous. */}
                         <td>
                           {user.totalGuesses > 0
                             ? (user.totalGuesses / maxRounds).toFixed(2)
                             : "/"}
                         </td>
-
-                        {/* Add more cells for additional properties */}
                       </tr>
                     ))}
                   </tbody>
