@@ -428,7 +428,7 @@ function WaitingRoom({
   }
 
   return (
-    <div className="waiting-room-background">
+    <div className="waiting-room-background" data-testid="waiting-room">
       {connectionMode === "private" && (
         <div className="waiting-room-configuration-icon">
           {showConfiguration ? (

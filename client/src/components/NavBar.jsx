@@ -117,9 +117,15 @@ function NavBar({ roomId, isPhoneLayout }) {
                 className="navbar__logout"
                 title="Logout"
                 onClick={logout}
+                data-testid="logout-button"
               />
             ) : (
-              <Link className="navbar__login" reloadDocument to="/login">
+              <Link
+                className="navbar__login"
+                reloadDocument
+                to="/login"
+                data-testid="login-button"
+              >
                 Sign In
               </Link>
             )
