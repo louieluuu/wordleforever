@@ -32,12 +32,10 @@ jobs:
           node-version: 18
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-          run_install: |
-            - recursive: true
-              args: [--frozen-lockfile]
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Create env file containing EC2 URL
         run: |
