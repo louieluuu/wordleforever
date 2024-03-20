@@ -18,7 +18,6 @@ import { ImExit } from "react-icons/im"
 import Logo from "../assets/logo.svg"
 
 import InfoDialog from "./InfoDialog"
-import InfoDialogOld from "./InfoDialogOld"
 
 function NavBar({ roomId, isPhoneLayout }) {
   const navigate = useNavigate()
