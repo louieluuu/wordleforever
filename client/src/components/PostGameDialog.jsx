@@ -112,7 +112,7 @@ function PostGameDialog({
 
   return (
     <Dialog
-      className="dialog--stats"
+      className="dialog--postgame"
       open={true}
       onClose={handleSetShowPostGameDialog}
       initialFocus={closeButtonRef}

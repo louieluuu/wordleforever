@@ -1,51 +1,52 @@
-import React, { useRef } from "react"
-import { Dialog, Transition } from "@headlessui/react"
-import { Fragment } from "react"
+import Divider from "./Divider"
 
-import { TfiClose } from "react-icons/tfi"
+// MantineUI Modal Component.
+import { Modal } from "@mantine/core"
+import "@mantine/core/styles/Modal.css"
 
-// TODO: LOUIE - animate the dialog upon open and close
+// Importing the minimum number of additional styles that Modal depends on (trial & error)
+// https://mantine.dev/styles/css-files-list/
+import "@mantine/core/styles/ModalBase.css"
+import "@mantine/core/styles/UnstyledButton.css"
+import "@mantine/core/styles/CloseButton.css"
+import "@mantine/core/styles/Overlay.css"
 
 function InfoDialog({ show, setShow }) {
-  const closeButtonRef = useRef(null)
-
   return (
-    <Dialog
-      className="dialog"
-      open={show}
+    <Modal
+      opened={show}
       onClose={() => setShow(false)}
-      initialFocus={closeButtonRef}
+      centered={true}
+      transitionProps={{
+        transition: "slide-up",
+        duration: 400,
+        timingFunction: "ease",
+      }}
     >
-      <Dialog.Panel>
-        <div className="dialog__right">
-          <div ref={closeButtonRef}>
-            <TfiClose
-              className="dialog__btn--close"
-              onClick={() => setShow(false)}
-            />
-          </div>
-        </div>
-
-        <Dialog.Title
-          style={{
-            fontFamily: "Calistoga",
-            marginTop: "0.5rem",
-            marginBottom: "0",
-          }}
-        >
-          The Ultimate Multiplayer Wordle experience.
-        </Dialog.Title>
-        <Dialog.Description
-          style={{
-            fontWeight: "100",
-            fontFamily: "Roboto Slab",
-            fontSize: "1.15rem",
-            marginTop: "0rem",
-          }}
-        >
-          Race against the clock.
-        </Dialog.Description>
-
+      <div
+        style={{
+          fontFamily: "Calistoga",
+          fontSize: "1.5rem",
+          fontWeight: "bold",
+          marginTop: "0.5rem",
+          marginBottom: "0",
+        }}
+      >
+        The Ultimate Multiplayer
+        <br />
+        Wordle experience.
+      </div>
+      <div
+        style={{
+          fontWeight: "100",
+          fontFamily: "Roboto Slab",
+          fontSize: "1.15rem",
+          marginTop: "0rem",
+        }}
+      >
+        Race against the clock.
+      </div>
+      <p>
         <ul
           style={{
             maxWidth: "20rem",
@@ -62,100 +63,102 @@ function InfoDialog({ show, setShow }) {
           </li>
           <li>... Statistics, QOL features, and more!</li>
         </ul>
+      </p>
 
-        <hr style={{ marginBlock: "1.3rem" }} />
+      <Divider />
 
-        <Dialog.Title
-          style={{
-            fontFamily: "Calistoga",
-            marginTop: "0.5rem",
-            marginBottom: "0",
-          }}
+      <div
+        style={{
+          fontFamily: "Calistoga",
+          fontSize: "1.5rem",
+          fontWeight: "bold",
+          marginTop: "0.5rem",
+          marginBottom: "0",
+        }}
+      >
+        How To Play
+      </div>
+
+      <div
+        style={{
+          fontWeight: "100",
+          fontFamily: "Roboto Slab",
+          fontSize: "1.15rem",
+          marginTop: "0rem",
+        }}
+      >
+        Guess a word, then watch the tiles change color.
+      </div>
+
+      <p style={{ fontWeight: "bold" }}>Examples</p>
+
+      <div className="game-board__row" style={{ gap: "0.3rem" }}>
+        <div className="game-board__cell--dialog--green">S</div>
+        <div className="game-board__cell--dialog">L</div>
+        <div className="game-board__cell--dialog">E</div>
+        <div className="game-board__cell--dialog">E</div>
+        <div className="game-board__cell--dialog">P</div>
+      </div>
+
+      <p>
+        <b>S</b>
+        &nbsp;is in the word, and in the correct spot.
+      </p>
+
+      <div className="game-board__row" style={{ gap: "0.3rem" }}>
+        <div className="game-board__cell--dialog">L</div>
+        <div className="game-board__cell--dialog">O</div>
+        <div className="game-board__cell--dialog--yellow">F</div>
+        <div className="game-board__cell--dialog">T</div>
+        <div className="game-board__cell--dialog">Y</div>
+      </div>
+
+      <p>
+        <b>F</b>
+        &nbsp;is in the word, but in the wrong spot.
+      </p>
+
+      <div className="game-board__row" style={{ gap: "0.3rem" }}>
+        <div className="game-board__cell--dialog">V</div>
+        <div className="game-board__cell--dialog">A</div>
+        <div className="game-board__cell--dialog">R</div>
+        <div className="game-board__cell--dialog--grey">U</div>
+        <div className="game-board__cell--dialog">S</div>
+      </div>
+
+      <p>
+        <b>U</b>
+        &nbsp;is not in the word at all.
+      </p>
+
+      <Divider />
+
+      <p style={{ fontSize: "0.8rem" }}>
+        <b>
+          <i>Wordle Forever</i>
+        </b>
+        &nbsp;is our love letter to&nbsp;
+        <a
+          className="text-link"
+          href="https://www.nytimes.com/games/wordle/index.html"
         >
-          How To Play
-        </Dialog.Title>
-
-        <Dialog.Description
-          style={{
-            fontWeight: "100",
-            fontFamily: "Roboto Slab",
-            fontSize: "1.15rem",
-            marginTop: "0rem",
-          }}
+          <i>Wordle</i>
+        </a>{" "}
+        by Josh Wardle. Open source and hosted on&nbsp;
+        <a
+          className="text-link"
+          href="https://github.com/louieluuu/wordle-forever"
         >
-          Guess a word, and watch the tiles change color.
-        </Dialog.Description>
-
-        <p style={{ fontWeight: "bold" }}>Examples</p>
-
-        <div className="game-board__row" style={{ gap: "0.3rem" }}>
-          <div className="game-board__cell--dialog--green">S</div>
-          <div className="game-board__cell--dialog">L</div>
-          <div className="game-board__cell--dialog">E</div>
-          <div className="game-board__cell--dialog">E</div>
-          <div className="game-board__cell--dialog">P</div>
-        </div>
-
-        <p>
-          <b>S</b>
-          &nbsp;is in the word, and in the correct spot.
-        </p>
-
-        <div className="game-board__row" style={{ gap: "0.3rem" }}>
-          <div className="game-board__cell--dialog">L</div>
-          <div className="game-board__cell--dialog">O</div>
-          <div className="game-board__cell--dialog--yellow">F</div>
-          <div className="game-board__cell--dialog">T</div>
-          <div className="game-board__cell--dialog">Y</div>
-        </div>
-
-        <p>
-          <b>F</b>
-          &nbsp;is in the word, but in the wrong spot.
-        </p>
-
-        <div className="game-board__row" style={{ gap: "0.3rem" }}>
-          <div className="game-board__cell--dialog">V</div>
-          <div className="game-board__cell--dialog">A</div>
-          <div className="game-board__cell--dialog">R</div>
-          <div className="game-board__cell--dialog--grey">U</div>
-          <div className="game-board__cell--dialog">S</div>
-        </div>
-
-        <p>
-          <b>U</b>
-          &nbsp;is not in the word at all.
-        </p>
-
-        <hr style={{ marginBlock: "1.3rem" }} />
-
-        <p style={{ fontSize: "0.8rem" }}>
-          <b>
-            <i>Wordle Forever</i>
-          </b>
-          &nbsp;is our love letter to&nbsp;
-          <a
-            className="text-link"
-            href="https://www.nytimes.com/games/wordle/index.html"
-          >
-            <i>Wordle</i>
-          </a>{" "}
-          by Josh Wardle. Open source and hosted on&nbsp;
-          <a
-            className="text-link"
-            href="https://github.com/louieluuu/wordle-forever"
-          >
-            Github
-          </a>
-          .&nbsp;Your feedback is appreciated. Feel free to reach out via{" "}
-          <a className="text-link" href="mailto:wordleforever@gmail.com">
-            email
-          </a>
-          . Created by Louie Lu and Thomas Chiu,&nbsp;
-          <span style={{ fontSize: "0.7rem" }}>2023-2024</span>.
-        </p>
-      </Dialog.Panel>
-    </Dialog>
+          Github
+        </a>
+        .&nbsp;Your feedback is appreciated. Feel free to reach out via{" "}
+        <a className="text-link" href="mailto:wordleforever@gmail.com">
+          email
+        </a>
+        . Created by Louie Lu & Thomas Chiu,&nbsp;
+        <span style={{ fontSize: "0.7rem" }}>2023-2024</span>.
+      </p>
+    </Modal>
   )
 }
 

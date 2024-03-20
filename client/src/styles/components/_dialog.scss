@@ -47,7 +47,8 @@
   }
 }
 
-.dialog--stats {
+// TODO: Replace the Postgame dialog with Mantine as well.
+.dialog--postgame {
   @extend .dialog;
 
   max-width: 100vw;

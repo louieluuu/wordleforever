@@ -1,0 +1,64 @@
+// Overriding Mantine defaults with their Styles API.
+
+// In other words, we can access the Mantine components'
+// styles directly, and override them with our own.
+
+@mixin phone-styles-mantine {
+  .mantine-Modal-content {
+    font-size: 4.5vw;
+    padding-inline: 0.5dvh;
+  }
+  .mantine-Modal-content {
+    min-width: 100vw;
+  }
+}
+
+// ================== MODAL ======================
+// (https://mantine.dev/core/modal/?t=styles-api)
+.mantine-Modal-root {
+}
+
+.mantine-Modal-inner {
+}
+
+.mantine-Modal-content {
+  max-width: 30rem;
+
+  background-color: $bg-main-dark;
+  border-radius: 0.75rem;
+  box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.05), 0 0 10px 4px rgba(0, 0, 0, 0.05),
+    0 0 15px 6px rgba(0, 0, 0, 0.05), 0 0 20px 8px rgba(0, 0, 0, 0.05);
+}
+
+// i.e. the container that the close button resides in
+.mantine-Modal-header {
+  padding-top: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.mantine-Modal-overlay {
+  // No, opacity doesn't work.
+  background-color: hsla(0, 0%, 0%, 0.4);
+}
+
+.mantine-Modal-title {
+}
+
+.mantine-Modal-body {
+  padding: 2rem;
+  padding-top: 0;
+}
+
+.mantine-Modal-close {
+  width: 3rem;
+  height: 3rem;
+  color: $color-secondary;
+
+  // Aria label for the close button
+  &:focus {
+    outline: 2px solid $username;
+  }
+}
+
+// ================== SEGMENTED CONTROL ======================
+// (https://mantine.dev/core/segmented-control/?t=styles-api)

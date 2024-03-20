@@ -18,6 +18,7 @@
 @import "./components/stats";
 @import "./components/segmented-control";
 @import "./components/divider";
+@import "./components/mantine";
 
 * {
   box-sizing: border-box;
@@ -83,7 +84,8 @@ li {
 
   @include phone-styles-navbar;
   @include phone-styles-menu;
-  @include phone-styles-dialog;
+  @include phone-styles-dialog; // TODO: remove later? (mantine pwn)
+  @include phone-styles-mantine;
   @include phone-styles-alert-modal;
   @include phone-styles-stats;
 }
