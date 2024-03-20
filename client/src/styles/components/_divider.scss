@@ -12,19 +12,21 @@
 
   font-weight: 100;
   font-size: 1.4rem;
-}
 
-.divider::before,
-.divider::after {
-  content: "";
-  flex: 1;
-  border-bottom: 1px solid hsl(0, 0%, 67%);
-}
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid hsl(0, 0%, 67%);
+    margin-inline: 0.5em;
+  }
 
-.divider::before {
-  margin-right: 0.5em;
-}
+  &--no-label {
+    @extend .divider;
 
-.divider::after {
-  margin-left: 0.5em;
+    &::before,
+    &::after {
+      margin-inline: 0;
+    }
+  }
 }

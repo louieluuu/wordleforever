@@ -1,32 +1,43 @@
 import React, { useRef } from "react"
-import { Dialog, Transition } from "@headlessui/react"
-import { Fragment } from "react"
+import Divider from "./Divider"
+
+// MantineUI Component
+import { Modal } from "@mantine/core"
+import "@mantine/core/styles/Modal.css"
+import "@mantine/core/styles/UnstyledButton.css"
+import "@mantine/core/styles/CloseButton.css"
+import "@mantine/core/styles/Overlay.css"
+import "@mantine/core/styles/ModalBase.css"
+
+// import "../styles/components/_segmented-control.scss"
 
 import { TfiClose } from "react-icons/tfi"
 
-// TODO: LOUIE - animate the dialog upon open and close
+function InfoDialog2({ show, setShow }) {
+  console.log(`show: ${show}`)
 
-function InfoDialog({ show, setShow }) {
   const closeButtonRef = useRef(null)
 
-  return (
-    <Dialog
-      className="dialog"
-      open={show}
-      onClose={() => setShow(false)}
-      initialFocus={closeButtonRef}
-    >
-      <Dialog.Panel>
-        <div className="dialog__right">
-          <div ref={closeButtonRef}>
-            <TfiClose
-              className="dialog__btn--close"
-              onClick={() => setShow(false)}
-            />
-          </div>
-        </div>
+  function closeDialog() {
+    setShow(false)
+  }
 
-        <Dialog.Title
+  // TODO: Consider:
+  // size="auto"
+
+  return (
+    <>
+      <Modal opened={show} onClose={closeDialog}>
+        {/* <div className="dialog__right">
+            <div ref={closeButtonRef}>
+              <TfiClose
+                className="dialog__btn--close"
+                onClick={() => setShow(false)}
+              />
+            </div>
+          </div> */}
+
+        <div
           style={{
             fontFamily: "Calistoga",
             marginTop: "0.5rem",
@@ -34,8 +45,8 @@ function InfoDialog({ show, setShow }) {
           }}
         >
           The Ultimate Multiplayer Wordle experience.
-        </Dialog.Title>
-        <Dialog.Description
+        </div>
+        <div
           style={{
             fontWeight: "100",
             fontFamily: "Roboto Slab",
@@ -44,8 +55,7 @@ function InfoDialog({ show, setShow }) {
           }}
         >
           Race against the clock.
-        </Dialog.Description>
-
+        </div>
         <ul
           style={{
             maxWidth: "20rem",
@@ -63,9 +73,9 @@ function InfoDialog({ show, setShow }) {
           <li>... Statistics, QOL features, and more!</li>
         </ul>
 
-        <hr style={{ marginBlock: "1.3rem" }} />
+        <Divider />
 
-        <Dialog.Title
+        <div
           style={{
             fontFamily: "Calistoga",
             marginTop: "0.5rem",
@@ -73,9 +83,9 @@ function InfoDialog({ show, setShow }) {
           }}
         >
           How To Play
-        </Dialog.Title>
+        </div>
 
-        <Dialog.Description
+        <div
           style={{
             fontWeight: "100",
             fontFamily: "Roboto Slab",
@@ -84,7 +94,7 @@ function InfoDialog({ show, setShow }) {
           }}
         >
           Guess a word, and watch the tiles change color.
-        </Dialog.Description>
+        </div>
 
         <p style={{ fontWeight: "bold" }}>Examples</p>
 
@@ -127,7 +137,7 @@ function InfoDialog({ show, setShow }) {
           &nbsp;is not in the word at all.
         </p>
 
-        <hr style={{ marginBlock: "1.3rem" }} />
+        <Divider />
 
         <p style={{ fontSize: "0.8rem" }}>
           <b>
@@ -154,9 +164,9 @@ function InfoDialog({ show, setShow }) {
           . Created by Louie Lu and Thomas Chiu,&nbsp;
           <span style={{ fontSize: "0.7rem" }}>2023-2024</span>.
         </p>
-      </Dialog.Panel>
-    </Dialog>
+      </Modal>
+    </>
   )
 }
 
-export default InfoDialog
+export default InfoDialog2

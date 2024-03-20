@@ -17,7 +17,9 @@ import { ImExit } from "react-icons/im"
 
 import Logo from "../assets/logo.svg"
 
+// TODO: Delete later
 import InfoDialog from "./InfoDialog"
+import InfoDialog2 from "./InfoDialog2"
 
 function NavBar({ roomId, isPhoneLayout }) {
   const navigate = useNavigate()
@@ -82,7 +84,9 @@ function NavBar({ roomId, isPhoneLayout }) {
 
   return (
     <>
-      {showInfoDialog && <InfoDialog show={setShowInfoDialog} />}
+      {showInfoDialog && (
+        <InfoDialog2 show={showInfoDialog} setShow={setShowInfoDialog} />
+      )}
       <header className="navbar">
         <div className="navbar__left" onClick={refreshPage}>
           <div className="logo">
