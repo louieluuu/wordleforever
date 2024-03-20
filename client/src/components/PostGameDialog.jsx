@@ -19,22 +19,7 @@ function PostGameDialog({
   userInfoSortedByPoints,
   maxRounds,
 }) {
-  // Finding the "best" value for each stat. These values
-  // will eventually be compared to each user's stats,
-  // and bolded if they match.
-  const maxPoints = _.max(userInfoSortedByPoints.map((user) => user.points))
-  const maxRoundsWon = _.max(
-    userInfoSortedByPoints.map((user) => user.roundsWon)
-  )
-  const maxSolves = _.max(
-    userInfoSortedByPoints.map((user) => _.sum(user.solveDistribution))
-  )
-  const minAvgSolveTime = _.min(
-    userInfoSortedByPoints.map((user) =>
-      (user.totalSolveTime / _.sum(user.solveDistribution)).toFixed(2)
-    )
-  )
-
+  // X Button ref
   const closeButtonRef = useRef(null)
 
   // Inline styles
@@ -54,12 +39,42 @@ function PostGameDialog({
     alignItems: "center",
   }
 
+  // Destructured best stats (used to highlight stats in the table)
+  const { maxPoints, maxRoundsWon, maxSolves, minAvgSolveTime } = getBestStats()
+
   function handleSetShowPostGameDialog() {
     setShowPostGameDialog(false)
   }
 
   function switchPage() {
     setShowScoreboard((prevState) => !prevState)
+  }
+
+  function getBestStats() {
+    // By starting at 1, we guarantee that if no one solves anything in a match, no one's stats are highlighted. (If we started at 0, then a bunch of 0's would be highlighted.)
+    let maxPoints = 1
+    let maxRoundsWon = 1
+    let maxSolves = 1
+    let minAvgSolveTime = Infinity
+
+    for (let i = 0; i < userInfoSortedByPoints.length; i++) {
+      const user = userInfoSortedByPoints[i]
+
+      maxPoints = Math.max(maxPoints, user.points)
+      maxRoundsWon = Math.max(maxRoundsWon, user.roundsWon)
+      maxSolves = Math.max(maxSolves, _.sum(user.solveDistribution))
+      if (_.sum(user.solveDistribution) > 0) {
+        minAvgSolveTime = Math.min(
+          minAvgSolveTime,
+          calculateAvgSolveTime(user.solveDistribution, user.totalSolveTime)
+        )
+      }
+    }
+
+    minAvgSolveTime = minAvgSolveTime.toFixed(2)
+
+    // Return an object with the best values for each stat.
+    return { maxPoints, maxRoundsWon, maxSolves, minAvgSolveTime }
   }
 
   function calculateAvgSolveTime(solveDistribution, totalSolveTime) {
