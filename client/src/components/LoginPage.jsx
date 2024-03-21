@@ -81,7 +81,12 @@ function LoginPage({ setRoomId }) {
         onChange={(e) => setPassword(e.target.value)}
         onKeyDown={handleKeyDown}
       />
-      <Link style={{ alignSelf: "flex-end" }} reloadDocument to="/forgot">
+      <Link
+        className="text-link"
+        style={{ alignSelf: "flex-end" }}
+        reloadDocument
+        to="/forgot"
+      >
         Forgot Password?
       </Link>
       <button className="menu__btn--auth" onClick={login}>
@@ -90,7 +95,12 @@ function LoginPage({ setRoomId }) {
 
       <div className="auth__divider">OR</div>
 
-      <Link style={{ fontWeight: "500" }} reloadDocument to="/register">
+      <Link
+        className="text-link"
+        style={{ fontWeight: "500" }}
+        reloadDocument
+        to="/register"
+      >
         New user? Register here!
       </Link>
     </div>
