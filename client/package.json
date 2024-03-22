@@ -12,7 +12,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.18",
     "@mantine/core": "^7.5.3",
     "axios": "^1.6.7",
     "firebase": "^10.7.2",
