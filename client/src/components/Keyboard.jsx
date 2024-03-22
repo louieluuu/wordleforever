@@ -210,12 +210,12 @@ function Keyboard({
         </div>
       </div>
       {isGameOver && (
-        <div className="post-game-buttons">
+        <div className="keyboard__postgame">
           {connectionMode === "private" &&
             isMatchOver &&
             !showPostGameDialog && (
               <div
-                className="show-scoreboard-btn"
+                className="keyboard__postgame--popup"
                 onClick={() => setShowPostGameDialog(true)}
               >
                 <MdKeyboardDoubleArrowUp />

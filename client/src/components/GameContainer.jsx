@@ -905,15 +905,14 @@ function GameContainer({
 
       {!isSpectating ? (
         <div className="lower-game-container">
-          {showPostGameDialog && (
-            <PostGameDialog
-              setShowPostGameDialog={setShowPostGameDialog}
-              showScoreboard={showScoreboard}
-              setShowScoreboard={setShowScoreboard}
-              userInfoSortedByPoints={userInfoSortedByPoints}
-              maxRounds={maxRounds}
-            />
-          )}
+          <PostGameDialog
+            showPostGameDialog={showPostGameDialog}
+            setShowPostGameDialog={setShowPostGameDialog}
+            showScoreboard={showScoreboard}
+            setShowScoreboard={setShowScoreboard}
+            userInfoSortedByPoints={userInfoSortedByPoints}
+            maxRounds={maxRounds}
+          />
           <Keyboard
             handleLetter={handleLetter}
             handleBackspace={handleBackspace}

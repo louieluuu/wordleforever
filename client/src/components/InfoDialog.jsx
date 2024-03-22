@@ -23,19 +23,11 @@ function InfoDialog({ show, setShow }) {
         timingFunction: "ease",
       }}
     >
-      <div
-        style={{
-          fontFamily: "Calistoga",
-          fontSize: "1.5rem",
-          fontWeight: "bold",
-          marginTop: "0.5rem",
-          marginBottom: "0",
-        }}
-      >
+      <Modal.Title>
         The Ultimate Multiplayer
         <br />
         Wordle experience.
-      </div>
+      </Modal.Title>
       <div
         style={{
           fontWeight: "100",
@@ -67,17 +59,7 @@ function InfoDialog({ show, setShow }) {
 
       <Divider />
 
-      <div
-        style={{
-          fontFamily: "Calistoga",
-          fontSize: "1.5rem",
-          fontWeight: "bold",
-          marginTop: "0.5rem",
-          marginBottom: "0",
-        }}
-      >
-        How To Play
-      </div>
+      <Modal.Title>How To Play</Modal.Title>
 
       <div
         style={{

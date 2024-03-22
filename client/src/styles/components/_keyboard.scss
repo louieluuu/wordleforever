@@ -19,8 +19,8 @@
     }
   }
   .keyboard {
-    .post-game-buttons {
-      .show-scoreboard-btn {
+    &__postgame {
+      &--popup {
         width: 5dvh;
         height: 5dvh;
         font-size: 3dvh;
@@ -122,7 +122,7 @@
     }
   }
 
-  .post-game-buttons {
+  &__postgame {
     display: flex;
     align-items: center;
 
@@ -136,7 +136,7 @@
 
     white-space: nowrap;
 
-    .show-scoreboard-btn {
+    &--popup {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -147,6 +147,15 @@
       background-color: $color;
       color: $bg-main;
       border-radius: 50%;
+
+      &:hover {
+        cursor: pointer;
+        color: $key-hover;
+      }
+
+      &:active {
+        transform: scale(0.9);
+      }
     }
   }
 }
