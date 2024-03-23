@@ -89,7 +89,7 @@ function NavBar({ roomId, isPhoneLayout }) {
             <img src={Logo} alt="Logo" />
             {!isPhoneLayout && (
               <div className="logo__wordmark">
-                <strong className="logo__wordmark--left">Wordle&nbsp;</strong>
+                <strong className="logo__wordmark--left">Words&nbsp;</strong>
                 <strong className="logo__wordmark--right">Forever</strong>
               </div>
             )}
