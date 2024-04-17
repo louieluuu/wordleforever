@@ -145,7 +145,11 @@ async function handleCorrectGuess(
 
         // Example: 2-person private game, first person goes OOG, second person solves:
         // in this case, we don't want setSolvedTimer to run
-        if (game.countSolved === 1 && game.isDynamicTimerOn) {
+        if (
+          game.connectionMode === "private" &&
+          game.countSolved === 1 &&
+          game.isDynamicTimerOn
+        ) {
           game.setSolvedTimer(roomId, io)
         }
       }
