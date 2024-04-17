@@ -1,8 +1,10 @@
-import React, { useRef, useLayoutEffect } from "react"
+import React, { useRef, useLayoutEffect, useState } from "react"
 import containsBadWord from "../helpers/nameFilter"
 
 import { HiOutlinePencilSquare } from "react-icons/hi2"
 import { Tooltip } from "react-tooltip"
+
+import AlertModal from "./AlertModal"
 
 function WelcomeMessage({
   isFirstTimeVisitor,
@@ -14,6 +16,9 @@ function WelcomeMessage({
   const displayNameRef = useRef(null)
   /** Seems a bit hacky but works, uses a hidden span element to measure the width and sets the input box size to that width. Dynamically sizing the input box was tricky */
   const textWidthRef = useRef(null)
+
+  const [alertMessage, setAlertMessage] = useState("")
+  const [showAlertModal, setShowAlertModal] = useState(false)
 
   useLayoutEffect(() => {
     if (textWidthRef.current) {
@@ -35,6 +40,8 @@ function WelcomeMessage({
       }
       // Disallow some truly depraved words
       if (containsBadWord(updatedDisplayName)) {
+        setAlertMessage("Display name cannot contain inappropriate words")
+        setShowAlertModal(true)
         return
       }
 
@@ -109,6 +116,11 @@ function WelcomeMessage({
           <br />
         </div>
       </Tooltip>
+      <AlertModal
+        showAlertModal={showAlertModal}
+        setShowAlertModal={setShowAlertModal}
+        message={alertMessage}
+      />
     </div>
   )
 }
