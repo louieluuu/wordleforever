@@ -4,12 +4,19 @@
 // styles directly, and override them with our own.
 
 @mixin phone-styles-mantine {
+  // ================== MODAL ======================
   .mantine-Modal-content {
     font-size: 4.5vw;
     padding-inline: 0.5dvh;
   }
   .mantine-Modal-content {
     min-width: 100vw;
+  }
+
+  // ================== SEGMENTED CONTROL ======================
+  .mantine-SegmentedControl-root {
+    width: 92.5vw;
+    max-width: 92.5vw;
   }
 }
 
@@ -68,3 +75,48 @@
 
 // ================== SEGMENTED CONTROL ======================
 // (https://mantine.dev/core/segmented-control/?t=styles-api)
+
+.mantine-SegmentedControl-root {
+  $width-desktop: 50vw;
+
+  width: $width-desktop;
+  max-width: $width-desktop;
+
+  background-color: $bg-main-dark;
+
+  box-shadow: 0 0.0625rem 0.1875rem $stats-tabs-shadow,
+    $stats-tabs-shadow 0 1.25rem 1.5625rem -0.3125rem,
+    $stats-tabs-shadow 0 0.3125rem 0.625rem -0.3125rem;
+}
+
+.mantine-SegmentedControl-indicator {
+  border-radius: 0.5rem;
+
+  background-image: linear-gradient(
+    to right,
+    hsl(339, 76%, 59%),
+    hsl(27, 98%, 54%)
+  );
+}
+
+.mantine-SegmentedControl-control {
+  &::before {
+    display: none;
+  }
+}
+
+.mantine-SegmentedControl-label {
+  &,
+  &:hover {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 1.7rem;
+    font-weight: 500;
+    color: hsl(0, 0%, 50%);
+
+    &[data-active] {
+      color: hsl(0, 0%, 100%);
+    }
+  }
+}

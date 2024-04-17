@@ -8,7 +8,6 @@ const _ = { isEmpty, sum }
 // MantineUI Component
 import { SegmentedControl } from "@mantine/core"
 import "@mantine/core/styles/SegmentedControl.css"
-import "../styles/components/_segmented-control.scss"
 
 // SVGs
 import GameIcon from "../assets/game-icon.svg"
@@ -24,14 +23,6 @@ import Divider from "./Divider"
 import StatsDistribution from "./StatsDistribution"
 
 function StatsPage({ isPhoneLayout }) {
-  // Specifying the MantineUI-specific class names.
-  const segmentedControlClasses = {
-    root: "root",
-    indicator: "indicator",
-    control: "control",
-    label: "label",
-  }
-
   // TODO: Actually, I need the case-insensitive username from the db.
   // /user/goldjet should return Goldjet as the username.
   const { username } = useParams()
@@ -78,7 +69,6 @@ function StatsPage({ isPhoneLayout }) {
         <div className="stats__page">
           <div className="stats__tabs">
             <SegmentedControl
-              classNames={segmentedControlClasses}
               value={connectionModePath}
               data={[
                 { value: "public", label: "Public" },
@@ -87,7 +77,6 @@ function StatsPage({ isPhoneLayout }) {
               onChange={changeConnectionModePath}
             />
             <SegmentedControl
-              classNames={segmentedControlClasses}
               value={gameModePath}
               data={[
                 { value: "normal", label: "Normal" },
