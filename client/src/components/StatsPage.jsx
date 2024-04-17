@@ -9,6 +9,9 @@ const _ = { isEmpty, sum }
 import { SegmentedControl } from "@mantine/core"
 import "@mantine/core/styles/SegmentedControl.css"
 
+// React-spinners Component
+import { Blocks } from "react-loader-spinner"
+
 // SVGs
 import GameIcon from "../assets/game-icon.svg"
 
@@ -67,6 +70,15 @@ function StatsPage({ isPhoneLayout }) {
         <div>LOADING...</div>
       ) : (
         <div className="stats__page">
+          <Blocks
+            height="80"
+            width="80"
+            color="#4fa94d"
+            ariaLabel="blocks-loading"
+            wrapperStyle={{}}
+            wrapperClass="blocks-wrapper"
+            visible={true}
+          />
           <div className="stats__tabs">
             <SegmentedControl
               value={connectionModePath}
