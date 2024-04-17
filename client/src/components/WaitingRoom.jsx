@@ -11,7 +11,6 @@ import Checkmark from "../assets/checkmark.svg?react"
 // React-icons
 import { FaGear } from "react-icons/fa6"
 import { FaArrowLeft } from "react-icons/fa"
-import { CgCloseO } from "react-icons/cg"
 import { SlClose } from "react-icons/sl"
 
 // Components
