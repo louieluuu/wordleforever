@@ -380,4 +380,19 @@
     font-family: "Roboto Slab";
     align-self: flex-end;
   }
+
+  .waiting-room-leave {
+    margin-top: 2rem;
+    font-size: 2rem;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 60%;
+      transition-duration: 0.1s;
+    }
+
+    &:active {
+      transform: scale(0.9);
+    }
+  }
 }
