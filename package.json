@@ -21,8 +21,5 @@
   "devDependencies": {
     "@playwright/test": "^1.42.1",
     "@types/node": "^20.11.30"
-  },
-  "dependencies": {
-    "react-loader-spinner": "^6.1.6"
   }
 }
