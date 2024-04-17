@@ -318,6 +318,8 @@ function GameContainer({
           updatedUserInfo.forEach((obj) => {
             if (obj.userId === updatedUserId) {
               obj.streak = updatedStreak
+            } else {
+              obj.streak = 0
             }
           })
           return updatedUserInfo
@@ -597,16 +599,11 @@ function GameContainer({
       setHasSolved(true)
       if (isOnline(connectionMode)) {
         socket.emit("correctGuess", roomId, updatedBoard, activeRowIndex)
-        if (typeof connectionMode === "string" && connectionMode === "public") {
-          handleWin()
+        if (winningUserId && socket.userId !== winningUserId) {
+          playAudio(audioSolve)
         }
-        if (
-          typeof connectionMode === "string" &&
-          connectionMode === "private"
-        ) {
-          if (winningUserId && socket.userId !== winningUserId) {
-            playAudio(audioSolve)
-          }
+        if (typeof connectionMode === "string" && connectionMode === "public") {
+          setIsGameOver(true)
         }
       }
       if (connectionMode === "offline") {

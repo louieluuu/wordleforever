@@ -32,13 +32,6 @@ function dbIsRegistered(userId) {
   return false
 }
 
-function dbHasUpdated(userId, hasUpdatedInDbList) {
-  if (userId) {
-    return hasUpdatedInDbList.includes(userId)
-  }
-  return true
-}
-
 async function dbCheckExistingUsername(username) {
   if (username) {
     const usernameExists = await User.exists({ username: username })
@@ -404,10 +397,7 @@ async function dbConstructUserUpdate(userId, game) {
 }
 
 async function dbUpdateUser(userId, game) {
-  if (
-    dbIsRegistered(userId) &&
-    !dbHasUpdated(userId, game.hasUpdatedInDbList)
-  ) {
+  if (dbIsRegistered(userId)) {
     try {
       const userUpdate = await dbConstructUserUpdate(userId, game)
       console.log(

@@ -117,8 +117,10 @@ async function handleCorrectGuess(
       }
 
       // Update stats
-      if (game.connectionMode === "public") {
+      // Public game logic - everyone can continue to solve the word, but streaks should only be updated once (on the first solve)
+      if (game.connectionMode === "public" && game.countSolved === 1) {
         game.updateStreaks(userId)
+        game.broadcastStreak(roomId, userId, io)
       } else if (game.connectionMode === "private") {
         game.updatePoints(userId)
         game.broadcastPoints(roomId, userId, io)
@@ -127,10 +129,14 @@ async function handleCorrectGuess(
       game.incrementTotalSolveTime(userId)
       game.incrementTotalGuesses(userId)
 
+      if (game.connectionMode === "public") {
+        dbUpdateUser(userId, game)
+      }
+
       // Game progression
       if (game.isGameOver()) {
         game.endGame(roomId, io)
-        if (game.isMatchOver()) {
+        if (game.connectionMode === "private" && game.isMatchOver()) {
           dbBatchUpdateUsers(game)
         }
       } else {
@@ -156,13 +162,10 @@ async function handleOutOfGuesses(roomId, userId, io) {
     game.incrementTotalOutOfGuesses(userId)
     game.countOutOfGuesses += 1
 
-    // In the public outOfGuesses case, db must be updated
-    // immediately; can't wait for batch update
     if (game.connectionMode === "public") {
       game.resetStreak(userId)
       game.broadcastStreak(roomId, userId, io)
       await dbUpdateUser(userId, game)
-      game.hasUpdatedInDbList.push(userId)
     }
     if (game.isGameOver()) {
       game.endGame(roomId, io)

@@ -29,7 +29,6 @@ export default class Game {
     this.solvedTimer = 0
     this.elapsedTime = 0
     this.elapsedTimerId = null
-    this.hasUpdatedInDbList = []
   }
 
   static createGame(
@@ -398,17 +397,8 @@ export default class Game {
   }
 
   isGameOver() {
-    if (this.connectionMode === "private") {
-      if (this.countSolved + this.countOutOfGuesses >= this.getRoomSize()) {
-        return true
-      }
-    } else if (this.connectionMode === "public") {
-      if (
-        this.countSolved > 0 ||
-        this.countOutOfGuesses >= this.getRoomSize()
-      ) {
-        return true
-      }
+    if (this.countSolved + this.countOutOfGuesses >= this.getRoomSize()) {
+      return true
     }
     return false
   }
