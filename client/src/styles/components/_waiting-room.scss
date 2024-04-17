@@ -37,7 +37,7 @@
     .waiting-room-configuration-icon {
       top: 3%;
       left: 5%;
-      font-size: 6vw;
+      font-size: 2rem;
     }
 
     .waiting-room-configuration {
@@ -384,6 +384,8 @@
   .waiting-room-leave {
     margin-top: 2rem;
     font-size: 2rem;
+
+    opacity: 70%;
     cursor: pointer;
 
     &:hover {
