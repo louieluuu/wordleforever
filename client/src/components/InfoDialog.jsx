@@ -57,7 +57,7 @@ function InfoDialog({ show, setShow }) {
         </ul>
       </p>
 
-      <Divider />
+      <Divider margin="1rem" />
 
       <Modal.Title>How To Play</Modal.Title>
 
@@ -113,7 +113,7 @@ function InfoDialog({ show, setShow }) {
         &nbsp;is not in the word at all.
       </p>
 
-      <Divider />
+      <Divider margin="1rem" />
 
       <p style={{ fontSize: "0.8rem" }}>
         <b>

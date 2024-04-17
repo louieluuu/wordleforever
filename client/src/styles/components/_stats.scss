@@ -161,6 +161,8 @@ $platinum-ratio: math.div(508.83, 791.64);
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+
     flex: 1;
 
     font-family: $main-font;

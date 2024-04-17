@@ -132,7 +132,7 @@ function PostGameDialog({
             <div className="postgame__scoreboard">
               <Modal.Title style={flexCenter}>Results</Modal.Title>
 
-              <Divider margin={"1.3rem"} />
+              <Divider margin="1.3rem" />
 
               {/* 1st place */}
               <div style={{ ...flexCenter, fontSize: "3rem" }}>👑</div>
@@ -241,12 +241,12 @@ function PostGameDialog({
                   <br></br>
                 </div>
               )}
-              <Divider margin={"1.3rem"} />
+              <Divider margin="1.3rem" />
             </div>
           ) : (
             <>
               <Modal.Title style={flexCenter}>Statistics</Modal.Title>
-              <Divider margin={"1.3rem"} />
+              <Divider margin="1.3rem" />
               <p
                 style={{
                   fontWeight: "bold",
@@ -348,7 +348,7 @@ function PostGameDialog({
                   </table>
                 </div>
               </div>
-              <Divider margin={"1.3rem"} />
+              <Divider margin="1.3rem" />
             </>
           )}
 

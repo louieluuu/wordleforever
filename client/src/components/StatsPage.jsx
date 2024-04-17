@@ -10,7 +10,7 @@ import { SegmentedControl } from "@mantine/core"
 import "@mantine/core/styles/SegmentedControl.css"
 
 // React-spinners Component
-import { Blocks } from "react-loader-spinner"
+import { ColorRing } from "react-loader-spinner"
 
 // SVGs
 import GameIcon from "../assets/game-icon.svg"
@@ -38,6 +38,10 @@ function StatsPage({ isPhoneLayout }) {
     localStorage.getItem("gameModePath") || "normal"
   )
 
+  // Defining a color for ColorRing loader (it uses it 5 times)
+  const color = "hsl(115, 29%, 48%)"
+
+  // Retrieving stats from DB
   useEffect(() => {
     const SERVER_URL =
       process.env.NODE_ENV === "production"
@@ -53,6 +57,7 @@ function StatsPage({ isPhoneLayout }) {
     })
   }, [])
 
+  // Helper Functions
   function changeConnectionModePath(value) {
     localStorage.setItem("connectionModePath", value)
     setConnectionModePath(value)
@@ -63,22 +68,18 @@ function StatsPage({ isPhoneLayout }) {
     setGameModePath(value)
   }
 
-  // TODO: The "LOADING..." could definitely be improved. Maybe a spinner or something.
   return (
-    <>
+    <div className="stats__page">
       {_.isEmpty(userStats) ? (
-        <div>LOADING...</div>
+        <ColorRing
+          visible={true}
+          height="80"
+          width="80"
+          ariaLabel="color-ring-loading"
+          colors={[color, color, color, color, color]}
+        />
       ) : (
-        <div className="stats__page">
-          <Blocks
-            height="80"
-            width="80"
-            color="#4fa94d"
-            ariaLabel="blocks-loading"
-            wrapperStyle={{}}
-            wrapperClass="blocks-wrapper"
-            visible={true}
-          />
+        <>
           <div className="stats__tabs">
             <SegmentedControl
               value={connectionModePath}
@@ -325,9 +326,9 @@ function StatsPage({ isPhoneLayout }) {
               </div>
             </div>
           </div>
-        </div>
+        </>
       )}
-    </>
+    </div>
   )
 }
 
