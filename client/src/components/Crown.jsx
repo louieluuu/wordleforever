@@ -4,7 +4,7 @@ import React from "react"
 
 function Crown({ matches }) {
   function getCrownClassName() {
-    return matches === 0 ? "--none" : ""
+    return matches === 0 ? "--near-invisible" : ""
   }
 
   return (
