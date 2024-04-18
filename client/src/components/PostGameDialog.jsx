@@ -1,11 +1,14 @@
 import React from "react"
 
+// Lodash
 import { sum, min, max } from "lodash-es"
 const _ = { sum, min, max }
 
 import socket from "../socket"
 
+// Components
 import Divider from "./Divider"
+import Crown from "./Crown"
 
 // MantineUI Modal Component.
 import { Modal } from "@mantine/core"
@@ -29,7 +32,7 @@ function PostGameDialog({
   showScoreboard,
   setShowScoreboard,
   userInfoSortedByPoints,
-  maxRounds,
+  maxRounds, // TODO: Why is this here?
 }) {
   // Inline styles
   const flexStart = {
@@ -135,7 +138,9 @@ function PostGameDialog({
               <Divider margin="1.3rem" />
 
               {/* 1st place */}
-              <div style={{ ...flexCenter, fontSize: "3rem" }}>👑</div>
+              <div style={{ ...flexCenter, fontSize: "4rem" }}>
+                <Crown />
+              </div>
               <div
                 style={{
                   ...flexCenter,

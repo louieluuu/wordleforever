@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react"
 // Components
 import AlertModal from "./AlertModal"
 import Streak from "./Streak"
+import Crown from "./Crown"
 
 // SVG
 import star from "../assets/star.svg"
@@ -133,10 +134,6 @@ function GameBoard({
     return addPrefix("game-board-username")
   }
 
-  function getCrownClassName() {
-    return addPrefix("game-board-crown")
-  }
-
   function getPointTimeout(pointDiff) {
     if (pointDiff > 35) {
       return 5
@@ -199,7 +196,12 @@ function GameBoard({
 
       <div className={getInfoClassName()}>
         <span className={getUsernameClassName()}>
-          {isLeading && <span className={getCrownClassName()}>👑&nbsp;</span>}
+          {isLeading && (
+            <>
+              <Crown />
+              &nbsp;
+            </>
+          )}
           {displayName}
         </span>
         {connectionMode === "private" && (

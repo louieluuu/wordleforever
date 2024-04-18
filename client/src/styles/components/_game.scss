@@ -32,7 +32,6 @@ $desktop-user-info-font-size: 1rem;
 
 $phone-user-font-size: 8vw;
 $phone-user-info-font-size: 4vw;
-$phone-user-crown-size: 3.5vw;
 
 // Max width
 $desktop-user-info-max-width: 13rem;
@@ -59,11 +58,8 @@ $phone-others-cell-size: 3dvh;
 $phone-others-cell-font-size: 4vw;
 $phone-others-info-font-size: 1.5dvh;
 $phone-others-info-max-width: 15dvh;
-$phone-others-crown-size: 1.1dvh;
 
 $phone-others-board-gap: 0 6dvh;
-
-$desktop-others-crown-size: 0.7rem;
 
 // Countdown timer
 $countdown-timer-placement: 35dvh;
@@ -196,14 +192,13 @@ $phone-star-left: 53%;
       display: flex;
 
       .compressed-game-board-username {
+        display: flex;
+        align-items: center;
+
         max-width: $phone-user-info-max-width;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-      }
-
-      .compressed-game-board-crown {
-        font-size: $phone-user-crown-size;
       }
     }
 
@@ -246,14 +241,13 @@ $phone-star-left: 53%;
     display: flex;
 
     .compressed-game-board-username {
+      display: flex;
+      align-items: center;
+
       max-width: $phone-others-info-max-width;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-    }
-
-    .compressed-game-board-crown {
-      font-size: $phone-others-crown-size;
     }
   }
 
@@ -263,14 +257,13 @@ $phone-star-left: 53%;
     display: flex;
 
     .game-board-username {
+      display: flex;
+      align-items: center;
+
       max-width: $phone-user-info-max-width;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-    }
-
-    .game-board-crown {
-      font-size: $phone-user-crown-size;
     }
   }
 
@@ -940,14 +933,13 @@ $phone-star-left: 53%;
   display: flex;
 
   .game-board-username {
+    display: flex;
+    align-items: center;
+
     max-width: $desktop-user-info-max-width;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  .game-board-crown {
-    font-size: $desktop-others-crown-size;
   }
 }
 
@@ -957,14 +949,13 @@ $phone-star-left: 53%;
   display: flex;
 
   .small-game-board-username {
+    display: flex;
+    align-items: center;
+
     max-width: $desktop-others-info-max-width;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  .small-game-board-crown {
-    font-size: $desktop-others-crown-size;
   }
 }
 

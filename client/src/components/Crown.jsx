@@ -2,8 +2,9 @@
 
 import React from "react"
 
-function Crown({ matches }) {
+function Crown({ matches = null }) {
   function getCrownClassName() {
+    // Only relevant for rendering on the StatsPage. If there are no matches, the crown should be nearly invisible.
     return matches === 0 ? "--near-invisible" : ""
   }
 
