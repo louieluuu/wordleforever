@@ -134,9 +134,7 @@ function PostGameDialog({
           {showScoreboard ? (
             <div className="postgame__scoreboard">
               <Modal.Title style={flexCenter}>Results</Modal.Title>
-
               <Divider margin="1.3rem" />
-
               {/* 1st place */}
               <div style={{ ...flexCenter, fontSize: "4rem" }}>
                 <Crown />
@@ -161,9 +159,7 @@ function PostGameDialog({
               >
                 {userInfoSortedByPoints[0].points} pts
               </div>
-
               <br></br>
-
               {/* 2nd and 3rd place */}
               <div
                 style={{
@@ -222,9 +218,7 @@ function PostGameDialog({
                   </>
                 )}
               </div>
-
               <br></br>
-
               {/* 4th place and below */}
               {userInfoSortedByPoints.length > 3 && (
                 <div style={flexColumn}>

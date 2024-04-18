@@ -3,7 +3,13 @@
   }
 
   &__user {
+    display: flex;
+    align-items: center;
+    text-align: center;
+
     &--highlight {
+      @extend .postgame__user;
+
       font-weight: 500;
       color: $username;
     }
