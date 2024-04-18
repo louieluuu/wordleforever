@@ -417,12 +417,14 @@ function GameContainer({
 
   // Cycle through trailing periods for spectator message
   useEffect(() => {
-    const cycle = setInterval(() => {
-      setMessageIndex((prevMessageIndex) => (prevMessageIndex + 1) % 4)
-    }, 1000)
+    if (isSpectating) {
+      const cycle = setInterval(() => {
+        setMessageIndex((prevMessageIndex) => (prevMessageIndex + 1) % 4)
+      }, 1000)
 
-    return () => clearInterval(cycle)
-  }, [])
+      return () => clearInterval(cycle)
+    }
+  }, [isSpectating])
 
   // Set spectator message and corresponding remaining periods (which are hidden for styling)
   useEffect(() => {
