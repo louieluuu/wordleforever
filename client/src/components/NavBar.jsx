@@ -66,8 +66,6 @@ function NavBar({ roomId, isPhoneLayout }) {
     setShowInfoDialog(true)
   }
 
-  // The following navbar actions would take a player out of an active game, so they should be confirmed.
-
   function handleClickStats() {
     if (user) {
       navigate(`/user/${user.displayName}`)
@@ -77,15 +75,22 @@ function NavBar({ roomId, isPhoneLayout }) {
     }
   }
 
-  function refreshPage() {
-    window.location.href = "/"
+  function handleClickLogo() {
+    // Logic may change later, but for now, if a user is in a room, they should be prompted to leave the room before returning to the home page.
+    if (roomId) {
+      if (window.confirm("Are you sure you want to leave the room?")) {
+        window.location.href = "/"
+      }
+    } else {
+      window.location.href = "/"
+    }
   }
 
   return (
     <>
       <InfoDialog show={showInfoDialog} setShow={setShowInfoDialog} />
       <header className="navbar">
-        <div className="navbar__left" onClick={refreshPage}>
+        <div className="navbar__left" onClick={handleClickLogo}>
           <div className="logo">
             <img src={Logo} alt="Logo" />
             {!isPhoneLayout && (
@@ -102,11 +107,13 @@ function NavBar({ roomId, isPhoneLayout }) {
             title="Info"
             onClick={openInfoDialog}
           />
-          <BiBarChartAlt2
-            className="navbar__stats"
-            title="Statistics"
-            onClick={handleClickStats}
-          />
+          {!roomId ? (
+            <BiBarChartAlt2
+              className="navbar__stats"
+              title="Statistics"
+              onClick={handleClickStats}
+            />
+          ) : null}
           <RiMoonClearFill
             className={getColorThemeClassName()}
             title="Switch color theme"
