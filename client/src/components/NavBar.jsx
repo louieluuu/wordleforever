@@ -66,6 +66,8 @@ function NavBar({ roomId, isPhoneLayout }) {
     setShowInfoDialog(true)
   }
 
+  // The following navbar actions would take a player out of an active game, so they should be confirmed.
+
   function handleClickStats() {
     if (user) {
       navigate(`/user/${user.displayName}`)
