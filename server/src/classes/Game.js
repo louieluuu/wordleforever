@@ -130,15 +130,6 @@ export default class Game {
     }
   }
 
-  getAllRoundsWon() {
-    const allRoundsWonMapping = new Map()
-    this.gameUserInfo.forEach((userInfo, userId) => {
-      allRoundsWonMapping.set(userId, userInfo.roundsWon)
-    })
-
-    return allRoundsWonMapping
-  }
-
   getRoundsWon(userId) {
     const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
@@ -155,15 +146,6 @@ export default class Game {
     }
   }
 
-  getAllTotalSolveTime() {
-    const allTotalSolveTimeMapping = new Map()
-    this.gameUserInfo.forEach((userInfo, userId) => {
-      allTotalSolveTimeMapping.set(userId, userInfo.totalSolveTime)
-    })
-
-    return allTotalSolveTimeMapping
-  }
-
   getTotalSolveTime(userId) {
     const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
@@ -176,15 +158,6 @@ export default class Game {
     if (userInfo) {
       userInfo.totalSolveTime += this.elapsedTime
     }
-  }
-
-  getAllSolveDistribution() {
-    const allSolveDistributionMapping = new Map()
-    this.gameUserInfo.forEach((userInfo, userId) => {
-      allSolveDistributionMapping.set(userId, userInfo.solveDistribution)
-    })
-
-    return allSolveDistributionMapping
   }
 
   getSolveDistribution(userId) {
@@ -201,15 +174,6 @@ export default class Game {
     }
   }
 
-  getAllTotalGuesses() {
-    const allTotalGuessesMapping = new Map()
-    this.gameUserInfo.forEach((userInfo, userId) => {
-      allTotalGuessesMapping.set(userId, userInfo.totalGuesses)
-    })
-
-    return allTotalGuessesMapping
-  }
-
   getTotalGuesses(userId) {
     const userInfo = this.gameUserInfo.get(userId)
     if (userInfo) {
@@ -222,15 +186,6 @@ export default class Game {
     if (userInfo) {
       userInfo.totalGuesses += 1
     }
-  }
-
-  getAllTotalOutOfGuesses() {
-    const allTotalOutOfGuessesMapping = new Map()
-    this.gameUserInfo.forEach((userInfo, userId) => {
-      allTotalOutOfGuessesMapping.set(userId, userInfo.totalOutOfGuesses)
-    })
-
-    return allTotalOutOfGuessesMapping
   }
 
   getTotalOutOfGuesses(userId) {
