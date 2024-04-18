@@ -13,7 +13,6 @@ import { BiBarChartAlt2 } from "react-icons/bi"
 import { BsInfoCircle } from "react-icons/bs"
 import { RiMoonClearFill } from "react-icons/ri"
 import { ImExit } from "react-icons/im"
-// import { FaPowerOff } from "react-icons/fa6"
 
 import Logo from "../assets/logo.svg"
 

@@ -25,6 +25,11 @@ $login-padding-inline: 3.5vw;
       font-size: $login-font-size;
       padding-inline: $login-padding-inline;
     }
+
+    &__logout {
+      width: $icon-size;
+      height: $icon-size;
+    }
   }
   .logo {
     width: $logo-size;
