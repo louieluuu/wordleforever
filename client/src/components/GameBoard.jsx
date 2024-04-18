@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react"
-import { IoIosFlame } from "react-icons/io"
-import star from "../assets/star.svg"
 
+// Components
 import AlertModal from "./AlertModal"
+import Streak from "./Streak"
+
+// SVG
+import star from "../assets/star.svg"
 
 function GameBoard({
   board = [],
@@ -12,6 +15,7 @@ function GameBoard({
   points,
   streak,
   connectionMode,
+  gameMode,
   isOutOfGuesses,
   isLeading,
   isSmall,
@@ -133,22 +137,6 @@ function GameBoard({
     return addPrefix("game-board-crown")
   }
 
-  function getStreakClassName(streak) {
-    let streakClassName = "streak"
-    if (streak === 0) {
-      streakClassName += "--0"
-    } else if (1 <= streak && streak <= 3) {
-      streakClassName += "--1-3"
-    } else if (4 <= streak && streak <= 6) {
-      streakClassName += "--4-6"
-    } else if (7 <= streak && streak <= 9) {
-      streakClassName += "--7-9"
-    } else {
-      streakClassName += "--10"
-    }
-    return streakClassName
-  }
-
   function getPointTimeout(pointDiff) {
     if (pointDiff > 35) {
       return 5
@@ -223,10 +211,12 @@ function GameBoard({
         {connectionMode === "public" && (
           <>
             &nbsp;-&nbsp;
-            {streak}
-            <IoIosFlame
-              style={{ color: "hsl(1, 81%, 43%)" }}
-              className={getStreakClassName(streak)}
+            <Streak
+              streak={streak}
+              connectionMode={connectionMode}
+              gameMode={gameMode}
+              inGame={true}
+              renderNumber={true}
             />
           </>
         )}

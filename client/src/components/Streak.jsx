@@ -4,7 +4,7 @@ import Flame from "../assets/flame.svg?react"
 
 function Streak({
   streak,
-  bestStreak,
+  bestStreak = null,
   connectionMode,
   gameMode,
   inGame,
@@ -13,27 +13,22 @@ function Streak({
   function getFlameClassName() {
     let flameClassName = "flame"
 
-    // Only for rendering on the Stats Page.
+    // bestStreak is only considered for rendering on the StatsPage, not related to in-game. If you have never played that mode, the flame on the StatsPage should still show, but be nearly invisible.
     if (bestStreak === 0) {
-      return flameClassName + "--none"
+      return flameClassName + "--near-invisible"
     }
 
     // Edge case for streak === 0.
-    // While inGame and public mode, I want a low opacity flame.
+    // While inGame and public mode, I want a near invisible flame.
     // In all other cases, I want no flame.
     if (streak === 0) {
       if (inGame && connectionMode === "public") {
-        flameClassName += "--0"
+        flameClassName += "--near-invisible"
       }
       //
       else {
         flameClassName += "--hidden"
       }
-      return flameClassName
-    }
-
-    if (connectionMode === "private" && inGame) {
-      flameClassName += "--hidden"
       return flameClassName
     }
 
@@ -73,13 +68,7 @@ function Streak({
         <div className="streak-container">
           <Flame className={getFlameClassName()} />
           <span className="streak-text">
-            {streak === 0 || renderNumber === false
-              ? ""
-              : connectionMode === "private"
-              ? inGame
-                ? ""
-                : streak
-              : `${streak}`}
+            {streak === 0 || renderNumber === false ? "" : streak}
           </span>
         </div>
       )}

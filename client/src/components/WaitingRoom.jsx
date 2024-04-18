@@ -17,6 +17,7 @@ import { SlClose } from "react-icons/sl"
 import LobbyCountdownModal from "./LobbyCountdownModal"
 import AlertModal from "./AlertModal"
 import KickConfirmationModal from "./KickConfirmationModal"
+import Streak from "./Streak"
 
 // Global variables
 // Configuration
@@ -522,8 +523,17 @@ function WaitingRoom({
                           )}
                       </>
                     )}
-                  {connectionMode === "public" && user.currStreak !== 0 && (
-                    <span> &nbsp;&nbsp;{user.currStreak}🔥 </span>
+                  {connectionMode === "public" && (
+                    <>
+                      <span> &nbsp;&nbsp; </span>
+                      <Streak
+                        streak={user.currStreak}
+                        connectionMode={connectionMode}
+                        gameMode={gameMode}
+                        inGame={false}
+                        renderNumber={true}
+                      />
+                    </>
                   )}
                 </div>
               </div>

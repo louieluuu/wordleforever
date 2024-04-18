@@ -872,6 +872,7 @@ function GameContainer({
         )}
         <GameBoardContainer
           connectionMode={connectionMode}
+          gameMode={gameMode}
           board={board}
           activeRow={activeRowIndex}
           activeCell={activeCellIndex}

@@ -6,12 +6,11 @@
 }
 
 .flame {
-  // TODO: Not sure if we're using this yet.
   &--hidden {
     visibility: hidden;
   }
 
-  &--none {
+  &--near-invisible {
     fill: $bg-main-near-invisible;
   }
 

@@ -6,6 +6,7 @@ import OnlineGameBoardContainer from "./OnlineGameBoardContainer"
 
 function GameBoardContainer({
   connectionMode,
+  gameMode,
   board,
   activeRow,
   activeCell,
@@ -30,6 +31,7 @@ function GameBoardContainer({
             activeRow={activeRow}
             activeCell={activeCell}
             connectionMode={connectionMode}
+            gameMode={gameMode}
             isOutOfGuesses={isOutOfGuesses}
             isUser={true}
             isGameOver={isGameOver}
@@ -43,6 +45,7 @@ function GameBoardContainer({
       ) : (
         <OnlineGameBoardContainer
           connectionMode={connectionMode}
+          gameMode={gameMode}
           board={board}
           activeRow={activeRow}
           activeCell={activeCell}

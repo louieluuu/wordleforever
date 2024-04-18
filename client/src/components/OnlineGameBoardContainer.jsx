@@ -4,6 +4,7 @@ import GameBoard from "./GameBoard"
 
 function OnlineGameBoardContainer({
   connectionMode,
+  gameMode,
   board,
   activeRow,
   activeCell,
@@ -73,6 +74,7 @@ function OnlineGameBoardContainer({
                 points={userInfo[0].points}
                 streak={userInfo[0].streak}
                 connectionMode={connectionMode}
+                gameMode={gameMode}
                 isOutOfGuesses={isOutOfGuesses}
                 isLeading={isUserLeading(userInfo[0].userId)}
                 isUser={true}
@@ -97,6 +99,7 @@ function OnlineGameBoardContainer({
                         points={obj.points}
                         streak={obj.streak}
                         connectionMode={connectionMode}
+                        gameMode={gameMode}
                         isOutOfGuesses={isOutOfGuesses}
                         isLeading={isUserLeading(obj.userId)}
                         isCompressed={isPhoneLayout}
@@ -113,6 +116,7 @@ function OnlineGameBoardContainer({
                         points={obj.points}
                         streak={obj.streak}
                         connectionMode={connectionMode}
+                        gameMode={gameMode}
                         isOutOfGuesses={isOutOfGuesses}
                         isLeading={isUserLeading(obj.userId)}
                         isSmall={isMoreThanTwoPlayers()}
@@ -137,6 +141,7 @@ function OnlineGameBoardContainer({
                     points={obj.points}
                     streak={obj.streak}
                     connectionMode={connectionMode}
+                    gameMode={gameMode}
                     isOutOfGuesses={isOutOfGuesses}
                     isLeading={isUserLeading(obj.userId)}
                     isCompressed={isPhoneLayout}
@@ -155,6 +160,7 @@ function OnlineGameBoardContainer({
                     points={obj.points}
                     streak={obj.streak}
                     connectionMode={connectionMode}
+                    gameMode={gameMode}
                     isOutOfGuesses={isOutOfGuesses}
                     isLeading={isUserLeading(obj.userId)}
                     isSmall={isMoreThanTwoPlayers()}
