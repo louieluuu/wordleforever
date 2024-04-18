@@ -38,7 +38,7 @@ function InfoDialog({ show, setShow }) {
       >
         Race against the clock.
       </div>
-      <p>
+      <div style={{ marginBlock: "1em" }}>
         <ul
           style={{
             maxWidth: "20rem",
@@ -55,7 +55,7 @@ function InfoDialog({ show, setShow }) {
           </li>
           <li>... Statistics, QOL features, and more!</li>
         </ul>
-      </p>
+      </div>
 
       <Divider margin="1rem" />
 
