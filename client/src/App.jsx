@@ -3,6 +3,7 @@ import { useMediaQuery } from "react-responsive"
 
 import socket from "./socket"
 import { auth } from "./firebase"
+import { useAuthState } from "react-firebase-hooks/auth"
 
 import { MantineProvider } from "@mantine/core"
 
@@ -51,6 +52,8 @@ function App() {
   const [inputWidth, setInputWidth] = useState(0)
 
   const [roomId, setRoomId] = useState("")
+
+  const [user, loadingUser, errorUser] = useAuthState(auth)
 
   // We want to validate before setting these variables because we are pulling from localStorage, which anyone can change within their browser. Need to ensure the value we are pulling is something we expect / know how to handle
   useEffect(() => {
@@ -116,7 +119,8 @@ function App() {
     }
   }, [])
 
-  return (
+  // loadingUser check is necessary to prevent the potentially inaccurate 0.5s flash of the Login/Logout buttons when the user is not yet authenticated
+  return loadingUser ? null : (
     <MantineProvider>
       <Router>
         <div className="full-page">
