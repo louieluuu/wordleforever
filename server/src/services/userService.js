@@ -195,17 +195,17 @@ async function constructTotalMatchesUpdate(connectionMode, gameMode) {
 }
 
 function constructTotalGamesUpdate(
-  totalRounds,
+  roundsPlayed,
   roundLimit,
   connectionMode,
   gameMode
 ) {
   let update = {}
 
-  if (typeof totalRounds === "number") {
-    if (totalRounds > 0 && totalRounds <= roundLimit) {
+  if (typeof roundsPlayed === "number") {
+    if (roundsPlayed > 0 && roundsPlayed <= roundLimit) {
       const totalGamesPath = `stats.${connectionMode}.${gameMode}.totalGames`
-      update = { $inc: { [totalGamesPath]: totalRounds } }
+      update = { $inc: { [totalGamesPath]: roundsPlayed } }
     }
   }
 
@@ -341,7 +341,7 @@ async function dbConstructUserUpdate(userId, game) {
   )
 
   const totalGamesUpdate = constructTotalGamesUpdate(
-    game.round,
+    game.getRoundsPlayed(userId),
     game.roundLimit,
     game.connectionMode,
     game.gameMode

@@ -79,6 +79,7 @@ export default class Game {
           .map(() => new Array(5).fill({ letter: "", color: "" })),
         streak: user.currStreak,
         points: prevGameUserInfo.get(userId)?.points || 0,
+        roundsPlayed: prevGameUserInfo.get(userId)?.roundsPlayed + 1 || 1,
         roundsWon: prevGameUserInfo.get(userId)?.roundsWon || 0,
         solveDistribution: prevGameUserInfo.get(userId)?.solveDistribution || [
           0, 0, 0, 0, 0, 0,
@@ -119,6 +120,13 @@ export default class Game {
     // Guarantees only one winner.
     if (this.winnerId === null) {
       this.winnerId = userId
+    }
+  }
+
+  getRoundsPlayed(userId) {
+    const userInfo = this.gameUserInfo.get(userId)
+    if (userInfo) {
+      return userInfo.roundsPlayed
     }
   }
 

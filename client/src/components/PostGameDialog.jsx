@@ -339,7 +339,9 @@ function PostGameDialog({
                           {/* totalGuesses' "best" is ambiguous. */}
                           <td>
                             {user.totalGuesses > 0
-                              ? (user.totalGuesses / maxRounds).toFixed(2)
+                              ? (user.totalGuesses / user.roundsPlayed).toFixed(
+                                  2
+                                )
                               : "/"}
                           </td>
                         </tr>
