@@ -139,17 +139,23 @@ function RegisterPage({ setRoomId }) {
         style={{
           fontSize: "1.75rem",
           fontWeight: "500",
-          marginBottom: "0.2rem",
+          marginBottom: "1rem",
         }}
       >
-        Register
+        Create Your Free Account
       </p>
-      <div style={{ fontSize: "0.9rem" }}></div>
+
+      <ul>
+        <li>Record your play stats!</li>
+        <li>Track your streak!</li>
+        <li>Unlock ranks and titles!</li>
+      </ul>
 
       <div className="auth">
         <div className={`auth__error${errorMessage ? "" : "--hidden"}`}>
           {errorMessage}
         </div>
+        Email and password will be used to log in.
         <input
           className="auth__form"
           placeholder="Email"
@@ -166,6 +172,22 @@ function RegisterPage({ setRoomId }) {
           onChange={(e) => setPassword(e.target.value)}
           onKeyDown={handleKeyDown}
         />
+        <div style={{ marginBlock: "1rem" }}></div>
+        <span
+          style={{ cursor: "help" }}
+          title="You can still change your in-game display name at any time."
+        >
+          Choose a name to be{" "}
+          <span
+            style={{
+              textDecoration: "underline",
+              textDecorationStyle: "dashed",
+              textDecorationColor: "hsl(197, 100%, 40%)",
+            }}
+          >
+            linked to your account.
+          </span>
+        </span>
         <input
           className="auth__form"
           placeholder="Username"
