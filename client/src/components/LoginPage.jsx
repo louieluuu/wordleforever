@@ -6,11 +6,16 @@ import useSetRoomId from "../helpers/useSetRoomId"
 import { auth } from "../firebase"
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth"
 
+// React-icons
+import { FaRegEye } from "react-icons/fa"
+import { FaRegEyeSlash } from "react-icons/fa6"
+
 function LoginPage({ setRoomId }) {
   useSetRoomId(setRoomId)
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
 
   const [signInWithEmailAndPassword, user, loading, error] =
     useSignInWithEmailAndPassword(auth)
@@ -73,14 +78,28 @@ function LoginPage({ setRoomId }) {
         onChange={(e) => setEmail(e.target.value)}
         onKeyDown={handleKeyDown}
       />
-      <input
-        className="auth__form"
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        onKeyDown={handleKeyDown}
-      />
+      <div style={{ position: "relative" }}>
+        <input
+          className="auth__form--password"
+          placeholder="Password"
+          type={showPassword ? "text" : "password"}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            right: "10px",
+            transform: "translateY(-50%)",
+            cursor: "pointer",
+          }}
+          onClick={() => setShowPassword((prev) => !prev)}
+        >
+          {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+        </div>
+      </div>
       <Link
         className="text-link"
         style={{ alignSelf: "flex-end" }}

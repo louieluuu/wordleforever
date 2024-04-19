@@ -10,6 +10,10 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
 
 import containsBadWord from "../helpers/nameFilter"
 
+// React-icons
+import { FaRegEye } from "react-icons/fa"
+import { FaRegEyeSlash } from "react-icons/fa6"
+
 function RegisterPage({ setRoomId }) {
   useSetRoomId(setRoomId)
 
@@ -17,6 +21,8 @@ function RegisterPage({ setRoomId }) {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+
   const [username, setUsername] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
 
@@ -164,14 +170,28 @@ function RegisterPage({ setRoomId }) {
           onChange={(e) => setEmail(e.target.value)}
           onKeyDown={handleKeyDown}
         />
-        <input
-          className="auth__form"
-          placeholder="Password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          onKeyDown={handleKeyDown}
-        />
+        <div style={{ position: "relative" }}>
+          <input
+            className="auth__form--password"
+            placeholder="Password"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              right: "10px",
+              transform: "translateY(-50%)",
+              cursor: "pointer",
+            }}
+            onClick={() => setShowPassword((prev) => !prev)}
+          >
+            {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+          </div>
+        </div>
         <div style={{ marginBlock: "1rem" }}></div>
         <span
           style={{ cursor: "help" }}

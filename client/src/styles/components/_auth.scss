@@ -29,6 +29,12 @@
     &:focus {
       outline: 2px solid $username;
     }
+
+    &--password {
+      @extend .auth__form;
+
+      padding-right: 1.8rem; // For the eye icon
+    }
   }
 
   &__divider {
