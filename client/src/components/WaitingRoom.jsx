@@ -316,15 +316,6 @@ function WaitingRoom({
     setShowKickConfirmationModal(true)
   }
 
-  // TODO: what is this for? (Thomas' relic)
-  function getUsernamesClassName() {
-    let usernamesClassName = "waiting-room-user-info"
-    if (userInfo && userInfo.length > 0) {
-      usernamesClassName += `--${userInfo.length}`
-    }
-    return usernamesClassName
-  }
-
   function copyLink() {
     navigator.clipboard.writeText(window.location.href)
     setIsCopied(true)

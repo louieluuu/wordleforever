@@ -8,9 +8,6 @@ function handleStartPrivateGame(gameMode, setIsHost) {
       setIsHost(true)
       resolve(roomId)
     })
-
-    socket.on("error", reject)
-    setTimeout(() => reject(new Error("Timeout")), 5000)
   })
 }
 
@@ -27,9 +24,8 @@ function handleStartPublicGame(gameMode) {
     socket.on("roomCreated", (roomId) => {
       handleRoomCreated(roomId)
     })
-    socket.on("error", reject)
-    setTimeout(() => reject(new Error("Timeout")), 5000)
 
+    // Helper functions for the socket.on events
     function handleMatchFound(roomId) {
       cleanupAllSocketListeners()
       resolve(roomId)
@@ -37,6 +33,7 @@ function handleStartPublicGame(gameMode) {
 
     function handleNoMatchesFound(gameMode) {
       socket.emit("createRoom", "public", gameMode)
+      // TODO: Audit if these two socket.offs are necessary, because the cleanupAllSocketListeners() function is called after this
       socket.off("matchFound")
       socket.off("noMatchesFound")
     }
