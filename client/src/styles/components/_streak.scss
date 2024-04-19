@@ -73,5 +73,17 @@
 }
 
 .guess-icon {
-  fill: $color;
+  &__border {
+    &--left-top {
+      fill: $color;
+    }
+
+    &--right-bot {
+      fill: $bg-main-less-invisible;
+    }
+  }
+
+  &__question {
+    fill: $color;
+  }
 }
