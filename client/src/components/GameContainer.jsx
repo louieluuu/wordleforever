@@ -6,6 +6,10 @@ import Confetti from "react-confetti"
 import socket from "../socket"
 import useSetRoomId from "../helpers/useSetRoomId"
 
+// Lodash
+import { sum } from "lodash-es"
+const _ = { sum }
+
 // Components
 import CountdownModal from "./CountdownModal"
 import GameBoardContainer from "./GameBoardContainer"
@@ -387,7 +391,27 @@ function GameContainer({
       // Used to sort the users by points.
       // To be passed in for rendering the PostGameDialog leaderboard.
       const copyUserInfo = [...userInfo]
-      const sortedByPoints = copyUserInfo.sort((a, b) => b.points - a.points)
+      const sortedByPoints = copyUserInfo.sort((a, b) => {
+        if (b.points !== a.points) {
+          return b.points - a.points
+        } else {
+          // Tiebreaker: faster average solve time
+          const averageSolveTimeA =
+            a.totalSolveTime / _.sum(a.solveDistribution)
+          const averageSolveTimeB =
+            b.totalSolveTime / _.sum(b.solveDistribution)
+
+          if (averageSolveTimeA !== averageSolveTimeB) {
+            return averageSolveTimeA - averageSolveTimeB
+          } else {
+            // Second tiebreaker: total solved words
+            const amountSolvedA = _.sum(a.solveDistribution)
+            const amountSolvedB = _.sum(b.solveDistribution)
+
+            return amountSolvedB - amountSolvedA
+          }
+        }
+      })
 
       if (socket.userId === sortedByPoints[0].userId) {
         playAudio(audioWinMatch)
