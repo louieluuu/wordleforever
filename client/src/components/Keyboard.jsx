@@ -98,8 +98,9 @@ function Keyboard({
       }
     }
 
-    // TODO change this to regex.test() later
-    if (key.match(/^[a-zA-Z]$/)) {
+    const regexIsLetter = /^[a-zA-Z]$/
+
+    if (regexIsLetter.test(key)) {
       handleLetter(key)
     } else if (key === "Backspace") {
       handleBackspace()

@@ -6,9 +6,9 @@ function containsBadWord(name) {
   const onlyLetters = name.replace(/[^a-zA-Z]/g, "").toLowerCase()
 
   // Create a regex expression using the badWords array
-  const regex = new RegExp(`(${badWords.join("|")})`, "g")
+  const regexBadWords = new RegExp(`(${badWords.join("|")})`, "g")
 
-  return regex.test(onlyLetters)
+  return regexBadWords.test(onlyLetters)
 }
 
 export default containsBadWord

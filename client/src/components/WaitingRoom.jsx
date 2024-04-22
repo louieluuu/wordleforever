@@ -67,7 +67,6 @@ function WaitingRoom({
   const [userIdToKick, setUserIdToKick] = useState("")
   const [displayNameToKick, setDisplayNameToKick] = useState("")
 
-  // TODO: Wrap these all up in an object?
   // Configuration states
   const [showConfiguration, setShowConfiguration] = useState(false)
   const [maxPlayers, setMaxPlayers] = useState(DEFAULT_MAX_PLAYERS)
@@ -116,7 +115,7 @@ function WaitingRoom({
     })
 
     socket.on("roomFull", () => {
-      // TODO: display some sort of error message for the user
+      // TODO: Add a message to the user that the room is full (but will require Context API)
       navigate("/")
     })
 
@@ -278,7 +277,6 @@ function WaitingRoom({
   }
 
   function stopCountdown() {
-    // TODO: display something to the user?
     socket.emit("stopCountdown", roomId)
     setShowLobbyCountdownModal(false)
   }

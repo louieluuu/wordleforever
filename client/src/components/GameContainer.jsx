@@ -49,7 +49,7 @@ import timerLowMp3 from "../assets/audio/mp3/timer-low.mp3"
 import winMatchMp3 from "../assets/audio/mp3/win-match.mp3"
 import winRoundMp3 from "../assets/audio/mp3/win-round.mp3"
 
-// TODO: Placement of these?
+// Place these audio files outside of the component. We don't want them to be re-created every time the component re-renders.
 const audioGuesses = [
   new Howl({ src: [guess0Webm, guess0Mp3] }),
   new Howl({ src: [guess1Webm, guess1Mp3] }),
@@ -931,7 +931,6 @@ function GameContainer({
             showScoreboard={showScoreboard}
             setShowScoreboard={setShowScoreboard}
             userInfoSortedByPoints={userInfoSortedByPoints}
-            maxRounds={maxRounds}
           />
           <Keyboard
             handleLetter={handleLetter}

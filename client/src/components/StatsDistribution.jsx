@@ -3,7 +3,7 @@ import React from "react"
 function StatsDistribution({ stats, isPhoneLayout }) {
   const PHONE_BAR_WIDTH = 55
   const PHONE_UNIT = "vw"
-  // TODO: 19
+
   const DESKTOP_BAR_WIDTH = 11.5
   const DESKTOP_UNIT = "rem"
 

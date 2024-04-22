@@ -38,7 +38,7 @@ function StatsPage({ isPhoneLayout }) {
     localStorage.getItem("gameModePath") || "normal"
   )
 
-  // Defining a color for ColorRing loader (it uses it 5 times)
+  // Defining a green color for ColorRing loader (it uses it 5 times)
   const color = "hsl(115, 29%, 48%)"
 
   // Retrieving stats from DB

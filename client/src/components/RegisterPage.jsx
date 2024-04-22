@@ -26,9 +26,7 @@ function RegisterPage({ setRoomId }) {
   const [username, setUsername] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
 
-  // TODO: It would be nice if the email/pw errors had
-  // prio over the username errors, but the order would have to change.
-  function printErrorMessage(error) {
+  function printFirebaseError(error) {
     if (error) {
       switch (error.code) {
         case "auth/missing-email":
@@ -134,7 +132,7 @@ function RegisterPage({ setRoomId }) {
         socket.emit("createNewUser", userId, username)
         navigate("/")
       } catch (error) {
-        printErrorMessage(error)
+        printFirebaseError(error)
       }
     }
   }

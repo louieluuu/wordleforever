@@ -32,7 +32,6 @@ function PostGameDialog({
   showScoreboard,
   setShowScoreboard,
   userInfoSortedByPoints,
-  maxRounds, // TODO: Why is this here?
 }) {
   // Inline styles
   const flexStart = {
