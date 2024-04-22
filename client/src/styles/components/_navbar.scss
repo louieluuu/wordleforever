@@ -127,7 +127,7 @@ $login-padding-inline: 3.5vw;
     align-items: center;
 
     color: white;
-    background-color: $username;
+    background-color: $display-name;
 
     font-family: "Roboto";
     font-weight: bold;
@@ -142,7 +142,7 @@ $login-padding-inline: 3.5vw;
     caret-color: transparent;
 
     &:hover {
-      background-color: $username-hover;
+      background-color: $display-name-hover;
       cursor: pointer;
       transition-duration: 0.1s;
     }

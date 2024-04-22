@@ -1,5 +1,3 @@
-// TODO: Rename "username" to "displayName" at some point in SCSS
-
 html,
 html[data-theme="light"] {
   --bg-main: hsl(0, 0%, 100%);
@@ -38,11 +36,11 @@ html[data-theme="light"] {
   --error: hsl(0, 100%, 50%);
   --challenge: hsl(12, 90%, 35%);
   --tutorial-shadow: 0 0 0 max(100dvh, 100vw) rgba(0, 0, 0, 0.3);
-  --username: hsl(278, 37%, 69%);
-  --username-hover: hsl(278, 37%, 74%);
-  --username-form-hover: brightness(110%);
-  --username-shadow: hsl(278, 37%, 34%);
-  --username-shadow-hover: hsl(278, 37%, 44%);
+  --display-name: hsl(278, 37%, 69%);
+  --display-name-hover: hsl(278, 37%, 74%);
+  --display-name-form-hover: brightness(110%);
+  --display-name-shadow: hsl(278, 37%, 34%);
+  --display-name-shadow-hover: hsl(278, 37%, 44%);
   --header-hover: 65%;
   --waiting-room-background-filter: invert(0);
   --private-room-info: hsl(273, 22%, 84%);
@@ -126,11 +124,11 @@ html[data-theme="dark"] {
   --error: hsl(0, 100%, 50%);
   --challenge: hsl(12, 90%, 40%);
   --tutorial-shadow: 0 0 0 max(100dvh, 100vw) rgba(255, 255, 255, 0.3);
-  --username: hsl(40, 78%, 53%);
-  --username-hover: hsl(40, 78%, 58%);
-  --username-form-hover: brightness(112%);
-  --username-shadow: hsl(40, 78%, 29%);
-  --username-shadow-hover: hsl(40, 78%, 39%);
+  --display-name: hsl(40, 78%, 53%);
+  --display-name-hover: hsl(40, 78%, 58%);
+  --display-name-form-hover: brightness(112%);
+  --display-name-shadow: hsl(40, 78%, 29%);
+  --display-name-shadow-hover: hsl(40, 78%, 39%);
   --header-hover: 85%;
   --waiting-room-background-filter: invert(1);
   --private-room-info: hsl(40, 20%, 45%);
@@ -217,11 +215,11 @@ $btn-neutral-hover: var(--btn-neutral-hover);
 $error: var(--error);
 $challenge: var(--challenge);
 $tutorial-shadow: var(--tutorial-shadow);
-$username: var(--username);
-$username-hover: var(--username-hover);
-$username-form-hover: var(--username-form-hover);
-$username-shadow: var(--username-shadow);
-$username-shadow-hover: var(--username-shadow-hover);
+$display-name: var(--display-name);
+$display-name-hover: var(--display-name-hover);
+$display-name-form-hover: var(--display-name-form-hover);
+$display-name-shadow: var(--display-name-shadow);
+$display-name-shadow-hover: var(--display-name-shadow-hover);
 $header-hover: var(--header-hover);
 $waiting-room-background-filter: var(--waiting-room-background-filter);
 $private-room-info: var(--private-room-info);

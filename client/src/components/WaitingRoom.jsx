@@ -199,8 +199,7 @@ function WaitingRoom({
     }
   }, [isHostConfigurationSynced])
 
-  // TODO: Don't like this placement here, I think it should belong with nicknameform.
-  // Keep displayName up to date
+  // Broadcast displayName changes to the room
   useEffect(() => {
     socket.emit("updateDisplayName", roomId, displayName)
   }, [displayName])
@@ -223,7 +222,7 @@ function WaitingRoom({
     }
   }, [userInfo])
 
-  // TODO: check if this should be merged with the above useEffect as they both only have the one dependency on userInfo, or is it okay to keep it more "readable" with 2 blocks
+  // TODO: check if this should be merged with the above useEffect as they both only have the one dependency on userInfo, or is it okay to keep it more "readable" with 2 blocks. -TC
   // Check if all players are ready in a private room
   useEffect(() => {
     let playersReady = 0

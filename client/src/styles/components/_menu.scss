@@ -203,9 +203,9 @@
     font-weight: bold;
     border-radius: 1rem;
     border: none;
-    box-shadow: 0 7px 2px -1px $username-shadow;
+    box-shadow: 0 7px 2px -1px $display-name-shadow;
 
-    background-color: $username;
+    background-color: $display-name;
 
     margin-top: 2.5rem;
 
@@ -216,8 +216,8 @@
     }
 
     &:hover {
-      background-color: $username-hover;
-      box-shadow: 0 7px 2px -1px $username-shadow-hover;
+      background-color: $display-name-hover;
+      box-shadow: 0 7px 2px -1px $display-name-shadow-hover;
     }
 
     &--google {

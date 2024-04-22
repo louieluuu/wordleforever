@@ -5,7 +5,6 @@
 @import "variables";
 @import "./components/navbar";
 @import "./components/auth";
-@import "./components/dialog";
 @import "./components/page-content";
 @import "./components/menu";
 @import "./components/welcome-message";
@@ -14,10 +13,10 @@
 @import "./components/keyboard";
 @import "./components/postgame";
 @import "./components/alert-modal";
-@import "./components/streak";
 @import "./components/stats";
 @import "./components/divider";
 @import "./components/mantine";
+@import "./components/svg";
 
 * {
   box-sizing: border-box;
@@ -75,6 +74,7 @@ li {
 
 @media only screen and (max-width: $breakpoint-sm) {
   @include phone-styles-divider;
+  @include phone-styles-mantine;
 
   @include phone-styles-keyboard;
   @include phone-styles-game-board;
@@ -83,8 +83,6 @@ li {
 
   @include phone-styles-navbar;
   @include phone-styles-menu;
-  @include phone-styles-dialog; // TODO: remove later? (mantine pwn)
-  @include phone-styles-mantine;
   @include phone-styles-alert-modal;
   @include phone-styles-stats;
 }

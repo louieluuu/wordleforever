@@ -76,10 +76,12 @@ function WelcomeMessage({
   return (
     <div className="welcome-message">
       Hey there,
-      <div className="username-line">
+      <div className="display-name-line">
         <input
           ref={displayNameRef}
-          className={`username-form${isFirstTimeVisitor ? "--first-time" : ""}`}
+          className={`display-name-form${
+            isFirstTimeVisitor ? "--first-time" : ""
+          }`}
           type="text"
           value={displayName}
           onChange={handleDisplayNameChange}
@@ -96,7 +98,7 @@ function WelcomeMessage({
       </div>
       <a data-tooltip-id="display-name-tooltip">
         <HiOutlinePencilSquare
-          className={`username-form__pencil${
+          className={`display-name-form__pencil${
             isFirstTimeVisitor ? "--first-time" : ""
           }`}
           onClick={focusDisplayNameForm}

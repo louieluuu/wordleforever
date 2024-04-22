@@ -491,15 +491,6 @@ export default class Game {
     }
   }
 
-  // TODO: Not being used.
-  // broadcastEndOfMatch(roomId, io) {
-  //   if (roomId) {
-  //     io.to(roomId).emit("endOfMatch")
-  //   } else {
-  //     console.error("Invalid roomId for broadcasting end of match")
-  //   }
-  // }
-
   cleanupTimer() {
     clearInterval(this.timerId)
     delete this.timerId

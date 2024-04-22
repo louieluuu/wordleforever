@@ -4,14 +4,14 @@
     line-height: 0.6;
   }
   .welcome-message,
-  .username-form,
+  .display-name-form,
   .hidden-span {
     font-size: 11vw;
   }
-  .username-form {
+  .display-name-form {
     text-underline-offset: 0.75dvh;
   }
-  .username-form__pencil {
+  .display-name-form__pencil {
     font-size: 6vw;
   }
 
@@ -34,17 +34,16 @@
   max-width: 100vw;
 }
 
-// TODO: LOUIE - What does this do?
-.username-line {
+.display-name-line {
   display: flex;
   flex-direction: column;
   line-height: 1.28;
 }
 
-.username-form,
+.display-name-form,
 .hidden-span {
   display: flex;
-  color: $username;
+  color: $display-name;
   background-color: transparent;
   text-align: center;
   border: none;
@@ -58,14 +57,14 @@
   max-width: 85vw;
 
   &--first-time {
-    @extend .username-form;
+    @extend .display-name-form;
     box-shadow: $tutorial-shadow;
     position: relative;
     z-index: 1;
   }
 
   &:hover {
-    filter: $username-form-hover;
+    filter: $display-name-form-hover;
   }
 
   &__pencil {
@@ -79,7 +78,7 @@
     }
 
     &--first-time {
-      @extend .username-form__pencil;
+      @extend .display-name-form__pencil;
       background-color: $bg-main;
       position: relative;
       z-index: 1;

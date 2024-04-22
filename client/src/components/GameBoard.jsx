@@ -130,8 +130,8 @@ function GameBoard({
     return addPrefix("game-board-info")
   }
 
-  function getUsernameClassName() {
-    return addPrefix("game-board-username")
+  function getDisplayNameClassName() {
+    return addPrefix("game-board-display-name")
   }
 
   function getPointTimeout(pointDiff) {
@@ -195,7 +195,7 @@ function GameBoard({
       )}
 
       <div className={getInfoClassName()}>
-        <span className={getUsernameClassName()}>
+        <span className={getDisplayNameClassName()}>
           {isLeading && (
             <>
               <Crown />
